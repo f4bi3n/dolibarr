@@ -2,10 +2,10 @@
 
 namespace Sabre\VObject\ITip;
 
-class BrokerNewEventTest extends BrokerTester {
-
-    function testNoAttendee() {
-
+class BrokerNewEventTest extends BrokerTester
+{
+    public function testNoAttendee()
+    {
         $message = <<<ICS
 BEGIN:VCALENDAR
 BEGIN:VEVENT
@@ -17,11 +17,10 @@ END:VCALENDAR
 ICS;
 
         $result = $this->parse(null, $message, []);
-
     }
 
-    function testVTODO() {
-
+    public function testVTODO()
+    {
         $message = <<<ICS
 BEGIN:VCALENDAR
 BEGIN:VTODO
@@ -31,11 +30,10 @@ END:VCALENDAR
 ICS;
 
         $result = $this->parse(null, $message, []);
-
     }
 
-    function testSimpleInvite() {
-
+    public function testSimpleInvite()
+    {
         $message = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -80,14 +78,13 @@ ICS;
         ];
 
         $this->parse(null, $message, $expected, 'mailto:strunk@example.org');
-
     }
 
     /**
      * @expectedException \Sabre\VObject\ITip\ITipException
      */
-    function testBrokenEventUIDMisMatch() {
-
+    public function testBrokenEventUIDMisMatch()
+    {
         $message = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -105,13 +102,12 @@ END:VCALENDAR
 ICS;
 
         $this->parse(null, $message, [], 'mailto:strunk@example.org');
-
     }
     /**
      * @expectedException \Sabre\VObject\ITip\ITipException
      */
-    function testBrokenEventOrganizerMisMatch() {
-
+    public function testBrokenEventOrganizerMisMatch()
+    {
         $message = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -129,11 +125,10 @@ END:VCALENDAR
 ICS;
 
         $this->parse(null, $message, [], 'mailto:strunk@example.org');
-
     }
 
-    function testRecurrenceInvite() {
-
+    public function testRecurrenceInvite()
+    {
         $message = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -257,10 +252,10 @@ ICS
         ];
 
         $this->parse(null, $message, $expected, 'mailto:strunk@example.org');
-
     }
 
-    function testRecurrenceInvite2() {
+    public function testRecurrenceInvite2()
+    {
 
         // This method tests a nearly identical path, but in this case the
         // master event does not have an EXDATE.
@@ -385,11 +380,10 @@ ICS
         ];
 
         $this->parse(null, $message, $expected, 'mailto:strunk@example.org');
-
     }
 
-    function testScheduleAgentClient() {
-
+    public function testScheduleAgentClient()
+    {
         $message = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -406,14 +400,13 @@ ICS;
         $version = \Sabre\VObject\Version::VERSION;
 
         $this->parse(null, $message, [], 'mailto:strunk@example.org');
-
     }
 
     /**
      * @expectedException Sabre\VObject\ITip\ITipException
      */
-    function testMultipleUID() {
-
+    public function testMultipleUID()
+    {
         $message = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -440,14 +433,13 @@ ICS;
 
         $version = \Sabre\VObject\Version::VERSION;
         $this->parse(null, $message, [], 'mailto:strunk@example.org');
-
     }
 
     /**
      * @expectedException Sabre\VObject\ITip\SameOrganizerForAllComponentsException
      */
-    function testChangingOrganizers() {
-
+    public function testChangingOrganizers()
+    {
         $message = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -474,10 +466,9 @@ ICS;
 
         $version = \Sabre\VObject\Version::VERSION;
         $this->parse(null, $message, [], 'mailto:strunk@example.org');
-
     }
-    function testNoOrganizerHasAttendee() {
-
+    public function testNoOrganizerHasAttendee()
+    {
         $message = <<<ICS
 BEGIN:VCALENDAR
 BEGIN:VEVENT
@@ -490,7 +481,5 @@ END:VCALENDAR
 ICS;
 
         $this->parse(null, $message, [], 'mailto:strunk@example.org');
-
     }
-
 }

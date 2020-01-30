@@ -70,70 +70,76 @@ class box_contracts extends ModeleBoxes
      */
     public function loadBox($max = 5)
     {
-    	global $user, $langs, $conf;
+        global $user, $langs, $conf;
 
-    	$this->max=$max;
+        $this->max=$max;
 
-    	include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
+        include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 
-    	$this->info_box_head = array('text' => $langs->trans("BoxTitleLastContracts", $max));
+        $this->info_box_head = array('text' => $langs->trans("BoxTitleLastContracts", $max));
 
-    	if ($user->rights->contrat->lire)
-    	{
-        	$contractstatic=new Contrat($this->db);
-        	$thirdpartytmp=new Societe($this->db);
+        if ($user->rights->contrat->lire) {
+            $contractstatic=new Contrat($this->db);
+            $thirdpartytmp=new Societe($this->db);
 
-    	    $sql = "SELECT s.nom as name, s.rowid as socid, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
+            $sql = "SELECT s.nom as name, s.rowid as socid, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
             $sql.= " c.rowid, c.ref, c.statut as fk_statut, c.date_contrat, c.datec, c.fin_validite, c.date_cloture";
             $sql.= ", c.ref_customer, c.ref_supplier";
-    		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
-    		if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-    		$sql.= " WHERE c.fk_soc = s.rowid";
-    		$sql.= " AND c.entity = ".$conf->entity;
-    		if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-    		if($user->socid) $sql.= " AND s.rowid = ".$user->socid;
-    		if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql.= " ORDER BY c.date_contrat DESC, c.ref DESC ";
-    		else $sql.= " ORDER BY c.tms DESC, c.ref DESC ";
-    		$sql.= $this->db->plimit($max, 0);
+            $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
+            if (!$user->rights->societe->client->voir && !$user->socid) {
+                $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+            }
+            $sql.= " WHERE c.fk_soc = s.rowid";
+            $sql.= " AND c.entity = ".$conf->entity;
+            if (!$user->rights->societe->client->voir && !$user->socid) {
+                $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+            }
+            if ($user->socid) {
+                $sql.= " AND s.rowid = ".$user->socid;
+            }
+            if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) {
+                $sql.= " ORDER BY c.date_contrat DESC, c.ref DESC ";
+            } else {
+                $sql.= " ORDER BY c.tms DESC, c.ref DESC ";
+            }
+            $sql.= $this->db->plimit($max, 0);
 
-    		$resql = $this->db->query($sql);
-    		if ($resql)
-    		{
-    			$num = $this->db->num_rows($resql);
-    			$now=dol_now();
+            $resql = $this->db->query($sql);
+            if ($resql) {
+                $num = $this->db->num_rows($resql);
+                $now=dol_now();
 
-    			$line = 0;
+                $line = 0;
 
-    			$langs->load("contracts");
+                $langs->load("contracts");
 
-                while ($line < $num)
-                {
-    				$objp = $this->db->fetch_object($resql);
+                while ($line < $num) {
+                    $objp = $this->db->fetch_object($resql);
 
-    				$datec=$this->db->jdate($objp->datec);
-    				$dateterm=$this->db->jdate($objp->fin_validite);
-    				$dateclose=$this->db->jdate($objp->date_cloture);
-    				$late = '';
+                    $datec=$this->db->jdate($objp->datec);
+                    $dateterm=$this->db->jdate($objp->fin_validite);
+                    $dateclose=$this->db->jdate($objp->date_cloture);
+                    $late = '';
 
-    				$contractstatic->statut=$objp->fk_statut;
-    				$contractstatic->id=$objp->rowid;
-    				$contractstatic->ref=$objp->ref;
-    				$contractstatic->ref_customer = $objp->ref_customer;
-    				$contractstatic->ref_supplier = $objp->ref_supplier;
-    				$result=$contractstatic->fetch_lines();
+                    $contractstatic->statut=$objp->fk_statut;
+                    $contractstatic->id=$objp->rowid;
+                    $contractstatic->ref=$objp->ref;
+                    $contractstatic->ref_customer = $objp->ref_customer;
+                    $contractstatic->ref_supplier = $objp->ref_supplier;
+                    $result=$contractstatic->fetch_lines();
 
-    				$thirdpartytmp->name = $objp->name;
-    				$thirdpartytmp->id = $objp->socid;
-    				$thirdpartytmp->email = $objp->email;
-    				$thirdpartytmp->client = $objp->client;
-    				$thirdpartytmp->fournisseur = $objp->fournisseur;
-    				$thirdpartytmp->code_client = $objp->code_client;
-    				$thirdpartytmp->code_fournisseur = $objp->code_fournisseur;
-    				$thirdpartytmp->code_compta = $objp->code_compta;
-    				$thirdpartytmp->code_compta_fournisseur = $objp->code_compta_fournisseur;
+                    $thirdpartytmp->name = $objp->name;
+                    $thirdpartytmp->id = $objp->socid;
+                    $thirdpartytmp->email = $objp->email;
+                    $thirdpartytmp->client = $objp->client;
+                    $thirdpartytmp->fournisseur = $objp->fournisseur;
+                    $thirdpartytmp->code_client = $objp->code_client;
+                    $thirdpartytmp->code_fournisseur = $objp->code_fournisseur;
+                    $thirdpartytmp->code_compta = $objp->code_compta;
+                    $thirdpartytmp->code_compta_fournisseur = $objp->code_compta_fournisseur;
 
-    				// fin_validite is no more on contract but on services
-    				// if ($objp->fk_statut == 1 && $dateterm < ($now - $conf->contrat->cloture->warning_delay)) { $late = img_warning($langs->trans("Late")); }
+                    // fin_validite is no more on contract but on services
+                    // if ($objp->fk_statut == 1 && $dateterm < ($now - $conf->contrat->cloture->warning_delay)) { $late = img_warning($langs->trans("Late")); }
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'class="nowraponall"',
@@ -162,11 +168,12 @@ class box_contracts extends ModeleBoxes
                     $line++;
                 }
 
-                if ($num==0)
+                if ($num==0) {
                     $this->info_box_contents[$line][0] = array(
                         'td' => 'class="center opacitymedium"',
                         'text'=>$langs->trans("NoRecordedContracts"),
                     );
+                }
 
                 $this->db->free($resql);
             } else {
@@ -184,14 +191,14 @@ class box_contracts extends ModeleBoxes
         }
     }
 
-	/**
-	 *	Method to show box
-	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
-	 *	@return	string
-	 */
+    /**
+     *	Method to show box
+     *
+     *	@param	array	$head       Array with properties of box title
+     *	@param  array	$contents   Array with properties of box lines
+     *  @param	int		$nooutput	No print, only return string
+     *	@return	string
+     */
     public function showBox($head = null, $contents = null, $nooutput = 0)
     {
         return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);

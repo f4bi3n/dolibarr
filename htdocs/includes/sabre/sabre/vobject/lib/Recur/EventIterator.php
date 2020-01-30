@@ -58,7 +58,8 @@ use Sabre\VObject\Settings;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class EventIterator implements \Iterator {
+class EventIterator implements \Iterator
+{
 
     /**
      * Reference timeZone for floating dates and times.
@@ -93,8 +94,8 @@ class EventIterator implements \Iterator {
      * @param DateTimeZone $timeZone Reference timezone for floating dates and
      *                               times.
      */
-    function __construct($input, $uid = null, DateTimeZone $timeZone = null) {
-
+    public function __construct($input, $uid = null, DateTimeZone $timeZone = null)
+    {
         if (is_null($timeZone)) {
             $timeZone = new DateTimeZone('UTC');
         }
@@ -115,24 +116,17 @@ class EventIterator implements \Iterator {
                 throw new InvalidArgumentException('No events found in this calendar');
             }
             $events = $input->getByUID($uid);
-
         }
 
         foreach ($events as $vevent) {
-
             if (!isset($vevent->{'RECURRENCE-ID'})) {
-
                 $this->masterEvent = $vevent;
-
             } else {
-
                 $this->exceptions[
                     $vevent->{'RECURRENCE-ID'}->getDateTime($this->timeZone)->getTimeStamp()
                 ] = true;
                 $this->overriddenEvents[] = $vevent;
-
             }
-
         }
 
         if (!$this->masterEvent) {
@@ -152,15 +146,11 @@ class EventIterator implements \Iterator {
         $this->allDay = !$this->masterEvent->DTSTART->hasTime();
 
         if (isset($this->masterEvent->EXDATE)) {
-
             foreach ($this->masterEvent->EXDATE as $exDate) {
-
                 foreach ($exDate->getDateTimes($this->timeZone) as $dt) {
                     $this->exceptions[$dt->getTimeStamp()] = true;
                 }
-
             }
-
         }
 
         if (isset($this->masterEvent->DTEND)) {
@@ -202,7 +192,6 @@ class EventIterator implements \Iterator {
         if (!$this->valid()) {
             throw new NoInstancesException('This recurrence rule does not generate any valid instances');
         }
-
     }
 
     /**
@@ -210,12 +199,11 @@ class EventIterator implements \Iterator {
      *
      * @return DateTimeImmutable
      */
-    function current() {
-
+    public function current()
+    {
         if ($this->currentDate) {
             return clone $this->currentDate;
         }
-
     }
 
     /**
@@ -224,12 +212,11 @@ class EventIterator implements \Iterator {
      *
      * @return DateTimeImmutable
      */
-    function getDtStart() {
-
+    public function getDtStart()
+    {
         if ($this->currentDate) {
             return clone $this->currentDate;
         }
-
     }
 
     /**
@@ -238,14 +225,13 @@ class EventIterator implements \Iterator {
      *
      * @return DateTimeImmutable
      */
-    function getDtEnd() {
-
+    public function getDtEnd()
+    {
         if (!$this->valid()) {
             return;
         }
         $end = clone $this->currentDate;
         return $end->modify('+' . $this->eventDuration . ' seconds');
-
     }
 
     /**
@@ -256,8 +242,8 @@ class EventIterator implements \Iterator {
      *
      * @return VEvent
      */
-    function getEventObject() {
-
+    public function getEventObject()
+    {
         if ($this->currentOverriddenEvent) {
             return $this->currentOverriddenEvent;
         }
@@ -285,7 +271,6 @@ class EventIterator implements \Iterator {
         $recurid->name = 'RECURRENCE-ID';
         $event->add($recurid);
         return $event;
-
     }
 
     /**
@@ -295,11 +280,11 @@ class EventIterator implements \Iterator {
      *
      * @return int
      */
-    function key() {
+    public function key()
+    {
 
         // The counter is always 1 ahead.
         return $this->counter - 1;
-
     }
 
     /**
@@ -308,20 +293,19 @@ class EventIterator implements \Iterator {
      *
      * @return bool
      */
-    function valid() {
-
+    public function valid()
+    {
         if ($this->counter > Settings::$maxRecurrences && Settings::$maxRecurrences !== -1) {
             throw new MaxInstancesExceededException('Recurring events are only allowed to generate ' . Settings::$maxRecurrences);
         }
         return !!$this->currentDate;
-
     }
 
     /**
      * Sets the iterator back to the starting point.
      */
-    function rewind() {
-
+    public function rewind()
+    {
         $this->recurIterator->rewind();
         // re-creating overridden event index.
         $index = [];
@@ -338,7 +322,6 @@ class EventIterator implements \Iterator {
         $this->currentDate = clone $this->startDate;
 
         $this->next();
-
     }
 
     /**
@@ -346,8 +329,8 @@ class EventIterator implements \Iterator {
      *
      * @return void
      */
-    function next() {
-
+    public function next()
+    {
         $this->currentOverriddenEvent = null;
         $this->counter++;
         if ($this->nextDate) {
@@ -366,14 +349,12 @@ class EventIterator implements \Iterator {
                 $nextDate = $this->recurIterator->current();
                 $this->recurIterator->next();
             } while (isset($this->exceptions[$nextDate->getTimeStamp()]));
-
         }
 
 
         // $nextDate now contains what rrule thinks is the next one, but an
         // overridden event may cut ahead.
         if ($this->overriddenEventsIndex) {
-
             $offsets = end($this->overriddenEventsIndex);
             $timestamp = key($this->overriddenEventsIndex);
             $offset = end($offsets);
@@ -393,13 +374,10 @@ class EventIterator implements \Iterator {
 
                 // Exit point!
                 return;
-
             }
-
         }
 
         $this->currentDate = $nextDate;
-
     }
 
     /**
@@ -407,12 +385,11 @@ class EventIterator implements \Iterator {
      *
      * @param DateTimeInterface $dateTime
      */
-    function fastForward(DateTimeInterface $dateTime) {
-
+    public function fastForward(DateTimeInterface $dateTime)
+    {
         while ($this->valid() && $this->getDtEnd() <= $dateTime) {
             $this->next();
         }
-
     }
 
     /**
@@ -420,10 +397,9 @@ class EventIterator implements \Iterator {
      *
      * @return bool
      */
-    function isInfinite() {
-
+    public function isInfinite()
+    {
         return $this->recurIterator->isInfinite();
-
     }
 
     /**
@@ -509,5 +485,4 @@ class EventIterator implements \Iterator {
      * @var VEVENT
      */
     protected $currentOverriddenEvent;
-
 }

@@ -31,7 +31,6 @@ function exceptions()
         $call_trace
             = parse_backtrace(debug_backtrace());
     }
-
 }
 exceptions();
 
@@ -44,8 +43,9 @@ function parse_backtrace($raw, $skip = 1)
         }
         //$output .= print_r($entry, true) . "\n";
         $output .= "\nFile: " . $entry['file'] . " (Line: " . $entry['line'] . ")\n";
-        if (isset($entry['class']))
+        if (isset($entry['class'])) {
             $output .= $entry['class'] . "::";
+        }
         $output .= $entry['function']
             . "( " . json_encode($entry['args']) . " )\n";
     }
@@ -64,7 +64,7 @@ if ($success && isset($api)) {
 } else {
     if (isset($response['error']['message'])) {
         $icon = '<icon class="denied"></icon>';
-        $title = end(explode(':',$response['error']['message'],2));
+        $title = end(explode(':', $response['error']['message'], 2));
     } else {
         $icon = '<icon class="warning"></icon>';
         $title = 'No Matching Resource';
@@ -73,8 +73,9 @@ if ($success && isset($api)) {
 function render($data, $shadow=true)
 {
     $r = '';
-    if (empty($data))
+    if (empty($data)) {
         return $r;
+    }
     $r .= $shadow ? "<ul class=\"shadow\">\n": "<ul>\n";
     if (is_array($data)) {
         // field name
@@ -86,7 +87,7 @@ function render($data, $shadow=true)
             $r .= '<span>';
             if (is_array($value)) {
                 // recursive
-                $r .= render($value,false);
+                $r .= render($value, false);
             } else {
                 // value, with hyperlinked hyperlinks
                 if (is_bool($value)) {
@@ -112,8 +113,9 @@ function render($data, $shadow=true)
 $reqHeadersArr = array();
 $requestHeaders = $_SERVER['REQUEST_METHOD'] . ' ' . $_SERVER['REQUEST_URI'] . ' ' . $_SERVER['SERVER_PROTOCOL'] . PHP_EOL;
 foreach ($reqHeadersArr as $key => $value) {
-    if ($key == 'Host')
+    if ($key == 'Host') {
         continue;
+    }
     $requestHeaders .= "$key: $value" . PHP_EOL;
 }
 // $requestHeaders = $this->encode(apache_request_headers(), FALSE,
@@ -134,20 +136,20 @@ $responseHeaders .= Util::$restler->responseCode.' '.\Luracast\Restler\RestExcep
 <body>
 <div id="breadcrumbs-one">
     <?php
-    if(Util::$restler->exception){
+    if (Util::$restler->exception) {
         $stages =  Util::$restler->exception->getStages();
         $curStage = Util::$restler->exception->getStage();
-        foreach($stages['success'] as $stage){
+        foreach ($stages['success'] as $stage) {
             echo "<a href=\"#\">$stage</a>";
         }
-        foreach($stages['failure'] as $stage){
+        foreach ($stages['failure'] as $stage) {
             echo '<a href="#" class="failure">'
                 . $stage
                 . ($stage==$curStage ? ' <span class="state"/> ' : '')
                 . '</a>';
         }
     } else {
-        foreach(Util::$restler->_events as $stage){
+        foreach (Util::$restler->_events as $stage) {
             echo "<a href=\"#\">$stage</a>";
         }
     }

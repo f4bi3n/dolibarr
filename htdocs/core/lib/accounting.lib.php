@@ -36,10 +36,10 @@
  */
 function is_empty($var, $allow_false = false, $allow_ws = false)
 {
-	if (!isset($var) || is_null($var) || ($allow_ws == false && trim($var) == "" && !is_bool($var)) || ($allow_false === false && is_bool($var) && $var === false) || (is_array($var) && empty($var))) {
-		return true;
-	}
-	return false;
+    if (!isset($var) || is_null($var) || ($allow_ws == false && trim($var) == "" && !is_bool($var)) || ($allow_false === false && is_bool($var) && $var === false) || (is_array($var) && empty($var))) {
+        return true;
+    }
+    return false;
 }
 
 /**
@@ -50,25 +50,25 @@ function is_empty($var, $allow_false = false, $allow_ws = false)
  */
 function accounting_prepare_head(AccountingAccount $object)
 {
-	global $langs, $conf;
+    global $langs, $conf;
 
-	$h = 0;
-	$head = array ();
+    $h = 0;
+    $head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/accountancy/admin/card.php?id=' . $object->id;
-	$head[$h][1] = $langs->trans("Card");
-	$head[$h][2] = 'card';
-	$h ++;
+    $head[$h][0] = DOL_URL_ROOT.'/accountancy/admin/card.php?id=' . $object->id;
+    $head[$h][1] = $langs->trans("Card");
+    $head[$h][2] = 'card';
+    $h ++;
 
-	// Show more tabs from modules
-	// Entries must be declared in modules descriptor with line
-	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__'); to add new tab
-	// $this->tabs = array('entity:-tabname); to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'accounting_account');
+    // Show more tabs from modules
+    // Entries must be declared in modules descriptor with line
+    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__'); to add new tab
+    // $this->tabs = array('entity:-tabname); to remove a tab
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'accounting_account');
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'accounting_account', 'remove');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'accounting_account', 'remove');
 
-	return $head;
+    return $head;
 }
 
 /**
@@ -79,9 +79,9 @@ function accounting_prepare_head(AccountingAccount $object)
  */
 function clean_account($account)
 {
-	$account = rtrim($account, "0");
+    $account = rtrim($account, "0");
 
-	return $account;
+    return $account;
 }
 
 /**
@@ -92,31 +92,35 @@ function clean_account($account)
  */
 function length_accountg($account)
 {
-	global $conf;
+    global $conf;
 
-	if ($account < 0 || is_empty($account)) return '';
+    if ($account < 0 || is_empty($account)) {
+        return '';
+    }
 
-	if (! is_empty($conf->global->ACCOUNTING_MANAGE_ZERO)) return $account;
+    if (! is_empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
+        return $account;
+    }
 
-	$g = $conf->global->ACCOUNTING_LENGTH_GACCOUNT;
-	if (! is_empty($g)) {
-		// Clean parameters
-		$i = strlen($account);
+    $g = $conf->global->ACCOUNTING_LENGTH_GACCOUNT;
+    if (! is_empty($g)) {
+        // Clean parameters
+        $i = strlen($account);
 
-		if ($i >= 1) {
-			while ( $i < $g ) {
-				$account .= '0';
+        if ($i >= 1) {
+            while ($i < $g) {
+                $account .= '0';
 
-				$i ++;
-			}
+                $i ++;
+            }
 
-			return $account;
-		} else {
-			return $account;
-		}
-	} else {
-		return $account;
-	}
+            return $account;
+        } else {
+            return $account;
+        }
+    } else {
+        return $account;
+    }
 }
 
 /**
@@ -127,31 +131,35 @@ function length_accountg($account)
  */
 function length_accounta($accounta)
 {
-	global $conf;
+    global $conf;
 
-	if ($accounta < 0 || is_empty($accounta)) return '';
+    if ($accounta < 0 || is_empty($accounta)) {
+        return '';
+    }
 
-	if (! is_empty($conf->global->ACCOUNTING_MANAGE_ZERO)) return $accounta;
+    if (! is_empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
+        return $accounta;
+    }
 
-	$a = $conf->global->ACCOUNTING_LENGTH_AACCOUNT;
-	if (! is_empty($a)) {
-		// Clean parameters
-		$i = strlen($accounta);
+    $a = $conf->global->ACCOUNTING_LENGTH_AACCOUNT;
+    if (! is_empty($a)) {
+        // Clean parameters
+        $i = strlen($accounta);
 
-		if ($i >= 1) {
-			while ( $i < $a ) {
-				$accounta .= '0';
+        if ($i >= 1) {
+            while ($i < $a) {
+                $accounta .= '0';
 
-				$i ++;
-			}
+                $i ++;
+            }
 
-			return $accounta;
-		} else {
-			return $accounta;
-		}
-	} else {
-		return $accounta;
-	}
+            return $accounta;
+        } else {
+            return $accounta;
+        }
+    } else {
+        return $accounta;
+    }
 }
 
 
@@ -177,7 +185,9 @@ function journalHead($nom, $variante, $period, $periodlink, $description, $build
 
     print "\n\n<!-- start banner journal -->\n";
 
-    if(! is_empty($varlink)) $varlink = '?'.$varlink;
+    if (! is_empty($varlink)) {
+        $varlink = '?'.$varlink;
+    }
 
     $head=array();
     $h=0;
@@ -190,8 +200,7 @@ function journalHead($nom, $variante, $period, $periodlink, $description, $build
 
     dol_fiche_head($head, 'journal');
 
-    foreach($moreparam as $key => $value)
-    {
+    foreach ($moreparam as $key => $value) {
         print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
     }
     print '<table width="100%" class="border">';
@@ -205,14 +214,18 @@ function journalHead($nom, $variante, $period, $periodlink, $description, $build
     print '</tr>';
 
     // Calculation mode
-    if ($calcmode)
-    {
+    if ($calcmode) {
         print '<tr>';
         print '<td width="110">'.$langs->trans("CalculationMode").'</td>';
-        if (! $variante) print '<td colspan="3">';
-        else print '<td>';
+        if (! $variante) {
+            print '<td colspan="3">';
+        } else {
+            print '<td>';
+        }
         print $calcmode;
-        if ($variante) print '</td><td colspan="2">'.$variante;
+        if ($variante) {
+            print '</td><td colspan="2">'.$variante;
+        }
         print '</td>';
         print '</tr>';
     }
@@ -220,10 +233,17 @@ function journalHead($nom, $variante, $period, $periodlink, $description, $build
     // Ligne de la periode d'analyse du rapport
     print '<tr>';
     print '<td>'.$langs->trans("ReportPeriod").'</td>';
-    if (! $periodlink) print '<td colspan="3">';
-    else print '<td>';
-    if ($period) print $period;
-    if ($periodlink) print '</td><td colspan="2">'.$periodlink;
+    if (! $periodlink) {
+        print '<td colspan="3">';
+    } else {
+        print '<td>';
+    }
+    if ($period) {
+        print $period;
+    }
+    if ($periodlink) {
+        print '</td><td colspan="2">'.$periodlink;
+    }
     print '</td>';
     print '</tr>';
 

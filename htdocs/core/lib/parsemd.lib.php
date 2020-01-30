@@ -31,23 +31,18 @@
  */
 function dolMd2Html($content, $parser = 'parsedown', $replaceimagepath = null)
 {
-    if (is_array($replaceimagepath))
-    {
-        foreach($replaceimagepath as $key => $val)
-        {
+    if (is_array($replaceimagepath)) {
+        foreach ($replaceimagepath as $key => $val) {
             $keytoreplace = ']('.$key;
             $valafter = ']('.$val;
             $content = preg_replace('/'.preg_quote($keytoreplace, '/').'/m', $valafter, $content);
         }
     }
-    if ($parser == 'parsedown')
-    {
+    if ($parser == 'parsedown') {
         include_once DOL_DOCUMENT_ROOT.'/includes/parsedown/Parsedown.php';
         $Parsedown = new Parsedown();
         $content = $Parsedown->text($content);
-    }
-    else
-    {
+    } else {
         $content = nl2br($content);
     }
 
@@ -65,10 +60,8 @@ function dolMd2Html($content, $parser = 'parsedown', $replaceimagepath = null)
  */
 function dolMd2Asciidoc($content, $parser = 'dolibarr', $replaceimagepath = null)
 {
-    if (is_array($replaceimagepath))
-    {
-        foreach($replaceimagepath as $key => $val)
-        {
+    if (is_array($replaceimagepath)) {
+        foreach ($replaceimagepath as $key => $val) {
             $keytoreplace = ']('.$key;
             $valafter = ']('.$val;
             $content = preg_replace('/'.preg_quote($keytoreplace, '/').'/m', $valafter, $content);
@@ -76,7 +69,7 @@ function dolMd2Asciidoc($content, $parser = 'dolibarr', $replaceimagepath = null
     }
     //if ($parser == 'dolibarr')
     //{
-        $content = preg_replace('/<!--.*-->/msU', '', $content);
+    $content = preg_replace('/<!--.*-->/msU', '', $content);
     //}
     //else
     //{

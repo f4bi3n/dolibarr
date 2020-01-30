@@ -37,12 +37,12 @@ class mod_facture_mercure extends ModeleNumRefFactures
      * Dolibarr version of the loaded document
      * @var string
      */
-	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+    public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
 
     /**
-	 * @var string Error message
-	 */
-	public $error = '';
+     * @var string Error message
+     */
+    public $error = '';
 
 
     /**
@@ -65,7 +65,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
         $texte.= '<input type="hidden" name="maskconstinvoice" value="FACTURE_MERCURE_MASK_INVOICE">';
         $texte.= '<input type="hidden" name="maskconstreplacement" value="FACTURE_MERCURE_MASK_REPLACEMENT">';
         $texte.= '<input type="hidden" name="maskconstcredit" value="FACTURE_MERCURE_MASK_CREDIT">';
-		$texte.= '<input type="hidden" name="maskconstdeposit" value="FACTURE_MERCURE_MASK_DEPOSIT">';
+        $texte.= '<input type="hidden" name="maskconstdeposit" value="FACTURE_MERCURE_MASK_DEPOSIT">';
         $texte.= '<table class="nobordernopadding" width="100%">';
 
         $tooltip=$langs->trans("GenericMaskCodes", $langs->transnoentities("Invoice"), $langs->transnoentities("Invoice"));
@@ -120,8 +120,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
         $mysoc->code_client=$old_code_client;
         $mysoc->typent_code=$old_code_type;
 
-        if (! $numExample)
-        {
+        if (! $numExample) {
             $numExample = 'NotConfigured';
         }
         return $numExample;
@@ -137,40 +136,42 @@ class mod_facture_mercure extends ModeleNumRefFactures
      */
     public function getNextValue($objsoc, $invoice, $mode = 'next')
     {
-    	global $db,$conf;
+        global $db,$conf;
 
-    	require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
+        require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
 
         // Get Mask value
         $mask = '';
-        if (is_object($invoice) && $invoice->type == 1)
-        {
-        	$mask=$conf->global->FACTURE_MERCURE_MASK_REPLACEMENT;
-        	if (! $mask)
-        	{
-        		$mask=$conf->global->FACTURE_MERCURE_MASK_INVOICE;
-        	}
+        if (is_object($invoice) && $invoice->type == 1) {
+            $mask=$conf->global->FACTURE_MERCURE_MASK_REPLACEMENT;
+            if (! $mask) {
+                $mask=$conf->global->FACTURE_MERCURE_MASK_INVOICE;
+            }
+        } elseif (is_object($invoice) && $invoice->type == 2) {
+            $mask=$conf->global->FACTURE_MERCURE_MASK_CREDIT;
+        } elseif (is_object($invoice) && $invoice->type == 3) {
+            $mask=$conf->global->FACTURE_MERCURE_MASK_DEPOSIT;
+        } else {
+            $mask=$conf->global->FACTURE_MERCURE_MASK_INVOICE;
         }
-        elseif (is_object($invoice) && $invoice->type == 2) $mask=$conf->global->FACTURE_MERCURE_MASK_CREDIT;
-        elseif (is_object($invoice) && $invoice->type == 3) $mask=$conf->global->FACTURE_MERCURE_MASK_DEPOSIT;
-        else $mask=$conf->global->FACTURE_MERCURE_MASK_INVOICE;
-        if (! $mask)
-        {
+        if (! $mask) {
             $this->error='NotConfigured';
             return 0;
         }
 
-    	$where='';
-    	//if ($facture->type == 2) $where.= " AND type = 2";
-    	//else $where.=" AND type != 2";
+        $where='';
+        //if ($facture->type == 2) $where.= " AND type = 2";
+        //else $where.=" AND type != 2";
 
-    	// Get entities
-    	$entity = getEntity('invoicenumber', 1, $invoice);
+        // Get entities
+        $entity = getEntity('invoicenumber', 1, $invoice);
 
-    	$numFinal=get_next_value($db, $mask, 'facture', 'ref', $where, $objsoc, $invoice->date, $mode, false, null, $entity);
-    	if (! preg_match('/([0-9])+/', $numFinal)) $this->error = $numFinal;
+        $numFinal=get_next_value($db, $mask, 'facture', 'ref', $where, $objsoc, $invoice->date, $mode, false, null, $entity);
+        if (! preg_match('/([0-9])+/', $numFinal)) {
+            $this->error = $numFinal;
+        }
 
-    	return  $numFinal;
+        return  $numFinal;
     }
 
 

@@ -100,14 +100,15 @@ class PriceGlobalVariable
 
         dol_syslog(__METHOD__);
         $resql=$this->db->query($sql);
-        if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+        if (! $resql) {
+            $error++;
+            $this->errors[]="Error ".$this->db->lasterror();
+        }
 
-        if (! $error)
-        {
+        if (! $error) {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
 
-            if (! $notrigger)
-            {
+            if (! $notrigger) {
                 // Uncomment this and change MYOBJECT to your own tag if you
                 // want this action calls a trigger.
 
@@ -119,18 +120,14 @@ class PriceGlobalVariable
         }
 
         // Commit or rollback
-        if ($error)
-        {
-            foreach($this->errors as $errmsg)
-            {
+        if ($error) {
+            foreach ($this->errors as $errmsg) {
                 dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
                 $this->error.=($this->error?', '.$errmsg:$errmsg);
             }
             $this->db->rollback();
             return -1*$error;
-        }
-        else
-        {
+        } else {
             $this->db->commit();
             return $this->id;
         }
@@ -151,25 +148,19 @@ class PriceGlobalVariable
 
         dol_syslog(__METHOD__);
         $resql=$this->db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             $obj = $this->db->fetch_object($resql);
-            if ($obj)
-            {
+            if ($obj) {
                 $this->id			= $id;
                 $this->code			= $obj->code;
                 $this->description	= $obj->description;
                 $this->value		= $obj->value;
                 $this->checkParameters();
                 return 1;
-            }
-            else
-            {
+            } else {
                 return 0;
             }
-        }
-        else
-        {
+        } else {
             $this->error="Error ".$this->db->lasterror();
             return -1;
         }
@@ -199,7 +190,10 @@ class PriceGlobalVariable
 
         dol_syslog(__METHOD__);
         $resql = $this->db->query($sql);
-        if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+        if (! $resql) {
+            $error++;
+            $this->errors[]="Error ".$this->db->lasterror();
+        }
 
         // if (! $error)
         // {
@@ -216,18 +210,14 @@ class PriceGlobalVariable
         // }
 
         // Commit or rollback
-        if ($error)
-        {
-            foreach($this->errors as $errmsg)
-            {
+        if ($error) {
+            foreach ($this->errors as $errmsg) {
                 dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
                 $this->error.=($this->error?', '.$errmsg:$errmsg);
             }
             $this->db->rollback();
             return -1*$error;
-        }
-        else
-        {
+        } else {
             $this->db->commit();
             return 1;
         }
@@ -248,10 +238,8 @@ class PriceGlobalVariable
 
         $this->db->begin();
 
-        if (! $error)
-        {
-            if (! $notrigger)
-            {
+        if (! $error) {
+            if (! $notrigger) {
                 // Uncomment this and change MYOBJECT to your own tag if you
                 // want this action calls a trigger.
 
@@ -262,29 +250,27 @@ class PriceGlobalVariable
             }
         }
 
-        if (! $error)
-        {
+        if (! $error) {
             $sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
             $sql.= " WHERE rowid = ".$rowid;
 
             dol_syslog(__METHOD__);
             $resql = $this->db->query($sql);
-            if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+            if (! $resql) {
+                $error++;
+                $this->errors[]="Error ".$this->db->lasterror();
+            }
         }
 
         // Commit or rollback
-        if ($error)
-        {
-            foreach($this->errors as $errmsg)
-            {
+        if ($error) {
+            foreach ($this->errors as $errmsg) {
                 dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
                 $this->error.=($this->error?', '.$errmsg:$errmsg);
             }
             $this->db->rollback();
             return -1*$error;
-        }
-        else
-        {
+        } else {
             $this->db->commit();
             return 1;
         }
@@ -312,11 +298,17 @@ class PriceGlobalVariable
     public function checkParameters()
     {
         // Clean parameters
-        if (isset($this->code)) $this->code=trim($this->code);
-        if (isset($this->description)) $this->description=trim($this->description);
+        if (isset($this->code)) {
+            $this->code=trim($this->code);
+        }
+        if (isset($this->description)) {
+            $this->description=trim($this->description);
+        }
 
         // Check parameters
-        if (empty($this->value) || !is_numeric($this->value)) $this->value=0;
+        if (empty($this->value) || !is_numeric($this->value)) {
+            $this->value=0;
+        }
     }
 
     /**
@@ -332,12 +324,10 @@ class PriceGlobalVariable
 
         dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             $retarray = array();
 
-            while ($record = $this->db->fetch_array($resql))
-            {
+            while ($record = $this->db->fetch_array($resql)) {
                 $variable_obj = new PriceGlobalVariable($this->db);
                 $variable_obj->id			= $record["rowid"];
                 $variable_obj->code			= $record["code"];
@@ -349,9 +339,7 @@ class PriceGlobalVariable
 
             $this->db->free($resql);
             return $retarray;
-        }
-        else
-        {
+        } else {
             $this->error=$this->db->error();
             return -1;
         }

@@ -15,7 +15,8 @@ use Sabre\Xml\XmlSerializable;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class SupportedCollationSet implements XmlSerializable {
+class SupportedCollationSet implements XmlSerializable
+{
 
     /**
      * The xmlSerialize method is called during xml writing.
@@ -36,12 +37,10 @@ class SupportedCollationSet implements XmlSerializable {
      * @param Writer $writer
      * @return void
      */
-    function xmlSerialize(Writer $writer) {
-
+    public function xmlSerialize(Writer $writer)
+    {
         foreach (['i;ascii-casemap', 'i;octet', 'i;unicode-casemap'] as $coll) {
             $writer->writeElement('{urn:ietf:params:xml:ns:carddav}supported-collation', $coll);
         }
-
     }
-
 }

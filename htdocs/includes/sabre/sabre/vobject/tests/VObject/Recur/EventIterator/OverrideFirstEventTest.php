@@ -5,12 +5,12 @@ namespace Sabre\VObject\RecurrenceIterator;
 use DateTime;
 use Sabre\VObject\Reader;
 
-class OverrideFirstEventTest extends \PHPUnit_Framework_TestCase {
-
+class OverrideFirstEventTest extends \PHPUnit_Framework_TestCase
+{
     use \Sabre\VObject\PHPUnitAssertions;
 
-    function testOverrideFirstEvent() {
-
+    public function testOverrideFirstEvent()
+    {
         $input = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -72,12 +72,10 @@ ICS;
             $expected,
             $vcal
         );
-
-
     }
 
-    function testRemoveFirstEvent() {
-
+    public function testRemoveFirstEvent()
+    {
         $input = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -116,6 +114,5 @@ ICS;
             $expected,
             $vcal
         );
-
     }
 }

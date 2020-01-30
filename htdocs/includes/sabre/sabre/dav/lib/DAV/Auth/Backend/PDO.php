@@ -9,7 +9,8 @@ namespace Sabre\DAV\Auth\Backend;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class PDO extends AbstractDigest {
+class PDO extends AbstractDigest
+{
 
     /**
      * Reference to PDO connection
@@ -33,10 +34,9 @@ class PDO extends AbstractDigest {
      *
      * @param \PDO $pdo
      */
-    function __construct(\PDO $pdo) {
-
+    public function __construct(\PDO $pdo)
+    {
         $this->pdo = $pdo;
-
     }
 
     /**
@@ -46,12 +46,10 @@ class PDO extends AbstractDigest {
      * @param string $username
      * @return string|null
      */
-    function getDigestHash($realm, $username) {
-
+    public function getDigestHash($realm, $username)
+    {
         $stmt = $this->pdo->prepare('SELECT digesta1 FROM ' . $this->tableName . ' WHERE username = ?');
         $stmt->execute([$username]);
         return $stmt->fetchColumn() ?: null;
-
     }
-
 }

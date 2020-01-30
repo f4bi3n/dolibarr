@@ -23,7 +23,8 @@ use Sabre\DAV\ServerPlugin;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Plugin extends ServerPlugin {
+class Plugin extends ServerPlugin
+{
 
     /**
      * If you only want this plugin to store properties for a limited set of
@@ -47,10 +48,9 @@ class Plugin extends ServerPlugin {
      *
      * @param Backend\BackendInterface $backend
      */
-    function __construct(Backend\BackendInterface $backend) {
-
+    public function __construct(Backend\BackendInterface $backend)
+    {
         $this->backend = $backend;
-
     }
 
     /**
@@ -64,13 +64,12 @@ class Plugin extends ServerPlugin {
      * @param Server $server
      * @return void
      */
-    function initialize(Server $server) {
-
-        $server->on('propFind',    [$this, 'propFind'], 130);
-        $server->on('propPatch',   [$this, 'propPatch'], 300);
-        $server->on('afterMove',   [$this, 'afterMove']);
+    public function initialize(Server $server)
+    {
+        $server->on('propFind', [$this, 'propFind'], 130);
+        $server->on('propPatch', [$this, 'propPatch'], 300);
+        $server->on('afterMove', [$this, 'afterMove']);
         $server->on('afterUnbind', [$this, 'afterUnbind']);
-
     }
 
     /**
@@ -83,13 +82,14 @@ class Plugin extends ServerPlugin {
      * @param INode $node
      * @return void
      */
-    function propFind(PropFind $propFind, INode $node) {
-
+    public function propFind(PropFind $propFind, INode $node)
+    {
         $path = $propFind->getPath();
         $pathFilter = $this->pathFilter;
-        if ($pathFilter && !$pathFilter($path)) return;
+        if ($pathFilter && !$pathFilter($path)) {
+            return;
+        }
         $this->backend->propFind($propFind->getPath(), $propFind);
-
     }
 
     /**
@@ -102,12 +102,13 @@ class Plugin extends ServerPlugin {
      * @param PropPatch $propPatch
      * @return void
      */
-    function propPatch($path, PropPatch $propPatch) {
-
+    public function propPatch($path, PropPatch $propPatch)
+    {
         $pathFilter = $this->pathFilter;
-        if ($pathFilter && !$pathFilter($path)) return;
+        if ($pathFilter && !$pathFilter($path)) {
+            return;
+        }
         $this->backend->propPatch($path, $propPatch);
-
     }
 
     /**
@@ -119,12 +120,13 @@ class Plugin extends ServerPlugin {
      * @param string $path
      * @return void
      */
-    function afterUnbind($path) {
-
+    public function afterUnbind($path)
+    {
         $pathFilter = $this->pathFilter;
-        if ($pathFilter && !$pathFilter($path)) return;
+        if ($pathFilter && !$pathFilter($path)) {
+            return;
+        }
         $this->backend->delete($path);
-
     }
 
     /**
@@ -136,16 +138,19 @@ class Plugin extends ServerPlugin {
      * @param string $destination
      * @return void
      */
-    function afterMove($source, $destination) {
-
+    public function afterMove($source, $destination)
+    {
         $pathFilter = $this->pathFilter;
-        if ($pathFilter && !$pathFilter($source)) return;
+        if ($pathFilter && !$pathFilter($source)) {
+            return;
+        }
         // If the destination is filtered, afterUnbind will handle cleaning up
         // the properties.
-        if ($pathFilter && !$pathFilter($destination)) return;
+        if ($pathFilter && !$pathFilter($destination)) {
+            return;
+        }
 
         $this->backend->move($source, $destination);
-
     }
 
     /**
@@ -156,10 +161,9 @@ class Plugin extends ServerPlugin {
      *
      * @return string
      */
-    function getPluginName() {
-
+    public function getPluginName()
+    {
         return 'property-storage';
-
     }
 
     /**
@@ -173,13 +177,12 @@ class Plugin extends ServerPlugin {
      *
      * @return array
      */
-    function getPluginInfo() {
-
+    public function getPluginInfo()
+    {
         return [
             'name'        => $this->getPluginName(),
             'description' => 'This plugin allows any arbitrary WebDAV property to be set on any resource.',
             'link'        => 'http://sabre.io/dav/property-storage/',
         ];
-
     }
 }

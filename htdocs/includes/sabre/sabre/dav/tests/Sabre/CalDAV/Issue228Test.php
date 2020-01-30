@@ -11,8 +11,8 @@ use Sabre\HTTP;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Issue228Test extends \Sabre\DAVServerTest {
-
+class Issue228Test extends \Sabre\DAVServerTest
+{
     protected $setupCalDAV = true;
 
     protected $caldavCalendars = [
@@ -43,8 +43,8 @@ END:VCALENDAR
         ],
     ];
 
-    function testIssue228() {
-
+    public function testIssue228()
+    {
         $request = HTTP\Sapi::createFromServerArray([
             'REQUEST_METHOD'    => 'REPORT',
             'HTTP_CONTENT_TYPE' => 'application/xml',
@@ -74,6 +74,5 @@ END:VCALENDAR
 
         // We must check if absolutely nothing was returned from this query.
         $this->assertFalse(strpos($response->body, 'BEGIN:VCALENDAR'));
-
     }
 }

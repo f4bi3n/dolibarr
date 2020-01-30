@@ -34,37 +34,46 @@ $action = GETPOST('action', 'alpha');
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
 $page = GETPOST('page', 'int');
-if (!$sortorder) $sortorder = "DESC";
-if (!$sortfield) $sortfield = "date";
-if (empty($page) || $page == -1) { $page = 0; }
+if (!$sortorder) {
+    $sortorder = "DESC";
+}
+if (!$sortfield) {
+    $sortfield = "date";
+}
+if (empty($page) || $page == -1) {
+    $page = 0;
+}
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $offset = $limit * $page;
 
-if (!$user->admin)
-	accessforbidden();
+if (!$user->admin) {
+    accessforbidden();
+}
 
 
 /*
  * Actions
  */
 
-if ($action == 'delete')
-{
-	if (preg_match('/^backup\//', GETPOST('urlfile', 'alpha')))
-	{
-		$file = $conf->admin->dir_output.'/backup/'.basename(GETPOST('urlfile', 'alpha'));
-		$ret = dol_delete_file($file, 1);
-		if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
-		else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
-	}
-	else
-	{
-		$file = $conf->admin->dir_output.'/documents/'.basename(GETPOST('urlfile', 'alpha'));
-		$ret = dol_delete_file($file, 1);
-		if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
-		else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
-	}
-	$action = '';
+if ($action == 'delete') {
+    if (preg_match('/^backup\//', GETPOST('urlfile', 'alpha'))) {
+        $file = $conf->admin->dir_output.'/backup/'.basename(GETPOST('urlfile', 'alpha'));
+        $ret = dol_delete_file($file, 1);
+        if ($ret) {
+            setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+        } else {
+            setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
+        }
+    } else {
+        $file = $conf->admin->dir_output.'/documents/'.basename(GETPOST('urlfile', 'alpha'));
+        $ret = dol_delete_file($file, 1);
+        if ($ret) {
+            setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+        } else {
+            setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
+        }
+    }
+    $action = '';
 }
 
 /*
@@ -113,10 +122,10 @@ jQuery(document).ready(function() {';
 
 <?php
 if (in_array($type, array('mysql', 'mysqli'))) {
-	print 'jQuery("#radio_dump_mysql").click();';
+    print 'jQuery("#radio_dump_mysql").click();';
 }
 if (in_array($type, array('pgsql'))) {
-	print 'jQuery("#radio_dump_postgresql").click();';
+    print 'jQuery("#radio_dump_postgresql").click();';
 }
 print "});\n";
 print "</script>\n";
@@ -184,12 +193,9 @@ if (in_array($type, array('mysql', 'mysqli'))) {
     print '<fieldset id="mysql_options"><legend>'.$langs->trans("MySqlExportParameters").'</legend>';
 
     print '<div class="formelementrow">'.$langs->trans("FullPathToMysqldumpCommand");
-    if (empty($conf->global->SYSTEMTOOLS_MYSQLDUMP))
-    {
+    if (empty($conf->global->SYSTEMTOOLS_MYSQLDUMP)) {
         $fullpathofmysqldump = $db->getPathOfDump();
-    }
-    else
-    {
+    } else {
         $fullpathofmysqldump = $conf->global->SYSTEMTOOLS_MYSQLDUMP;
     }
     print '<br>';
@@ -228,8 +234,8 @@ if (in_array($type, array('mysql', 'mysqli'))) {
     print '<input type="checkbox" name="use_mysql_quick_param" value="yes" id="checkbox_use_quick" />';
     print '<label for="checkbox_use_quick">';
     print $form->textwithpicto($langs->trans('ExportUseMySQLQuickParameter'), $langs->trans('ExportUseMySQLQuickParameterHelp'));
-	print '</label>';
-	print '<br/>';
+    print '</label>';
+    print '<br/>';
 
     print '<!-- <input type="checkbox" name="drop_database" value="yes" id="checkbox_drop_database" />';
     print '<label for="checkbox_drop_database">'.$langs->trans("AddDropDatabase").'</label>';
@@ -339,9 +345,7 @@ if (in_array($type, array('pgsql'))) {
     print '<div class="formelementrow">'.$langs->trans("FullPathToPostgreSQLdumpCommand");
     if (empty($conf->global->SYSTEMTOOLS_POSTGRESQLDUMP)) {
         $fullpathofpgdump = $db->getPathOfDump();
-    }
-    else
-    {
+    } else {
         $fullpathofpgdump = $conf->global->SYSTEMTOOLS_POSTGRESQLDUMP;
     }
     print '<br>';
@@ -394,16 +398,16 @@ print '<br>';
 $prefix = 'dump';
 $ext = '.sql';
 if (in_array($type, array('mysql', 'mysqli'))) {
-	$prefix = 'mysqldump';
-	$ext = 'sql';
+    $prefix = 'mysqldump';
+    $ext = 'sql';
 }
 //if ($label == 'PostgreSQL') {
 //	$prefix='pg_dump';
 //	$ext='dump';
 //}
 if (in_array($type, array('pgsql'))) {
-	$prefix = 'pg_dump';
-	$ext = 'sql';
+    $prefix = 'pg_dump';
+    $ext = 'sql';
 }
 $file = $prefix.'_'.$dolibarr_main_db_name.'_'.dol_sanitizeFileName(DOL_VERSION).'_'.strftime("%Y%m%d%H%M").'.'.$ext;
 print '<input type="text" name="filename_template" style="width: 90%" id="filename_template" value="'.$file.'" />';
@@ -413,40 +417,38 @@ print '<br>';
 // Define compressions array
 $compression = array();
 if (in_array($type, array('mysql', 'mysqli'))) {
-	$compression['gz'] = array(
-		'function' => 'gzopen',
-		'id' => 'radio_compression_gzip',
-		'label' => $langs->trans("Gzip")
-	);
-	// Not open source format. Must implement dol_compress function
-	// $compression['zip']= array(
-	//     'function' => 'dol_compress',
-	//     'id' => 'radio_compression_zip',
-	//     'label' => $langs->trans("FormatZip")
-	// );
-    $compression['bz'] = array(
-		'function' => 'bzopen',
-		'id' => 'radio_compression_bzip',
-		'label' => $langs->trans("Bzip2")
-	);
-    $compression['none'] = array(
-    	'function' => '',
-    	'id' => 'radio_compression_none',
-    	'label' => $langs->trans("None")
+    $compression['gz'] = array(
+        'function' => 'gzopen',
+        'id' => 'radio_compression_gzip',
+        'label' => $langs->trans("Gzip")
     );
-}
-else
-{
-	$compression['none'] = array(
-		'function' => '',
-		'id' => 'radio_compression_none',
-		'label' => $langs->trans("None")
-	);
-	$compression['gz'] = array(
-		'function' => 'gzopen',
-		'id' => 'radio_compression_gzip',
-		'label' => $langs->trans("Gzip")
-	);
+    // Not open source format. Must implement dol_compress function
+    // $compression['zip']= array(
+    //     'function' => 'dol_compress',
+    //     'id' => 'radio_compression_zip',
+    //     'label' => $langs->trans("FormatZip")
+    // );
+    $compression['bz'] = array(
+        'function' => 'bzopen',
+        'id' => 'radio_compression_bzip',
+        'label' => $langs->trans("Bzip2")
+    );
+    $compression['none'] = array(
+        'function' => '',
+        'id' => 'radio_compression_none',
+        'label' => $langs->trans("None")
+    );
+} else {
+    $compression['none'] = array(
+        'function' => '',
+        'id' => 'radio_compression_none',
+        'label' => $langs->trans("None")
+    );
+    $compression['gz'] = array(
+        'function' => 'gzopen',
+        'id' => 'radio_compression_gzip',
+        'label' => $langs->trans("Gzip")
+    );
 }
 
 // Show compression choices
@@ -456,24 +458,23 @@ print "\n";
 print $langs->trans("Compression").': &nbsp; ';
 
 $i = 0;
-foreach($compression as $key => $val)
-{
-	if (! $val['function'] || function_exists($val['function'])) {
-		// Enabled export format
-		$checked = '';
-		if ($key == 'gz') $checked = ' checked';
-		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'"'.$checked.'>';
-		print ' <label for="'.$val['id'].'">'.$val['label'].'</label>';
-	}
-	else
-	{
-		// Disabled export format
-		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'" disabled>';
-		print ' <label for="'.$val['id'].'">'.$val['label'].'</label>';
-		print ' <span class="opacitymedium">('.$langs->trans("NotAvailable").')</span>';
-	}
-	print ' &nbsp; &nbsp; ';
-	$i++;
+foreach ($compression as $key => $val) {
+    if (! $val['function'] || function_exists($val['function'])) {
+        // Enabled export format
+        $checked = '';
+        if ($key == 'gz') {
+            $checked = ' checked';
+        }
+        print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'"'.$checked.'>';
+        print ' <label for="'.$val['id'].'">'.$val['label'].'</label>';
+    } else {
+        // Disabled export format
+        print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'" disabled>';
+        print ' <label for="'.$val['id'].'">'.$val['label'].'</label>';
+        print ' <span class="opacitymedium">('.$langs->trans("NotAvailable").')</span>';
+    }
+    print ' &nbsp; &nbsp; ';
+    $i++;
 }
 
 print '</div>';
@@ -488,8 +489,7 @@ print '<input type="hidden" name="page_y" value="'.GETPOST('page_y', 'int').'">'
 print '<br>';
 print '<br>';
 
-if (!empty($_SESSION["commandbackuplastdone"]))
-{
+if (!empty($_SESSION["commandbackuplastdone"])) {
     print '<br><b>'.$langs->trans("RunCommandSummary").':</b><br>'."\n";
     print '<textarea rows="'.ROWS_2.'" class="centpercent">'.$_SESSION["commandbackuplastdone"].'</textarea><br>'."\n";
     print '<br>';
@@ -498,24 +498,23 @@ if (!empty($_SESSION["commandbackuplastdone"]))
 
     // Now show result
     print '<b>'.$langs->trans("BackupResult").':</b> ';
-	print $_SESSION["commandbackupresult"];
+    print $_SESSION["commandbackupresult"];
 
-	$_SESSION["commandbackuplastdone"] = '';
-	$_SESSION["commandbackuptorun"] = '';
-	$_SESSION["commandbackupresult"] = '';
+    $_SESSION["commandbackuplastdone"] = '';
+    $_SESSION["commandbackuptorun"] = '';
+    $_SESSION["commandbackupresult"] = '';
 }
-if (!empty($_SESSION["commandbackuptorun"]))
-{
-	print '<br><font class="warning">'.$langs->trans("YouMustRunCommandFromCommandLineAfterLoginToUser", $dolibarr_main_db_user, $dolibarr_main_db_user).':</font><br>'."\n";
-	print '<textarea id="commandbackuptoruntext" rows="'.ROWS_2.'" class="centpercent">'.$_SESSION["commandbackuptorun"].'</textarea><br>'."\n";
-	print ajax_autoselect("commandbackuptoruntext", 0);
-	print '<br>';
+if (!empty($_SESSION["commandbackuptorun"])) {
+    print '<br><font class="warning">'.$langs->trans("YouMustRunCommandFromCommandLineAfterLoginToUser", $dolibarr_main_db_user, $dolibarr_main_db_user).':</font><br>'."\n";
+    print '<textarea id="commandbackuptoruntext" rows="'.ROWS_2.'" class="centpercent">'.$_SESSION["commandbackuptorun"].'</textarea><br>'."\n";
+    print ajax_autoselect("commandbackuptoruntext", 0);
+    print '<br>';
 
-	//print $paramclear;
+    //print $paramclear;
 
-	$_SESSION["commandbackuplastdone"] = '';
-	$_SESSION["commandbackuptorun"] = '';
-	$_SESSION["commandbackupresult"] = '';
+    $_SESSION["commandbackuplastdone"] = '';
+    $_SESSION["commandbackuptorun"] = '';
+    $_SESSION["commandbackupresult"] = '';
 }
 
 print "</div> <!-- end div center button -->\n";
@@ -576,17 +575,15 @@ unset($filecompression['none']);
 $filecompression['zip']= array('function' => 'dol_compress_dir', 'id' => 'radio_compression_zip',  'label' => $langs->trans("FormatZip"));
 
 $i = 0;
-foreach($filecompression as $key => $val)
-{
-    if (! $val['function'] || function_exists($val['function']))	// Enabled export format
-    {
-    	$checked = '';
-    	if ($key == 'gz') $checked = ' checked';
+foreach ($filecompression as $key => $val) {
+    if (! $val['function'] || function_exists($val['function'])) {	// Enabled export format
+        $checked = '';
+        if ($key == 'gz') {
+            $checked = ' checked';
+        }
         print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'"'.$checked.'>';
         print ' <label for="'.$val['id'].'">'.$val['label'].'</label>';
-    }
-    else	// Disabled export format
-    {
+    } else {	// Disabled export format
         print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'" disabled>';
         print ' <label for="'.$val['id'].'">'.$val['label'].'</label>';
         print ' <span class="opacitymedium">('.$langs->trans("NotAvailable").')</span>';

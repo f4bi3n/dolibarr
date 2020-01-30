@@ -43,33 +43,46 @@ $object = new Contact($db);
 $object->getCanvas($id);
 $objcanvas=null;
 $canvas = (! empty($object->canvas)?$object->canvas:GETPOST("canvas"));
-if (! empty($canvas))
-{
+if (! empty($canvas)) {
     require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
     $objcanvas = new Canvas($db, $action);
     $objcanvas->getCanvas('contact', 'contactcard', $canvas);
 }
 
 // Security check
-if ($user->socid) $socid=$user->socid;
+if ($user->socid) {
+    $socid=$user->socid;
+}
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'rowid', $objcanvas); // If we create a contact with no company (shared contacts), no check on write permission
 
 // Get parameters
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+    $page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-if (! empty($conf->global->MAIN_DOC_SORT_FIELD)) { $sortfield=$conf->global->MAIN_DOC_SORT_FIELD; }
-if (! empty($conf->global->MAIN_DOC_SORT_ORDER)) { $sortorder=$conf->global->MAIN_DOC_SORT_ORDER; }
+if (! empty($conf->global->MAIN_DOC_SORT_FIELD)) {
+    $sortfield=$conf->global->MAIN_DOC_SORT_FIELD;
+}
+if (! empty($conf->global->MAIN_DOC_SORT_ORDER)) {
+    $sortorder=$conf->global->MAIN_DOC_SORT_ORDER;
+}
 
-if (! $sortorder) $sortorder="ASC";
-if (! $sortfield) $sortfield="name";
+if (! $sortorder) {
+    $sortorder="ASC";
+}
+if (! $sortfield) {
+    $sortfield="name";
+}
 
-if ($id > 0) $object->fetch($id);
+if ($id > 0) {
+    $object->fetch($id);
+}
 
 $upload_dir = $conf->societe->multidir_output[$object->entity].'/contact/'.dol_sanitizeFileName($object->ref);
 $modulepart='contact';
@@ -89,14 +102,15 @@ include DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 $form = new Form($db);
 
 $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
-if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/contactnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->lastname) $title=$object->lastname;
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/contactnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->lastname) {
+    $title=$object->lastname;
+}
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('', $title, $helpurl);
 
-if ($object->id)
-{
+if ($object->id) {
     $head = contact_prepare_head($object);
-	$title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
+    $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
 
     dol_fiche_head($head, 'documents', $title, -1, 'contact');
 
@@ -104,22 +118,23 @@ if ($object->id)
     // Build file list
     $filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
     $totalsize=0;
-    foreach($filearray as $key => $file)
-    {
+    foreach ($filearray as $key => $file) {
         $totalsize+=$file['size'];
     }
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
     $morehtmlref='<div class="refidno">';
-    if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
-    {
+    if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
         $objsoc=new Societe($db);
         $objsoc->fetch($object->socid);
         // Thirdparty
         $morehtmlref.=$langs->trans('ThirdParty') . ' : ';
-        if ($objsoc->id > 0) $morehtmlref.=$objsoc->getNomUrl(1);
-        else $morehtmlref.=$langs->trans("ContactNotLinkedToCompany");
+        if ($objsoc->id > 0) {
+            $morehtmlref.=$objsoc->getNomUrl(1);
+        } else {
+            $morehtmlref.=$langs->trans("ContactNotLinkedToCompany");
+        }
     }
     $morehtmlref.='</div>';
 

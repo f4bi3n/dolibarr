@@ -171,7 +171,6 @@ abstract class Parser
         $this->warnings[QuotedPart::CODE] =
             new QuotedPart($this->lexer->getPrevious()['type'], $this->lexer->token['type']);
         return true;
-
     }
 
     protected function checkDQUOTE($hasClosingQuote)

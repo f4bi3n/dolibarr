@@ -30,8 +30,7 @@ global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/geturl.lib.php';
 
-if (empty($user->id))
-{
+if (empty($user->id)) {
     print "Load permissions for admin user nb 1\n";
     $user->fetch(1);
     $user->getrights();
@@ -174,45 +173,45 @@ class GetUrlLibTest extends PHPUnit\Framework\TestCase
      */
     public function testGetDomainFromURL()
     {
-    	global $conf,$user,$langs,$db;
-    	$conf=$this->savconf;
-    	$user=$this->savuser;
-    	$langs=$this->savlangs;
-    	$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-    	$result=getDomainFromURL('http://localhost');
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('localhost', $result, 'Test 0a');
+        $result=getDomainFromURL('http://localhost');
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals('localhost', $result, 'Test 0a');
 
-    	$result=getDomainFromURL('http://localhost', 1);
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('localhost', $result, 'Test 0b');
+        $result=getDomainFromURL('http://localhost', 1);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals('localhost', $result, 'Test 0b');
 
-    	$result=getDomainFromURL('https://dolimed.com');
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('dolimed', $result, 'Test 1');
+        $result=getDomainFromURL('https://dolimed.com');
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals('dolimed', $result, 'Test 1');
 
-    	$result=getDomainFromURL('http://www.dolimed.com/screenshots/afile');
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('dolimed', $result, 'Test 2');
+        $result=getDomainFromURL('http://www.dolimed.com/screenshots/afile');
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals('dolimed', $result, 'Test 2');
 
-    	$result=getDomainFromURL('http://www.with.dolimed.com/screenshots/afile');
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('dolimed', $result, 'Test 3');
+        $result=getDomainFromURL('http://www.with.dolimed.com/screenshots/afile');
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals('dolimed', $result, 'Test 3');
 
-    	$result=getDomainFromURL('https://dolimed.com', 1);
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('dolimed.com', $result, 'Test 4');
+        $result=getDomainFromURL('https://dolimed.com', 1);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals('dolimed.com', $result, 'Test 4');
 
-    	$result=getDomainFromURL('http://www.dolimed.com/screenshots/afile', 1);
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('dolimed.com', $result, 'Test 5');
+        $result=getDomainFromURL('http://www.dolimed.com/screenshots/afile', 1);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals('dolimed.com', $result, 'Test 5');
 
-    	$result=getDomainFromURL('http://www.with.dolimed.com/screenshots/afile', 1);
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('dolimed.com', $result, 'Test 6');
+        $result=getDomainFromURL('http://www.with.dolimed.com/screenshots/afile', 1);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals('dolimed.com', $result, 'Test 6');
 
-    	return 1;
+        return 1;
     }
 
     /**

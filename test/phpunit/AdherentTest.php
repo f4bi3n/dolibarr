@@ -61,9 +61,9 @@ class AdherentTest extends PHPUnit\Framework\TestCase
      */
     public function __construct()
     {
-    	parent::__construct();
+        parent::__construct();
 
-    	//$this->sharedFixture
+        //$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -85,8 +85,14 @@ class AdherentTest extends PHPUnit\Framework\TestCase
             print "\n".__METHOD__." Company must be setup to have name-firstname in order 'Firstname Lastname'\n";
             die();
         }
-        if (! empty($conf->global->MAIN_MODULE_LDAP)) { print "\n".__METHOD__." module LDAP must be disabled.\n"; die(); }
-        if (! empty($conf->global->MAIN_MODULE_MAILMANSPIP)) { print "\n".__METHOD__." module MailmanSpip must be disabled.\n"; die(); }
+        if (! empty($conf->global->MAIN_MODULE_LDAP)) {
+            print "\n".__METHOD__." module LDAP must be disabled.\n";
+            die();
+        }
+        if (! empty($conf->global->MAIN_MODULE_MAILMANSPIP)) {
+            print "\n".__METHOD__." module MailmanSpip must be disabled.\n";
+            die();
+        }
 
         print __METHOD__."\n";
     }
@@ -271,7 +277,7 @@ class AdherentTest extends PHPUnit\Framework\TestCase
         $result=$localobject->update_note($localobject->note_private, '_private');
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
         $this->assertLessThan($result, 0);
-		$result=$localobject->update_note($localobject->note_public, '_public');
+        $result=$localobject->update_note($localobject->note_public, '_public');
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
         $this->assertLessThan($result, 0);
 
@@ -340,15 +346,15 @@ class AdherentTest extends PHPUnit\Framework\TestCase
         return $localobject;
     }
 
-     /**
-     * testAdherentSetUserId
-     *
-     * @param   Adherent    $localobject    Member instance
-     * @return  Adherent
-     *
-     * @depends testAdherentMakeSubstitution
-     * The depends says test is run only if previous is ok
-     */
+    /**
+    * testAdherentSetUserId
+    *
+    * @param   Adherent    $localobject    Member instance
+    * @return  Adherent
+    *
+    * @depends testAdherentMakeSubstitution
+    * The depends says test is run only if previous is ok
+    */
     public function testAdherentSetUserId(Adherent $localobject)
     {
         global $conf,$user,$langs,$db;

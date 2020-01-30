@@ -28,8 +28,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
 
 
-if (!$user->admin)
-accessforbidden();
+if (!$user->admin) {
+    accessforbidden();
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array("users","admin","other"));
@@ -44,22 +45,23 @@ $eventstolog=$securityevent->eventstolog;
 /*
  *	Actions
  */
-if ($action == "save")
-{
-	$i=0;
+if ($action == "save") {
+    $i=0;
 
-	$db->begin();
+    $db->begin();
 
-	foreach ($eventstolog as $key => $arr)
-	{
-		$param='MAIN_LOGEVENTS_'.$arr['id'];
-		//print "param=".$param." - ".$_POST[$param];
-		if (! empty($_POST[$param])) dolibarr_set_const($db, $param, $_POST[$param], 'chaine', 0, '', $conf->entity);
-		else dolibarr_del_const($db, $param, $conf->entity);
-	}
+    foreach ($eventstolog as $key => $arr) {
+        $param='MAIN_LOGEVENTS_'.$arr['id'];
+        //print "param=".$param." - ".$_POST[$param];
+        if (! empty($_POST[$param])) {
+            dolibarr_set_const($db, $param, $_POST[$param], 'chaine', 0, '', $conf->entity);
+        } else {
+            dolibarr_del_const($db, $param, $conf->entity);
+        }
+    }
 
-	$db->commit();
-	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    $db->commit();
+    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 }
 
 
@@ -91,18 +93,16 @@ print "<tr class=\"liste_titre\">";
 print "<td colspan=\"2\">".$langs->trans("LogEvents")."</td>";
 print "</tr>\n";
 // Loop on each event type
-foreach ($eventstolog as $key => $arr)
-{
-	if ($arr['id'])
-	{
-		print '<tr class="oddeven">';
-		print '<td>'.$arr['id'].'</td>';
-		print '<td>';
-		$key='MAIN_LOGEVENTS_'.$arr['id'];
-		$value=$conf->global->$key;
-		print '<input class="oddeven" type="checkbox" name="'.$key.'" value="1"'.($value?' checked':'').'>';
-		print '</td></tr>'."\n";
-	}
+foreach ($eventstolog as $key => $arr) {
+    if ($arr['id']) {
+        print '<tr class="oddeven">';
+        print '<td>'.$arr['id'].'</td>';
+        print '<td>';
+        $key='MAIN_LOGEVENTS_'.$arr['id'];
+        $value=$conf->global->$key;
+        print '<input class="oddeven" type="checkbox" name="'.$key.'" value="1"'.($value?' checked':'').'>';
+        print '</td></tr>'."\n";
+    }
 }
 print '</table>';
 

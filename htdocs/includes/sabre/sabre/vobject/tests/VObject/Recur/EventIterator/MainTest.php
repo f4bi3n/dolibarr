@@ -7,10 +7,10 @@ use DateTimeZone;
 use Sabre\VObject\Component\VCalendar;
 use Sabre\VObject\Recur\EventIterator;
 
-class MainTest extends \PHPUnit_Framework_TestCase {
-
-    function testValues() {
-
+class MainTest extends \PHPUnit_Framework_TestCase
+{
+    public function testValues()
+    {
         $vcal = new VCalendar();
         $ev = $vcal->createComponent('VEVENT');
         $ev->UID = 'bla';
@@ -25,15 +25,14 @@ class MainTest extends \PHPUnit_Framework_TestCase {
         $it = new EventIterator($vcal, (string)$ev->UID);
 
         $this->assertTrue($it->isInfinite());
-
     }
 
     /**
      * @expectedException \Sabre\VObject\InvalidDataException
      * @depends testValues
      */
-    function testInvalidFreq() {
-
+    public function testInvalidFreq()
+    {
         $vcal = new VCalendar();
         $ev = $vcal->createComponent('VEVENT');
         $ev->RRULE = 'FREQ=SMONTHLY;INTERVAL=3;UNTIL=20111025T000000Z';
@@ -45,34 +44,31 @@ class MainTest extends \PHPUnit_Framework_TestCase {
         $vcal->add($ev);
 
         $it = new EventIterator($vcal, (string)$ev->UID);
-
     }
 
     /**
      * @expectedException InvalidArgumentException
      */
-    function testVCalendarNoUID() {
-
+    public function testVCalendarNoUID()
+    {
         $vcal = new VCalendar();
         $it = new EventIterator($vcal);
-
     }
 
     /**
      * @expectedException InvalidArgumentException
      */
-    function testVCalendarInvalidUID() {
-
+    public function testVCalendarInvalidUID()
+    {
         $vcal = new VCalendar();
         $it = new EventIterator($vcal, 'foo');
-
     }
 
     /**
      * @depends testValues
      */
-    function testHourly() {
-
+    public function testHourly()
+    {
         $vcal = new VCalendar();
         $ev = $vcal->createComponent('VEVENT');
 
@@ -90,12 +86,12 @@ class MainTest extends \PHPUnit_Framework_TestCase {
         $max = 12;
         $result = [];
         foreach ($it as $item) {
-
             $result[] = $item;
             $max--;
 
-            if (!$max) break;
-
+            if (!$max) {
+                break;
+            }
         }
 
         $tz = new DateTimeZone('UTC');
@@ -117,14 +113,13 @@ class MainTest extends \PHPUnit_Framework_TestCase {
             ],
             $result
         );
-
     }
 
     /**
      * @depends testValues
      */
-    function testDaily() {
-
+    public function testDaily()
+    {
         $vcal = new VCalendar();
         $ev = $vcal->createComponent('VEVENT');
 
@@ -143,12 +138,12 @@ class MainTest extends \PHPUnit_Framework_TestCase {
         $max = 12;
         $result = [];
         foreach ($it as $item) {
-
             $result[] = $item;
             $max--;
 
-            if (!$max) break;
-
+            if (!$max) {
+                break;
+            }
         }
 
         $tz = new DateTimeZone('UTC');
@@ -165,14 +160,13 @@ class MainTest extends \PHPUnit_Framework_TestCase {
             ],
             $result
         );
-
     }
 
     /**
      * @depends testValues
      */
-    function testNoRRULE() {
-
+    public function testNoRRULE()
+    {
         $vcal = new VCalendar();
         $ev = $vcal->createComponent('VEVENT');
 
@@ -190,12 +184,12 @@ class MainTest extends \PHPUnit_Framework_TestCase {
         $max = 12;
         $result = [];
         foreach ($it as $item) {
-
             $result[] = $item;
             $max--;
 
-            if (!$max) break;
-
+            if (!$max) {
+                break;
+            }
         }
 
         $tz = new DateTimeZone('UTC');
@@ -206,14 +200,13 @@ class MainTest extends \PHPUnit_Framework_TestCase {
             ],
             $result
         );
-
     }
 
     /**
      * @depends testValues
      */
-    function testDailyByDayByHour() {
-
+    public function testDailyByDayByHour()
+    {
         $vcal = new VCalendar();
         $ev = $vcal->createComponent('VEVENT');
 
@@ -232,12 +225,12 @@ class MainTest extends \PHPUnit_Framework_TestCase {
         $max = 12;
         $result = [];
         foreach ($it as $item) {
-
             $result[] = $item;
             $max--;
 
-            if (!$max) break;
-
+            if (!$max) {
+                break;
+            }
         }
 
         $tz = new DateTimeZone('UTC');
@@ -259,14 +252,13 @@ class MainTest extends \PHPUnit_Framework_TestCase {
             ],
             $result
         );
-
     }
 
     /**
      * @depends testValues
      */
-    function testDailyByHour() {
-
+    public function testDailyByHour()
+    {
         $vcal = new VCalendar();
         $ev = $vcal->createComponent('VEVENT');
 
@@ -285,12 +277,12 @@ class MainTest extends \PHPUnit_Framework_TestCase {
         $max = 12;
         $result = [];
         foreach ($it as $item) {
-
             $result[] = $item;
             $max--;
 
-            if (!$max) break;
-
+            if (!$max) {
+                break;
+            }
         }
 
         $tz = new DateTimeZone('UTC');
@@ -312,14 +304,13 @@ class MainTest extends \PHPUnit_Framework_TestCase {
             ],
             $result
         );
-
     }
 
     /**
      * @depends testValues
      */
-    function testDailyByDay() {
-
+    public function testDailyByDay()
+    {
         $vcal = new VCalendar();
         $ev = $vcal->createComponent('VEVENT');
 
@@ -338,12 +329,12 @@ class MainTest extends \PHPUnit_Framework_TestCase {
         $max = 12;
         $result = [];
         foreach ($it as $item) {
-
             $result[] = $item;
             $max--;
 
-            if (!$max) break;
-
+            if (!$max) {
+                break;
+            }
         }
 
         $tz = new DateTimeZone('UTC');
@@ -365,14 +356,13 @@ class MainTest extends \PHPUnit_Framework_TestCase {
             ],
             $result
         );
-
     }
 
     /**
      * @depends testValues
      */
-    function testWeekly() {
-
+    public function testWeekly()
+    {
         $vcal = new VCalendar();
         $ev = $vcal->createComponent('VEVENT');
 
@@ -391,12 +381,12 @@ class MainTest extends \PHPUnit_Framework_TestCase {
         $max = 12;
         $result = [];
         foreach ($it as $item) {
-
             $result[] = $item;
             $max--;
 
-            if (!$max) break;
-
+            if (!$max) {
+                break;
+            }
         }
 
         $tz = new DateTimeZone('UTC');
@@ -416,14 +406,13 @@ class MainTest extends \PHPUnit_Framework_TestCase {
             ],
             $result
         );
-
     }
 
     /**
      * @depends testValues
      */
-    function testWeeklyByDayByHour() {
-
+    public function testWeeklyByDayByHour()
+    {
         $vcal = new VCalendar();
         $ev = $vcal->createComponent('VEVENT');
 
@@ -442,12 +431,12 @@ class MainTest extends \PHPUnit_Framework_TestCase {
         $max = 15;
         $result = [];
         foreach ($it as $item) {
-
             $result[] = $item;
             $max--;
 
-            if (!$max) break;
-
+            if (!$max) {
+                break;
+            }
         }
 
         $tz = new DateTimeZone('UTC');
@@ -472,14 +461,13 @@ class MainTest extends \PHPUnit_Framework_TestCase {
             ],
             $result
         );
-
     }
 
     /**
      * @depends testValues
      */
-    function testWeeklyByDaySpecificHour() {
-
+    public function testWeeklyByDaySpecificHour()
+    {
         $vcal = new VCalendar();
         $ev = $vcal->createComponent('VEVENT');
 
@@ -498,12 +486,12 @@ class MainTest extends \PHPUnit_Framework_TestCase {
         $max = 12;
         $result = [];
         foreach ($it as $item) {
-
             $result[] = $item;
             $max--;
 
-            if (!$max) break;
-
+            if (!$max) {
+                break;
+            }
         }
 
         $tz = new DateTimeZone('UTC');
@@ -525,14 +513,13 @@ class MainTest extends \PHPUnit_Framework_TestCase {
             ],
             $result
         );
-
     }
 
     /**
      * @depends testValues
      */
-    function testWeeklyByDay() {
-
+    public function testWeeklyByDay()
+    {
         $vcal = new VCalendar();
         $ev = $vcal->createComponent('VEVENT');
 
@@ -551,12 +538,12 @@ class MainTest extends \PHPUnit_Framework_TestCase {
         $max = 12;
         $result = [];
         foreach ($it as $item) {
-
             $result[] = $item;
             $max--;
 
-            if (!$max) break;
-
+            if (!$max) {
+                break;
+            }
         }
 
         $tz = new DateTimeZone('UTC');
@@ -578,14 +565,13 @@ class MainTest extends \PHPUnit_Framework_TestCase {
             ],
             $result
         );
-
     }
 
     /**
      * @depends testValues
      */
-    function testMonthly() {
-
+    public function testMonthly()
+    {
         $vcal = new VCalendar();
         $ev = $vcal->createComponent('VEVENT');
 
@@ -603,12 +589,12 @@ class MainTest extends \PHPUnit_Framework_TestCase {
         $max = 14;
         $result = [];
         foreach ($it as $item) {
-
             $result[] = $item;
             $max--;
 
-            if (!$max) break;
-
+            if (!$max) {
+                break;
+            }
         }
 
         $tz = new DateTimeZone('UTC');
@@ -623,15 +609,13 @@ class MainTest extends \PHPUnit_Framework_TestCase {
             ],
             $result
         );
-
-
     }
 
     /**
      * @depends testValues
      */
-    function testMonthlyEndOfMonth() {
-
+    public function testMonthlyEndOfMonth()
+    {
         $vcal = new VCalendar();
         $ev = $vcal->createComponent('VEVENT');
 
@@ -649,12 +633,12 @@ class MainTest extends \PHPUnit_Framework_TestCase {
         $max = 14;
         $result = [];
         foreach ($it as $item) {
-
             $result[] = $item;
             $max--;
 
-            if (!$max) break;
-
+            if (!$max) {
+                break;
+            }
         }
 
         $tz = new DateTimeZone('UTC');
@@ -676,15 +660,13 @@ class MainTest extends \PHPUnit_Framework_TestCase {
             ],
             $result
         );
-
-
     }
 
     /**
      * @depends testValues
      */
-    function testMonthlyByMonthDay() {
-
+    public function testMonthlyByMonthDay()
+    {
         $vcal = new VCalendar();
         $ev = $vcal->createComponent('VEVENT');
 
@@ -702,12 +684,12 @@ class MainTest extends \PHPUnit_Framework_TestCase {
         $max = 14;
         $result = [];
         foreach ($it as $item) {
-
             $result[] = $item;
             $max--;
 
-            if (!$max) break;
-
+            if (!$max) {
+                break;
+            }
         }
 
         $tz = new DateTimeZone('UTC');
@@ -726,7 +708,6 @@ class MainTest extends \PHPUnit_Framework_TestCase {
             ],
             $result
         );
-
     }
 
     /**
@@ -736,8 +717,8 @@ class MainTest extends \PHPUnit_Framework_TestCase {
      * @depends testValues
      * @medium
      */
-    function testMonthlyByDay() {
-
+    public function testMonthlyByDay()
+    {
         $vcal = new VCalendar();
         $ev = $vcal->createComponent('VEVENT');
 
@@ -755,12 +736,12 @@ class MainTest extends \PHPUnit_Framework_TestCase {
         $max = 20;
         $result = [];
         foreach ($it as $item) {
-
             $result[] = $item;
             $max--;
 
-            if (!$max) break;
-
+            if (!$max) {
+                break;
+            }
         }
 
         $tz = new DateTimeZone('UTC');
@@ -786,14 +767,13 @@ class MainTest extends \PHPUnit_Framework_TestCase {
             ],
             $result
         );
-
     }
 
     /**
      * @depends testValues
      */
-    function testMonthlyByDayByMonthDay() {
-
+    public function testMonthlyByDayByMonthDay()
+    {
         $vcal = new VCalendar();
         $ev = $vcal->createComponent('VEVENT');
 
@@ -811,12 +791,12 @@ class MainTest extends \PHPUnit_Framework_TestCase {
         $max = 20;
         $result = [];
         foreach ($it as $item) {
-
             $result[] = $item;
             $max--;
 
-            if (!$max) break;
-
+            if (!$max) {
+                break;
+            }
         }
 
         $tz = new DateTimeZone('UTC');
@@ -836,14 +816,13 @@ class MainTest extends \PHPUnit_Framework_TestCase {
             ],
             $result
         );
-
     }
 
     /**
      * @depends testValues
      */
-    function testMonthlyByDayBySetPos() {
-
+    public function testMonthlyByDayBySetPos()
+    {
         $vcal = new VCalendar();
         $ev = $vcal->createComponent('VEVENT');
 
@@ -861,12 +840,12 @@ class MainTest extends \PHPUnit_Framework_TestCase {
         $max = 20;
         $result = [];
         foreach ($it as $item) {
-
             $result[] = $item;
             $max--;
 
-            if (!$max) break;
-
+            if (!$max) {
+                break;
+            }
         }
 
         $tz = new DateTimeZone('UTC');
@@ -886,14 +865,13 @@ class MainTest extends \PHPUnit_Framework_TestCase {
             ],
             $result
         );
-
     }
 
     /**
      * @depends testValues
      */
-    function testYearly() {
-
+    public function testYearly()
+    {
         $vcal = new VCalendar();
         $ev = $vcal->createComponent('VEVENT');
 
@@ -911,12 +889,12 @@ class MainTest extends \PHPUnit_Framework_TestCase {
         $max = 20;
         $result = [];
         foreach ($it as $item) {
-
             $result[] = $item;
             $max--;
 
-            if (!$max) break;
-
+            if (!$max) {
+                break;
+            }
         }
 
         $tz = new DateTimeZone('UTC');
@@ -936,14 +914,13 @@ class MainTest extends \PHPUnit_Framework_TestCase {
             ],
             $result
         );
-
     }
 
     /**
      * @depends testValues
      */
-    function testYearlyLeapYear() {
-
+    public function testYearlyLeapYear()
+    {
         $vcal = new VCalendar();
         $ev = $vcal->createComponent('VEVENT');
 
@@ -961,12 +938,12 @@ class MainTest extends \PHPUnit_Framework_TestCase {
         $max = 20;
         $result = [];
         foreach ($it as $item) {
-
             $result[] = $item;
             $max--;
 
-            if (!$max) break;
-
+            if (!$max) {
+                break;
+            }
         }
 
         $tz = new DateTimeZone('UTC');
@@ -979,14 +956,13 @@ class MainTest extends \PHPUnit_Framework_TestCase {
             ],
             $result
         );
-
     }
 
     /**
      * @depends testValues
      */
-    function testYearlyByMonth() {
-
+    public function testYearlyByMonth()
+    {
         $vcal = new VCalendar();
         $ev = $vcal->createComponent('VEVENT');
 
@@ -1004,12 +980,12 @@ class MainTest extends \PHPUnit_Framework_TestCase {
         $max = 20;
         $result = [];
         foreach ($it as $item) {
-
             $result[] = $item;
             $max--;
 
-            if (!$max) break;
-
+            if (!$max) {
+                break;
+            }
         }
 
         $tz = new DateTimeZone('UTC');
@@ -1027,14 +1003,13 @@ class MainTest extends \PHPUnit_Framework_TestCase {
             ],
             $result
         );
-
     }
 
     /**
      * @depends testValues
      */
-    function testYearlyByMonthByDay() {
-
+    public function testYearlyByMonthByDay()
+    {
         $vcal = new VCalendar();
         $ev = $vcal->createComponent('VEVENT');
 
@@ -1052,12 +1027,12 @@ class MainTest extends \PHPUnit_Framework_TestCase {
         $max = 20;
         $result = [];
         foreach ($it as $item) {
-
             $result[] = $item;
             $max--;
 
-            if (!$max) break;
-
+            if (!$max) {
+                break;
+            }
         }
 
         $tz = new DateTimeZone('UTC');
@@ -1075,14 +1050,13 @@ class MainTest extends \PHPUnit_Framework_TestCase {
             ],
             $result
         );
-
     }
 
     /**
      * @depends testValues
      */
-    function testFastForward() {
-
+    public function testFastForward()
+    {
         $vcal = new VCalendar();
         $ev = $vcal->createComponent('VEVENT');
 
@@ -1104,23 +1078,23 @@ class MainTest extends \PHPUnit_Framework_TestCase {
         $max = 20;
         $result = [];
         while ($item = $it->current()) {
-
             $result[] = $item;
             $max--;
 
-            if (!$max) break;
+            if (!$max) {
+                break;
+            }
             $it->next();
-
         }
 
         $this->assertEquals([], $result);
-
     }
 
     /**
      * @depends testValues
      */
-    function testFastForwardAllDayEventThatStopAtTheStartTime() {
+    public function testFastForwardAllDayEventThatStopAtTheStartTime()
+    {
         $vcal = new VCalendar();
         $ev = $vcal->createComponent('VEVENT');
 
@@ -1147,8 +1121,8 @@ class MainTest extends \PHPUnit_Framework_TestCase {
     /**
      * @depends testValues
      */
-    function testComplexExclusions() {
-
+    public function testComplexExclusions()
+    {
         $vcal = new VCalendar();
         $ev = $vcal->createComponent('VEVENT');
 
@@ -1175,12 +1149,12 @@ class MainTest extends \PHPUnit_Framework_TestCase {
         $max = 20;
         $result = [];
         foreach ($it as $item) {
-
             $result[] = $item;
             $max--;
 
-            if (!$max) break;
-
+            if (!$max) {
+                break;
+            }
         }
 
         $this->assertEquals(
@@ -1195,14 +1169,13 @@ class MainTest extends \PHPUnit_Framework_TestCase {
             ],
             $result
         );
-
     }
 
     /**
      * @depends testValues
      */
-    function testOverridenEvent() {
-
+    public function testOverridenEvent()
+    {
         $vcal = new VCalendar();
 
         $ev1 = $vcal->createComponent('VEVENT');
@@ -1236,11 +1209,9 @@ class MainTest extends \PHPUnit_Framework_TestCase {
         $dates = [];
         $summaries = [];
         while ($it->valid()) {
-
             $dates[] = $it->getDTStart();
             $summaries[] = (string)$it->getEventObject()->SUMMARY;
             $it->next();
-
         }
 
         $tz = new DateTimeZone('UTC');
@@ -1269,14 +1240,13 @@ class MainTest extends \PHPUnit_Framework_TestCase {
             'Event 3',
             'baseEvent',
         ], $summaries);
-
     }
 
     /**
      * @depends testValues
      */
-    function testOverridenEvent2() {
-
+    public function testOverridenEvent2()
+    {
         $vcal = new VCalendar();
 
         $ev1 = $vcal->createComponent('VEVENT');
@@ -1301,11 +1271,9 @@ class MainTest extends \PHPUnit_Framework_TestCase {
         $dates = [];
         $summaries = [];
         while ($it->valid()) {
-
             $dates[] = $it->getDTStart();
             $summaries[] = (string)$it->getEventObject()->SUMMARY;
             $it->next();
-
         }
 
         $tz = new DateTimeZone('UTC');
@@ -1321,14 +1289,13 @@ class MainTest extends \PHPUnit_Framework_TestCase {
             'Override!',
             'baseEvent',
         ], $summaries);
-
     }
 
     /**
      * @depends testValues
      */
-    function testOverridenEventNoValuesExpected() {
-
+    public function testOverridenEventNoValuesExpected()
+    {
         $vcal = new VCalendar();
         $ev1 = $vcal->createComponent('VEVENT');
 
@@ -1362,23 +1329,20 @@ class MainTest extends \PHPUnit_Framework_TestCase {
         // iterator would hit 24, 25 (overriden from 31) and 7 feb but because
         // we 'filter' from the 28th till the 6th, we should get 0 results.
         while ($it->valid() && $it->getDTStart() < new DateTimeImmutable('2012-02-06 23:00:00')) {
-
             $dates[] = $it->getDTStart();
             $summaries[] = (string)$it->getEventObject()->SUMMARY;
             $it->next();
-
         }
 
         $this->assertEquals([], $dates);
         $this->assertEquals([], $summaries);
-
     }
 
     /**
      * @depends testValues
      */
-    function testRDATE() {
-
+    public function testRDATE()
+    {
         $vcal = new VCalendar();
         $ev = $vcal->createComponent('VEVENT');
 
@@ -1400,12 +1364,12 @@ class MainTest extends \PHPUnit_Framework_TestCase {
         $max = 12;
         $result = [];
         foreach ($it as $item) {
-
             $result[] = $item;
             $max--;
 
-            if (!$max) break;
-
+            if (!$max) {
+                break;
+            }
         }
 
         $tz = new DateTimeZone('UTC');
@@ -1418,15 +1382,14 @@ class MainTest extends \PHPUnit_Framework_TestCase {
             ],
             $result
         );
-
     }
 
     /**
      * @depends testValues
      * @expectedException \InvalidArgumentException
      */
-    function testNoMasterBadUID() {
-
+    public function testNoMasterBadUID()
+    {
         $vcal = new VCalendar();
         // ev2 overrides an event, and puts it on 2pm instead.
         $ev2 = $vcal->createComponent('VEVENT');
@@ -1447,6 +1410,5 @@ class MainTest extends \PHPUnit_Framework_TestCase {
         $vcal->add($ev3);
 
         $it = new EventIterator($vcal, 'broken');
-
     }
 }

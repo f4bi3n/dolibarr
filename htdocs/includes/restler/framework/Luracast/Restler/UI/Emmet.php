@@ -25,8 +25,9 @@ class Emmet
      */
     public static function make($string, $data = null)
     {
-        if (!strlen($string))
+        if (!strlen($string)) {
             return array();
+        }
 
         $implicitTag =
             function () use (& $tag) {
@@ -60,13 +61,16 @@ class Emmet
 
         $parseText =
             function (
-                $text, $round, $total, $data, $delimiter = null
-            )
-            use (
+                $text,
+                $round,
+                $total,
+                $data,
+                $delimiter = null
+            ) use (
                 & $tokens, & $tag
             ) {
                 $digits = 0;
-                if ($delimiter == null)
+                if ($delimiter == null) {
                     $delimiter = array(
                         '.' => true,
                         '#' => true,
@@ -78,6 +82,7 @@ class Emmet
                         ']' => true,
                         '=' => true,
                     );
+                }
                 while (!empty($tokens) &&
                     !isset($delimiter[$t = array_shift($tokens)])) {
                     while ('$' === $t) {
@@ -126,32 +131,42 @@ class Emmet
                         $text .= $t;
                     }
                 }
-                if (isset($t))
+                if (isset($t)) {
                     array_unshift($tokens, $t);
+                }
                 return $text;
             };
 
         $parseAttributes =
-            function (Callable $self, $round, $total, $data)
-            use (& $tokens, & $tag, $parseText) {
+            function (callable $self, $round, $total, $data) use (& $tokens, & $tag, $parseText) {
                 $a = $parseText(
-                    '', $round, $total, $data
+                    '',
+                    $round,
+                    $total,
+                    $data
                 );
-                if (is_null($a))
+                if (is_null($a)) {
                     return;
+                }
                 if ('=' == ($v = array_shift($tokens))) {
                     //value
                     if ('"' == ($v = array_shift($tokens))) {
                         $text = '';
                         $tag->$a($parseText(
-                            $text, $round, $total, $data,
+                            $text,
+                            $round,
+                            $total,
+                            $data,
                             array('"' => true)
                         ));
                     } else {
                         array_unshift($tokens, $v);
                         $text = '';
                         $tag->$a($parseText(
-                            $text, $round, $total, $data,
+                            $text,
+                            $round,
+                            $total,
+                            $data,
                             array(' ' => true, ']' => true)
                         ));
                     }
@@ -174,9 +189,10 @@ class Emmet
 
         $parse =
             function (
-                Callable $self, $round = 1, $total = 1
-            )
-            use (
+                callable $self,
+                $round = 1,
+                $total = 1
+            ) use (
                 & $tokens, & $parent, & $tag, & $data,
                 $parseAttributes, $implicitTag, $parseText
             ) {
@@ -201,7 +217,10 @@ class Emmet
                             $implicitTag();
                             $tag->id(
                                 $parseText(
-                                    array_shift($tokens), $round, $total, $data
+                                    array_shift($tokens),
+                                    $round,
+                                    $total,
+                                    $data
                                 )
                             );
                             break;
@@ -211,14 +230,21 @@ class Emmet
                             array_unshift($offsetTokens, '[');
                             $implicitTag();
                             $parseAttributes(
-                                $parseAttributes, $round, $total, $data
+                                $parseAttributes,
+                                $round,
+                                $total,
+                                $data
                             );
                             break;
                         //child
                         case '{':
                             $text = '';
                             $tag[] = $parseText(
-                                $text, $round, $total, $data, array('}' => true)
+                                $text,
+                                $round,
+                                $total,
+                                $data,
+                                array('}' => true)
                             );
                             break;
                         case '>':
@@ -266,11 +292,13 @@ class Emmet
                                 break;
                             }
                             $tag = $tag->parent;
-                            if ($tag->parent)
+                            if ($tag->parent) {
                                 $tag = $tag->parent;
+                            }
                             while ('^' == ($t = array_shift($tokens))) {
-                                if ($tag->parent)
+                                if ($tag->parent) {
                                     $tag = $tag->parent;
+                                }
                             }
                             $child = new T($t);
                             $tag[] = $child;

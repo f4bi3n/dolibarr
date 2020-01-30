@@ -1,5 +1,6 @@
 <?php
 namespace Luracast\Restler;
+
 /**
  * Static event broadcasting system for Restler
  *
@@ -21,7 +22,8 @@ class EventDispatcher
     public static $self;
     protected $events = array();
 
-    public function __construct() {
+    public function __construct()
+    {
         static::$self = $this;
         if (!empty(static::$_waitList)) {
             foreach (static::$_waitList as $param) {
@@ -33,7 +35,7 @@ class EventDispatcher
     public static function __callStatic($eventName, $params)
     {
         if (0 === strpos($eventName, 'on')) {
-            if(static::$self){
+            if (static::$self) {
                 return call_user_func_array(array(static::$self, $eventName), $params);
             }
             static::$_waitList[] = func_get_args();
@@ -44,8 +46,9 @@ class EventDispatcher
     public function __call($eventName, $params)
     {
         if (0 === strpos($eventName, 'on')) {
-            if (!isset($this->listeners[$eventName]) || !is_array($this->listeners[$eventName]))
+            if (!isset($this->listeners[$eventName]) || !is_array($this->listeners[$eventName])) {
                 $this->listeners[$eventName] = array();
+            }
             $this->listeners[$eventName][] = $params[0];
         }
         return $this;
@@ -89,10 +92,10 @@ class EventDispatcher
         $this->events[] = $eventName;
         $params = func_get_args();
         $eventName = 'on'.ucfirst(array_shift($params));
-        if (isset($this->listeners[$eventName]))
-            foreach ($this->listeners[$eventName] as $callback)
+        if (isset($this->listeners[$eventName])) {
+            foreach ($this->listeners[$eventName] as $callback) {
                 call_user_func_array($callback, $params);
+            }
+        }
     }
-
 }
-

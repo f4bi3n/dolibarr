@@ -22,7 +22,8 @@ use Sabre\HTTP\ResponseInterface;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Plugin extends ServerPlugin {
+class Plugin extends ServerPlugin
+{
 
     /**
      * By default this plugin will require that the user is authenticated,
@@ -56,12 +57,11 @@ class Plugin extends ServerPlugin {
      *
      * @param Backend\BackendInterface $authBackend
      */
-    function __construct(Backend\BackendInterface $authBackend = null) {
-
+    public function __construct(Backend\BackendInterface $authBackend = null)
+    {
         if (!is_null($authBackend)) {
             $this->addBackend($authBackend);
         }
-
     }
 
     /**
@@ -70,10 +70,9 @@ class Plugin extends ServerPlugin {
      * @param Backend\BackendInterface $authBackend
      * @return void
      */
-    function addBackend(Backend\BackendInterface $authBackend) {
-
+    public function addBackend(Backend\BackendInterface $authBackend)
+    {
         $this->backends[] = $authBackend;
-
     }
 
     /**
@@ -82,10 +81,9 @@ class Plugin extends ServerPlugin {
      * @param Server $server
      * @return void
      */
-    function initialize(Server $server) {
-
+    public function initialize(Server $server)
+    {
         $server->on('beforeMethod', [$this, 'beforeMethod'], 10);
-
     }
 
     /**
@@ -96,10 +94,9 @@ class Plugin extends ServerPlugin {
      *
      * @return string
      */
-    function getPluginName() {
-
+    public function getPluginName()
+    {
         return 'auth';
-
     }
 
     /**
@@ -114,10 +111,9 @@ class Plugin extends ServerPlugin {
      *
      * @return string|null
      */
-    function getCurrentPrincipal() {
-
+    public function getCurrentPrincipal()
+    {
         return $this->currentPrincipal;
-
     }
 
     /**
@@ -127,8 +123,8 @@ class Plugin extends ServerPlugin {
      * @param ResponseInterface $response
      * @return bool
      */
-    function beforeMethod(RequestInterface $request, ResponseInterface $response) {
-
+    public function beforeMethod(RequestInterface $request, ResponseInterface $response)
+    {
         if ($this->currentPrincipal) {
 
             // We already have authentication information. This means that the
@@ -144,7 +140,6 @@ class Plugin extends ServerPlugin {
             //
             // See issue #580 for more information about that.
             return;
-
         }
 
         $authResult = $this->check($request, $response);
@@ -167,7 +162,6 @@ class Plugin extends ServerPlugin {
             $this->challenge($request, $response);
             throw new NotAuthenticated(implode(', ', $authResult[1]));
         }
-
     }
 
     /**
@@ -188,14 +182,13 @@ class Plugin extends ServerPlugin {
      * @param ResponseInterface $response
      * @return array
      */
-    function check(RequestInterface $request, ResponseInterface $response) {
-
+    public function check(RequestInterface $request, ResponseInterface $response)
+    {
         if (!$this->backends) {
             throw new \Sabre\DAV\Exception('No authentication backends were configured on this server.');
         }
         $reasons = [];
         foreach ($this->backends as $backend) {
-
             $result = $backend->check(
                 $request,
                 $response
@@ -211,11 +204,9 @@ class Plugin extends ServerPlugin {
                 return [true, $result[1]];
             }
             $reasons[] = $result[1];
-
         }
 
         return [false, $reasons];
-
     }
 
     /**
@@ -229,12 +220,11 @@ class Plugin extends ServerPlugin {
      * @param ResponseInterface $response
      * @return array
      */
-    function challenge(RequestInterface $request, ResponseInterface $response) {
-
+    public function challenge(RequestInterface $request, ResponseInterface $response)
+    {
         foreach ($this->backends as $backend) {
             $backend->challenge($request, $response);
         }
-
     }
 
     /**
@@ -255,10 +245,9 @@ class Plugin extends ServerPlugin {
      *
      * @return string[]|null
      */
-    function getLoginFailedReasons() {
-
+    public function getLoginFailedReasons()
+    {
         return $this->loginFailedReasons;
-
     }
 
     /**
@@ -272,14 +261,12 @@ class Plugin extends ServerPlugin {
      *
      * @return array
      */
-    function getPluginInfo() {
-
+    public function getPluginInfo()
+    {
         return [
             'name'        => $this->getPluginName(),
             'description' => 'Generic authentication plugin',
             'link'        => 'http://sabre.io/dav/authentication/',
         ];
-
     }
-
 }

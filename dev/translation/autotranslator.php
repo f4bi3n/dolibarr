@@ -67,25 +67,21 @@ print 'Argument 1='.$argv[1]."\n";
 print 'Argument 2='.$argv[2]."\n";
 print 'Argument 3='.$argv[3]."\n";
 $file='';
-if (isset($argv[4]))
-{
-	$file=$argv[4];
-	print 'Argument 4='.$argv[4]."\n";
+if (isset($argv[4])) {
+    $file=$argv[4];
+    print 'Argument 4='.$argv[4]."\n";
 }
 print 'Files will be generated/updated in directory '.$dir."\n";
 
-if ($argv[2] != 'all')
-{
-	if (! is_dir($dir.'/'.$argv[2]))
-	{
-		print 'Create directory '.$dir.'/'.$argv[2]."\n";
-		$result=mkdir($dir.'/'.$argv[2]);
-		if (! $result)
-		{
-			$db->close();
-			return -1;
-		}
-	}
+if ($argv[2] != 'all') {
+    if (! is_dir($dir.'/'.$argv[2])) {
+        print 'Create directory '.$dir.'/'.$argv[2]."\n";
+        $result=mkdir($dir.'/'.$argv[2]);
+        if (! $result) {
+            $db->close();
+            return -1;
+        }
+    }
 }
 
 require_once DOL_DOCUMENT_ROOT."/../dev/translation/autotranslator.class.php";

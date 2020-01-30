@@ -31,10 +31,8 @@ $timeZone = new \DateTimeZone('America/Toronto');
 $bench->fb->start();
 
 for ($i = 0; $i < $repeat; $i++) {
-
     $fb = new Sabre\VObject\FreeBusyGenerator($start, $end, $vcal, $timeZone);
     $results = $fb->getResult();
-
 }
 $bench->fb->stop();
 
@@ -42,18 +40,13 @@ $bench->fb->stop();
 
 echo $bench,"\n";
 
-function formatMemory($input) {
-
+function formatMemory($input)
+{
     if (strlen($input) > 6) {
-
         return round($input / (1024 * 1024)) . 'M';
-
     } elseif (strlen($input) > 3) {
-
         return round($input / 1024) . 'K';
-
     }
-
 }
 
 unset($input, $splitter);

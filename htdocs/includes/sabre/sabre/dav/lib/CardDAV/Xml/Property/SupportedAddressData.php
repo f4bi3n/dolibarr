@@ -20,7 +20,8 @@ use Sabre\Xml\XmlSerializable;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class SupportedAddressData implements XmlSerializable {
+class SupportedAddressData implements XmlSerializable
+{
 
     /**
      * supported versions
@@ -34,8 +35,8 @@ class SupportedAddressData implements XmlSerializable {
      *
      * @param array|null $supportedData
      */
-    function __construct(array $supportedData = null) {
-
+    public function __construct(array $supportedData = null)
+    {
         if (is_null($supportedData)) {
             $supportedData = [
                 ['contentType' => 'text/vcard', 'version' => '3.0'],
@@ -45,7 +46,6 @@ class SupportedAddressData implements XmlSerializable {
         }
 
         $this->supportedData = $supportedData;
-
     }
 
     /**
@@ -67,8 +67,8 @@ class SupportedAddressData implements XmlSerializable {
      * @param Writer $writer
      * @return void
      */
-    function xmlSerialize(Writer $writer) {
-
+    public function xmlSerialize(Writer $writer)
+    {
         foreach ($this->supportedData as $supported) {
             $writer->startElement('{' . Plugin::NS_CARDDAV . '}address-data-type');
             $writer->writeAttributes([
@@ -77,7 +77,5 @@ class SupportedAddressData implements XmlSerializable {
                 ]);
             $writer->endElement(); // address-data-type
         }
-
     }
-
 }

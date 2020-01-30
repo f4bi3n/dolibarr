@@ -7,27 +7,27 @@ use Sabre\HTTP;
 require_once 'Sabre/DAV/AbstractServer.php';
 require_once 'Sabre/DAV/TestPlugin.php';
 
-class ServerPluginTest extends AbstractServer {
+class ServerPluginTest extends AbstractServer
+{
 
     /**
      * @var Sabre\DAV\TestPlugin
      */
     protected $testPlugin;
 
-    function setUp() {
-
+    public function setUp()
+    {
         parent::setUp();
 
         $testPlugin = new TestPlugin();
         $this->server->addPlugin($testPlugin);
         $this->testPlugin = $testPlugin;
-
     }
 
     /**
      */
-    function testBaseClass() {
-
+    public function testBaseClass()
+    {
         $p = new ServerPluginMock();
         $this->assertEquals([], $p->getFeatures());
         $this->assertEquals([], $p->getHTTPMethods(''));
@@ -36,13 +36,13 @@ class ServerPluginTest extends AbstractServer {
                 'name'        => 'Sabre\DAV\ServerPluginMock',
                 'description' => null,
                 'link'        => null
-            ], $p->getPluginInfo()
+            ],
+            $p->getPluginInfo()
         );
-
     }
 
-    function testOptions() {
-
+    public function testOptions()
+    {
         $serverVars = [
             'REQUEST_URI'    => '/',
             'REQUEST_METHOD' => 'OPTIONS',
@@ -64,30 +64,25 @@ class ServerPluginTest extends AbstractServer {
         $this->assertEquals(200, $this->response->status);
         $this->assertEquals('', $this->response->body);
         $this->assertEquals('OPTIONS', $this->testPlugin->beforeMethod);
-
-
     }
 
-    function testGetPlugin() {
-
+    public function testGetPlugin()
+    {
         $this->assertEquals($this->testPlugin, $this->server->getPlugin(get_class($this->testPlugin)));
-
     }
 
-    function testUnknownPlugin() {
-
+    public function testUnknownPlugin()
+    {
         $this->assertNull($this->server->getPlugin('SomeRandomClassName'));
-
     }
 
-    function testGetSupportedReportSet() {
-
+    public function testGetSupportedReportSet()
+    {
         $this->assertEquals([], $this->testPlugin->getSupportedReportSet('/'));
-
     }
 
-    function testGetPlugins() {
-
+    public function testGetPlugins()
+    {
         $this->assertEquals(
             [
                 get_class($this->testPlugin) => $this->testPlugin,
@@ -95,14 +90,12 @@ class ServerPluginTest extends AbstractServer {
             ],
             $this->server->getPlugins()
         );
-
     }
-
-
 }
 
-class ServerPluginMock extends ServerPlugin {
-
-    function initialize(Server $s) { }
-
+class ServerPluginMock extends ServerPlugin
+{
+    public function initialize(Server $s)
+    {
+    }
 }

@@ -18,7 +18,8 @@ use Sabre\Xml\XmlDeserializable;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Share implements XmlDeserializable {
+class Share implements XmlDeserializable
+{
 
     /**
      * The list of new people added or updated or removed from the share.
@@ -32,10 +33,9 @@ class Share implements XmlDeserializable {
      *
      * @param Sharee[] $sharees
      */
-    function __construct(array $sharees) {
-
+    public function __construct(array $sharees)
+    {
         $this->sharees = $sharees;
-
     }
 
     /**
@@ -59,8 +59,8 @@ class Share implements XmlDeserializable {
      * @param Reader $reader
      * @return mixed
      */
-    static function xmlDeserialize(Reader $reader) {
-
+    public static function xmlDeserialize(Reader $reader)
+    {
         $elems = $reader->parseGetElements([
             '{' . Plugin::NS_CALENDARSERVER . '}set'    => 'Sabre\\Xml\\Element\\KeyValue',
             '{' . Plugin::NS_CALENDARSERVER . '}remove' => 'Sabre\\Xml\\Element\\KeyValue',
@@ -71,7 +71,7 @@ class Share implements XmlDeserializable {
         foreach ($elems as $elem) {
             switch ($elem['name']) {
 
-                case '{' . Plugin::NS_CALENDARSERVER . '}set' :
+                case '{' . Plugin::NS_CALENDARSERVER . '}set':
                     $sharee = $elem['value'];
 
                     $sumElem = '{' . Plugin::NS_CALENDARSERVER . '}summary';
@@ -94,7 +94,7 @@ class Share implements XmlDeserializable {
                     ]);
                     break;
 
-                case '{' . Plugin::NS_CALENDARSERVER . '}remove' :
+                case '{' . Plugin::NS_CALENDARSERVER . '}remove':
                     $sharees[] = new Sharee([
                         'href'   => $elem['value']['{DAV:}href'],
                         'access' => \Sabre\DAV\Sharing\Plugin::ACCESS_NOACCESS
@@ -105,7 +105,5 @@ class Share implements XmlDeserializable {
         }
 
         return new self($sharees);
-
     }
-
 }

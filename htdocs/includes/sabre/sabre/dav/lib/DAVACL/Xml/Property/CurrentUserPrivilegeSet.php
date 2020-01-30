@@ -18,7 +18,8 @@ use Sabre\Xml\Writer;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class CurrentUserPrivilegeSet implements Element, HtmlOutput {
+class CurrentUserPrivilegeSet implements Element, HtmlOutput
+{
 
     /**
      * List of privileges
@@ -34,10 +35,9 @@ class CurrentUserPrivilegeSet implements Element, HtmlOutput {
      *
      * @param array $privileges
      */
-    function __construct(array $privileges) {
-
+    public function __construct(array $privileges)
+    {
         $this->privileges = $privileges;
-
     }
 
     /**
@@ -59,17 +59,13 @@ class CurrentUserPrivilegeSet implements Element, HtmlOutput {
      * @param Writer $writer
      * @return void
      */
-    function xmlSerialize(Writer $writer) {
-
+    public function xmlSerialize(Writer $writer)
+    {
         foreach ($this->privileges as $privName) {
-
             $writer->startElement('{DAV:}privilege');
             $writer->writeElement($privName);
             $writer->endElement();
-
         }
-
-
     }
 
     /**
@@ -79,10 +75,9 @@ class CurrentUserPrivilegeSet implements Element, HtmlOutput {
      * @param string $privilegeName
      * @return bool
      */
-    function has($privilegeName) {
-
+    public function has($privilegeName)
+    {
         return in_array($privilegeName, $this->privileges);
-
     }
 
     /**
@@ -90,10 +85,9 @@ class CurrentUserPrivilegeSet implements Element, HtmlOutput {
      *
      * @return array
      */
-    function getValue() {
-
+    public function getValue()
+    {
         return $this->privileges;
-
     }
 
     /**
@@ -117,8 +111,8 @@ class CurrentUserPrivilegeSet implements Element, HtmlOutput {
      * @param Reader $reader
      * @return mixed
      */
-    static function xmlDeserialize(Reader $reader) {
-
+    public static function xmlDeserialize(Reader $reader)
+    {
         $result = [];
 
         $tree = $reader->parseInnerTree(['{DAV:}privilege' => 'Sabre\\Xml\\Element\\Elements']);
@@ -129,7 +123,6 @@ class CurrentUserPrivilegeSet implements Element, HtmlOutput {
             $result[] = $element['value'][0];
         }
         return new self($result);
-
     }
 
     /**
@@ -146,14 +139,11 @@ class CurrentUserPrivilegeSet implements Element, HtmlOutput {
      * @param HtmlOutputHelper $html
      * @return string
      */
-    function toHtml(HtmlOutputHelper $html) {
-
+    public function toHtml(HtmlOutputHelper $html)
+    {
         return implode(
             ', ',
             array_map([$html, 'xmlName'], $this->getValue())
         );
-
     }
-
-
 }

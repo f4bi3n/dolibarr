@@ -27,8 +27,9 @@ require_once DOL_DOCUMENT_ROOT.'/imports/class/import.class.php';
 // Load translation files required by the page
 $langs->load("exports");
 
-if (! $user->socid == 0)
-  accessforbidden();
+if (! $user->socid == 0) {
+    accessforbidden();
+}
 
 $import=new Import($db);
 $import->load_arrays($user);
@@ -64,25 +65,25 @@ print '</tr>';
 
 if (count($import->array_import_code))
 {
-	foreach ($import->array_import_code as $key => $value)
-	{
-		print '<tr class="oddeven"><td>';
-		print img_object($import->array_import_module[$key]->getName(),$import->array_import_module[$key]->picto).' ';
-		print $import->array_import_module[$key]->getName();
-		print '</td><td>';
-		$string=$langs->trans($import->array_import_label[$key]);
-		print ($string!=$import->array_import_label[$key]?$string:$import->array_import_label[$key]);
-		print '</td>';
-		//        print '<td width="24">';
-		//        print '<a href="'.DOL_URL_ROOT.'/imports/import.php?step=2&amp;datatoimport='.$import->array_import_code[$key].'&amp;action=cleanselect">'.img_picto($langs->trans("NewImport"),'filenew').'</a>';
-		//        print '</td>';
-		print '</tr>';
+    foreach ($import->array_import_code as $key => $value)
+    {
+        print '<tr class="oddeven"><td>';
+        print img_object($import->array_import_module[$key]->getName(),$import->array_import_module[$key]->picto).' ';
+        print $import->array_import_module[$key]->getName();
+        print '</td><td>';
+        $string=$langs->trans($import->array_import_label[$key]);
+        print ($string!=$import->array_import_label[$key]?$string:$import->array_import_label[$key]);
+        print '</td>';
+        //        print '<td width="24">';
+        //        print '<a href="'.DOL_URL_ROOT.'/imports/import.php?step=2&amp;datatoimport='.$import->array_import_code[$key].'&amp;action=cleanselect">'.img_picto($langs->trans("NewImport"),'filenew').'</a>';
+        //        print '</td>';
+        print '</tr>';
 
-	}
+    }
 }
 else
 {
-	print '<tr><td '.$bc[false].' colspan="2">'.$langs->trans("NoImportableData").'</td></tr>';
+    print '<tr><td '.$bc[false].' colspan="2">'.$langs->trans("NoImportableData").'</td></tr>';
 }
 print '</table>';
 print '</div>';
@@ -90,16 +91,15 @@ print '<br>';
 */
 
 print '<div class="center">';
-if (count($import->array_import_code))
-{
-	//if ($user->rights->import->run)
-	//{
+if (count($import->array_import_code)) {
+    //if ($user->rights->import->run)
+    //{
     print dolGetButtonTitle($langs->trans('NewImport'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/imports/import.php?leftmenu=import');
-	//}
-	//else
-	//{
-	//	print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("NewImport").'</a>';
-	//}
+    //}
+    //else
+    //{
+    //	print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("NewImport").'</a>';
+    //}
 }
 print '</div>';
 print '<br>';
@@ -121,15 +121,14 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/import/modules_import.php';
 $model=new ModeleImports();
 $liste=$model->liste_modeles($db);
 
-foreach($liste as $key)
-{
-	print '<tr class="oddeven">';
-	print '<td width="16">'.img_picto_common($model->getDriverLabelForKey($key), $model->getPictoForKey($key)).'</td>';
-	$text=$model->getDriverDescForKey($key);
-	print '<td>'.$form->textwithpicto($model->getDriverLabelForKey($key), $text).'</td>';
-	print '<td>'.$model->getLibLabelForKey($key).'</td>';
-	print '<td class="nowrap right">'.$model->getLibVersionForKey($key).'</td>';
-	print '</tr>';
+foreach ($liste as $key) {
+    print '<tr class="oddeven">';
+    print '<td width="16">'.img_picto_common($model->getDriverLabelForKey($key), $model->getPictoForKey($key)).'</td>';
+    $text=$model->getDriverDescForKey($key);
+    print '<td>'.$form->textwithpicto($model->getDriverLabelForKey($key), $text).'</td>';
+    print '<td>'.$model->getLibLabelForKey($key).'</td>';
+    print '<td class="nowrap right">'.$model->getLibVersionForKey($key).'</td>';
+    print '</tr>';
 }
 
 print '</table>';

@@ -5,12 +5,12 @@ namespace Sabre\CalDAV\Subscriptions;
 use Sabre\DAV\PropPatch;
 use Sabre\DAV\Xml\Property\Href;
 
-class SubscriptionTest extends \PHPUnit_Framework_TestCase {
-
+class SubscriptionTest extends \PHPUnit_Framework_TestCase
+{
     protected $backend;
 
-    function getSub($override = []) {
-
+    public function getSub($override = [])
+    {
         $caldavBackend = new \Sabre\CalDAV\Backend\MockSubscriptionSupport([], []);
 
         $info = [
@@ -28,11 +28,10 @@ class SubscriptionTest extends \PHPUnit_Framework_TestCase {
 
         $this->backend = $caldavBackend;
         return $subscription;
-
     }
 
-    function testValues() {
-
+    public function testValues()
+    {
         $sub = $this->getSub();
 
         $this->assertEquals('uri', $sub->getName());
@@ -70,40 +69,36 @@ class SubscriptionTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals($acl, $sub->getACL());
 
         $this->assertNull($sub->getSupportedPrivilegeSet());
-
     }
 
-    function testValues2() {
-
+    public function testValues2()
+    {
         $sub = $this->getSub([
             'lastmodified' => null,
         ]);
 
         $this->assertEquals(null, $sub->getLastModified());
-
     }
 
     /**
      * @expectedException \Sabre\DAV\Exception\Forbidden
      */
-    function testSetACL() {
-
+    public function testSetACL()
+    {
         $sub = $this->getSub();
         $sub->setACL([]);
-
     }
 
-    function testDelete() {
-
+    public function testDelete()
+    {
         $sub = $this->getSub();
         $sub->delete();
 
         $this->assertEquals([], $this->backend->getSubscriptionsForUser('principals1/user1'));
-
     }
 
-    function testUpdateProperties() {
-
+    public function testUpdateProperties()
+    {
         $sub = $this->getSub();
         $propPatch = new PropPatch([
             '{DAV:}displayname' => 'foo',
@@ -115,17 +110,14 @@ class SubscriptionTest extends \PHPUnit_Framework_TestCase {
             'foo',
             $this->backend->getSubscriptionsForUser('principals/user1')[0]['{DAV:}displayname']
         );
-
     }
 
     /**
      * @expectedException \InvalidArgumentException
      */
-    function testBadConstruct() {
-
+    public function testBadConstruct()
+    {
         $caldavBackend = new \Sabre\CalDAV\Backend\MockSubscriptionSupport([], []);
         new Subscription($caldavBackend, []);
-
     }
-
 }

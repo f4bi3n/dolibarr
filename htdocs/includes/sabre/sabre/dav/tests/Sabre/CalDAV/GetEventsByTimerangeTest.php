@@ -11,8 +11,8 @@ use Sabre\HTTP;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class GetEventsByTimerangeTest extends \Sabre\DAVServerTest {
-
+class GetEventsByTimerangeTest extends \Sabre\DAVServerTest
+{
     protected $setupCalDAV = true;
 
     protected $caldavCalendars = [
@@ -45,8 +45,8 @@ END:VCALENDAR
         ],
     ];
 
-    function testQueryTimerange() {
-
+    public function testQueryTimerange()
+    {
         $request = new HTTP\Request(
             'REPORT',
             '/calendars/user1/calendar1',
@@ -76,7 +76,5 @@ END:VCALENDAR
         $response = $this->request($request);
 
         $this->assertTrue(strpos($response->body, 'BEGIN:VCALENDAR') !== false);
-
     }
-
 }

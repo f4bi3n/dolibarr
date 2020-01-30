@@ -5,10 +5,10 @@ namespace Sabre\DAV\Xml\Request;
 use Sabre\DAV\Xml\Property\Href;
 use Sabre\DAV\Xml\XmlTest;
 
-class PropPatchTest extends XmlTest {
-
-    function testSerialize() {
-
+class PropPatchTest extends XmlTest
+{
+    public function testSerialize()
+    {
         $propPatch = new PropPatch();
         $propPatch->properties = [
             '{DAV:}displayname' => 'Hello!',
@@ -47,7 +47,5 @@ XML;
             $expected,
             $result
         );
-
     }
-
 }

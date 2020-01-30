@@ -5,7 +5,7 @@ define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site
 require '../../main.inc.php';
 
 if ($dolibarr_main_prod) {
-	accessforbidden();
+    accessforbidden();
 }
 
 $usedolheader=1;	// 1 = Test inside a dolibarr page, 0 = Use hard coded header
@@ -18,10 +18,8 @@ $form=new Form($db);
 // HEADER
 //--------
 
-if (empty($usedolheader))
-{
-	header("Content-type: text/html; charset=UTF8");
-	?>
+if (empty($usedolheader)) {
+    header("Content-type: text/html; charset=UTF8"); ?>
 	<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 	<html>
 	<head>
@@ -45,30 +43,28 @@ if (empty($usedolheader))
 
 
 	<?php
-}
-else
-{
+} else {
     $arraycss=array();
     $arrayjs=array();
     /*
-	$arraycss=array('/includes/jquery/plugins/datatables/media/css/jquery.dataTables.css',
-			'/includes/jquery/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css',
-			'/includes/jquery/plugins/datatables/extensions/ColReorder/css/colReorder.dataTables.min.css'
-	);
-	$arrayjs=array('/includes/jquery/plugins/datatables/media/js/jquery.dataTables.js',
-			'/includes/jquery/plugins/datatables/extensions/Buttons/js/dataTables.buttons.js',
-			'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.colVis.min.js',
-			'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.html5.min.js',
-			'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.flash.min.js',
-			'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.print.min.js',
-			'/includes/jquery/plugins/datatables/extensions/ColReorder/js/dataTables.colReorder.min.js',
-			'/includes/jszip/jszip.min.js',
-			'/includes/pdfmake/pdfmake.min.js',
-			'/includes/pdfmake/vfs_fonts.js'
-	);
+    $arraycss=array('/includes/jquery/plugins/datatables/media/css/jquery.dataTables.css',
+            '/includes/jquery/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css',
+            '/includes/jquery/plugins/datatables/extensions/ColReorder/css/colReorder.dataTables.min.css'
+    );
+    $arrayjs=array('/includes/jquery/plugins/datatables/media/js/jquery.dataTables.js',
+            '/includes/jquery/plugins/datatables/extensions/Buttons/js/dataTables.buttons.js',
+            '/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.colVis.min.js',
+            '/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.html5.min.js',
+            '/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.flash.min.js',
+            '/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.print.min.js',
+            '/includes/jquery/plugins/datatables/extensions/ColReorder/js/dataTables.colReorder.min.js',
+            '/includes/jszip/jszip.min.js',
+            '/includes/pdfmake/pdfmake.min.js',
+            '/includes/pdfmake/vfs_fonts.js'
+    );
     */
 
-	llxHeader('', '', '', '', 0, 0, $arrayjs, $arraycss);
+    llxHeader('', '', '', '', 0, 0, $arrayjs, $arraycss);
 }
 
 
@@ -160,19 +156,39 @@ $sortfield='aaa';
 $sortorder='ASC';
 $tasksarray=array(1,2,3);	// To force having several lines
 $tagidfortablednd='tablelines3';
-if (! empty($conf->use_javascript_ajax)) include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
+if (! empty($conf->use_javascript_ajax)) {
+    include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
+}
 
 $nav='';
 $nav.='<form name="dateselect" action="'.$_SERVER["PHP_SELF"].'?action=show_peruser'.$param.'">';
-if ($actioncode || isset($_GET['actioncode']) || isset($_POST['actioncode'])) $nav.='<input type="hidden" name="actioncode" value="'.$actioncode.'">';
-if ($status || isset($_GET['status']) || isset($_POST['status']))  $nav.='<input type="hidden" name="status" value="'.$status.'">';
-if ($filter)  $nav.='<input type="hidden" name="filter" value="'.$filter.'">';
-if ($filtert) $nav.='<input type="hidden" name="filtert" value="'.$filtert.'">';
-if ($socid)   $nav.='<input type="hidden" name="socid" value="'.$socid.'">';
-if ($showbirthday)  $nav.='<input type="hidden" name="showbirthday" value="1">';
-if ($pid)    $nav.='<input type="hidden" name="projectid" value="'.$pid.'">';
-if ($type)   $nav.='<input type="hidden" name="type" value="'.$type.'">';
-if ($usergroup) $nav.='<input type="hidden" name="usergroup" value="'.$usergroup.'">';
+if ($actioncode || isset($_GET['actioncode']) || isset($_POST['actioncode'])) {
+    $nav.='<input type="hidden" name="actioncode" value="'.$actioncode.'">';
+}
+if ($status || isset($_GET['status']) || isset($_POST['status'])) {
+    $nav.='<input type="hidden" name="status" value="'.$status.'">';
+}
+if ($filter) {
+    $nav.='<input type="hidden" name="filter" value="'.$filter.'">';
+}
+if ($filtert) {
+    $nav.='<input type="hidden" name="filtert" value="'.$filtert.'">';
+}
+if ($socid) {
+    $nav.='<input type="hidden" name="socid" value="'.$socid.'">';
+}
+if ($showbirthday) {
+    $nav.='<input type="hidden" name="showbirthday" value="1">';
+}
+if ($pid) {
+    $nav.='<input type="hidden" name="projectid" value="'.$pid.'">';
+}
+if ($type) {
+    $nav.='<input type="hidden" name="type" value="'.$type.'">';
+}
+if ($usergroup) {
+    $nav.='<input type="hidden" name="usergroup" value="'.$usergroup.'">';
+}
 $nav.= $form->selectDate($dateselect, 'dateselect', 0, 0, 1, '', 1, 0);
 $nav.= ' <input type="submit" name="submitdateselect" class="button" value="'.$langs->trans("Refresh").'">';
 $nav.= '</form>';
@@ -205,8 +221,7 @@ $cate_arbo = array('field1'=>'value1d into the select list D','field2'=>'value2d
 $moreforfilter.=$form->selectarray('search_ddd', $cate_arbo, '', 1, 0, 0, '', 0, 0, 0, 0, '', 1);		// List with js combo
 $moreforfilter.='</div>';
 
-if (! empty($moreforfilter))
-{
+if (! empty($moreforfilter)) {
     print '<div class="liste_titre liste_titre_bydiv centpercent">';
     print $moreforfilter;
     $parameters=array();
@@ -245,12 +260,12 @@ if (! empty($moreforfilter))
 $(document).ready(function(){
     $('#idtableexample2').dataTable( {
     	<?php
-    	if ($optioncss=='print') {
-    	 	print '\'dom\': \'lfrtip\',';
-    	} else {
-    		print '\'dom\': \'Blfrtip\',';
-    	}
-    	?>
+        if ($optioncss=='print') {
+            print '\'dom\': \'lfrtip\',';
+        } else {
+            print '\'dom\': \'Blfrtip\',';
+        }
+        ?>
     	"colReorder": true,
 		'buttons': [
 		          'colvis','copy', 'csv', 'excel', 'pdf', 'print'
@@ -292,9 +307,11 @@ $(document).ready(function(){
 
 
 <?php
-	$tasksarray=array(1,2,3);	// To force having several lines
-	$tagidfortablednd='tablelines';
-	if (! empty($conf->use_javascript_ajax)) include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
+    $tasksarray=array(1,2,3);	// To force having several lines
+    $tagidfortablednd='tablelines';
+    if (! empty($conf->use_javascript_ajax)) {
+        include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
+    }
 ?>
 <div class="tagtable centpercent liste_titre_bydiv" id="tablelines">
     <div class="tagtr liste_titre">
@@ -340,9 +357,8 @@ $(document).ready(function(){
 
 
 <?php
-if (! empty($usedolheader))
-{
-	llxFooter();
+if (! empty($usedolheader)) {
+    llxFooter();
 } else { ?>
 </body>
 <?php } ?>

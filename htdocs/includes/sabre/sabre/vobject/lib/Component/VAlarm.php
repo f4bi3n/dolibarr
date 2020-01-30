@@ -16,7 +16,8 @@ use Sabre\VObject\InvalidDataException;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class VAlarm extends VObject\Component {
+class VAlarm extends VObject\Component
+{
 
     /**
      * Returns a DateTime object when this alarm is going to trigger.
@@ -25,8 +26,8 @@ class VAlarm extends VObject\Component {
      *
      * @return DateTimeImmutable
      */
-    function getEffectiveTriggerTime() {
-
+    public function getEffectiveTriggerTime()
+    {
         $trigger = $this->TRIGGER;
         if (!isset($trigger['VALUE']) || strtoupper($trigger['VALUE']) === 'DURATION') {
             $triggerDuration = VObject\DateTimeParser::parseDuration($this->TRIGGER);
@@ -34,7 +35,6 @@ class VAlarm extends VObject\Component {
 
             $parentComponent = $this->parent;
             if ($related === 'START') {
-
                 if ($parentComponent->name === 'VTODO') {
                     $propName = 'DUE';
                 } else {
@@ -69,7 +69,6 @@ class VAlarm extends VObject\Component {
             $effectiveTrigger = $trigger->getDateTime();
         }
         return $effectiveTrigger;
-
     }
 
     /**
@@ -84,8 +83,8 @@ class VAlarm extends VObject\Component {
      *
      * @return bool
      */
-    function isInTimeRange(DateTimeInterface $start, DateTimeInterface $end) {
-
+    public function isInTimeRange(DateTimeInterface $start, DateTimeInterface $end)
+    {
         $effectiveTrigger = $this->getEffectiveTriggerTime();
 
         if (isset($this->DURATION)) {
@@ -98,7 +97,6 @@ class VAlarm extends VObject\Component {
             $period = new \DatePeriod($effectiveTrigger, $duration, (int)$repeat);
 
             foreach ($period as $occurrence) {
-
                 if ($start <= $occurrence && $end > $occurrence) {
                     return true;
                 }
@@ -107,7 +105,6 @@ class VAlarm extends VObject\Component {
         } else {
             return ($start <= $effectiveTrigger && $end > $effectiveTrigger);
         }
-
     }
 
     /**
@@ -125,8 +122,8 @@ class VAlarm extends VObject\Component {
      *
      * @var array
      */
-    function getValidationRules() {
-
+    public function getValidationRules()
+    {
         return [
             'ACTION'  => 1,
             'TRIGGER' => 1,
@@ -136,7 +133,5 @@ class VAlarm extends VObject\Component {
 
             'ATTACH' => '?',
         ];
-
     }
-
 }

@@ -4,17 +4,16 @@ namespace Sabre\DAV\Auth\Backend;
 
 use Sabre\HTTP;
 
-class ApacheTest extends \PHPUnit_Framework_TestCase {
-
-    function testConstruct() {
-
+class ApacheTest extends \PHPUnit_Framework_TestCase
+{
+    public function testConstruct()
+    {
         $backend = new Apache();
         $this->assertInstanceOf('Sabre\DAV\Auth\Backend\Apache', $backend);
-
     }
 
-    function testNoHeader() {
-
+    public function testNoHeader()
+    {
         $request = new HTTP\Request();
         $response = new HTTP\Response();
         $backend = new Apache();
@@ -22,11 +21,10 @@ class ApacheTest extends \PHPUnit_Framework_TestCase {
         $this->assertFalse(
             $backend->check($request, $response)[0]
         );
-
     }
 
-    function testRemoteUser() {
-
+    public function testRemoteUser()
+    {
         $request = HTTP\Sapi::createFromServerArray([
             'REMOTE_USER' => 'username',
         ]);
@@ -37,11 +35,10 @@ class ApacheTest extends \PHPUnit_Framework_TestCase {
             [true, 'principals/username'],
             $backend->check($request, $response)
         );
-
     }
 
-    function testRedirectRemoteUser() {
-
+    public function testRedirectRemoteUser()
+    {
         $request = HTTP\Sapi::createFromServerArray([
             'REDIRECT_REMOTE_USER' => 'username',
         ]);
@@ -52,11 +49,10 @@ class ApacheTest extends \PHPUnit_Framework_TestCase {
             [true, 'principals/username'],
             $backend->check($request, $response)
         );
-
     }
 
-    function testRequireAuth() {
-
+    public function testRequireAuth()
+    {
         $request = new HTTP\Request();
         $response = new HTTP\Response();
 
@@ -66,6 +62,5 @@ class ApacheTest extends \PHPUnit_Framework_TestCase {
         $this->assertNull(
             $response->getHeader('WWW-Authenticate')
         );
-
     }
 }

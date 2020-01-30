@@ -42,10 +42,9 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
 $conf->global->MAIN_UMASK='0666';
 
-if (empty($conf->service->enabled))
-{
-	print "Error: Module service must be enabled.\n";
-	exit(1);
+if (empty($conf->service->enabled)) {
+    print "Error: Module service must be enabled.\n";
+    exit(1);
 }
 
 /**
@@ -70,9 +69,9 @@ class WebservicesProductsTest extends PHPUnit\Framework\TestCase
      */
     public function __construct()
     {
-    	parent::__construct();
+        parent::__construct();
 
-    	//$this->sharedFixture
+        //$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -179,7 +178,7 @@ class WebservicesProductsTest extends PHPUnit\Framework\TestCase
         print __METHOD__." call method ".$WS_METHOD."\n";
         try {
             $result = $soapclient->call($WS_METHOD, $parameters, $ns, '');
-        } catch(SoapFault $exception) {
+        } catch (SoapFault $exception) {
             echo $exception;
             $result=0;
         }
@@ -242,7 +241,7 @@ class WebservicesProductsTest extends PHPUnit\Framework\TestCase
         print __METHOD__." call method ".$WS_METHOD."\n";
         try {
             $result = $soapclient->call($WS_METHOD, $parameters, $ns, '');
-        } catch(SoapFault $exception) {
+        } catch (SoapFault $exception) {
             echo $exception;
             $result=0;
         }
@@ -305,7 +304,7 @@ class WebservicesProductsTest extends PHPUnit\Framework\TestCase
         print __METHOD__." call method ".$WS_METHOD."\n";
         try {
             $result = $soapclient->call($WS_METHOD, $parameters, $ns, '');
-        } catch(SoapFault $exception) {
+        } catch (SoapFault $exception) {
             echo $exception;
             $result=0;
         }

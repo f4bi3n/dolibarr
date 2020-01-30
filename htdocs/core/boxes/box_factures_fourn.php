@@ -36,7 +36,7 @@ class box_factures_fourn extends ModeleBoxes
     public $boxlabel="BoxLastSupplierBills";
     public $depends = array("facture","fournisseur");
 
-	/**
+    /**
      * @var DoliDB Database handler.
      */
     public $db;
@@ -47,80 +47,87 @@ class box_factures_fourn extends ModeleBoxes
     public $info_box_contents = array();
 
 
-	/**
-	 *  Constructor
-	 *
-	 *  @param  DoliDB  $db         Database handler
-	 *  @param  string  $param      More parameters
-	 */
-	public function __construct($db, $param)
-	{
-	    global $user;
+    /**
+     *  Constructor
+     *
+     *  @param  DoliDB  $db         Database handler
+     *  @param  string  $param      More parameters
+     */
+    public function __construct($db, $param)
+    {
+        global $user;
 
-	    $this->db = $db;
+        $this->db = $db;
 
-	    $this->hidden = ! ($user->rights->fournisseur->facture->lire);
-	}
+        $this->hidden = ! ($user->rights->fournisseur->facture->lire);
+    }
 
-	/**
-	 *  Load data into info_box_contents array to show array later.
-	 *
-	 *  @param	int		$max        Maximum number of records to load
+    /**
+     *  Load data into info_box_contents array to show array later.
+     *
+     *  @param	int		$max        Maximum number of records to load
      *  @return	void
-	 */
-	public function loadBox($max = 5)
-	{
-		global $conf, $user, $langs;
+     */
+    public function loadBox($max = 5)
+    {
+        global $conf, $user, $langs;
 
-		$this->max=$max;
+        $this->max=$max;
 
-		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+        include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
         include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 
         $facturestatic = new FactureFournisseur($this->db);
         $thirdpartytmp = new Fournisseur($this->db);
 
-		$this->info_box_head = array(
-			'text' => $langs->trans("BoxTitleLast".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE?"":"Modified")."SupplierBills", $max)
-		);
+        $this->info_box_head = array(
+            'text' => $langs->trans("BoxTitleLast".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE?"":"Modified")."SupplierBills", $max)
+        );
 
-		if ($user->rights->fournisseur->facture->lire)
-		{
-			$sql = "SELECT s.nom as name, s.rowid as socid,";
+        if ($user->rights->fournisseur->facture->lire) {
+            $sql = "SELECT s.nom as name, s.rowid as socid,";
             $sql.= " s.code_fournisseur, s.email,";
             $sql.= " s.logo,";
-			$sql.= " f.rowid as facid, f.ref, f.ref_supplier,";
+            $sql.= " f.rowid as facid, f.ref, f.ref_supplier,";
             $sql.= " f.total_ht,";
             $sql.= " f.total_tva,";
             $sql.= " f.total_ttc,";
-			$sql.= " f.paye, f.fk_statut,";
-			$sql.= ' f.datef as df,';
-			$sql.= ' f.datec as datec,';
-			$sql.= ' f.date_lim_reglement as datelimite, f.tms, f.type';
-			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-			$sql.= ", ".MAIN_DB_PREFIX."facture_fourn as f";
-			if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-			$sql.= " WHERE f.fk_soc = s.rowid";
-			$sql.= " AND f.entity = ".$conf->entity;
-			if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-			if($user->socid) $sql.= " AND s.rowid = ".$user->socid;
-            if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql.= " ORDER BY f.datef DESC, f.ref DESC ";
-            else $sql.= " ORDER BY f.tms DESC, f.ref DESC ";
-			$sql.= $this->db->plimit($max, 0);
+            $sql.= " f.paye, f.fk_statut,";
+            $sql.= ' f.datef as df,';
+            $sql.= ' f.datec as datec,';
+            $sql.= ' f.date_lim_reglement as datelimite, f.tms, f.type';
+            $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+            $sql.= ", ".MAIN_DB_PREFIX."facture_fourn as f";
+            if (!$user->rights->societe->client->voir && !$user->socid) {
+                $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+            }
+            $sql.= " WHERE f.fk_soc = s.rowid";
+            $sql.= " AND f.entity = ".$conf->entity;
+            if (!$user->rights->societe->client->voir && !$user->socid) {
+                $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+            }
+            if ($user->socid) {
+                $sql.= " AND s.rowid = ".$user->socid;
+            }
+            if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) {
+                $sql.= " ORDER BY f.datef DESC, f.ref DESC ";
+            } else {
+                $sql.= " ORDER BY f.tms DESC, f.ref DESC ";
+            }
+            $sql.= $this->db->plimit($max, 0);
 
-			$result = $this->db->query($sql);
-			if ($result)
-			{
-				$num = $this->db->num_rows($result);
+            $result = $this->db->query($sql);
+            if ($result) {
+                $num = $this->db->num_rows($result);
 
-				$line = 0;
-				$l_due_date =  $langs->trans('Late').' ('.$langs->trans('DateDue').': %s)';
+                $line = 0;
+                $l_due_date =  $langs->trans('Late').' ('.$langs->trans('DateDue').': %s)';
 
                 while ($line < $num) {
-					$objp = $this->db->fetch_object($result);
-					$datelimite=$this->db->jdate($objp->datelimite);
-					$date=$this->db->jdate($objp->df);
-					$datem=$this->db->jdate($objp->tms);
+                    $objp = $this->db->fetch_object($result);
+                    $datelimite=$this->db->jdate($objp->datelimite);
+                    $date=$this->db->jdate($objp->df);
+                    $datem=$this->db->jdate($objp->tms);
 
                     $facturestatic->id = $objp->facid;
                     $facturestatic->ref = $objp->ref;
@@ -138,9 +145,9 @@ class box_factures_fourn extends ModeleBoxes
                     $thirdpartytmp->code_fournisseur = $objp->code_fournisseur;
                     $thirdpartytmp->logo = $objp->logo;
 
-					$late = '';
+                    $late = '';
 
-					if ($facturestatic->hasDelay()) {
+                    if ($facturestatic->hasDelay()) {
                         $late=img_warning(sprintf($l_due_date, dol_print_date($datelimite, 'day')));
                     }
 
@@ -185,11 +192,12 @@ class box_factures_fourn extends ModeleBoxes
                     $line++;
                 }
 
-                if ($num==0)
+                if ($num==0) {
                     $this->info_box_contents[$line][0] = array(
                         'td' => 'class="center"',
                         'text'=>$langs->trans("NoModifiedSupplierBills"),
                     );
+                }
 
                 $this->db->free($result);
             } else {
@@ -207,16 +215,16 @@ class box_factures_fourn extends ModeleBoxes
         }
     }
 
-	/**
-	 *	Method to show box
-	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
-	 *	@return	string
-	 */
+    /**
+     *	Method to show box
+     *
+     *	@param	array	$head       Array with properties of box title
+     *	@param  array	$contents   Array with properties of box lines
+     *  @param	int		$nooutput	No print, only return string
+     *	@return	string
+     */
     public function showBox($head = null, $contents = null, $nooutput = 0)
     {
-		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
-	}
+        return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+    }
 }

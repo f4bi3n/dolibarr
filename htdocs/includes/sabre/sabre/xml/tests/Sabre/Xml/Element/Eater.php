@@ -12,7 +12,8 @@ use Sabre\Xml;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Eater implements Xml\Element {
+class Eater implements Xml\Element
+{
 
     /**
      * The serialize method is called during xml writing.
@@ -29,12 +30,11 @@ class Eater implements Xml\Element {
      * @param Xml\Writer $writer
      * @return void
      */
-    function xmlSerialize(Xml\Writer $writer) {
-
+    public function xmlSerialize(Xml\Writer $writer)
+    {
         $writer->startElement('{http://sabredav.org/ns}elem1');
         $writer->write('hiiii!');
         $writer->endElement();
-
     }
 
     /**
@@ -58,21 +58,17 @@ class Eater implements Xml\Element {
      * @param Xml\Reader $reader
      * @return mixed
      */
-    static function xmlDeserialize(Xml\Reader $reader) {
-
+    public static function xmlDeserialize(Xml\Reader $reader)
+    {
         $reader->next();
 
         $count = 1;
         while ($count) {
-
             $reader->read();
             if ($reader->nodeType === $reader::END_ELEMENT) {
                 $count--;
             }
-
         }
         $reader->read();
-
     }
-
 }

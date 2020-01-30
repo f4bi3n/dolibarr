@@ -16,7 +16,8 @@ use Sabre\HTTP\ResponseInterface;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class MapGetToPropFind extends DAV\ServerPlugin {
+class MapGetToPropFind extends DAV\ServerPlugin
+{
 
     /**
      * reference to server class
@@ -31,8 +32,8 @@ class MapGetToPropFind extends DAV\ServerPlugin {
      * @param DAV\Server $server
      * @return void
      */
-    function initialize(DAV\Server $server) {
-
+    public function initialize(DAV\Server $server)
+    {
         $this->server = $server;
         $this->server->on('method:GET', [$this, 'httpGet'], 90);
     }
@@ -44,17 +45,17 @@ class MapGetToPropFind extends DAV\ServerPlugin {
      * @param ResponseInterface $response
      * @return bool
      */
-    function httpGet(RequestInterface $request, ResponseInterface $response) {
-
+    public function httpGet(RequestInterface $request, ResponseInterface $response)
+    {
         $node = $this->server->tree->getNodeForPath($request->getPath());
-        if ($node instanceof DAV\IFile) return;
+        if ($node instanceof DAV\IFile) {
+            return;
+        }
 
         $subRequest = clone $request;
         $subRequest->setMethod('PROPFIND');
 
         $this->server->invokeMethod($subRequest, $response);
         return false;
-
     }
-
 }

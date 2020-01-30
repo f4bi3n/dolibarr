@@ -22,7 +22,8 @@ use Sabre\HTTP\URLUtil;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class GuessContentType extends DAV\ServerPlugin {
+class GuessContentType extends DAV\ServerPlugin
+{
 
     /**
      * List of recognized file extensions
@@ -53,12 +54,12 @@ class GuessContentType extends DAV\ServerPlugin {
      * @param DAV\Server $server
      * @return void
      */
-    function initialize(DAV\Server $server) {
+    public function initialize(DAV\Server $server)
+    {
 
         // Using a relatively low priority (200) to allow other extensions
         // to set the content-type first.
         $server->on('propFind', [$this, 'propFind'], 200);
-
     }
 
     /**
@@ -70,15 +71,12 @@ class GuessContentType extends DAV\ServerPlugin {
      * @param INode $node
      * @return void
      */
-    function propFind(PropFind $propFind, INode $node) {
-
-        $propFind->handle('{DAV:}getcontenttype', function() use ($propFind) {
-
+    public function propFind(PropFind $propFind, INode $node)
+    {
+        $propFind->handle('{DAV:}getcontenttype', function () use ($propFind) {
             list(, $fileName) = URLUtil::splitPath($propFind->getPath());
             return $this->getContentType($fileName);
-
         });
-
     }
 
     /**
@@ -87,7 +85,8 @@ class GuessContentType extends DAV\ServerPlugin {
      * @param string $fileName
      * @return string
      */
-    protected function getContentType($fileName) {
+    protected function getContentType($fileName)
+    {
 
         // Just grabbing the extension
         $extension = strtolower(substr($fileName, strrpos($fileName, '.') + 1));
@@ -95,7 +94,5 @@ class GuessContentType extends DAV\ServerPlugin {
             return $this->extensionMap[$extension];
         }
         return 'application/octet-stream';
-
     }
-
 }

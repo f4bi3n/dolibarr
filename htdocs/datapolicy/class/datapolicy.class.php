@@ -30,15 +30,15 @@ include_once DOL_DOCUMENT_ROOT . '/adherents/class/adherent.class.php';
  */
 class DataPolicy
 {
-	/**
-	 *	Constructor
-	 *
-	 *  @param		DoliDB		$db      Database handler
-	 */
-	public function __construct($db)
-	{
-		$this->db = $db;
-	}
+    /**
+     *	Constructor
+     *
+     *  @param		DoliDB		$db      Database handler
+     */
+    public function __construct($db)
+    {
+        $this->db = $db;
+    }
 
     /**
      * getAllContactNotInformed
@@ -193,11 +193,12 @@ class DataPolicy
         $actiontypecode = 'AC_EMAIL';
         $actionmsg = $langs->transnoentities('MailSentBy') . ' ' . $from . ' ' . $langs->transnoentities('To') . ' ' . $sendto;
         if ($message) {
-            if ($sendtocc)
+            if ($sendtocc) {
                 $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc') . ": " . $sendtocc);
-                $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic') . ": " . $subject);
-                $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody') . ":");
-                $actionmsg = dol_concatdesc($actionmsg, $message);
+            }
+            $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic') . ": " . $subject);
+            $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody') . ":");
+            $actionmsg = dol_concatdesc($actionmsg, $message);
         }
 
 
@@ -264,11 +265,9 @@ class DataPolicy
 
         $actiontypecode = 'AC_EMAIL';
         $actionmsg = $langs->transnoentities('MailSentBy') . ' ' . $from . ' ' . $langs->transnoentities('To') . ' ' . $sendto;
-        if ($message)
-        {
-            if ($sendtocc)
-            {
-                 $actionmsg .= dol_concatdesc($actionmsg, $langs->transnoentities('Bcc') . ": " . $sendtocc);
+        if ($message) {
+            if ($sendtocc) {
+                $actionmsg .= dol_concatdesc($actionmsg, $langs->transnoentities('Bcc') . ": " . $sendtocc);
             }
             $actionmsg .= dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic') . ": " . $subject);
             $actionmsg .= dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody') . ":");

@@ -13,7 +13,8 @@ use Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class File extends AbstractDigest {
+class File extends AbstractDigest
+{
 
     /**
      * List of users
@@ -29,11 +30,11 @@ class File extends AbstractDigest {
      *
      * @param string|null $filename
      */
-    function __construct($filename = null) {
-
-        if (!is_null($filename))
+    public function __construct($filename = null)
+    {
+        if (!is_null($filename)) {
             $this->loadFile($filename);
-
+        }
     }
 
     /**
@@ -43,22 +44,21 @@ class File extends AbstractDigest {
      * @param string $filename
      * @return void
      */
-    function loadFile($filename) {
-
+    public function loadFile($filename)
+    {
         foreach (file($filename, FILE_IGNORE_NEW_LINES) as $line) {
-
-            if (substr_count($line, ":") !== 2)
+            if (substr_count($line, ":") !== 2) {
                 throw new DAV\Exception('Malformed htdigest file. Every line should contain 2 colons');
+            }
 
             list($username, $realm, $A1) = explode(':', $line);
 
-            if (!preg_match('/^[a-zA-Z0-9]{32}$/', $A1))
+            if (!preg_match('/^[a-zA-Z0-9]{32}$/', $A1)) {
                 throw new DAV\Exception('Malformed htdigest file. Invalid md5 hash');
+            }
 
             $this->users[$realm . ':' . $username] = $A1;
-
         }
-
     }
 
     /**
@@ -68,10 +68,8 @@ class File extends AbstractDigest {
      * @param string $username
      * @return string
      */
-    function getDigestHash($realm, $username) {
-
+    public function getDigestHash($realm, $username)
+    {
         return isset($this->users[$realm . ':' . $username]) ? $this->users[$realm . ':' . $username] : false;
-
     }
-
 }

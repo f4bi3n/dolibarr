@@ -13,6 +13,6 @@ use Sabre\DAVACL;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface ICalendar extends ICalendarObjectContainer, DAVACL\IACL {
-
+interface ICalendar extends ICalendarObjectContainer, DAVACL\IACL
+{
 }

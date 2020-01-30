@@ -110,7 +110,6 @@ use Mike42\Escpos\CapabilityProfile;
 use Mike42\Escpos\Printer;
 use Mike42\Escpos\EscposImage;
 
-
 /**
  * Class to manage Receipt Printers
  */
@@ -531,12 +530,11 @@ class dolReceiptPrinter extends Printer
                 $this->printer->feed();
                 $this->printer->cut();
 
-				// If is DummyPrintConnector send to log to debugging
-				if($this->printer->connector instanceof DummyPrintConnector)
-				{
-					$data = $this->printer->connector-> getData();
-					dol_syslog($data);
-				}
+                // If is DummyPrintConnector send to log to debugging
+                if ($this->printer->connector instanceof DummyPrintConnector) {
+                    $data = $this->printer->connector-> getData();
+                    dol_syslog($data);
+                }
                 $this->printer->close();
             } catch (Exception $e) {
                 $this->errors[] = $e->getMessage();
@@ -634,10 +632,10 @@ class dolReceiptPrinter extends Printer
                         foreach ($object->lines as $line) {
                             $vatarray[$line->tva_tx] += $line->total_tva;
                         }
-                        foreach($vatarray as $vatkey => $vatvalue) {
-                             $spacestoadd = $nbcharactbyline - strlen($vatkey)- 12;
-                             $spaces = str_repeat(' ', $spacestoadd);
-                             $this->printer->text($spaces. $vatkey.'% '.str_pad(price($vatvalue), 10, ' ', STR_PAD_LEFT)."\n");
+                        foreach ($vatarray as $vatkey => $vatvalue) {
+                            $spacestoadd = $nbcharactbyline - strlen($vatkey)- 12;
+                            $spaces = str_repeat(' ', $spacestoadd);
+                            $this->printer->text($spaces. $vatkey.'% '.str_pad(price($vatvalue), 10, ' ', STR_PAD_LEFT)."\n");
                         }
                         break;
                     case 'DOL_PRINT_OBJECT_TOTAL':
@@ -721,12 +719,11 @@ class dolReceiptPrinter extends Printer
                 }
             }
             // If is DummyPrintConnector send to log to debugging
-			if($this->printer->connector instanceof DummyPrintConnector)
-			{
-				$data = $this->printer->connector->getData();
-				dol_syslog($data);
-			}
-			// Close and print
+            if ($this->printer->connector instanceof DummyPrintConnector) {
+                $data = $this->printer->connector->getData();
+                dol_syslog($data);
+            }
+            // Close and print
             $this->printer->close();
         }
         return $error;

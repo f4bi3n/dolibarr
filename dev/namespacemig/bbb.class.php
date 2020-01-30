@@ -9,22 +9,22 @@ $globalbbb = 'globalbbb';
  */
 function fbbb()
 {
-	return 'fbbb';
+    return 'fbbb';
 }
 
 class Bbb
 {
-	const BBB='bbb';
+    const BBB='bbb';
 
-	/**
-	 * do
-	 * @return void
-	 */
-	public function do()
-	{
-		global $globalaaa, $globalbbb;
-		echo 'dobbb'."\n";
-		$globalaaa.='+bbb';
-		$globalbbb.='+bbb';
-	}
+    /**
+     * do
+     * @return void
+     */
+    public function do()
+    {
+        global $globalaaa, $globalbbb;
+        echo 'dobbb'."\n";
+        $globalaaa.='+bbb';
+        $globalbbb.='+bbb';
+    }
 }

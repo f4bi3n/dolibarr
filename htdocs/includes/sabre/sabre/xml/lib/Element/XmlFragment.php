@@ -20,20 +20,18 @@ use Sabre\Xml\Writer;
  * 3. It will have all the relevant xmlns attributes.
  * 4. It may not have a root element.
  */
-class XmlFragment implements Element {
-
+class XmlFragment implements Element
+{
     protected $xml;
 
-    function __construct($xml) {
-
+    public function __construct($xml)
+    {
         $this->xml = $xml;
-
     }
 
-    function getXml() {
-
+    public function getXml()
+    {
         return $this->xml;
-
     }
 
     /**
@@ -55,8 +53,8 @@ class XmlFragment implements Element {
      * @param Writer $writer
      * @return void
      */
-    function xmlSerialize(Writer $writer) {
-
+    public function xmlSerialize(Writer $writer)
+    {
         $reader = new Reader();
 
         // Wrapping the xml in a container, so root-less values can still be
@@ -69,7 +67,6 @@ XML;
         $reader->xml($xml);
 
         while ($reader->read()) {
-
             if ($reader->depth < 1) {
                 // Skipping the root node.
                 continue;
@@ -77,20 +74,20 @@ XML;
 
             switch ($reader->nodeType) {
 
-                case Reader::ELEMENT :
+                case Reader::ELEMENT:
                     $writer->startElement(
                         $reader->getClark()
                     );
                     $empty = $reader->isEmptyElement;
                     while ($reader->moveToNextAttribute()) {
                         switch ($reader->namespaceURI) {
-                            case '' :
+                            case '':
                                 $writer->writeAttribute($reader->localName, $reader->value);
                                 break;
-                            case 'http://www.w3.org/2000/xmlns/' :
+                            case 'http://www.w3.org/2000/xmlns/':
                                 // Skip namespace declarations
                                 break;
-                            default :
+                            default:
                                 $writer->writeAttribute($reader->getClark(), $reader->value);
                                 break;
                         }
@@ -99,20 +96,18 @@ XML;
                         $writer->endElement();
                     }
                     break;
-                case Reader::CDATA :
-                case Reader::TEXT :
+                case Reader::CDATA:
+                case Reader::TEXT:
                     $writer->text(
                         $reader->value
                     );
                     break;
-                case Reader::END_ELEMENT :
+                case Reader::END_ELEMENT:
                     $writer->endElement();
                     break;
 
             }
-
         }
-
     }
 
     /**
@@ -136,12 +131,10 @@ XML;
      * @param Reader $reader
      * @return mixed
      */
-    static function xmlDeserialize(Reader $reader) {
-
+    public static function xmlDeserialize(Reader $reader)
+    {
         $result = new self($reader->readInnerXml());
         $reader->next();
         return $result;
-
     }
-
 }

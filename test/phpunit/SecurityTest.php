@@ -30,19 +30,38 @@ require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security2.lib.php';
 
-if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER', '1');
-if (! defined('NOREQUIREDB'))    define('NOREQUIREDB', '1');
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
-if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN', '1');
-if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1'); // If there is no menu to show
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-if (! defined("NOLOGIN"))        define("NOLOGIN", '1');       // If this page is public (can be called outside logged session)
+if (! defined('NOREQUIREUSER')) {
+    define('NOREQUIREUSER', '1');
+}
+if (! defined('NOREQUIREDB')) {
+    define('NOREQUIREDB', '1');
+}
+if (! defined('NOREQUIRESOC')) {
+    define('NOREQUIRESOC', '1');
+}
+if (! defined('NOREQUIRETRAN')) {
+    define('NOREQUIRETRAN', '1');
+}
+if (! defined('NOCSRFCHECK')) {
+    define('NOCSRFCHECK', '1');
+}
+if (! defined('NOTOKENRENEWAL')) {
+    define('NOTOKENRENEWAL', '1');
+}
+if (! defined('NOREQUIREMENU')) {
+    define('NOREQUIREMENU', '1');
+} // If there is no menu to show
+if (! defined('NOREQUIREHTML')) {
+    define('NOREQUIREHTML', '1');
+} // If we don't need to load the html.form.class.php
+if (! defined('NOREQUIREAJAX')) {
+    define('NOREQUIREAJAX', '1');
+}
+if (! defined("NOLOGIN")) {
+    define("NOLOGIN", '1');
+}       // If this page is public (can be called outside logged session)
 
-if (empty($user->id))
-{
+if (empty($user->id)) {
     print "Load permissions for admin user nb 1\n";
     $user->fetch(1);
     $user->getrights();
@@ -59,75 +78,75 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  */
 class SecurityTest extends PHPUnit\Framework\TestCase
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
+    protected $savconf;
+    protected $savuser;
+    protected $savlangs;
+    protected $savdb;
 
-	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @return SecurityTest
-	 */
-	public function __construct()
-	{
-		parent::__construct();
+    /**
+     * Constructor
+     * We save global variables into local variables
+     *
+     * @return SecurityTest
+     */
+    public function __construct()
+    {
+        parent::__construct();
 
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
+        //$this->sharedFixture
+        global $conf,$user,$langs,$db;
+        $this->savconf=$conf;
+        $this->savuser=$user;
+        $this->savlangs=$langs;
+        $this->savdb=$db;
 
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
+        print __METHOD__." db->type=".$db->type." user->id=".$user->id;
+        //print " - db ".$db->db;
+        print "\n";
+    }
 
     // Static methods
     public static function setUpBeforeClass()
     {
-    	global $conf,$user,$langs,$db;
-		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+        global $conf,$user,$langs,$db;
+        $db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
-    	print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
     // tear down after class
     public static function tearDownAfterClass()
     {
-    	global $conf,$user,$langs,$db;
-		$db->rollback();
+        global $conf,$user,$langs,$db;
+        $db->rollback();
 
-		print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
-	/**
-	 * Init phpunit tests
-	 *
-	 * @return	void
-	 */
+    /**
+     * Init phpunit tests
+     *
+     * @return	void
+     */
     protected function setUp()
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
-	/**
-	 * End phpunit tests
-	 *
-	 * @return	void
-	 */
+    /**
+     * End phpunit tests
+     *
+     * @return	void
+     */
     protected function tearDown()
     {
-    	print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
     /**
@@ -137,15 +156,15 @@ class SecurityTest extends PHPUnit\Framework\TestCase
      */
     public function testSetLang()
     {
-    	global $conf;
-    	$conf=$this->savconf;
+        global $conf;
+        $conf=$this->savconf;
 
-    	$tmplangs = new Translate('', $conf);
+        $tmplangs = new Translate('', $conf);
 
-    	$_SERVER['HTTP_ACCEPT_LANGUAGE'] = "' malicious text with quote";
-    	$tmplangs->setDefaultLang('auto');
-    	print __METHOD__.' $tmplangs->defaultlang='.$tmplangs->defaultlang."\n";
-    	$this->assertEquals($tmplangs->defaultlang, 'malicioustextwithquote_MALICIOUSTEXTWITHQUOTE');
+        $_SERVER['HTTP_ACCEPT_LANGUAGE'] = "' malicious text with quote";
+        $tmplangs->setDefaultLang('auto');
+        print __METHOD__.' $tmplangs->defaultlang='.$tmplangs->defaultlang."\n";
+        $this->assertEquals($tmplangs->defaultlang, 'malicioustextwithquote_MALICIOUSTEXTWITHQUOTE');
     }
 
     /**
@@ -155,16 +174,16 @@ class SecurityTest extends PHPUnit\Framework\TestCase
      */
     public function testGETPOST()
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
         $_COOKIE["id"]=111;
-		$_GET["param1"]="222";
+        $_GET["param1"]="222";
         $_POST["param1"]="333";
-		$_GET["param2"]='a/b#e(pr)qq-rr\cc';
+        $_GET["param2"]='a/b#e(pr)qq-rr\cc';
         $_GET["param3"]='"a/b#e(pr)qq-rr\cc';    // Same than param2 + "
         $_GET["param4"]='../dir';
         $_GET["param5"]="a_1-b";
@@ -306,16 +325,16 @@ class SecurityTest extends PHPUnit\Framework\TestCase
      */
     public function testRestrictedArea()
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		//$dummyuser=new User($db);
-		//$result=restrictedArea($dummyuser,'societe');
+        //$dummyuser=new User($db);
+        //$result=restrictedArea($dummyuser,'societe');
 
-		$result=restrictedArea($user, 'societe');
-		$this->assertEquals(1, $result);
+        $result=restrictedArea($user, 'societe');
+        $this->assertEquals(1, $result);
     }
 }

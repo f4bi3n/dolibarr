@@ -34,8 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/vat.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-if (! empty($conf->projet->enabled))
-{
+if (! empty($conf->projet->enabled)) {
     require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
@@ -48,7 +47,9 @@ $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
 // Security check
-if ($user->socid) $socid=$user->socid;
+if ($user->socid) {
+    $socid=$user->socid;
+}
 $result = restrictedArea($user, 'tax', '', 'vat', 'charges');
 
 
@@ -63,12 +64,18 @@ if (empty($page) || $page == -1) {
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortorder) $sortorder="ASC";
-if (! $sortfield) $sortfield="name";
+if (! $sortorder) {
+    $sortorder="ASC";
+}
+if (! $sortfield) {
+    $sortfield="name";
+}
 
 
 $object = new Tva($db);
-if ($id > 0) $object->fetch($id);
+if ($id > 0) {
+    $object->fetch($id);
+}
 
 $upload_dir = $conf->tax->dir_output.'/'.dol_sanitizeFileName($object->ref);
 $modulepart='tax';
@@ -80,12 +87,12 @@ $modulepart='tax';
 
 include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 
-if ($action == 'setlib' && $user->rights->tax->charges->creer)
-{
+if ($action == 'setlib' && $user->rights->tax->charges->creer) {
     $object->fetch($id);
     $result = $object->setValueFrom('label', GETPOST('lib', 'alpha'), '', '', 'text', '', $user, 'TAX_MODIFY');
-    if ($result < 0)
+    if ($result < 0) {
         setEventMessages($object->error, $object->errors, 'errors');
+    }
 }
 
 
@@ -94,40 +101,40 @@ if ($action == 'setlib' && $user->rights->tax->charges->creer)
  */
 
 $form = new Form($db);
-if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
+if (! empty($conf->projet->enabled)) {
+    $formproject = new FormProjets($db);
+}
 
 $title = $langs->trans("VATPayment") . ' - ' . $langs->trans("Documents");
 $help_url='EN:Module_Taxes_and_social_contributions|FR:Module Taxes et dividendes|ES:M&oacute;dulo Impuestos y cargas sociales (IVA, impuestos)';
 llxHeader("", $title, $help_url);
 
-if ($object->id)
-{
-	$alreadypayed=$object->getSommePaiement();
+if ($object->id) {
+    $alreadypayed=$object->getSommePaiement();
 
     $head=vat_prepare_head($object);
 
     dol_fiche_head($head, 'documents', $langs->trans("VATPayment"), -1, 'bill');
 
-	$morehtmlref='<div class="refidno">';
-	// Label of social contribution
-	$morehtmlref.=$form->editfieldkey("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', 0, 1);
-	$morehtmlref.=$form->editfieldval("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', null, null, '', 1);
-	$morehtmlref.='</div>';
+    $morehtmlref='<div class="refidno">';
+    // Label of social contribution
+    $morehtmlref.=$form->editfieldkey("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', 0, 1);
+    $morehtmlref.=$form->editfieldval("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', null, null, '', 1);
+    $morehtmlref.='</div>';
 
-	$linkback = '<a href="' . DOL_URL_ROOT . '/compta/tva/list.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
+    $linkback = '<a href="' . DOL_URL_ROOT . '/compta/tva/list.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
 
-	$object->totalpaye = $totalpaye;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
+    $object->totalpaye = $totalpaye;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
-	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
+    dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
 
-	print '<div class="fichecenter">';
-	print '<div class="underbanner clearboth"></div>';
+    print '<div class="fichecenter">';
+    print '<div class="underbanner clearboth"></div>';
 
     // Build file list
     $filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
     $totalsize=0;
-    foreach($filearray as $key => $file)
-    {
+    foreach ($filearray as $key => $file) {
         $totalsize+=$file['size'];
     }
 
@@ -149,9 +156,7 @@ if ($object->id)
     $permtoedit = $user->rights->fournisseur->facture->creer;
     $param = '&id=' . $object->id;
     include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
-}
-else
-{
+} else {
     print $langs->trans("ErrorUnknown");
 }
 

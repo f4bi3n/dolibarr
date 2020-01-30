@@ -13,7 +13,6 @@ use OAuth\OAuth2\Token\StdOAuth2Token;
 
 class Harvest extends AbstractService
 {
-
     public function __construct(
         CredentialsInterface $credentials,
         ClientInterface $httpClient,

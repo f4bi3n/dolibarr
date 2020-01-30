@@ -39,7 +39,9 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'alpha');
 
 // Security check
-if ($user->socid) $socid=$user->socid;
+if ($user->socid) {
+    $socid=$user->socid;
+}
 $result = restrictedArea($user, 'resource', $id, 'resource');
 
 $object = new DolResource($db);
@@ -50,51 +52,42 @@ $result = $object->fetch($id, $ref);
  * Add a new contact
  */
 
-if ($action == 'addcontact' && $user->rights->resource->write)
-{
-    if ($result > 0 && $id > 0)
-    {
-    	$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
-  		$result = $object->add_contact($contactid, GETPOST('type', 'int'), GETPOST('source', 'alpha'));
+if ($action == 'addcontact' && $user->rights->resource->write) {
+    if ($result > 0 && $id > 0) {
+        $contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
+        $result = $object->add_contact($contactid, GETPOST('type', 'int'), GETPOST('source', 'alpha'));
     }
 
-	if ($result >= 0)
-	{
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-		exit;
-	}
-	else
-	{
-		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-			$langs->load("errors");
-			$mesg = $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
-		} else {
-			$mesg = $object->error;
-		}
+    if ($result >= 0) {
+        header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+        exit;
+    } else {
+        if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+            $langs->load("errors");
+            $mesg = $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
+        } else {
+            $mesg = $object->error;
+        }
 
-		setEventMessages($mesg, null, 'errors');
-	}
+        setEventMessages($mesg, null, 'errors');
+    }
 }
 
 // Toggle the status of a contact
-elseif ($action == 'swapstatut' && $user->rights->resource->write)
-{
+elseif ($action == 'swapstatut' && $user->rights->resource->write) {
     $result=$object->swapContactStatus(GETPOST('ligne', 'int'));
 }
 
 // Erase a contact
-elseif ($action == 'deletecontact' && $user->rights->resource->write)
-{
-	$result = $object->delete_contact(GETPOST('lineid', 'int'));
+elseif ($action == 'deletecontact' && $user->rights->resource->write) {
+    $result = $object->delete_contact(GETPOST('lineid', 'int'));
 
-	if ($result >= 0)
-	{
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-		exit;
-	}
-	else {
-		dol_print_error($db);
-	}
+    if ($result >= 0) {
+        header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+        exit;
+    } else {
+        dol_print_error($db);
+    }
 }
 
 
@@ -111,55 +104,58 @@ llxHeader('', $langs->trans("Resource"));
 
 // Mode vue et edition
 
-if ($id > 0 || ! empty($ref))
-{
-	$soc = new Societe($db);
-	$soc->fetch($object->socid);
+if ($id > 0 || ! empty($ref)) {
+    $soc = new Societe($db);
+    $soc->fetch($object->socid);
 
 
-	$head = resource_prepare_head($object);
-	dol_fiche_head($head, 'contact', $langs->trans("ResourceSingular"), -1, 'resource');
+    $head = resource_prepare_head($object);
+    dol_fiche_head($head, 'contact', $langs->trans("ResourceSingular"), -1, 'resource');
 
 
-	$linkback = '<a href="' . DOL_URL_ROOT . '/resource/list.php' . (! empty($socid) ? '?id=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+    $linkback = '<a href="' . DOL_URL_ROOT . '/resource/list.php' . (! empty($socid) ? '?id=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 
-	$morehtmlref='<div class="refidno">';
-	$morehtmlref.='</div>';
+    $morehtmlref='<div class="refidno">';
+    $morehtmlref.='</div>';
 
 
-	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+    dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
 
-	print '<div class="fichecenter">';
-	print '<div class="underbanner clearboth"></div>';
+    print '<div class="fichecenter">';
+    print '<div class="underbanner clearboth"></div>';
 
 
-	// Object
+    // Object
 
-	print '<table class="border tableforfield centpercent">';
+    print '<table class="border tableforfield centpercent">';
 
-	// Resource type
-	print '<tr>';
-	print '<td class="titlefield">' . $langs->trans("ResourceType") . '</td>';
-	print '<td>';
-	print $object->type_label;
-	print '</td>';
-	print '</tr>';
+    // Resource type
+    print '<tr>';
+    print '<td class="titlefield">' . $langs->trans("ResourceType") . '</td>';
+    print '<td>';
+    print $object->type_label;
+    print '</td>';
+    print '</tr>';
 
-	print '</table>';
-	print '</div>';
+    print '</table>';
+    print '</div>';
 
-	dol_fiche_end();
+    dol_fiche_end();
 
-	print '<br>';
+    print '<br>';
 
-	if (! empty($conf->global->RESOURCE_HIDE_ADD_CONTACT_USER))     $hideaddcontactforuser=1;
-	if (! empty($conf->global->RESOURCE_HIDE_ADD_CONTACT_THIPARTY)) $hideaddcontactforthirdparty=1;
+    if (! empty($conf->global->RESOURCE_HIDE_ADD_CONTACT_USER)) {
+        $hideaddcontactforuser=1;
+    }
+    if (! empty($conf->global->RESOURCE_HIDE_ADD_CONTACT_THIPARTY)) {
+        $hideaddcontactforthirdparty=1;
+    }
 
-	$permission=1;
-	// Contacts lines
-	include DOL_DOCUMENT_ROOT.'/core/tpl/contacts.tpl.php';
+    $permission=1;
+    // Contacts lines
+    include DOL_DOCUMENT_ROOT.'/core/tpl/contacts.tpl.php';
 }
 
 // End of page

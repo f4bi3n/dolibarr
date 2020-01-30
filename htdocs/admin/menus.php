@@ -34,13 +34,14 @@ $cancel=GETPOST('cancel', 'alpha');
 $langs->loadLangs(array("companies","products","admin","users","other"));
 
 // Security check
-if (! $user->admin) accessforbidden();
+if (! $user->admin) {
+    accessforbidden();
+}
 
 $dirstandard = array();
 $dirsmartphone = array();
 $dirmenus=array_merge(array("/core/menus/"), (array) $conf->modules_parts['menus']);
-foreach($dirmenus as $dirmenu)
-{
+foreach ($dirmenus as $dirmenu) {
     $dirstandard[]=$dirmenu.'standard';
     $dirsmartphone[]=$dirmenu.'smartphone';
 }
@@ -60,61 +61,57 @@ error_reporting($err);
  * Actions
  */
 
-if ($action == 'update' && ! $cancel)
-{
-	$_SESSION["mainmenu"]="home";   // Le gestionnaire de menu a pu changer
+if ($action == 'update' && ! $cancel) {
+    $_SESSION["mainmenu"]="home";   // Le gestionnaire de menu a pu changer
 
-	dolibarr_set_const($db, "MAIN_MENU_STANDARD", GETPOST('MAIN_MENU_STANDARD', 'alpha'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_MENU_SMARTPHONE", GETPOST('MAIN_MENU_SMARTPHONE', 'alpha'), 'chaine', 0, '', $conf->entity);
+    dolibarr_set_const($db, "MAIN_MENU_STANDARD", GETPOST('MAIN_MENU_STANDARD', 'alpha'), 'chaine', 0, '', $conf->entity);
+    dolibarr_set_const($db, "MAIN_MENU_SMARTPHONE", GETPOST('MAIN_MENU_SMARTPHONE', 'alpha'), 'chaine', 0, '', $conf->entity);
 
-	dolibarr_set_const($db, "MAIN_MENUFRONT_STANDARD", GETPOST('MAIN_MENUFRONT_STANDARD', 'alpha'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_MENUFRONT_SMARTPHONE", GETPOST('MAIN_MENUFRONT_SMARTPHONE', 'alpha'), 'chaine', 0, '', $conf->entity);
+    dolibarr_set_const($db, "MAIN_MENUFRONT_STANDARD", GETPOST('MAIN_MENUFRONT_STANDARD', 'alpha'), 'chaine', 0, '', $conf->entity);
+    dolibarr_set_const($db, "MAIN_MENUFRONT_SMARTPHONE", GETPOST('MAIN_MENUFRONT_SMARTPHONE', 'alpha'), 'chaine', 0, '', $conf->entity);
 
-	// Define list of menu handlers to initialize
-	$listofmenuhandler=array();
-	$listofmenuhandler[preg_replace('/(_backoffice|_frontoffice|_menu)?\.php/i', '', GETPOST('MAIN_MENU_STANDARD', 'alpha'))]=1;
-	$listofmenuhandler[preg_replace('/(_backoffice|_frontoffice|_menu)?\.php/i', '', GETPOST('MAIN_MENUFRONT_STANDARD', 'alpha'))]=1;
-	if (GETPOST('MAIN_MENU_SMARTPHONE', 'alpha'))      $listofmenuhandler[preg_replace('/(_backoffice|_frontoffice|_menu)?\.php/i', '', GETPOST('MAIN_MENU_SMARTPHONE', 'alpha'))]=1;
-	if (GETPOST('MAIN_MENUFRONT_SMARTPHONE', 'alpha')) $listofmenuhandler[preg_replace('/(_backoffice|_frontoffice|_menu)?\.php/i', '', GETPOST('MAIN_MENUFRONT_SMARTPHONE', 'alpha'))]=1;
+    // Define list of menu handlers to initialize
+    $listofmenuhandler=array();
+    $listofmenuhandler[preg_replace('/(_backoffice|_frontoffice|_menu)?\.php/i', '', GETPOST('MAIN_MENU_STANDARD', 'alpha'))]=1;
+    $listofmenuhandler[preg_replace('/(_backoffice|_frontoffice|_menu)?\.php/i', '', GETPOST('MAIN_MENUFRONT_STANDARD', 'alpha'))]=1;
+    if (GETPOST('MAIN_MENU_SMARTPHONE', 'alpha')) {
+        $listofmenuhandler[preg_replace('/(_backoffice|_frontoffice|_menu)?\.php/i', '', GETPOST('MAIN_MENU_SMARTPHONE', 'alpha'))]=1;
+    }
+    if (GETPOST('MAIN_MENUFRONT_SMARTPHONE', 'alpha')) {
+        $listofmenuhandler[preg_replace('/(_backoffice|_frontoffice|_menu)?\.php/i', '', GETPOST('MAIN_MENUFRONT_SMARTPHONE', 'alpha'))]=1;
+    }
 
-	// Initialize menu handlers
-	foreach ($listofmenuhandler as $key => $val)
-	{
-		// Load sql init_menu_handler.sql file
-		$dirmenus=array_merge(array("/core/menus/"), (array) $conf->modules_parts['menus']);
-		foreach($dirmenus as $dirmenu)
-		{
-			$file='init_menu_'.$key.'.sql';
-		    $fullpath=dol_buildpath($dirmenu.$file);
-		    //print 'action='.$action.' Search menu into fullpath='.$fullpath.'<br>';exit;
+    // Initialize menu handlers
+    foreach ($listofmenuhandler as $key => $val) {
+        // Load sql init_menu_handler.sql file
+        $dirmenus=array_merge(array("/core/menus/"), (array) $conf->modules_parts['menus']);
+        foreach ($dirmenus as $dirmenu) {
+            $file='init_menu_'.$key.'.sql';
+            $fullpath=dol_buildpath($dirmenu.$file);
+            //print 'action='.$action.' Search menu into fullpath='.$fullpath.'<br>';exit;
 
-			if (file_exists($fullpath))
-			{
-				$db->begin();
+            if (file_exists($fullpath)) {
+                $db->begin();
 
-				$result=run_sql($fullpath, 1, '', 1, $key, 'none');
-				if ($result > 0)
-				{
-					$db->commit();
-				}
-				else
-				{
-					$error++;
-					setEventMessages($langs->trans("FailedToInitializeMenu").' '.$key, null, 'errors');
-					$db->rollback();
-				}
-			}
-		}
-	}
+                $result=run_sql($fullpath, 1, '', 1, $key, 'none');
+                if ($result > 0) {
+                    $db->commit();
+                } else {
+                    $error++;
+                    setEventMessages($langs->trans("FailedToInitializeMenu").' '.$key, null, 'errors');
+                    $db->rollback();
+                }
+            }
+        }
+    }
 
-	if (! $error)
-	{
-		$db->close();
+    if (! $error) {
+        $db->close();
 
-		// We make a header redirect because we need to change menu NOW.
-		header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
-	}
+        // We make a header redirect because we need to change menu NOW.
+        header("Location: ".$_SERVER["PHP_SELF"]);
+        exit;
+    }
 }
 
 
@@ -188,9 +185,8 @@ print '<td>';
 $formadmin->select_menu(empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?$conf->global->MAIN_MENU_SMARTPHONE:$conf->global->MAIN_MENU_SMARTPHONE_FORCED, 'MAIN_MENU_SMARTPHONE', array_merge($dirstandard, $dirsmartphone), empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?'':' disabled');
 
 if (! empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED) && preg_match('/smartphone/', $conf->global->MAIN_MENU_SMARTPHONE_FORCED)
-	|| (empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED) && ! empty($conf->global->MAIN_MENU_SMARTPHONE) && preg_match('/smartphone/', $conf->global->MAIN_MENU_SMARTPHONE)))
-{
-	print ' '.img_warning($langs->transnoentitiesnoconv("ThisForceAlsoTheme"));
+    || (empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED) && ! empty($conf->global->MAIN_MENU_SMARTPHONE) && preg_match('/smartphone/', $conf->global->MAIN_MENU_SMARTPHONE))) {
+    print ' '.img_warning($langs->transnoentitiesnoconv("ThisForceAlsoTheme"));
 }
 
 print '</td>';
@@ -198,9 +194,8 @@ print '<td>';
 $formadmin->select_menu(empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?$conf->global->MAIN_MENUFRONT_SMARTPHONE:$conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED, 'MAIN_MENUFRONT_SMARTPHONE', array_merge($dirstandard, $dirsmartphone), empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?'':' disabled');
 
 if (! empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED) && preg_match('/smartphone/', $conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)
-	|| (empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED) && ! empty($conf->global->MAIN_MENU_SMARTPHONE) && preg_match('/smartphone/', $conf->global->MAIN_MENUFRONT_SMARTPHONE)))
-{
-	print ' '.img_warning($langs->transnoentitiesnoconv("ThisForceAlsoTheme"));
+    || (empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED) && ! empty($conf->global->MAIN_MENU_SMARTPHONE) && preg_match('/smartphone/', $conf->global->MAIN_MENUFRONT_SMARTPHONE))) {
+    print ' '.img_warning($langs->transnoentitiesnoconv("ThisForceAlsoTheme"));
 }
 
 print '</td>';

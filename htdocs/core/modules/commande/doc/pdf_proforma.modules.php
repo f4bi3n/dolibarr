@@ -41,39 +41,39 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 class pdf_proforma extends pdf_eratosthene
 {
 
-	/**
-	 *	Constructor
-	 *
-	 *  @param		DoliDB		$db      Database handler
-	 */
-	public function __construct($db)
-	{
-		global $conf,$langs,$mysoc;
+    /**
+     *	Constructor
+     *
+     *  @param		DoliDB		$db      Database handler
+     */
+    public function __construct($db)
+    {
+        global $conf,$langs,$mysoc;
 
-		parent::__construct($db);
+        parent::__construct($db);
 
-		$this->name = "proforma";
-		$this->description = $langs->trans('PDFProformaDescription');
-	}
+        $this->name = "proforma";
+        $this->description = $langs->trans('PDFProformaDescription');
+    }
 
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
-	/**
-	 *  Show top header of page.
-	 *
-	 *  @param	TCPDF		$pdf     		Object PDF
-	 *  @param  Object		$object     	Object to show
-	 *  @param  int	    	$showaddress    0=no, 1=yes
-	 *  @param  Translate	$outputlangs	Object lang for output
-	 *  @param	string		$titlekey		Translation key to show as title of document
-	 *  @return	int                         Return topshift value
-	 */
-	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey = "InvoiceProForma")
-	{
-		// phpcs:enable
-		global $conf,$langs,$hookmanager;
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+    /**
+     *  Show top header of page.
+     *
+     *  @param	TCPDF		$pdf     		Object PDF
+     *  @param  Object		$object     	Object to show
+     *  @param  int	    	$showaddress    0=no, 1=yes
+     *  @param  Translate	$outputlangs	Object lang for output
+     *  @param	string		$titlekey		Translation key to show as title of document
+     *  @return	int                         Return topshift value
+     */
+    protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey = "InvoiceProForma")
+    {
+        // phpcs:enable
+        global $conf,$langs,$hookmanager;
 
-		return parent::_pagehead($pdf, $object, $showaddress, $outputlangs, $titlekey);
-	}
+        return parent::_pagehead($pdf, $object, $showaddress, $outputlangs, $titlekey);
+    }
 }

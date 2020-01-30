@@ -74,7 +74,7 @@ class modCollab extends DolibarrModules
 
         // Constants
         //-----------
-           $this->const = array();
+        $this->const = array();
 
         // New pages on tabs
         // -----------------
@@ -110,7 +110,7 @@ class modCollab extends DolibarrModules
         // Main menu entries
         $r=0;
         $this->menu[$r]=array(
-			'fk_menu'=>'0',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+            'fk_menu'=>'0',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
             'type'=>'top',			                // This is a Left menu entry
             'titre'=>'Collab',
             'mainmenu'=>'collab',

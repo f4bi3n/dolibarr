@@ -61,64 +61,57 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
  * Statistics
  */
 
-if ($conf->use_javascript_ajax)
-{
+if ($conf->use_javascript_ajax) {
     $sql= "SELECT COUNT(t.rowid) as nb, status";
     $sql.=" FROM ".MAIN_DB_PREFIX."mrp_mo as t";
-	$sql.=" GROUP BY t.status";
+    $sql.=" GROUP BY t.status";
     $resql = $db->query($sql);
 
-    if ($resql)
-    {
-    	$num = $db->num_rows($resql);
-    	$i = 0;
+    if ($resql) {
+        $num = $db->num_rows($resql);
+        $i = 0;
 
-    	$totalnb=0;
-    	$dataseries=array();
-    	// -1=Canceled, 0=Draft, 1=Validated, (2=Accepted/On process not managed for customer orders), 3=Closed (Sent/Received, billed or not)
-    	while ($i < $num)
-    	{
-    		$obj = $db->fetch_object($resql);
-    		if ($obj)
-    		{
-    			//if ($row[1]!=-1 && ($row[1]!=3 || $row[2]!=1))
-    			{
-    				$dataseries[$obj->status]=array(0=>$staticmo->LibStatut($obj->status), $obj->nb);
-    				$totalnb+=$obj->nb;
-    			}
-    		}
-    		$i++;
-    	}
-    	$db->free($resql);
+        $totalnb=0;
+        $dataseries=array();
+        // -1=Canceled, 0=Draft, 1=Validated, (2=Accepted/On process not managed for customer orders), 3=Closed (Sent/Received, billed or not)
+        while ($i < $num) {
+            $obj = $db->fetch_object($resql);
+            if ($obj) {
+                //if ($row[1]!=-1 && ($row[1]!=3 || $row[2]!=1))
+                {
+                    $dataseries[$obj->status]=array(0=>$staticmo->LibStatut($obj->status), $obj->nb);
+                    $totalnb+=$obj->nb;
+                }
+            }
+            $i++;
+        }
+        $db->free($resql);
 
-    	print '<div class="div-table-responsive-no-min">';
-    	print '<table class="noborder nohover centpercent">';
-    	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("MO").'</th></tr>'."\n";
-        if ($conf->use_javascript_ajax)
-    	{
-    		print '<tr><td class="center" colspan="2">';
+        print '<div class="div-table-responsive-no-min">';
+        print '<table class="noborder nohover centpercent">';
+        print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("MO").'</th></tr>'."\n";
+        if ($conf->use_javascript_ajax) {
+            print '<tr><td class="center" colspan="2">';
 
-    		include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-    		$dolgraph = new DolGraph();
-    		$dolgraph->SetData($dataseries);
-    		$dolgraph->setShowLegend(1);
-    		$dolgraph->setShowPercent(1);
-    		$dolgraph->SetType(array('pie'));
-    		$dolgraph->setWidth('100%');
-    		$dolgraph->SetHeight(180);
-    		$dolgraph->draw('idgraphstatus');
-    		print $dolgraph->show($totalnb?0:1);
+            include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+            $dolgraph = new DolGraph();
+            $dolgraph->SetData($dataseries);
+            $dolgraph->setShowLegend(1);
+            $dolgraph->setShowPercent(1);
+            $dolgraph->SetType(array('pie'));
+            $dolgraph->setWidth('100%');
+            $dolgraph->SetHeight(180);
+            $dolgraph->draw('idgraphstatus');
+            print $dolgraph->show($totalnb?0:1);
 
-    		print '</td></tr>';
-    	}
-    	print "</table>";
-    	print "</div>";
+            print '</td></tr>';
+        }
+        print "</table>";
+        print "</div>";
 
-    	print "<br>";
-    }
-    else
-    {
-    	dol_print_error($db);
+        print "<br>";
+    } else {
+        dol_print_error($db);
     }
 }
 
@@ -140,44 +133,39 @@ $sql.= $db->order("a.tms", "DESC");
 $sql.= $db->plimit($max, 0);
 
 $resql=$db->query($sql);
-if ($resql)
-{
-	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre">';
-	print '<th colspan="4">'.$langs->trans("LatestBOMModified", $max).'</th></tr>';
+if ($resql) {
+    print '<div class="div-table-responsive-no-min">';
+    print '<table class="noborder centpercent">';
+    print '<tr class="liste_titre">';
+    print '<th colspan="4">'.$langs->trans("LatestBOMModified", $max).'</th></tr>';
 
-	$num = $db->num_rows($resql);
-	if ($num)
-	{
-		$i = 0;
-		while ($i < $num)
-		{
-			$obj = $db->fetch_object($resql);
+    $num = $db->num_rows($resql);
+    if ($num) {
+        $i = 0;
+        while ($i < $num) {
+            $obj = $db->fetch_object($resql);
 
-			$staticbom->id=$obj->rowid;
-			$staticbom->ref=$obj->ref;
-			$staticbom->date_modification=$obj->datem;
-			$staticbom->status=$obj->status;
+            $staticbom->id=$obj->rowid;
+            $staticbom->ref=$obj->ref;
+            $staticbom->date_modification=$obj->datem;
+            $staticbom->status=$obj->status;
 
-			print '<tr class="oddeven">';
-			print '<td>'.$staticbom->getNomUrl(1, 32).'</td>';
-			print '<td>'.dol_print_date($db->jdate($obj->datem), 'dayhour').'</td>';
-			print '<td class="right">'.$staticbom->getLibStatut(3).'</td>';
-			print '</tr>';
-			$i++;
-		}
-	} else {
-		print '<tr class="oddeven">';
-		print '<td><span class="opacitymedium">' . $langs->trans("None") . '</span></td>';
-		print '</tr>';
-	}
-	print "</table></div>";
-	print "<br>";
-}
-else
-{
-	dol_print_error($db);
+            print '<tr class="oddeven">';
+            print '<td>'.$staticbom->getNomUrl(1, 32).'</td>';
+            print '<td>'.dol_print_date($db->jdate($obj->datem), 'dayhour').'</td>';
+            print '<td class="right">'.$staticbom->getLibStatut(3).'</td>';
+            print '</tr>';
+            $i++;
+        }
+    } else {
+        print '<tr class="oddeven">';
+        print '<td><span class="opacitymedium">' . $langs->trans("None") . '</span></td>';
+        print '</tr>';
+    }
+    print "</table></div>";
+    print "<br>";
+} else {
+    dol_print_error($db);
 }
 
 /*
@@ -193,19 +181,16 @@ $sql.= $db->order("a.tms", "DESC");
 $sql.= $db->plimit($max, 0);
 
 $resql=$db->query($sql);
-if ($resql)
-{
+if ($resql) {
     print '<div class="div-table-responsive-no-min">';
     print '<table class="noborder centpercent">';
     print '<tr class="liste_titre">';
     print '<th colspan="4">'.$langs->trans("LatestMOModified", $max).'</th></tr>';
 
     $num = $db->num_rows($resql);
-    if ($num)
-    {
+    if ($num) {
         $i = 0;
-        while ($i < $num)
-        {
+        while ($i < $num) {
             $obj = $db->fetch_object($resql);
 
             $staticmo->id=$obj->rowid;
@@ -227,9 +212,7 @@ if ($resql)
     }
     print "</table></div>";
     print "<br>";
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 

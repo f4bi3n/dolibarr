@@ -2,10 +2,10 @@
 
 namespace Sabre\DAV;
 
-class SimpleFileTest extends \PHPUnit_Framework_TestCase {
-
-    function testAll() {
-
+class SimpleFileTest extends \PHPUnit_Framework_TestCase
+{
+    public function testAll()
+    {
         $file = new SimpleFile('filename.txt', 'contents', 'text/plain');
 
         $this->assertEquals('filename.txt', $file->getName());
@@ -13,7 +13,5 @@ class SimpleFileTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(8, $file->getSize());
         $this->assertEquals('"' . sha1('contents') . '"', $file->getETag());
         $this->assertEquals('text/plain', $file->getContentType());
-
     }
-
 }

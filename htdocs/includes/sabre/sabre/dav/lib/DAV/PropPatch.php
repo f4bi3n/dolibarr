@@ -17,7 +17,8 @@ use UnexpectedValueException;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class PropPatch {
+class PropPatch
+{
 
     /**
      * Properties that are being updated.
@@ -56,10 +57,9 @@ class PropPatch {
      *
      * @param array $mutations A list of updates
      */
-    function __construct(array $mutations) {
-
+    public function __construct(array $mutations)
+    {
         $this->mutations = $mutations;
-
     }
 
     /**
@@ -84,18 +84,15 @@ class PropPatch {
      * @param callable $callback
      * @return void
      */
-    function handle($properties, callable $callback) {
-
+    public function handle($properties, callable $callback)
+    {
         $usedProperties = [];
         foreach ((array)$properties as $propertyName) {
-
             if (array_key_exists($propertyName, $this->mutations) && !isset($this->result[$propertyName])) {
-
                 $usedProperties[] = $propertyName;
                 // HTTP Accepted
                 $this->result[$propertyName] = 202;
             }
-
         }
 
         // Only registering if there's any unhandled properties.
@@ -109,7 +106,6 @@ class PropPatch {
             is_string($properties) ? $properties : $usedProperties,
             $callback
         ];
-
     }
 
     /**
@@ -120,8 +116,8 @@ class PropPatch {
      * @param callable $callback
      * @return void
      */
-    function handleRemaining(callable $callback) {
-
+    public function handleRemaining(callable $callback)
+    {
         $properties = $this->getRemainingMutations();
         if (!$properties) {
             // Nothing to do, don't register callback
@@ -137,7 +133,6 @@ class PropPatch {
                 $callback
             ];
         }
-
     }
 
     /**
@@ -147,8 +142,8 @@ class PropPatch {
      * @param int $resultCode
      * @return void
      */
-    function setResultCode($properties, $resultCode) {
-
+    public function setResultCode($properties, $resultCode)
+    {
         foreach ((array)$properties as $propertyName) {
             $this->result[$propertyName] = $resultCode;
         }
@@ -156,7 +151,6 @@ class PropPatch {
         if ($resultCode >= 400) {
             $this->failed = true;
         }
-
     }
 
     /**
@@ -165,13 +159,12 @@ class PropPatch {
      * @param int $resultCode
      * @return void
      */
-    function setRemainingResultCode($resultCode) {
-
+    public function setRemainingResultCode($resultCode)
+    {
         $this->setResultCode(
             $this->getRemainingMutations(),
             $resultCode
         );
-
     }
 
     /**
@@ -181,8 +174,8 @@ class PropPatch {
      *
      * @return string[]
      */
-    function getRemainingMutations() {
-
+    public function getRemainingMutations()
+    {
         $remaining = [];
         foreach ($this->mutations as $propertyName => $propValue) {
             if (!isset($this->result[$propertyName])) {
@@ -191,7 +184,6 @@ class PropPatch {
         }
 
         return $remaining;
-
     }
 
     /**
@@ -201,8 +193,8 @@ class PropPatch {
      *
      * @return array
      */
-    function getRemainingValues() {
-
+    public function getRemainingValues()
+    {
         $remaining = [];
         foreach ($this->mutations as $propertyName => $propValue) {
             if (!isset($this->result[$propertyName])) {
@@ -211,7 +203,6 @@ class PropPatch {
         }
 
         return $remaining;
-
     }
 
     /**
@@ -222,20 +213,18 @@ class PropPatch {
      *
      * @return bool
      */
-    function commit() {
+    public function commit()
+    {
 
         // First we validate if every property has a handler
         foreach ($this->mutations as $propertyName => $value) {
-
             if (!isset($this->result[$propertyName])) {
                 $this->failed = true;
                 $this->result[$propertyName] = 403;
             }
-
         }
 
         foreach ($this->propertyUpdateCallbacks as $callbackInfo) {
-
             if ($this->failed) {
                 break;
             }
@@ -244,7 +233,6 @@ class PropPatch {
             } else {
                 $this->doCallbackMultiProp($callbackInfo[0], $callbackInfo[1]);
             }
-
         }
 
         /**
@@ -252,18 +240,15 @@ class PropPatch {
          * update all other properties accordingly.
          */
         if ($this->failed) {
-
             foreach ($this->result as $propertyName => $status) {
                 if ($status === 202) {
                     // Failed dependency
                     $this->result[$propertyName] = 424;
                 }
             }
-
         }
 
         return !$this->failed;
-
     }
 
     /**
@@ -273,8 +258,8 @@ class PropPatch {
      * @param callable $callback
      * @return void
      */
-    private function doCallBackSingleProp($propertyName, callable $callback) {
-
+    private function doCallBackSingleProp($propertyName, callable $callback)
+    {
         $result = $callback($this->mutations[$propertyName]);
         if (is_bool($result)) {
             if ($result) {
@@ -297,7 +282,6 @@ class PropPatch {
         if ($result >= 400) {
             $this->failed = true;
         }
-
     }
 
     /**
@@ -307,8 +291,8 @@ class PropPatch {
      * @param callable $callback
      * @return void
      */
-    private function doCallBackMultiProp(array $propertyList, callable $callback) {
-
+    private function doCallBackMultiProp(array $propertyList, callable $callback)
+    {
         $argument = [];
         foreach ($propertyList as $propertyName) {
             $argument[$propertyName] = $this->mutations[$propertyName];
@@ -327,7 +311,6 @@ class PropPatch {
                     $this->failed = true;
                 }
                 $this->result[$propertyName] = $resultCode;
-
             }
         } elseif ($result === true) {
 
@@ -335,7 +318,6 @@ class PropPatch {
             foreach ($argument as $propertyName => $propertyValue) {
                 $this->result[$propertyName] = is_null($propertyValue) ? 204 : 200;
             }
-
         } elseif ($result === false) {
             // Fail :(
             $this->failed = true;
@@ -345,7 +327,6 @@ class PropPatch {
         } else {
             throw new UnexpectedValueException('A callback sent to handle() did not return an array or a bool');
         }
-
     }
 
     /**
@@ -353,10 +334,9 @@ class PropPatch {
      *
      * @return array
      */
-    function getResult() {
-
+    public function getResult()
+    {
         return $this->result;
-
     }
 
     /**
@@ -364,10 +344,8 @@ class PropPatch {
      *
      * @return array
      */
-    function getMutations() {
-
+    public function getMutations()
+    {
         return $this->mutations;
-
     }
-
 }

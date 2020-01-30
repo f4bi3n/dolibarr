@@ -20,8 +20,8 @@ use Sabre\HTTP\ResponseInterface;
  * @author Jean-Tiare LE BIGOT (http://www.jtlebi.fr/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Plugin extends DAV\ServerPlugin {
-
+class Plugin extends DAV\ServerPlugin
+{
     const RANGE_APPEND = 1;
     const RANGE_START = 2;
     const RANGE_END = 3;
@@ -41,11 +41,10 @@ class Plugin extends DAV\ServerPlugin {
      * @param DAV\Server $server
      * @return void
      */
-    function initialize(DAV\Server $server) {
-
+    public function initialize(DAV\Server $server)
+    {
         $this->server = $server;
         $server->on('method:PATCH', [$this, 'httpPatch']);
-
     }
 
     /**
@@ -56,10 +55,9 @@ class Plugin extends DAV\ServerPlugin {
      *
      * @return string
      */
-    function getPluginName() {
-
+    public function getPluginName()
+    {
         return 'partialupdate';
-
     }
 
     /**
@@ -76,8 +74,8 @@ class Plugin extends DAV\ServerPlugin {
      * @param string $uri
      * @return array
      */
-    function getHTTPMethods($uri) {
-
+    public function getHTTPMethods($uri)
+    {
         $tree = $this->server->tree;
 
         if ($tree->nodeExists($uri)) {
@@ -87,7 +85,6 @@ class Plugin extends DAV\ServerPlugin {
             }
         }
         return [];
-
     }
 
     /**
@@ -95,10 +92,9 @@ class Plugin extends DAV\ServerPlugin {
      *
      * @return array
      */
-    function getFeatures() {
-
+    public function getFeatures()
+    {
         return ['sabredav-partialupdate'];
-
     }
 
     /**
@@ -112,8 +108,8 @@ class Plugin extends DAV\ServerPlugin {
      * @param ResponseInterface $response
      * @return void
      */
-    function httpPatch(RequestInterface $request, ResponseInterface $response) {
-
+    public function httpPatch(RequestInterface $request, ResponseInterface $response)
+    {
         $path = $request->getPath();
 
         // Get the node. Will throw a 404 if not found
@@ -137,10 +133,12 @@ class Plugin extends DAV\ServerPlugin {
         }
 
         $len = $this->server->httpRequest->getHeader('Content-Length');
-        if (!$len) throw new DAV\Exception\LengthRequired('A Content-Length header is required');
+        if (!$len) {
+            throw new DAV\Exception\LengthRequired('A Content-Length header is required');
+        }
 
         switch ($range[0]) {
-            case self::RANGE_START :
+            case self::RANGE_START:
                 // Calculate the end-range if it doesn't exist.
                 if (!$range[2]) {
                     $range[2] = $range[1] + $len - 1;
@@ -155,8 +153,9 @@ class Plugin extends DAV\ServerPlugin {
                 break;
         }
 
-        if (!$this->server->emit('beforeWriteContent', [$path, $node, null]))
+        if (!$this->server->emit('beforeWriteContent', [$path, $node, null])) {
             return;
+        }
 
         $body = $this->server->httpRequest->getBody();
 
@@ -166,12 +165,13 @@ class Plugin extends DAV\ServerPlugin {
         $this->server->emit('afterWriteContent', [$path, $node]);
 
         $response->setHeader('Content-Length', '0');
-        if ($etag) $response->setHeader('ETag', $etag);
+        if ($etag) {
+            $response->setHeader('ETag', $etag);
+        }
         $response->setStatus(204);
 
         // Breaks the event chain
         return false;
-
     }
 
     /**
@@ -194,14 +194,18 @@ class Plugin extends DAV\ServerPlugin {
      * @param RequestInterface $request
      * @return array|null
      */
-    function getHTTPUpdateRange(RequestInterface $request) {
-
+    public function getHTTPUpdateRange(RequestInterface $request)
+    {
         $range = $request->getHeader('X-Update-Range');
-        if (is_null($range)) return null;
+        if (is_null($range)) {
+            return null;
+        }
 
         // Matching "Range: bytes=1234-5678: both numbers are optional
 
-        if (!preg_match('/^(append)|(?:bytes=([0-9]+)-([0-9]*))|(?:bytes=(-[0-9]+))$/i', $range, $matches)) return null;
+        if (!preg_match('/^(append)|(?:bytes=([0-9]+)-([0-9]*))|(?:bytes=(-[0-9]+))$/i', $range, $matches)) {
+            return null;
+        }
 
         if ($matches[1] === 'append') {
             return [self::RANGE_APPEND];
@@ -210,6 +214,5 @@ class Plugin extends DAV\ServerPlugin {
         } else {
             return [self::RANGE_END, $matches[4]];
         }
-
     }
 }

@@ -65,8 +65,7 @@ class FichinterStats extends Stats
         $this->cachefilesuffix = $mode;
 
         $this->where.= " c.entity = ".$conf->entity;
-        if ($mode == 'customer')
-        {
+        if ($mode == 'customer') {
             $object=new Fichinter($this->db);
             $this->from = MAIN_DB_PREFIX.$object->table_element." as c";
             $this->from_line = MAIN_DB_PREFIX.$object->table_element_line." as tl";
@@ -74,12 +73,15 @@ class FichinterStats extends Stats
             $this->field_line='0';
             //$this->where.= " AND c.fk_statut > 0";    // Not draft and not cancelled
         }
-        if (!$user->rights->societe->client->voir && !$this->socid) $this->where .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
-        if ($this->socid)
-        {
+        if (!$user->rights->societe->client->voir && !$this->socid) {
+            $this->where .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+        }
+        if ($this->socid) {
             $this->where.=" AND c.fk_soc = ".$this->socid;
         }
-        if ($this->userid > 0) $this->where.=' AND c.fk_user_author = '.$this->userid;
+        if ($this->userid > 0) {
+            $this->where.=' AND c.fk_user_author = '.$this->userid;
+        }
     }
 
     /**
@@ -95,7 +97,9 @@ class FichinterStats extends Stats
 
         $sql = "SELECT date_format(c.date_valid,'%m') as dm, COUNT(*) as nb";
         $sql.= " FROM ".$this->from;
-        if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        if (!$user->rights->societe->client->voir && !$this->socid) {
+            $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        }
         $sql.= " WHERE c.date_valid BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
         $sql.= " AND ".$this->where;
         $sql.= " GROUP BY dm";
@@ -117,7 +121,9 @@ class FichinterStats extends Stats
 
         $sql = "SELECT date_format(c.date_valid,'%Y') as dm, COUNT(*) as nb, 0";
         $sql.= " FROM ".$this->from;
-        if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        if (!$user->rights->societe->client->voir && !$this->socid) {
+            $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        }
         $sql.= " WHERE ".$this->where;
         $sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm', 'DESC');
@@ -138,7 +144,9 @@ class FichinterStats extends Stats
 
         $sql = "SELECT date_format(c.date_valid,'%m') as dm, 0";
         $sql.= " FROM ".$this->from;
-        if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        if (!$user->rights->societe->client->voir && !$this->socid) {
+            $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        }
         $sql.= " WHERE c.date_valid BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
         $sql.= " AND ".$this->where;
         $sql.= " GROUP BY dm";
@@ -160,7 +168,9 @@ class FichinterStats extends Stats
 
         $sql = "SELECT date_format(c.date_valid,'%m') as dm, 0";
         $sql.= " FROM ".$this->from;
-        if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        if (!$user->rights->societe->client->voir && !$this->socid) {
+            $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        }
         $sql.= " WHERE c.date_valid BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
         $sql.= " AND ".$this->where;
         $sql.= " GROUP BY dm";
@@ -180,7 +190,9 @@ class FichinterStats extends Stats
 
         $sql = "SELECT date_format(c.date_valid,'%Y') as year, COUNT(*) as nb, 0 as total, 0 as avg";
         $sql.= " FROM ".$this->from;
-        if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        if (!$user->rights->societe->client->voir && !$this->socid) {
+            $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        }
         $sql.= " WHERE ".$this->where;
         $sql.= " GROUP BY year";
         $sql.= $this->db->order('year', 'DESC');

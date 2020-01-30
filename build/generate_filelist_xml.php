@@ -22,7 +22,9 @@
  * 		\brief      This script create a xml checksum file
  */
 
-if (! defined('NOREQUIREDB')) define('NOREQUIREDB', '1');	// Do not create database handler $db
+if (! defined('NOREQUIREDB')) {
+    define('NOREQUIREDB', '1');
+}	// Do not create database handler $db
 
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
@@ -54,7 +56,9 @@ parse_str($argv[1]);
 
 $i=0;
 while ($i < $argc) {
-    if (! empty($argv[$i])) parse_str($argv[$i]);
+    if (! empty($argv[$i])) {
+        parse_str($argv[$i]);
+    }
     if (preg_match('/includeconstant=/', $argv[$i])) {
         $tmp=explode(':', $includeconstant, 3);
         if (count($tmp) != 3) {
@@ -78,7 +82,9 @@ $savrelease = $release;
 $tmpver=explode('-', $release, 2);
 if ($tmpver[0] == 'auto' || $tmpver[0] == 'autostable') {
     $release=DOL_VERSION;
-    if ($tmpver[1] && $tmpver[0] == 'auto') $release.='-'.$tmpver[1];
+    if ($tmpver[1] && $tmpver[0] == 'auto') {
+        $release.='-'.$tmpver[1];
+    }
 }
 
 if (empty($includecustom)) {
@@ -110,7 +116,7 @@ print "Working on files into          : ".DOL_DOCUMENT_ROOT."\n";
 print "Include custom in signature    : ".$includecustom."\n";
 print "Include constants in signature : ";
 foreach ($includeconstants as $countrycode => $tmp) {
-    foreach($tmp as $constname => $constvalue) {
+    foreach ($tmp as $constname => $constvalue) {
         print $constname.'='.$constvalue." ";
     }
 }
@@ -130,7 +136,7 @@ fputs($fp, '<checksum_list version="'.$release.'" date="'.dol_print_date(dol_now
 
 foreach ($includeconstants as $countrycode => $tmp) {
     fputs($fp, '<dolibarr_constants country="'.$countrycode.'">'."\n");
-    foreach($tmp as $constname => $constvalue) {
+    foreach ($tmp as $constname => $constvalue) {
         $valueforchecksum=(empty($constvalue)?'0':$constvalue);
         $checksumconcat[]=$valueforchecksum;
         fputs($fp, '    <constant name="'.$constname.'">'.$valueforchecksum.'</constant>'."\n");
@@ -155,8 +161,9 @@ foreach ($files as $filetmp) {
     //$newdir = str_replace(dirname(__FILE__).'/../htdocs', '', dirname($file));
     $newdir = str_replace(DOL_DOCUMENT_ROOT, '', dirname($file));
     if ($newdir!=$dir) {
-        if ($needtoclose)
+        if ($needtoclose) {
             fputs($fp, '  </dir>'."\n");
+        }
         fputs($fp, '  <dir name="'.$newdir.'" >'."\n");
         $dir = $newdir;
         $needtoclose=1;
@@ -198,8 +205,9 @@ foreach ($files as $filetmp) {
     $newdir = str_replace(DOL_DOCUMENT_ROOT, '', dirname($file));
     $newdir = str_replace(dirname(__FILE__).'/../scripts', '', dirname($file));
     if ($newdir!=$dir) {
-        if ($needtoclose)
+        if ($needtoclose) {
             fputs($fp, '  </dir>'."\n");
+        }
         fputs($fp, '  <dir name="'.$newdir.'" >'."\n");
         $dir = $newdir;
         $needtoclose=1;

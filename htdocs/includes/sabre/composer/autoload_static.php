@@ -6,7 +6,7 @@ namespace Composer\Autoload;
 
 class ComposerStaticInit60b9ac98a8448ede6c445b0fd4bd31e0
 {
-    public static $files = array (
+    public static $files = array(
         '383eaff206634a77a1be54e64e6459c7' => __DIR__ . '/..' . '/sabre/uri/lib/functions.php',
         '3569eecfeed3bcf0bad3c998a494ecb8' => __DIR__ . '/..' . '/sabre/xml/lib/Deserializer/functions.php',
         '93aa591bc4ca510c520999e34229ee79' => __DIR__ . '/..' . '/sabre/xml/lib/Serializer/functions.php',
@@ -16,9 +16,9 @@ class ComposerStaticInit60b9ac98a8448ede6c445b0fd4bd31e0
         'ebdb698ed4152ae445614b69b5e4bb6a' => __DIR__ . '/..' . '/sabre/http/lib/functions.php',
     );
 
-    public static $prefixLengthsPsr4 = array (
-        'S' => 
-        array (
+    public static $prefixLengthsPsr4 = array(
+        'S' =>
+        array(
             'Sabre\\Xml\\' => 10,
             'Sabre\\VObject\\' => 14,
             'Sabre\\Uri\\' => 10,
@@ -29,51 +29,51 @@ class ComposerStaticInit60b9ac98a8448ede6c445b0fd4bd31e0
             'Sabre\\CardDAV\\' => 14,
             'Sabre\\CalDAV\\' => 13,
         ),
-        'P' => 
-        array (
+        'P' =>
+        array(
             'Psr\\Log\\' => 8,
         ),
     );
 
-    public static $prefixDirsPsr4 = array (
-        'Sabre\\Xml\\' => 
-        array (
+    public static $prefixDirsPsr4 = array(
+        'Sabre\\Xml\\' =>
+        array(
             0 => __DIR__ . '/..' . '/sabre/xml/lib',
         ),
-        'Sabre\\VObject\\' => 
-        array (
+        'Sabre\\VObject\\' =>
+        array(
             0 => __DIR__ . '/..' . '/sabre/vobject/lib',
         ),
-        'Sabre\\Uri\\' => 
-        array (
+        'Sabre\\Uri\\' =>
+        array(
             0 => __DIR__ . '/..' . '/sabre/uri/lib',
         ),
-        'Sabre\\HTTP\\' => 
-        array (
+        'Sabre\\HTTP\\' =>
+        array(
             0 => __DIR__ . '/..' . '/sabre/http/lib',
         ),
-        'Sabre\\Event\\' => 
-        array (
+        'Sabre\\Event\\' =>
+        array(
             0 => __DIR__ . '/..' . '/sabre/event/lib',
         ),
-        'Sabre\\DAV\\' => 
-        array (
+        'Sabre\\DAV\\' =>
+        array(
             0 => __DIR__ . '/..' . '/sabre/dav/lib/DAV',
         ),
-        'Sabre\\DAVACL\\' => 
-        array (
+        'Sabre\\DAVACL\\' =>
+        array(
             0 => __DIR__ . '/..' . '/sabre/dav/lib/DAVACL',
         ),
-        'Sabre\\CardDAV\\' => 
-        array (
+        'Sabre\\CardDAV\\' =>
+        array(
             0 => __DIR__ . '/..' . '/sabre/dav/lib/CardDAV',
         ),
-        'Sabre\\CalDAV\\' => 
-        array (
+        'Sabre\\CalDAV\\' =>
+        array(
             0 => __DIR__ . '/..' . '/sabre/dav/lib/CalDAV',
         ),
-        'Psr\\Log\\' => 
-        array (
+        'Psr\\Log\\' =>
+        array(
             0 => __DIR__ . '/..' . '/psr/log/Psr/Log',
         ),
     );
@@ -83,7 +83,6 @@ class ComposerStaticInit60b9ac98a8448ede6c445b0fd4bd31e0
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInit60b9ac98a8448ede6c445b0fd4bd31e0::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInit60b9ac98a8448ede6c445b0fd4bd31e0::$prefixDirsPsr4;
-
         }, null, ClassLoader::class);
     }
 }

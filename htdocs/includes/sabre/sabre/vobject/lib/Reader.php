@@ -12,7 +12,8 @@ namespace Sabre\VObject;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Reader {
+class Reader
+{
 
     /**
      * If this option is passed to the reader, it will be less strict about the
@@ -39,14 +40,13 @@ class Reader {
      * @param string $charset
      * @return Document
      */
-    static function read($data, $options = 0, $charset = 'UTF-8') {
-
+    public static function read($data, $options = 0, $charset = 'UTF-8')
+    {
         $parser = new Parser\MimeDir();
         $parser->setCharset($charset);
         $result = $parser->parse($data, $options);
 
         return $result;
-
     }
 
     /**
@@ -64,13 +64,12 @@ class Reader {
      *
      * @return Document
      */
-    static function readJson($data, $options = 0) {
-
+    public static function readJson($data, $options = 0)
+    {
         $parser = new Parser\Json();
         $result = $parser->parse($data, $options);
 
         return $result;
-
     }
 
     /**
@@ -86,13 +85,11 @@ class Reader {
      *
      * @return Document
      */
-    static function readXML($data, $options = 0) {
-
+    public static function readXML($data, $options = 0)
+    {
         $parser = new Parser\XML();
         $result = $parser->parse($data, $options);
 
         return $result;
-
     }
-
 }

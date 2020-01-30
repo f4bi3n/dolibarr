@@ -5,10 +5,10 @@ namespace Sabre\Xml\Element;
 use Sabre\Xml\Reader;
 use Sabre\Xml\Writer;
 
-class UriTest extends \PHPUnit_Framework_TestCase {
-
-    function testDeserialize() {
-
+class UriTest extends \PHPUnit_Framework_TestCase
+{
+    public function testDeserialize()
+    {
         $input = <<<BLA
 <?xml version="1.0"?>
 <root xmlns="http://sabredav.org/ns">
@@ -39,11 +39,10 @@ BLA;
             ],
             $output
         );
-
     }
 
-    function testSerialize() {
-
+    public function testSerialize()
+    {
         $writer = new Writer();
         $writer->namespaceMap = [
             'http://sabredav.org/ns' => null
@@ -69,8 +68,5 @@ BLA;
 XML;
 
         $this->assertEquals($expected, $output);
-
-
     }
-
 }

@@ -147,7 +147,7 @@ class Swift_Transport_SendmailTransport extends Swift_Transport_AbstractSmtpTran
             $this->throwException(new Swift_TransportException(
                 'Unsupported sendmail command flags ['.$command.']. '.
                 'Must be one of "-bs" or "-t" but can include additional flags.'
-                ));
+            ));
         }
 
         return $count;

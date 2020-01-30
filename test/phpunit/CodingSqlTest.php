@@ -30,19 +30,38 @@ require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security2.lib.php';
 
-if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER', '1');
-if (! defined('NOREQUIREDB'))    define('NOREQUIREDB', '1');
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
-if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN', '1');
-if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1'); // If there is no menu to show
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-if (! defined("NOLOGIN"))        define("NOLOGIN", '1');       // If this page is public (can be called outside logged session)
+if (! defined('NOREQUIREUSER')) {
+    define('NOREQUIREUSER', '1');
+}
+if (! defined('NOREQUIREDB')) {
+    define('NOREQUIREDB', '1');
+}
+if (! defined('NOREQUIRESOC')) {
+    define('NOREQUIRESOC', '1');
+}
+if (! defined('NOREQUIRETRAN')) {
+    define('NOREQUIRETRAN', '1');
+}
+if (! defined('NOCSRFCHECK')) {
+    define('NOCSRFCHECK', '1');
+}
+if (! defined('NOTOKENRENEWAL')) {
+    define('NOTOKENRENEWAL', '1');
+}
+if (! defined('NOREQUIREMENU')) {
+    define('NOREQUIREMENU', '1');
+} // If there is no menu to show
+if (! defined('NOREQUIREHTML')) {
+    define('NOREQUIREHTML', '1');
+} // If we don't need to load the html.form.class.php
+if (! defined('NOREQUIREAJAX')) {
+    define('NOREQUIREAJAX', '1');
+}
+if (! defined("NOLOGIN")) {
+    define("NOLOGIN", '1');
+}       // If this page is public (can be called outside logged session)
 
-if (empty($user->id))
-{
+if (empty($user->id)) {
     print "Load permissions for admin user nb 1\n";
     $user->fetch(1);
     $user->getrights();
@@ -72,9 +91,9 @@ class CodingSqlTest extends PHPUnit\Framework\TestCase
      */
     public function __construct()
     {
-    	parent::__construct();
+        parent::__construct();
 
-    	//$this->sharedFixture
+        //$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -145,15 +164,14 @@ class CodingSqlTest extends PHPUnit\Framework\TestCase
 
         $listofsqldir = array(DOL_DOCUMENT_ROOT.'/install/mysql/data', DOL_DOCUMENT_ROOT.'/install/mysql/tables', DOL_DOCUMENT_ROOT.'/install/mysql/migration');
 
-        foreach ($listofsqldir as $dir)
-        {
+        foreach ($listofsqldir as $dir) {
             print 'Process dir '.$dir."\n";
             $filesarray = scandir($dir);
 
-            foreach($filesarray as $key => $file)
-            {
-                if (! preg_match('/\.sql$/', $file))
+            foreach ($filesarray as $key => $file) {
+                if (! preg_match('/\.sql$/', $file)) {
                     continue;
+                }
 
                 print 'Check sql file '.$file."\n";
                 $filecontent=file_get_contents($dir.'/'.$file);
@@ -163,9 +181,8 @@ class CodingSqlTest extends PHPUnit\Framework\TestCase
                 $this->assertTrue($result===false, 'Found back quote into '.$file.'. Bad.');
 
                 $result=strpos($filecontent, '"');
-                if ($result)
-                {
-                	$result=(! strpos($filecontent, '["') && ! strpos($filecontent, '{"'));
+                if ($result) {
+                    $result=(! strpos($filecontent, '["') && ! strpos($filecontent, '{"'));
                 }
                 print __METHOD__." Result for checking we don't have double quote = ".$result."\n";
                 $this->assertTrue($result===false, 'Found double quote that is not [" neither {" (used for json content) into '.$file.'. Bad.');
@@ -190,22 +207,14 @@ class CodingSqlTest extends PHPUnit\Framework\TestCase
                 print __METHOD__." Result for checking we don't have 'integer(' = ".$result."\n";
                 $this->assertTrue($result===false, 'Found value in parenthesis after the integer. It must be integer not integer(x) into '.$file.'. Bad.');
 
-                if ($dir == DOL_DOCUMENT_ROOT.'/install/mysql/migration')
-                {
+                if ($dir == DOL_DOCUMENT_ROOT.'/install/mysql/migration') {
                     // Test for migration files only
-                }
-                elseif ($dir == DOL_DOCUMENT_ROOT.'/install/mysql/data')
-                {
+                } elseif ($dir == DOL_DOCUMENT_ROOT.'/install/mysql/data') {
                     // Test for data files only
-                }
-                else
-                {
-                    if (preg_match('/\.key\.sql$/', $file))
-                    {
+                } else {
+                    if (preg_match('/\.key\.sql$/', $file)) {
                         // Test for key files only
-                    }
-                    else
-                    {
+                    } else {
                         // Test for non key files only
                         $result=(strpos($filecontent, 'KEY ') && strpos($filecontent, 'PRIMARY KEY') == 0);
                         print __METHOD__." Result for checking we don't have ' KEY ' instead of a sql file to create index = ".$result."\n";
@@ -236,9 +245,10 @@ class CodingSqlTest extends PHPUnit\Framework\TestCase
         $db=$this->savdb;
 
         $filesarray = scandir(DOL_DOCUMENT_ROOT.'/../dev/initdemo');
-        foreach($filesarray as $key => $file) {
-            if (! preg_match('/\.sql$/', $file))
+        foreach ($filesarray as $key => $file) {
+            if (! preg_match('/\.sql$/', $file)) {
                 continue;
+            }
 
             print 'Check sql file '.$file."\n";
             $filecontent=file_get_contents(DOL_DOCUMENT_ROOT.'/../dev/initdemo/'.$file);

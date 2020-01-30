@@ -13,7 +13,8 @@ namespace Sabre\DAVACL\PrincipalBackend;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-abstract class AbstractBackend implements BackendInterface {
+abstract class AbstractBackend implements BackendInterface
+{
 
     /**
      * Finds a principal by its URI.
@@ -32,7 +33,8 @@ abstract class AbstractBackend implements BackendInterface {
      * @param string $principalPrefix
      * @return string
      */
-    function findByUri($uri, $principalPrefix) {
+    public function findByUri($uri, $principalPrefix)
+    {
 
         // Note that the default implementation here is a bit slow and could
         // likely be optimized.
@@ -47,7 +49,5 @@ abstract class AbstractBackend implements BackendInterface {
         if ($result) {
             return $result[0];
         }
-
     }
-
 }

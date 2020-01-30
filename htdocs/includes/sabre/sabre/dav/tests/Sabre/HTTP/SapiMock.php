@@ -11,9 +11,9 @@ namespace Sabre\HTTP;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class SapiMock extends Sapi {
-
-    static $sent = 0;
+class SapiMock extends Sapi
+{
+    public static $sent = 0;
 
     /**
      * Overriding this so nothing is ever echo'd.
@@ -21,10 +21,8 @@ class SapiMock extends Sapi {
      * @param ResponseInterface $response
      * @return void
      */
-    static function sendResponse(ResponseInterface $response) {
-
+    public static function sendResponse(ResponseInterface $response)
+    {
         self::$sent++;
-
     }
-
 }

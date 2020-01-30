@@ -35,9 +35,9 @@ class FormBank
     public $db;
 
     /**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
+     * @var string Error code (or message)
+     */
+    public $error='';
 
 
     /**
@@ -64,18 +64,18 @@ class FormBank
         print Form::selectarray($htmlname, $account->type_lib, $selected);
     }
 
-	/**
-	 * Returns the name of the Iban label. India uses 'IFSC' and the rest of the world 'IBAN' name.
-	 *
-	 * @param Account $account Account object
-	 * @return string
-	 */
-	public static function getIBANLabel(Account $account)
-	{
-		if ($account->getCountryCode() == 'IN') {
-			return 'IFSC';
-		}
+    /**
+     * Returns the name of the Iban label. India uses 'IFSC' and the rest of the world 'IBAN' name.
+     *
+     * @param Account $account Account object
+     * @return string
+     */
+    public static function getIBANLabel(Account $account)
+    {
+        if ($account->getCountryCode() == 'IN') {
+            return 'IFSC';
+        }
 
-		return 'IBANNumber';
-	}
+        return 'IBANNumber';
+    }
 }

@@ -28,32 +28,30 @@
  */
 function takepos_prepare_head()
 {
-	global $langs, $conf;
+    global $langs, $conf;
 
-	$h = 0;
-	$head = array();
+    $h = 0;
+    $head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/takepos/admin/setup.php';
-	$head[$h][1] = $langs->trans("Parameters");
-	$head[$h][2] = 'setup';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/takepos/admin/setup.php';
+    $head[$h][1] = $langs->trans("Parameters");
+    $head[$h][2] = 'setup';
+    $h++;
 
-	if ($conf->global->TAKEPOS_CUSTOM_RECEIPT)
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/takepos/admin/receipt.php';
-		$head[$h][1] = $langs->trans("Receipt");
-		$head[$h][2] = 'receipt';
-		$h++;
-	}
+    if ($conf->global->TAKEPOS_CUSTOM_RECEIPT) {
+        $head[$h][0] = DOL_URL_ROOT.'/takepos/admin/receipt.php';
+        $head[$h][1] = $langs->trans("Receipt");
+        $head[$h][2] = 'receipt';
+        $h++;
+    }
 
-	$numterminals = max(1, $conf->global->TAKEPOS_NUM_TERMINALS);
-	for ($i = 1; $i <= $numterminals; $i++)
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/takepos/admin/terminal.php?terminal='.$i;
-		$head[$h][1] = $langs->trans("Terminal"). " ".$i;
-		$head[$h][2] = 'terminal'.$i;
-		$h++;
-	}
+    $numterminals = max(1, $conf->global->TAKEPOS_NUM_TERMINALS);
+    for ($i = 1; $i <= $numterminals; $i++) {
+        $head[$h][0] = DOL_URL_ROOT.'/takepos/admin/terminal.php?terminal='.$i;
+        $head[$h][1] = $langs->trans("Terminal"). " ".$i;
+        $head[$h][2] = 'terminal'.$i;
+        $h++;
+    }
 
     complete_head_from_modules($conf, $langs, null, $head, $h, 'takepos');
 

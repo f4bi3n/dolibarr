@@ -15,7 +15,8 @@ use Sabre\Xml;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class TimeStamp extends Text {
+class TimeStamp extends Text
+{
 
     /**
      * In case this is a multi-value property. This string will be used as a
@@ -33,10 +34,9 @@ class TimeStamp extends Text {
      *
      * @return string
      */
-    function getValueType() {
-
+    public function getValueType()
+    {
         return 'TIMESTAMP';
-
     }
 
     /**
@@ -46,8 +46,8 @@ class TimeStamp extends Text {
      *
      * @return array
      */
-    function getJsonValue() {
-
+    public function getJsonValue()
+    {
         $parts = DateTimeParser::parseVCardDateTime($this->getValue());
 
         $dateStr =
@@ -64,7 +64,6 @@ class TimeStamp extends Text {
         }
 
         return [$dateStr];
-
     }
 
     /**
@@ -75,12 +74,12 @@ class TimeStamp extends Text {
      *
      * @return void
      */
-    protected function xmlSerializeValue(Xml\Writer $writer) {
+    protected function xmlSerializeValue(Xml\Writer $writer)
+    {
 
         // xCard is the only XML and JSON format that has the same date and time
         // format than vCard.
         $valueType = strtolower($this->getValueType());
         $writer->writeElement($valueType, $this->getValue());
-
     }
 }

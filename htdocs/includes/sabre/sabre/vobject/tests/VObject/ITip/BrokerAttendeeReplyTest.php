@@ -2,10 +2,10 @@
 
 namespace Sabre\VObject\ITip;
 
-class BrokerAttendeeReplyTest extends BrokerTester {
-
-    function testAccepted() {
-
+class BrokerAttendeeReplyTest extends BrokerTester
+{
+    public function testAccepted()
+    {
         $oldMessage = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -69,11 +69,10 @@ ICS
         ];
 
         $this->parse($oldMessage, $newMessage, $expected);
-
     }
 
-    function testRecurringReply() {
-
+    public function testRecurringReply()
+    {
         $oldMessage = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -219,11 +218,10 @@ ICS
         ];
 
         $this->parse($oldMessage, $newMessage, $expected);
-
     }
 
-    function testRecurringAllDay() {
-
+    public function testRecurringAllDay()
+    {
         $oldMessage = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -239,7 +237,7 @@ END:VCALENDAR
 ICS;
 
 
-    $newMessage = <<<ICS
+        $newMessage = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
 BEGIN:VEVENT
@@ -292,9 +290,9 @@ END:VEVENT
 END:VCALENDAR
 ICS;
 
-    $version = \Sabre\VObject\Version::VERSION;
+        $version = \Sabre\VObject\Version::VERSION;
 
-    $expected = [
+        $expected = [
         [
             'uid'           => 'foobar',
             'method'        => 'REPLY',
@@ -362,11 +360,10 @@ ICS
         ];
 
         $this->parse($oldMessage, $newMessage, $expected);
-
     }
 
-    function testNoChange() {
-
+    public function testNoChange()
+    {
         $oldMessage = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -397,11 +394,10 @@ ICS;
 
         $expected = [];
         $this->parse($oldMessage, $newMessage, $expected);
-
     }
 
-    function testNoChangeForceSend() {
-
+    public function testNoChangeForceSend()
+    {
         $oldMessage = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -459,11 +455,10 @@ ICS
 
         ];
         $this->parse($oldMessage, $newMessage, $expected);
-
     }
 
-    function testNoRelevantAttendee() {
-
+    public function testNoRelevantAttendee()
+    {
         $oldMessage = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -493,7 +488,6 @@ ICS;
 
         $expected = [];
         $this->parse($oldMessage, $newMessage, $expected);
-
     }
 
     /**
@@ -504,9 +498,8 @@ ICS;
      * This should automatically generate a DECLINED message for that
      * specific instance.
      */
-    function testCreateReplyByException() {
-
-
+    public function testCreateReplyByException()
+    {
         $oldMessage = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -567,7 +560,6 @@ ICS
             ],
         ];
         $this->parse($oldMessage, $newMessage, $expected);
-
     }
 
     /**
@@ -576,9 +568,8 @@ ICS
      *
      * @depends testCreateReplyByException
      */
-    function testCreateReplyByExceptionTz() {
-
-
+    public function testCreateReplyByExceptionTz()
+    {
         $oldMessage = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -639,15 +630,13 @@ ICS
             ],
         ];
         $this->parse($oldMessage, $newMessage, $expected);
-
     }
 
     /**
      * @depends testCreateReplyByException
      */
-    function testCreateReplyByExceptionAllDay() {
-
-
+    public function testCreateReplyByExceptionAllDay()
+    {
         $oldMessage = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -711,11 +700,10 @@ ICS
             ],
         ];
         $this->parse($oldMessage, $newMessage, $expected);
-
     }
 
-    function testDeclined() {
-
+    public function testDeclined()
+    {
         $oldMessage = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -776,11 +764,10 @@ ICS
         ];
 
         $this->parse($oldMessage, $newMessage, $expected);
-
     }
 
-    function testDeclinedCancelledEvent() {
-
+    public function testDeclinedCancelledEvent()
+    {
         $oldMessage = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -815,7 +802,6 @@ ICS;
         $expected = [];
 
         $this->parse($oldMessage, $newMessage, $expected);
-
     }
 
     /**
@@ -827,9 +813,8 @@ ICS;
      * For any other attendence status, the new status would have been
      * declined, but for this, no message should we sent.
      */
-    function testDontCreateReplyWhenEventWasDeclined() {
-
-
+    public function testDontCreateReplyWhenEventWasDeclined()
+    {
         $oldMessage = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -871,11 +856,10 @@ ICS;
         $expected = [];
 
         $this->parse($oldMessage, $newMessage, $expected);
-
     }
 
-    function testScheduleAgentOnOrganizer() {
-
+    public function testScheduleAgentOnOrganizer()
+    {
         $oldMessage = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -907,11 +891,10 @@ ICS;
 
         $expected = [];
         $this->parse($oldMessage, $newMessage, $expected);
-
     }
 
-    function testAcceptedAllDay() {
-
+    public function testAcceptedAllDay()
+    {
         $oldMessage = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -972,7 +955,6 @@ ICS
         ];
 
         $this->parse($oldMessage, $newMessage, $expected);
-
     }
 
     /**
@@ -982,8 +964,8 @@ ICS
      * This is possible in cases an organizer created a recurring event, and
      * invited an attendee for one instance of the event.
      */
-    function testReplyNoMasterEvent() {
-
+    public function testReplyNoMasterEvent()
+    {
         $oldMessage = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -1049,7 +1031,6 @@ ICS
         ];
 
         $this->parse($oldMessage, $newMessage, $expected);
-
     }
 
     /**
@@ -1058,8 +1039,8 @@ ICS
      *
      * @depends testAccepted
      */
-    function testPartyCrasher() {
-
+    public function testPartyCrasher()
+    {
         $oldMessage = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -1141,6 +1122,5 @@ ICS
         ];
 
         $this->parse($oldMessage, $newMessage, $expected);
-
     }
 }

@@ -14,7 +14,8 @@ use Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class ConflictingLock extends Locked {
+class ConflictingLock extends Locked
+{
 
     /**
      * This method allows the exception to include additional information into the WebDAV error response
@@ -23,14 +24,12 @@ class ConflictingLock extends Locked {
      * @param \DOMElement $errorNode
      * @return void
      */
-    function serialize(DAV\Server $server, \DOMElement $errorNode) {
-
+    public function serialize(DAV\Server $server, \DOMElement $errorNode)
+    {
         if ($this->lock) {
             $error = $errorNode->ownerDocument->createElementNS('DAV:', 'd:no-conflicting-lock');
             $errorNode->appendChild($error);
             $error->appendChild($errorNode->ownerDocument->createElementNS('DAV:', 'd:href', $this->lock->uri));
         }
-
     }
-
 }

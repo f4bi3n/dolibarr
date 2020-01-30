@@ -33,17 +33,15 @@ $phone = GETPOST('phone');
 $notfound = $langs->trans("Unknown");
 
 // Security check
-if (empty($conf->clicktodial->enabled))
-{
+if (empty($conf->clicktodial->enabled)) {
     print "Error: Module Click to dial is not enabled.\n";
     exit;
 }
 
 // Check parameters
-if (empty($phone))
-{
-	print "Error: Url must be called with parameter phone=phone to search\n";
-	exit;
+if (empty($phone)) {
+    print "Error: Url must be called with parameter phone=phone to search\n";
+    exit;
 }
 
 $sql = "SELECT s.nom as name FROM ".MAIN_DB_PREFIX."societe as s";
@@ -57,21 +55,17 @@ $sql.= $db->plimit(1);
 
 dol_syslog('cidlookup search information with phone '.$phone, LOG_DEBUG);
 $resql = $db->query($sql);
-if ($resql)
-{
-	$obj = $db->fetch_object($resql);
-	if ($obj)
-	{
-		$found = $obj->name;
-	} else {
-		$found = $notfound;
-	}
-	$db->free($resql);
-}
-else
-{
-	dol_print_error($db, 'Error');
-	$found = 'Error';
+if ($resql) {
+    $obj = $db->fetch_object($resql);
+    if ($obj) {
+        $found = $obj->name;
+    } else {
+        $found = $notfound;
+    }
+    $db->free($resql);
+} else {
+    dol_print_error($db, 'Error');
+    $found = 'Error';
 }
 //Greek to Latin
 $greek = array('α','β','γ','δ','ε','ζ','η','θ','ι','κ','λ','μ','ν','ξ','ο','π','ρ','ς','σ','τ','υ','φ','χ','ψ','ω','Α','Β','Γ','Δ','Ε','Ζ','Η','Θ','Ι','Κ','Λ','Μ','Ν','Ξ','Ο','Π','Ρ','Σ','Τ','Υ','Φ','Χ','Ψ','Ω','ά','έ','ή','ί','ό','ύ','ώ','ϊ','ΐ','Ά','Έ','Ή','Ί','Ό','Ύ','Ώ','Ϊ');

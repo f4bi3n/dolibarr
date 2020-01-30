@@ -50,11 +50,13 @@ class DolibarrApi
     {
         global $conf, $dolibarr_main_url_root;
 
-        if (empty($cachedir)) $cachedir = $conf->api->dir_temp;
+        if (empty($cachedir)) {
+            $cachedir = $conf->api->dir_temp;
+        }
         Defaults::$cacheDirectory = $cachedir;
 
         $this->db = $db;
-        $production_mode = ( empty($conf->global->API_PRODUCTION_MODE) ? false : true );
+        $production_mode = (empty($conf->global->API_PRODUCTION_MODE) ? false : true);
         $this->r = new Restler($production_mode, $refreshCache);
 
         $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
@@ -100,9 +102,9 @@ class DolibarrApi
         // Remove $db object property for object
         unset($object->db);
         unset($object->isextrafieldmanaged);
-		unset($object->ismultientitymanaged);
-		unset($object->restrictiononfksoc);
-		unset($object->table_rowid);
+        unset($object->ismultientitymanaged);
+        unset($object->restrictiononfksoc);
+        unset($object->table_rowid);
 
         // Remove linkedObjects. We should already have linkedObjectIds that avoid huge responses
         unset($object->linkedObjects);
@@ -157,7 +159,7 @@ class DolibarrApi
         unset($object->libelle_paiement);
 
         if ($object->table_element != 'ticket') {
-        	unset($object->comments);
+            unset($object->comments);
         }
 
         // Remove the $oldcopy property because it is not supported by the JSON
@@ -172,10 +174,9 @@ class DolibarrApi
         unset($object->oldcopy);
 
         // If object has lines, remove $db property
-        if (isset($object->lines) && is_array($object->lines) && count($object->lines) > 0)  {
+        if (isset($object->lines) && is_array($object->lines) && count($object->lines) > 0) {
             $nboflines = count($object->lines);
-        	for ($i=0; $i < $nboflines; $i++)
-            {
+            for ($i=0; $i < $nboflines; $i++) {
                 $this->_cleanObjectDatas($object->lines[$i]);
 
                 unset($object->lines[$i]->contact);
@@ -211,108 +212,110 @@ class DolibarrApi
             }
         }
 
-        if (! empty($object->thirdparty) && is_object($object->thirdparty))
-        {
-        	$this->_cleanObjectDatas($object->thirdparty);
+        if (! empty($object->thirdparty) && is_object($object->thirdparty)) {
+            $this->_cleanObjectDatas($object->thirdparty);
         }
 
-		return $object;
+        return $object;
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
-	/**
-	 * Check user access to a resource
-	 *
-	 * Check access by user to a given resource
-	 *
-	 * @param string	$resource		element to check
-	 * @param int		$resource_id	Object ID if we want to check a particular record (optional) is linked to a owned thirdparty (optional).
-	 * @param string	$dbtablename	'TableName&SharedElement' with Tablename is table where object is stored. SharedElement is an optional key to define where to check entity. Not used if objectid is null (optional)
-	 * @param string	$feature2		Feature to check, second level of permission (optional). Can be or check with 'level1|level2'.
-	 * @param string	$dbt_keyfield   Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional)
-	 * @param string	$dbt_select     Field name for select if not rowid. Not used if objectid is null (optional)
+    /**
+     * Check user access to a resource
+     *
+     * Check access by user to a given resource
+     *
+     * @param string	$resource		element to check
+     * @param int		$resource_id	Object ID if we want to check a particular record (optional) is linked to a owned thirdparty (optional).
+     * @param string	$dbtablename	'TableName&SharedElement' with Tablename is table where object is stored. SharedElement is an optional key to define where to check entity. Not used if objectid is null (optional)
+     * @param string	$feature2		Feature to check, second level of permission (optional). Can be or check with 'level1|level2'.
+     * @param string	$dbt_keyfield   Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional)
+     * @param string	$dbt_select     Field name for select if not rowid. Not used if objectid is null (optional)
      * @return bool
-	 * @throws RestException
-	 */
+     * @throws RestException
+     */
     protected static function _checkAccessToResource($resource, $resource_id = 0, $dbtablename = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid')
     {
         // phpcs:enable
-		// Features/modules to check
-		$featuresarray = array($resource);
-		if (preg_match('/&/', $resource)) {
-			$featuresarray = explode("&", $resource);
-		}
-		elseif (preg_match('/\|/', $resource)) {
-			$featuresarray = explode("|", $resource);
-		}
+        // Features/modules to check
+        $featuresarray = array($resource);
+        if (preg_match('/&/', $resource)) {
+            $featuresarray = explode("&", $resource);
+        } elseif (preg_match('/\|/', $resource)) {
+            $featuresarray = explode("|", $resource);
+        }
 
-		// More subfeatures to check
-		if (! empty($feature2)) {
-			$feature2 = explode("|", $feature2);
-		}
+        // More subfeatures to check
+        if (! empty($feature2)) {
+            $feature2 = explode("|", $feature2);
+        }
 
-		return checkUserAccessToObject(DolibarrApiAccess::$user, $featuresarray, $resource_id, $dbtablename, $feature2, $dbt_keyfield, $dbt_select);
+        return checkUserAccessToObject(DolibarrApiAccess::$user, $featuresarray, $resource_id, $dbtablename, $feature2, $dbt_keyfield, $dbt_select);
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
-	/**
-	 * Return if a $sqlfilters parameter is valid
-	 *
-	 * @param  string   $sqlfilters     sqlfilter string
-	 * @return boolean                  True if valid, False if not valid
-	 */
-	protected function _checkFilters($sqlfilters)
-	{
+    /**
+     * Return if a $sqlfilters parameter is valid
+     *
+     * @param  string   $sqlfilters     sqlfilter string
+     * @return boolean                  True if valid, False if not valid
+     */
+    protected function _checkFilters($sqlfilters)
+    {
         // phpcs:enable
-	    //$regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-	    //$tmp=preg_replace_all('/'.$regexstring.'/', '', $sqlfilters);
-	    $tmp=$sqlfilters;
-	    $ok=0;
-	    $i=0; $nb=strlen($tmp);
-	    $counter=0;
-	    while ($i < $nb)
-	    {
-	        if ($tmp[$i]=='(') $counter++;
-	        if ($tmp[$i]==')') $counter--;
-            if ($counter < 0)
-            {
-	            $error="Bad sqlfilters=".$sqlfilters;
-	            dol_syslog($error, LOG_WARNING);
-	            return false;
+        //$regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+        //$tmp=preg_replace_all('/'.$regexstring.'/', '', $sqlfilters);
+        $tmp=$sqlfilters;
+        $ok=0;
+        $i=0;
+        $nb=strlen($tmp);
+        $counter=0;
+        while ($i < $nb) {
+            if ($tmp[$i]=='(') {
+                $counter++;
+            }
+            if ($tmp[$i]==')') {
+                $counter--;
+            }
+            if ($counter < 0) {
+                $error="Bad sqlfilters=".$sqlfilters;
+                dol_syslog($error, LOG_WARNING);
+                return false;
             }
             $i++;
-	    }
-	    return true;
-	}
+        }
+        return true;
+    }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
-	/**
-	 * Function to forge a SQL criteria
-	 *
-	 * @param  array    $matches       Array of found string by regex search. Example: "t.ref:like:'SO-%'" or "t.date_creation:<:'20160101'" or "t.nature:is:NULL"
-	 * @return string                  Forged criteria. Example: "t.field like 'abc%'"
-	 */
-	protected static function _forge_criteria_callback($matches)
-	{
+    /**
+     * Function to forge a SQL criteria
+     *
+     * @param  array    $matches       Array of found string by regex search. Example: "t.ref:like:'SO-%'" or "t.date_creation:<:'20160101'" or "t.nature:is:NULL"
+     * @return string                  Forged criteria. Example: "t.field like 'abc%'"
+     */
+    protected static function _forge_criteria_callback($matches)
+    {
         // phpcs:enable
-	    global $db;
+        global $db;
 
-	    //dol_syslog("Convert matches ".$matches[1]);
-	    if (empty($matches[1])) return '';
-	    $tmp=explode(':', $matches[1]);
-        if (count($tmp) < 3) return '';
+        //dol_syslog("Convert matches ".$matches[1]);
+        if (empty($matches[1])) {
+            return '';
+        }
+        $tmp=explode(':', $matches[1]);
+        if (count($tmp) < 3) {
+            return '';
+        }
 
-	    $tmpescaped=$tmp[2];
-	    $regbis = array();
-	    if (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis))
-	    {
-	        $tmpescaped = "'".$db->escape($regbis[1])."'";
-	    }
-	    else
-	    {
-	        $tmpescaped = $db->escape($tmpescaped);
-	    }
-	    return $db->escape($tmp[0]).' '.strtoupper($db->escape($tmp[1]))." ".$tmpescaped;
-	}
+        $tmpescaped=$tmp[2];
+        $regbis = array();
+        if (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis)) {
+            $tmpescaped = "'".$db->escape($regbis[1])."'";
+        } else {
+            $tmpescaped = $db->escape($tmpescaped);
+        }
+        return $db->escape($tmp[0]).' '.strtoupper($db->escape($tmp[1]))." ".$tmpescaped;
+    }
 }

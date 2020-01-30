@@ -12,15 +12,16 @@ use Sabre\HTTP;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class HttpDeleteTest extends DAVServerTest {
+class HttpDeleteTest extends DAVServerTest
+{
 
     /**
      * Sets up the DAV tree.
      *
      * @return void
      */
-    function setUpTree() {
-
+    public function setUpTree()
+    {
         $this->tree = new Mock\Collection('root', [
             'file1' => 'foo',
             'dir'   => [
@@ -28,14 +29,13 @@ class HttpDeleteTest extends DAVServerTest {
                 'subfile2' => 'baz',
             ],
         ]);
-
     }
 
     /**
      * A successful DELETE
      */
-    function testDelete() {
-
+    public function testDelete()
+    {
         $request = new HTTP\Request('DELETE', '/file1');
 
         $response = $this->request($request);
@@ -53,14 +53,13 @@ class HttpDeleteTest extends DAVServerTest {
             ],
             $response->getHeaders()
         );
-
     }
 
     /**
      * Deleting a Directory
      */
-    function testDeleteDirectory() {
-
+    public function testDeleteDirectory()
+    {
         $request = new HTTP\Request('DELETE', '/dir');
 
         $response = $this->request($request);
@@ -78,14 +77,13 @@ class HttpDeleteTest extends DAVServerTest {
             ],
             $response->getHeaders()
         );
-
     }
 
     /**
      * DELETE on a node that does not exist
      */
-    function testDeleteNotFound() {
-
+    public function testDeleteNotFound()
+    {
         $request = new HTTP\Request('DELETE', '/file2');
         $response = $this->request($request);
 
@@ -94,14 +92,13 @@ class HttpDeleteTest extends DAVServerTest {
             $response->getStatus(),
             "Incorrect status code. Response body:  " . $response->getBodyAsString()
         );
-
     }
 
     /**
      * DELETE with preconditions
      */
-    function testDeletePreconditions() {
-
+    public function testDeletePreconditions()
+    {
         $request = new HTTP\Request('DELETE', '/file1', [
             'If-Match' => '"' . md5('foo') . '"',
         ]);
@@ -113,14 +110,13 @@ class HttpDeleteTest extends DAVServerTest {
             $response->getStatus(),
             "Incorrect status code. Response body:  " . $response->getBodyAsString()
         );
-
     }
 
     /**
      * DELETE with incorrect preconditions
      */
-    function testDeletePreconditionsFailed() {
-
+    public function testDeletePreconditionsFailed()
+    {
         $request = new HTTP\Request('DELETE', '/file1', [
             'If-Match' => '"' . md5('bar') . '"',
         ]);
@@ -132,6 +128,5 @@ class HttpDeleteTest extends DAVServerTest {
             $response->getStatus(),
             "Incorrect status code. Response body:  " . $response->getBodyAsString()
         );
-
     }
 }

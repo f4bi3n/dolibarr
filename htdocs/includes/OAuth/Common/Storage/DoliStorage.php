@@ -99,8 +99,7 @@ class DoliStorage implements TokenStorageInterface
         $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."oauth_token";
         $sql.= " WHERE service='".$this->db->escape($service)."' AND entity=1";
         $resql = $this->db->query($sql);
-        if (! $resql)
-        {
+        if (! $resql) {
             dol_print_error($this->db);
         }
         $obj = $this->db->fetch_array($resql);
@@ -132,8 +131,7 @@ class DoliStorage implements TokenStorageInterface
         $sql = "SELECT token FROM ".MAIN_DB_PREFIX."oauth_token";
         $sql.= " WHERE service='".$this->db->escape($service)."'";
         $resql = $this->db->query($sql);
-        if (! $resql)
-        {
+        if (! $resql) {
             dol_print_error($this->db);
         }
         $result = $this->db->fetch_array($resql);
@@ -158,9 +156,9 @@ class DoliStorage implements TokenStorageInterface
         //if (is_array($tokens) && array_key_exists($service, $tokens)) {
         //    unset($tokens[$service]);
 
-            $sql = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token";
-            $sql.= " WHERE service='".$this->db->escape($service)."'";
-            $resql = $this->db->query($sql);
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token";
+        $sql.= " WHERE service='".$this->db->escape($service)."'";
+        $resql = $this->db->query($sql);
         //}
 
         // allow chaining
@@ -186,7 +184,6 @@ class DoliStorage implements TokenStorageInterface
     {
         if ($this->hasAuthorizationState($service)) {
             return $this->states[$service];
-
         }
 
         throw new AuthorizationStateNotFoundException('State not found in db, are you sure you stored it?');
@@ -209,8 +206,7 @@ class DoliStorage implements TokenStorageInterface
         $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."oauth_state";
         $sql.= " WHERE service='".$this->db->escape($service)."' AND entity=1";
         $resql = $this->db->query($sql);
-        if (! $resql)
-        {
+        if (! $resql) {
             dol_print_error($this->db);
         }
         $obj = $this->db->fetch_array($resql);
@@ -281,5 +277,4 @@ class DoliStorage implements TokenStorageInterface
         // allow chaining
         return $this;
     }
-
 }

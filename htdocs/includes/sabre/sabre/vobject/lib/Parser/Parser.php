@@ -11,7 +11,8 @@ namespace Sabre\VObject\Parser;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-abstract class Parser {
+abstract class Parser
+{
 
     /**
      * Turning on this option makes the parser more forgiving.
@@ -45,8 +46,8 @@ abstract class Parser {
      *
      * @return void
      */
-    function __construct($input = null, $options = 0) {
-
+    public function __construct($input = null, $options = 0)
+    {
         if (!is_null($input)) {
             $this->setInput($input);
         }
@@ -66,7 +67,7 @@ abstract class Parser {
      *
      * @return array
      */
-    abstract function parse($input = null, $options = 0);
+    abstract public function parse($input = null, $options = 0);
 
     /**
      * Sets the input data.
@@ -75,6 +76,5 @@ abstract class Parser {
      *
      * @return void
      */
-    abstract function setInput($input);
-
+    abstract public function setInput($input);
 }

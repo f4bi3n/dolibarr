@@ -7,34 +7,32 @@ use DateTimeZone;
 use Sabre\VObject\Component\VCalendar;
 use Sabre\VObject\Recur;
 
-class InfiniteLoopProblemTest extends \PHPUnit_Framework_TestCase {
-
-    function setUp() {
-
+class InfiniteLoopProblemTest extends \PHPUnit_Framework_TestCase
+{
+    public function setUp()
+    {
         $this->vcal = new VCalendar();
-
     }
 
     /**
      * This bug came from a Fruux customer. This would result in a never-ending
      * request.
      */
-    function testFastForwardTooFar() {
-
+    public function testFastForwardTooFar()
+    {
         $ev = $this->vcal->createComponent('VEVENT');
         $ev->UID = 'foobar';
         $ev->DTSTART = '20090420T180000Z';
         $ev->RRULE = 'FREQ=WEEKLY;BYDAY=MO;UNTIL=20090704T205959Z;INTERVAL=1';
 
         $this->assertFalse($ev->isInTimeRange(new DateTimeImmutable('2012-01-01 12:00:00'), new DateTimeImmutable('3000-01-01 00:00:00')));
-
     }
 
     /**
      * Different bug, also likely an infinite loop.
      */
-    function testYearlyByMonthLoop() {
-
+    public function testYearlyByMonthLoop()
+    {
         $ev = $this->vcal->createComponent('VEVENT');
         $ev->UID = 'uuid';
         $ev->DTSTART = '20120101T154500';
@@ -62,14 +60,12 @@ class InfiniteLoopProblemTest extends \PHPUnit_Framework_TestCase {
                 break;
             }
             $it->next();
-
         }
 
         $this->assertEquals(
             [new DateTimeImmutable('2012-02-01 15:45:00', new DateTimeZone('Europe/Berlin'))],
             $collect
         );
-
     }
 
     /**
@@ -80,8 +76,8 @@ class InfiniteLoopProblemTest extends \PHPUnit_Framework_TestCase {
      * @expectedException \Sabre\VObject\InvalidDataException
      * @return void
      */
-    function testZeroInterval() {
-
+    public function testZeroInterval()
+    {
         $ev = $this->vcal->createComponent('VEVENT');
         $ev->UID = 'uuid';
         $ev->DTSTART = '20120824T145700Z';
@@ -92,7 +88,5 @@ class InfiniteLoopProblemTest extends \PHPUnit_Framework_TestCase {
         $it->fastForward(new DateTimeImmutable('2013-01-01 23:00:00', new DateTimeZone('UTC')));
 
         // if we got this far.. it means we are no longer infinitely looping
-
     }
-
 }

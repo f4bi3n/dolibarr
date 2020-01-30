@@ -2,10 +2,10 @@
 
 namespace Sabre\VObject;
 
-class EmptyParameterTest extends \PHPUnit_Framework_TestCase {
-
-    function testRead() {
-
+class EmptyParameterTest extends \PHPUnit_Framework_TestCase
+{
+    public function testRead()
+    {
         $input = <<<VCF
 BEGIN:VCARD
 VERSION:2.1
@@ -42,11 +42,10 @@ END:VCARD
 VCF;
 
         $this->assertEquals($expected, str_replace("\r", "", $vcard));
-
     }
 
-    function testVCard21Parameter() {
-
+    public function testVCard21Parameter()
+    {
         $vcard = new Component\VCard([], false);
         $vcard->VERSION = '2.1';
         $vcard->PHOTO = 'random_stuff';
@@ -64,6 +63,5 @@ VCF;
         ];
 
         $this->assertEquals(implode("\r\n", $expected), $result);
-
     }
 }

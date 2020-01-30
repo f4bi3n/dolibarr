@@ -34,46 +34,46 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/livraison/modules_livraison.php';
 
 class mod_livraison_jade extends ModeleNumRefDeliveryOrder
 {
-	/**
+    /**
      * Dolibarr version of the loaded document
      * @var string
      */
-	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
+    public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
-	/**
-	 * @var string Error message
-	 */
-	public $error = '';
+    /**
+     * @var string Error message
+     */
+    public $error = '';
 
-	/**
-	 * @var string Nom du modele
-	 * @deprecated
-	 * @see $name
-	 */
-	public $nom = 'Jade';
+    /**
+     * @var string Nom du modele
+     * @deprecated
+     * @see $name
+     */
+    public $nom = 'Jade';
 
-	/**
-	 * @var string model name
-	 */
-	public $name = 'Jade';
+    /**
+     * @var string model name
+     */
+    public $name = 'Jade';
 
     public $prefix = 'BL';
 
 
-	/**
-	 *   Returns the description of the numbering model
-	 *
-	 *   @return     string      Texte descripif
-	 */
-	public function info()
-	{
-		global $langs;
-		return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
-	}
+    /**
+     *   Returns the description of the numbering model
+     *
+     *   @return     string      Texte descripif
+     */
+    public function info()
+    {
+        global $langs;
+        return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
+    }
 
-	/**
-	 *  Return an example of numbering
-	 *
+    /**
+     *  Return an example of numbering
+     *
      *  @return     string      Example
      */
     public function getExample()
@@ -94,7 +94,8 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
         $langs->load("bills");
 
         // Check invoice num
-        $fayymm = ''; $max = '';
+        $fayymm = '';
+        $max = '';
 
         $posindice = 8;
         $sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max"; // This is standard SQL
@@ -103,13 +104,14 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
         $sql .= " AND entity = ".$conf->entity;
 
         $resql = $db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             $row = $db->fetch_row($resql);
-            if ($row) { $fayymm = substr($row[0], 0, 6); $max = $row[0]; }
+            if ($row) {
+                $fayymm = substr($row[0], 0, 6);
+                $max = $row[0];
+            }
         }
-        if ($fayymm && !preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $fayymm))
-        {
+        if ($fayymm && !preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $fayymm)) {
             $langs->load("errors");
             $this->error = $langs->trans('ErrorNumRefModel', $max);
             return false;
@@ -119,12 +121,12 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
     }
 
     /**
-	 * 	Return next free value
-	 *
-	 *  @param	Societe		$objsoc     Object thirdparty
-	 *  @param  Object		$object		Object we need next value for
-	 *  @return string      			Value if KO, <0 if KO
-	 */
+     * 	Return next free value
+     *
+     *  @param	Societe		$objsoc     Object thirdparty
+     *  @param  Object		$object		Object we need next value for
+     *  @return string      			Value if KO, <0 if KO
+     */
     public function getNextValue($objsoc, $object)
     {
         global $db, $conf;
@@ -140,20 +142,27 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
         dol_syslog("mod_livraison_jade::getNextValue", LOG_DEBUG);
         if ($resql) {
             $obj = $db->fetch_object($resql);
-            if ($obj) $max = intval($obj->max);
-            else $max = 0;
-        }
-        else
-        {
+            if ($obj) {
+                $max = intval($obj->max);
+            } else {
+                $max = 0;
+            }
+        } else {
             return -1;
         }
 
         $date = $object->date_delivery;
-        if (empty($date)) $date = dol_now();
+        if (empty($date)) {
+            $date = dol_now();
+        }
         $yymm = strftime("%y%m", $date);
 
-        if ($max >= (pow(10, 4) - 1)) $num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
-        else $num = sprintf("%04s", $max + 1);
+        if ($max >= (pow(10, 4) - 1)) {
+            $num = $max + 1;
+        } // If counter > 9999, we do not format on 4 chars, we take number as it is
+        else {
+            $num = sprintf("%04s", $max + 1);
+        }
 
         dol_syslog("mod_livraison_jade::getNextValue return ".$this->prefix.$yymm."-".$num);
         return $this->prefix.$yymm."-".$num;

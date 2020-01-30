@@ -37,9 +37,9 @@ class PrintingDriver
     public $db;
 
     /**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
+     * @var string Error code (or message)
+     */
+    public $error='';
 
 
     /**
@@ -68,7 +68,7 @@ class PrintingDriver
 
         $moduledir=DOL_DOCUMENT_ROOT."/core/modules/printing/";
         $tmpfiles=dol_dir_list($moduledir, 'all', 0, '\modules.php', '', 'name', SORT_ASC, 0);
-        foreach($tmpfiles as $record) {
+        foreach ($tmpfiles as $record) {
             $list[$record['fullname']]=str_replace('.modules.php', '', $record['name']);
         }
 
@@ -85,7 +85,10 @@ class PrintingDriver
         global $langs;
         $langs->load("printing");
         $transstring="PrintingModuleDesc".$this->name;
-        if ($langs->trans($transstring) != $transstring) return $langs->trans($transstring);
-        else return $this->desc;
+        if ($langs->trans($transstring) != $transstring) {
+            return $langs->trans($transstring);
+        } else {
+            return $this->desc;
+        }
     }
 }

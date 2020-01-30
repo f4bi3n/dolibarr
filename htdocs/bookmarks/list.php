@@ -36,7 +36,7 @@ $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'myo
 
 // Security check
 if (!$user->rights->bookmark->lire) {
-	restrictedArea($user, 'bookmarks');
+    restrictedArea($user, 'bookmarks');
 }
 $optioncss = GETPOST('optioncss', 'alpha');
 
@@ -45,12 +45,18 @@ $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
 $page = GETPOST('page', 'int');
-if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
+if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) {
+    $page = 0;
+}     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortfield) $sortfield = 'position';
-if (!$sortorder) $sortorder = 'ASC';
+if (!$sortfield) {
+    $sortfield = 'position';
+}
+if (!$sortorder) {
+    $sortorder = 'ASC';
+}
 
 $id = GETPOST("id", 'int');
 
@@ -65,18 +71,14 @@ $permissiontodelete = $user->rights->bookmark->delete;
  * Actions
  */
 
-if ($action == 'delete')
-{
-	$res = $object->remove($id);
-	if ($res > 0)
-	{
-		header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
-	}
-	else
-	{
-		setEventMessages($object->error, $object->errors, 'errors');
-	}
+if ($action == 'delete') {
+    $res = $object->remove($id);
+    if ($res > 0) {
+        header("Location: ".$_SERVER["PHP_SELF"]);
+        exit;
+    } else {
+        setEventMessages($object->error, $object->errors, 'errors');
+    }
 }
 
 
@@ -95,61 +97,69 @@ $sql .= " u.login, u.lastname, u.firstname";
 $sql .= " FROM ".MAIN_DB_PREFIX."bookmark as b LEFT JOIN ".MAIN_DB_PREFIX."user as u ON b.fk_user=u.rowid";
 $sql .= " WHERE 1=1";
 $sql .= " AND b.entity IN (".getEntity('bookmark').")";
-if (!$user->admin) $sql .= " AND (b.fk_user = ".$user->id." OR b.fk_user is NULL OR b.fk_user = 0)";
+if (!$user->admin) {
+    $sql .= " AND (b.fk_user = ".$user->id." OR b.fk_user is NULL OR b.fk_user = 0)";
+}
 
 $sql .= $db->order($sortfield.", position", $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
-{
-	$resql = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($resql);
-	if (($page * $limit) > $nbtotalofrecords)	// if total of record found is smaller than page * limit, goto and load page 0
-	{
-		$page = 0;
-		$offset = 0;
-	}
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+    $resql = $db->query($sql);
+    $nbtotalofrecords = $db->num_rows($resql);
+    if (($page * $limit) > $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
+        $page = 0;
+        $offset = 0;
+    }
 }
 // if total of record found is smaller than limit, no need to do paging and to restart another select with limits set.
-if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords)
-{
-	$num = $nbtotalofrecords;
-}
-else
-{
-	$sql .= $db->plimit($limit + 1, $offset);
+if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords) {
+    $num = $nbtotalofrecords;
+} else {
+    $sql .= $db->plimit($limit + 1, $offset);
 
-	$resql = $db->query($sql);
-	if (!$resql)
-	{
-		dol_print_error($db);
-		exit;
-	}
+    $resql = $db->query($sql);
+    if (!$resql) {
+        dol_print_error($db);
+        exit;
+    }
 
-	$num = $db->num_rows($resql);
+    $num = $db->num_rows($resql);
 }
 
 $param = "";
-if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
-if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
-if ($optioncss != '') $param = '&optioncss='.urlencode($optioncss);
+if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+    $param .= '&contextpage='.urlencode($contextpage);
+}
+if ($limit > 0 && $limit != $conf->liste_limit) {
+    $param .= '&limit='.urlencode($limit);
+}
+if ($optioncss != '') {
+    $param = '&optioncss='.urlencode($optioncss);
+}
 
 $moreforfilter = '';
 
 // List of mass actions available
 $arrayofmassactions = array(
-	//'validate'=>$langs->trans("Validate"),
-	//'generate_doc'=>$langs->trans("ReGeneratePDF"),
-	//'builddoc'=>$langs->trans("PDFMerge"),
-	//'presend'=>$langs->trans("SendByMail"),
+    //'validate'=>$langs->trans("Validate"),
+    //'generate_doc'=>$langs->trans("ReGeneratePDF"),
+    //'builddoc'=>$langs->trans("PDFMerge"),
+    //'presend'=>$langs->trans("SendByMail"),
 );
-if ($permissiontodelete) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
+if ($permissiontodelete) {
+    $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+}
+if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) {
+    $arrayofmassactions = array();
+}
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
-if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+if ($optioncss != '') {
+    print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+}
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="action" value="list">';
@@ -179,82 +189,86 @@ print_liste_field_titre('');
 print "</tr>\n";
 
 $i = 0;
-while ($i < min($num, $limit))
-{
-	$obj = $db->fetch_object($resql);
+while ($i < min($num, $limit)) {
+    $obj = $db->fetch_object($resql);
 
-	$object->id = $obj->rowid;
-	$object->ref = $obj->rowid;
+    $object->id = $obj->rowid;
+    $object->ref = $obj->rowid;
 
-	print '<tr class="oddeven">';
+    print '<tr class="oddeven">';
 
-	// Id
-	print '<td class="left">';
-	print $object->getNomUrl(1);
-	print '</td>';
+    // Id
+    print '<td class="left">';
+    print $object->getNomUrl(1);
+    print '</td>';
 
-	$linkintern = 0;
-	$title = $obj->title;
-	$link = $obj->url;
+    $linkintern = 0;
+    $title = $obj->title;
+    $link = $obj->url;
 
-	// Title
-	print "<td>";
-	$linkintern = 1;
-	if ($linkintern) print "<a href=\"".$obj->url."\">";
-	print $title;
-	if ($linkintern) print "</a>";
-	print "</td>\n";
+    // Title
+    print "<td>";
+    $linkintern = 1;
+    if ($linkintern) {
+        print "<a href=\"".$obj->url."\">";
+    }
+    print $title;
+    if ($linkintern) {
+        print "</a>";
+    }
+    print "</td>\n";
 
-	// Url
-	print '<td class="tdoverflowmax200">';
-	if (!$linkintern) print '<a href="'.$obj->url.'"'.($obj->target ? ' target="newlink"' : '').'>';
-	print $link;
-	if (!$linkintern) print '</a>';
-	print "</td>\n";
+    // Url
+    print '<td class="tdoverflowmax200">';
+    if (!$linkintern) {
+        print '<a href="'.$obj->url.'"'.($obj->target ? ' target="newlink"' : '').'>';
+    }
+    print $link;
+    if (!$linkintern) {
+        print '</a>';
+    }
+    print "</td>\n";
 
-	// Target
-	print '<td class="center">';
-	if ($obj->target == 0) print $langs->trans("BookmarkTargetReplaceWindowShort");
-	if ($obj->target == 1) print $langs->trans("BookmarkTargetNewWindowShort");
-	print "</td>\n";
+    // Target
+    print '<td class="center">';
+    if ($obj->target == 0) {
+        print $langs->trans("BookmarkTargetReplaceWindowShort");
+    }
+    if ($obj->target == 1) {
+        print $langs->trans("BookmarkTargetNewWindowShort");
+    }
+    print "</td>\n";
 
-	// Author
-	print '<td class="center">';
-	if ($obj->fk_user)
-	{
-		$userstatic->id = $obj->fk_user;
-		$userstatic->lastname = $obj->login;
-		print $userstatic->getNomUrl(1);
-	}
-	else
-	{
-		print $langs->trans("Public");
-	}
-	print "</td>\n";
+    // Author
+    print '<td class="center">';
+    if ($obj->fk_user) {
+        $userstatic->id = $obj->fk_user;
+        $userstatic->lastname = $obj->login;
+        print $userstatic->getNomUrl(1);
+    } else {
+        print $langs->trans("Public");
+    }
+    print "</td>\n";
 
-	// Date creation
-	print '<td class="center">'.dol_print_date($db->jdate($obj->dateb), 'day')."</td>";
+    // Date creation
+    print '<td class="center">'.dol_print_date($db->jdate($obj->dateb), 'day')."</td>";
 
-	// Position
-	print '<td class="right">'.$obj->position."</td>";
+    // Position
+    print '<td class="right">'.$obj->position."</td>";
 
-	// Actions
-	print '<td class="nowrap right">';
-	if ($user->rights->bookmark->creer)
-	{
-		print '<a href="'.DOL_URL_ROOT."/bookmarks/card.php?action=edit&id=".$obj->rowid."&backtopage=".urlencode($_SERVER["PHP_SELF"]).'">'.img_edit()."</a>";
-	}
-	if ($user->rights->bookmark->supprimer)
-	{
-		print "<a href=\"".$_SERVER["PHP_SELF"]."?action=delete&id=$obj->rowid\">".img_delete()."</a>";
-	}
-	else
-	{
-		print "&nbsp;";
-	}
-	print "</td>";
-	print "</tr>\n";
-	$i++;
+    // Actions
+    print '<td class="nowrap right">';
+    if ($user->rights->bookmark->creer) {
+        print '<a href="'.DOL_URL_ROOT."/bookmarks/card.php?action=edit&id=".$obj->rowid."&backtopage=".urlencode($_SERVER["PHP_SELF"]).'">'.img_edit()."</a>";
+    }
+    if ($user->rights->bookmark->supprimer) {
+        print "<a href=\"".$_SERVER["PHP_SELF"]."?action=delete&id=$obj->rowid\">".img_delete()."</a>";
+    } else {
+        print "&nbsp;";
+    }
+    print "</td>";
+    print "</tr>\n";
+    $i++;
 }
 print "</table>";
 print '</div>';

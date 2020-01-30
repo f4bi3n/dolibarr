@@ -2,22 +2,22 @@
 
 namespace Sabre\Uri;
 
-class NormalizeTest extends \PHPUnit_Framework_TestCase{
+class NormalizeTest extends \PHPUnit_Framework_TestCase
+{
 
     /**
      * @dataProvider normalizeData
      */
-    function testNormalize($in, $out) {
-
+    public function testNormalize($in, $out)
+    {
         $this->assertEquals(
             $out,
             normalize($in)
         );
-
     }
 
-    function normalizeData() {
-
+    public function normalizeData()
+    {
         return [
             ['http://example.org/',             'http://example.org/'],
             ['HTTP://www.EXAMPLE.com/',         'http://www.example.com/'],
@@ -36,7 +36,5 @@ class NormalizeTest extends \PHPUnit_Framework_TestCase{
             //[ 'http://example.org/有词法别名.zh','http://example.org/%E6%9C%89%E8%AF%8D%E6%B3%95%E5%88%AB%E5%90%8D.zh'],
 
         ];
-
     }
-
 }

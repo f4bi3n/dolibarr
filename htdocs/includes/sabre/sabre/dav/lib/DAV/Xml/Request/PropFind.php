@@ -17,7 +17,8 @@ use Sabre\Xml\XmlDeserializable;
  * @author Evert Pot (http://www.rooftopsolutions.nl/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class PropFind implements XmlDeserializable {
+class PropFind implements XmlDeserializable
+{
 
     /**
      * If this is set to true, this was an 'allprop' request.
@@ -54,30 +55,26 @@ class PropFind implements XmlDeserializable {
      * @param Reader $reader
      * @return mixed
      */
-    static function xmlDeserialize(Reader $reader) {
-
+    public static function xmlDeserialize(Reader $reader)
+    {
         $self = new self();
 
         $reader->pushContext();
         $reader->elementMap['{DAV:}prop'] = 'Sabre\Xml\Element\Elements';
 
         foreach (KeyValue::xmlDeserialize($reader) as $k => $v) {
-
             switch ($k) {
-                case '{DAV:}prop' :
+                case '{DAV:}prop':
                     $self->properties = $v;
                     break;
-                case '{DAV:}allprop' :
+                case '{DAV:}allprop':
                     $self->allProp = true;
 
             }
-
         }
 
         $reader->popContext();
 
         return $self;
-
     }
-
 }

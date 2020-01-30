@@ -12,8 +12,8 @@ use Sabre\VObject;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class ExpandEventsDTSTARTandDTENDbyDayTest extends \Sabre\DAVServerTest {
-
+class ExpandEventsDTSTARTandDTENDbyDayTest extends \Sabre\DAVServerTest
+{
     protected $setupCalDAV = true;
 
     protected $caldavCalendars = [
@@ -43,8 +43,8 @@ END:VCALENDAR
         ],
     ];
 
-    function testExpandRecurringByDayEvent() {
-
+    public function testExpandRecurringByDayEvent()
+    {
         $request = HTTP\Sapi::createFromServerArray([
             'REQUEST_METHOD'    => 'REPORT',
             'HTTP_CONTENT_TYPE' => 'application/xml',
@@ -98,5 +98,4 @@ END:VCALENDAR
             }
         }
     }
-
 }

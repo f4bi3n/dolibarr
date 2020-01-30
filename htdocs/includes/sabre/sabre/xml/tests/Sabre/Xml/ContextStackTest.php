@@ -9,16 +9,15 @@ namespace Sabre\Xml;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class ContextStackTest extends \PHPUnit_Framework_TestCase {
-
-    function setUp() {
-
+class ContextStackTest extends \PHPUnit_Framework_TestCase
+{
+    public function setUp()
+    {
         $this->stack = $this->getMockForTrait('Sabre\\Xml\\ContextStackTrait');
-
     }
 
-    function testPushAndPull() {
-
+    public function testPushAndPull()
+    {
         $this->stack->contextUri = '/foo/bar';
         $this->stack->elementMap['{DAV:}foo'] = 'Bar';
         $this->stack->namespaceMap['DAV:'] = 'd';
@@ -38,7 +37,5 @@ class ContextStackTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals('/foo/bar', $this->stack->contextUri);
         $this->assertEquals('Bar', $this->stack->elementMap['{DAV:}foo']);
         $this->assertEquals('d', $this->stack->namespaceMap['DAV:']);
-
     }
-
 }

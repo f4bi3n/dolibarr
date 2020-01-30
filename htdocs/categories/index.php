@@ -34,13 +34,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 // Load translation files required by the page
 $langs->load("categories");
 
-if (!$user->rights->categorie->lire) accessforbidden();
+if (!$user->rights->categorie->lire) {
+    accessforbidden();
+}
 
 $id = GETPOST('id', 'int');
 $type = (GETPOST('type', 'aZ09') ? GETPOST('type', 'aZ09') : Categorie::TYPE_PRODUCT);
 $catname = GETPOST('catname', 'alpha');
 
-if (is_numeric($type)) $type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
+if (is_numeric($type)) {
+    $type = Categorie::$MAP_ID_TO_CODE[$type];
+} // For backward compatibility
 
 
 /*
@@ -50,16 +54,34 @@ if (is_numeric($type)) $type = Categorie::$MAP_ID_TO_CODE[$type]; // For backwar
 $categstatic = new Categorie($db);
 $form = new Form($db);
 
-if ($type == Categorie::TYPE_PRODUCT)       { $title=$langs->trans("ProductsCategoriesArea");  $typetext='product'; }
-elseif ($type == Categorie::TYPE_SUPPLIER)  { $title=$langs->trans("SuppliersCategoriesArea"); $typetext='supplier'; }
-elseif ($type == Categorie::TYPE_CUSTOMER)  { $title=$langs->trans("CustomersCategoriesArea"); $typetext='customer'; }
-elseif ($type == Categorie::TYPE_MEMBER)    { $title=$langs->trans("MembersCategoriesArea");   $typetext='member'; }
-elseif ($type == Categorie::TYPE_CONTACT)   { $title=$langs->trans("ContactsCategoriesArea");  $typetext='contact'; }
-elseif ($type == Categorie::TYPE_ACCOUNT)   { $title=$langs->trans("AccountsCategoriesArea");  $typetext='bank_account'; }
-elseif ($type == Categorie::TYPE_PROJECT)   { $title=$langs->trans("ProjectsCategoriesArea");  $typetext='project'; }
-elseif ($type == Categorie::TYPE_USER)      { $title=$langs->trans("UsersCategoriesArea");     $typetext='user'; }
-elseif ($type == Categorie::TYPE_WAREHOUSE) { $title=$langs->trans("StocksCategoriesArea");    $typetext='warehouse'; }
-elseif ($type == Categorie::TYPE_ACTIONCOMM) {
+if ($type == Categorie::TYPE_PRODUCT) {
+    $title=$langs->trans("ProductsCategoriesArea");
+    $typetext='product';
+} elseif ($type == Categorie::TYPE_SUPPLIER) {
+    $title=$langs->trans("SuppliersCategoriesArea");
+    $typetext='supplier';
+} elseif ($type == Categorie::TYPE_CUSTOMER) {
+    $title=$langs->trans("CustomersCategoriesArea");
+    $typetext='customer';
+} elseif ($type == Categorie::TYPE_MEMBER) {
+    $title=$langs->trans("MembersCategoriesArea");
+    $typetext='member';
+} elseif ($type == Categorie::TYPE_CONTACT) {
+    $title=$langs->trans("ContactsCategoriesArea");
+    $typetext='contact';
+} elseif ($type == Categorie::TYPE_ACCOUNT) {
+    $title=$langs->trans("AccountsCategoriesArea");
+    $typetext='bank_account';
+} elseif ($type == Categorie::TYPE_PROJECT) {
+    $title=$langs->trans("ProjectsCategoriesArea");
+    $typetext='project';
+} elseif ($type == Categorie::TYPE_USER) {
+    $title=$langs->trans("UsersCategoriesArea");
+    $typetext='user';
+} elseif ($type == Categorie::TYPE_WAREHOUSE) {
+    $title=$langs->trans("StocksCategoriesArea");
+    $typetext='warehouse';
+} elseif ($type == Categorie::TYPE_ACTIONCOMM) {
     $title = $langs->trans("ActionCommCategoriesArea");
     $typetext = 'actioncomm';
 } else {
@@ -75,7 +97,7 @@ llxHeader('', $title, '', '', 0, 0, $arrayofjs, $arrayofcss);
 
 $newcardbutton='';
 if (! empty($user->rights->categorie->creer)) {
-	$newcardbutton.= dolGetButtonTitle($langs->trans('NewCategory'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/categories/card.php?action=create&type='.$type.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?type='.$type));
+    $newcardbutton.= dolGetButtonTitle($langs->trans('NewCategory'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/categories/card.php?action=create&type='.$type.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?type='.$type));
 }
 
 print load_fiche_titre($title, $newcardbutton);
@@ -119,34 +141,33 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 /*
  * Categories found
  */
-if ($catname || $id > 0)
-{
-	$cats = $categstatic->rechercher($id, $catname, $typetext);
+if ($catname || $id > 0) {
+    $cats = $categstatic->rechercher($id, $catname, $typetext);
 
-	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("FoundCats").'</td></tr>';
+    print '<table class="noborder centpercent">';
+    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("FoundCats").'</td></tr>';
 
-	foreach ($cats as $cat)
-	{
-		print "\t".'<tr class="oddeven">'."\n";
-		print "\t\t<td>";
-		$categstatic->id = $cat->id;
-		$categstatic->ref = $cat->label;
-		$categstatic->label = $cat->label;
-		$categstatic->type = $cat->type;
-		$categstatic->color = $cat->color;
-		print '<span class="noborderoncategories" '.($categstatic->color ? ' style="background: #'.$categstatic->color.';"' : ' style="background: #aaa"').'>';
-		print $categstatic->getNomUrl(1, '');
-		print '</span>';
-		print "</td>\n";
-		print "\t\t<td>";
-		print dolGetFirstLineOfText($cat->description);
-		print "</td>\n";
-		print "\t</tr>\n";
-	}
-	print "</table>";
+    foreach ($cats as $cat) {
+        print "\t".'<tr class="oddeven">'."\n";
+        print "\t\t<td>";
+        $categstatic->id = $cat->id;
+        $categstatic->ref = $cat->label;
+        $categstatic->label = $cat->label;
+        $categstatic->type = $cat->type;
+        $categstatic->color = $cat->color;
+        print '<span class="noborderoncategories" '.($categstatic->color ? ' style="background: #'.$categstatic->color.';"' : ' style="background: #aaa"').'>';
+        print $categstatic->getNomUrl(1, '');
+        print '</span>';
+        print "</td>\n";
+        print "\t\t<td>";
+        print dolGetFirstLineOfText($cat->description);
+        print "</td>\n";
+        print "\t</tr>\n";
+    }
+    print "</table>";
+} else {
+    print '&nbsp;';
 }
-else print '&nbsp;';
 
 
 //print '</td></tr></table>';
@@ -164,23 +185,22 @@ $fulltree = $cate_arbo;
 // Define data (format for treeview)
 $data = array();
 $data[] = array('rowid'=>0, 'fk_menu'=>-1, 'title'=>"racine", 'mainmenu'=>'', 'leftmenu'=>'', 'fk_mainmenu'=>'', 'fk_leftmenu'=>'');
-foreach ($fulltree as $key => $val)
-{
-	$categstatic->id = $val['id'];
-	$categstatic->ref = $val['label'];
-	$categstatic->color = $val['color'];
-	$categstatic->type = $type;
-	$li = $categstatic->getNomUrl(1, '', 60);
-	$desc = dol_htmlcleanlastbr($val['description']);
+foreach ($fulltree as $key => $val) {
+    $categstatic->id = $val['id'];
+    $categstatic->ref = $val['label'];
+    $categstatic->color = $val['color'];
+    $categstatic->type = $type;
+    $li = $categstatic->getNomUrl(1, '', 60);
+    $desc = dol_htmlcleanlastbr($val['description']);
 
-	$data[] = array(
-	'rowid'=>$val['rowid'],
-	'fk_menu'=>$val['fk_parent'],
-	'entry'=>'<table class="nobordernopadding centpercent"><tr><td><span class="noborderoncategories" '.($categstatic->color ? ' style="background: #'.$categstatic->color.';"' : ' style="background: #aaa"').'>'.$li.'</span></td>'.
-	//'<td width="50%">'.dolGetFirstLineOfText($desc).'</td>'.
-	'<td class="right" width="20px;"><a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$val['id'].'&type='.$type.'">'.img_view().'</a></td>'.
-	'</tr></table>'
-	);
+    $data[] = array(
+    'rowid'=>$val['rowid'],
+    'fk_menu'=>$val['fk_parent'],
+    'entry'=>'<table class="nobordernopadding centpercent"><tr><td><span class="noborderoncategories" '.($categstatic->color ? ' style="background: #'.$categstatic->color.';"' : ' style="background: #aaa"').'>'.$li.'</span></td>'.
+    //'<td width="50%">'.dolGetFirstLineOfText($desc).'</td>'.
+    '<td class="right" width="20px;"><a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$val['id'].'&type='.$type.'">'.img_view().'</a></td>'.
+    '</tr></table>'
+    );
 }
 
 
@@ -188,30 +208,26 @@ foreach ($fulltree as $key => $val)
 
 print '<table class="liste nohover" width="100%">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Categories").'</td><td></td><td class="right">';
-if (!empty($conf->use_javascript_ajax))
-{
-	print '<div id="iddivjstreecontrol"><a class="notasortlink" href="#">'.img_picto('', 'object_category').' '.$langs->trans("UndoExpandAll").'</a> | <a class="notasortlink" href="#">'.img_picto('', 'object_category-expanded').' '.$langs->trans("ExpandAll").'</a></div>';
+if (!empty($conf->use_javascript_ajax)) {
+    print '<div id="iddivjstreecontrol"><a class="notasortlink" href="#">'.img_picto('', 'object_category').' '.$langs->trans("UndoExpandAll").'</a> | <a class="notasortlink" href="#">'.img_picto('', 'object_category-expanded').' '.$langs->trans("ExpandAll").'</a></div>';
 }
 print '</td></tr>';
 
 $nbofentries = (count($data) - 1);
 
-if ($nbofentries > 0)
-{
-	print '<tr class="pair"><td colspan="3">';
-	tree_recur($data, $data[0], 0);
-	print '</td></tr>';
-}
-else
-{
-	print '<tr class="pair">';
-	print '<td colspan="3"><table class="nobordernopadding"><tr class="nobordernopadding"><td>'.img_picto_common('', 'treemenu/branchbottom.gif').'</td>';
-	print '<td valign="middle">';
-	print $langs->trans("NoCategoryYet");
-	print '</td>';
-	print '<td>&nbsp;</td>';
-	print '</table></td>';
-	print '</tr>';
+if ($nbofentries > 0) {
+    print '<tr class="pair"><td colspan="3">';
+    tree_recur($data, $data[0], 0);
+    print '</td></tr>';
+} else {
+    print '<tr class="pair">';
+    print '<td colspan="3"><table class="nobordernopadding"><tr class="nobordernopadding"><td>'.img_picto_common('', 'treemenu/branchbottom.gif').'</td>';
+    print '<td valign="middle">';
+    print $langs->trans("NoCategoryYet");
+    print '</td>';
+    print '<td>&nbsp;</td>';
+    print '</table></td>';
+    print '</tr>';
 }
 
 print "</table>";

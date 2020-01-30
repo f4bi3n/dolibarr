@@ -100,7 +100,7 @@ class Swift_DependencyContainer
         if (!$this->has($itemName)) {
             throw new Swift_DependencyException(
                 'Cannot lookup dependency "'.$itemName.'" since it is not registered.'
-                );
+            );
         }
 
         switch ($this->store[$itemName]['lookupType']) {
@@ -310,7 +310,7 @@ class Swift_DependencyContainer
         if ($reflector->getConstructor()) {
             return $reflector->newInstanceArgs(
                 $this->createDependenciesFor($itemName)
-                );
+            );
         }
 
         return $reflector->newInstance();
@@ -332,7 +332,7 @@ class Swift_DependencyContainer
         if (!isset($this->endPoint)) {
             throw new BadMethodCallException(
                 'Component must first be registered by calling register()'
-                );
+            );
         }
 
         return $this->endPoint;

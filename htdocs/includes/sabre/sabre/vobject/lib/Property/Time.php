@@ -13,7 +13,8 @@ use Sabre\VObject\DateTimeParser;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Time extends Text {
+class Time extends Text
+{
 
     /**
      * In case this is a multi-value property. This string will be used as a
@@ -31,10 +32,9 @@ class Time extends Text {
      *
      * @return string
      */
-    function getValueType() {
-
+    public function getValueType()
+    {
         return 'TIME';
-
     }
 
     /**
@@ -46,7 +46,8 @@ class Time extends Text {
      *
      * @return void
      */
-    function setJsonValue(array $value) {
+    public function setJsonValue(array $value)
+    {
 
         // Removing colons from value.
         $value = str_replace(
@@ -60,7 +61,6 @@ class Time extends Text {
         } else {
             $this->setValue($value);
         }
-
     }
 
     /**
@@ -70,8 +70,8 @@ class Time extends Text {
      *
      * @return array
      */
-    function getJsonValue() {
-
+    public function getJsonValue()
+    {
         $parts = DateTimeParser::parseVCardTime($this->getValue());
         $timeStr = '';
 
@@ -118,7 +118,6 @@ class Time extends Text {
         }
 
         return [$timeStr];
-
     }
 
     /**
@@ -129,16 +128,14 @@ class Time extends Text {
      *
      * @return void
      */
-    function setXmlValue(array $value) {
-
+    public function setXmlValue(array $value)
+    {
         $value = array_map(
-            function($value) {
+            function ($value) {
                 return str_replace(':', '', $value);
             },
             $value
         );
         parent::setXmlValue($value);
-
     }
-
 }

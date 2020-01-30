@@ -26,9 +26,15 @@
 // This script is called with a POST method.
 // Directory to scan (full path) is inside POST['dir'].
 
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1); // Disables token renewal
-if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU', '1');
-if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML', '1');
+if (! defined('NOTOKENRENEWAL')) {
+    define('NOTOKENRENEWAL', 1);
+} // Disables token renewal
+if (! defined('NOREQUIREMENU')) {
+    define('NOREQUIREMENU', '1');
+}
+if (! defined('NOREQUIREHTML')) {
+    define('NOREQUIREHTML', '1');
+}
 
 $res=require '../../master.inc.php';
 
@@ -44,26 +50,23 @@ $signature = GETPOST('s');
 $newblock = GETPOST('b');
 $hash = GETPOST('h');
 
-if($auth->fetch(0, $signature)<=0) {
-	$auth->signature = $signature;
-	$auth->create($user);
+if ($auth->fetch(0, $signature)<=0) {
+    $auth->signature = $signature;
+    $auth->create($user);
 }
 
 
-if(!empty($hash)) {
-	echo $auth->checkBlockchain($hash) ? 'hashisok' : 'hashisjunk';
-}
-elseif(!empty($newblock)){
-	if($auth->checkBlock($newblock)) {
-		$auth->addBlock($newblock);
-		$auth->update($user);
+if (!empty($hash)) {
+    echo $auth->checkBlockchain($hash) ? 'hashisok' : 'hashisjunk';
+} elseif (!empty($newblock)) {
+    if ($auth->checkBlock($newblock)) {
+        $auth->addBlock($newblock);
+        $auth->update($user);
 
-		echo 'blockadded';
-	}
-	else{
-		echo 'blockalreadyadded';
-	}
-}
-else{
-	echo 'idontunderstandwhatihavetodo';
+        echo 'blockadded';
+    } else {
+        echo 'blockalreadyadded';
+    }
+} else {
+    echo 'idontunderstandwhatihavetodo';
 }

@@ -11,7 +11,8 @@ use Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface SubscriptionSupport extends BackendInterface {
+interface SubscriptionSupport extends BackendInterface
+{
 
     /**
      * Returns a list of subscriptions for a principal.
@@ -45,7 +46,7 @@ interface SubscriptionSupport extends BackendInterface {
      * @param string $principalUri
      * @return array
      */
-    function getSubscriptionsForUser($principalUri);
+    public function getSubscriptionsForUser($principalUri);
 
     /**
      * Creates a new subscription for a principal.
@@ -58,7 +59,7 @@ interface SubscriptionSupport extends BackendInterface {
      * @param array $properties
      * @return mixed
      */
-    function createSubscription($principalUri, $uri, array $properties);
+    public function createSubscription($principalUri, $uri, array $properties);
 
     /**
      * Updates a subscription
@@ -76,7 +77,7 @@ interface SubscriptionSupport extends BackendInterface {
      * @param \Sabre\DAV\PropPatch $propPatch
      * @return void
      */
-    function updateSubscription($subscriptionId, DAV\PropPatch $propPatch);
+    public function updateSubscription($subscriptionId, DAV\PropPatch $propPatch);
 
     /**
      * Deletes a subscription.
@@ -84,6 +85,5 @@ interface SubscriptionSupport extends BackendInterface {
      * @param mixed $subscriptionId
      * @return void
      */
-    function deleteSubscription($subscriptionId);
-
+    public function deleteSubscription($subscriptionId);
 }

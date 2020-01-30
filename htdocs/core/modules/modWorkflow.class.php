@@ -33,9 +33,9 @@ class modWorkflow extends DolibarrModules
 {
 
     /**
-	 *   Constructor. Define names, constants, directories, boxes, permissions
-	 *
-	 *   @param      DoliDB		$db      Database handler
+     *   Constructor. Define names, constants, directories, boxes, permissions
+     *
+     *   @param      DoliDB		$db      Database handler
      */
     public function __construct($db)
     {
@@ -69,10 +69,10 @@ class modWorkflow extends DolibarrModules
 
         // Dependencies
         $this->hidden = false;			// A condition to hide module
-		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
-		$this->requiredby = array();	// List of module ids to disable if this one is disabled
-		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
-		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
+        $this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
+        $this->requiredby = array();	// List of module ids to disable if this one is disabled
+        $this->conflictwith = array();	// List of module class names as string this module is in conflict with
+        $this->phpmin = array(5,4);		// Minimum version of PHP required by module
         $this->need_dolibarr_version = array(2,8);  // Minimum version of Dolibarr required by module
         $this->langfiles = array("@workflow");
 
@@ -143,19 +143,19 @@ class modWorkflow extends DolibarrModules
 
 
     /**
-	 *		Function called when module is enabled.
-	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-	 *		It also creates data directories
-	 *
+     *		Function called when module is enabled.
+     *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+     *		It also creates data directories
+     *
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int                 1 if OK, 0 if KO
+     *      @return     int                 1 if OK, 0 if KO
      */
     public function init($options = '')
     {
-		// Permissions
-		$this->remove($options);
+        // Permissions
+        $this->remove($options);
 
-		$sql = array();
+        $sql = array();
 
         return $this->_init($sql, $options);
     }

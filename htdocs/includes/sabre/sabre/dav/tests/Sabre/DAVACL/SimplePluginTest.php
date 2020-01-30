@@ -8,10 +8,10 @@ use Sabre\HTTP;
 require_once 'Sabre/DAVACL/MockPrincipal.php';
 require_once 'Sabre/DAVACL/MockACLNode.php';
 
-class SimplePluginTest extends \PHPUnit_Framework_TestCase {
-
-    function testValues() {
-
+class SimplePluginTest extends \PHPUnit_Framework_TestCase
+{
+    public function testValues()
+    {
         $aclPlugin = new Plugin();
         $this->assertEquals('acl', $aclPlugin->getPluginName());
         $this->assertEquals(
@@ -26,7 +26,8 @@ class SimplePluginTest extends \PHPUnit_Framework_TestCase {
                 '{DAV:}principal-property-search',
                 '{DAV:}principal-search-property-set'
             ],
-            $aclPlugin->getSupportedReportSet(''));
+            $aclPlugin->getSupportedReportSet('')
+        );
 
         $this->assertEquals(['ACL'], $aclPlugin->getMethods(''));
 
@@ -37,8 +38,8 @@ class SimplePluginTest extends \PHPUnit_Framework_TestCase {
         );
     }
 
-    function testGetFlatPrivilegeSet() {
-
+    public function testGetFlatPrivilegeSet()
+    {
         $expected = [
             '{DAV:}all' => [
                 'privilege'  => '{DAV:}all',
@@ -120,22 +121,20 @@ class SimplePluginTest extends \PHPUnit_Framework_TestCase {
         $server = new DAV\Server();
         $server->addPlugin($plugin);
         $this->assertEquals($expected, $plugin->getFlatPrivilegeSet(''));
-
     }
 
-    function testCurrentUserPrincipalsNotLoggedIn() {
-
+    public function testCurrentUserPrincipalsNotLoggedIn()
+    {
         $acl = new Plugin();
         $acl->allowUnauthenticatedAccess = false;
         $server = new DAV\Server();
         $server->addPlugin($acl);
 
         $this->assertEquals([], $acl->getCurrentUserPrincipals());
-
     }
 
-    function testCurrentUserPrincipalsSimple() {
-
+    public function testCurrentUserPrincipalsSimple()
+    {
         $tree = [
 
             new DAV\SimpleCollection('principals', [
@@ -156,11 +155,10 @@ class SimplePluginTest extends \PHPUnit_Framework_TestCase {
         $auth->beforeMethod(new HTTP\Request(), new HTTP\Response());
 
         $this->assertEquals(['principals/admin'], $acl->getCurrentUserPrincipals());
-
     }
 
-    function testCurrentUserPrincipalsGroups() {
-
+    public function testCurrentUserPrincipalsGroups()
+    {
         $tree = [
 
             new DAV\SimpleCollection('principals', [
@@ -194,11 +192,10 @@ class SimplePluginTest extends \PHPUnit_Framework_TestCase {
 
         // The second one should trigger the cache and be identical
         $this->assertEquals($expected, $acl->getCurrentUserPrincipals());
-
     }
 
-    function testGetACL() {
-
+    public function testGetACL()
+    {
         $acl = [
             [
                 'principal' => 'principals/admin',
@@ -221,11 +218,10 @@ class SimplePluginTest extends \PHPUnit_Framework_TestCase {
         $server->addPlugin($aclPlugin);
 
         $this->assertEquals($acl, $aclPlugin->getACL('foo'));
-
     }
 
-    function testGetCurrentUserPrivilegeSet() {
-
+    public function testGetCurrentUserPrivilegeSet()
+    {
         $acl = [
             [
                 'principal' => 'principals/admin',
@@ -274,11 +270,10 @@ class SimplePluginTest extends \PHPUnit_Framework_TestCase {
         ];
 
         $this->assertEquals($expected, $aclPlugin->getCurrentUserPrivilegeSet('foo'));
-
     }
 
-    function testCheckPrivileges() {
-
+    public function testCheckPrivileges()
+    {
         $acl = [
             [
                 'principal' => 'principals/admin',
@@ -316,6 +311,5 @@ class SimplePluginTest extends \PHPUnit_Framework_TestCase {
         //$auth->beforeMethod('GET','/');
 
         $this->assertFalse($aclPlugin->checkPrivileges('foo', ['{DAV:}read'], Plugin::R_PARENT, false));
-
     }
 }

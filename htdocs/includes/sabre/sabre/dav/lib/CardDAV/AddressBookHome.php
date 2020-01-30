@@ -16,8 +16,8 @@ use Sabre\Uri;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class AddressBookHome extends DAV\Collection implements DAV\IExtendedCollection, DAVACL\IACL {
-
+class AddressBookHome extends DAV\Collection implements DAV\IExtendedCollection, DAVACL\IACL
+{
     use DAVACL\ACLTrait;
 
     /**
@@ -40,11 +40,10 @@ class AddressBookHome extends DAV\Collection implements DAV\IExtendedCollection,
      * @param Backend\BackendInterface $carddavBackend
      * @param string $principalUri
      */
-    function __construct(Backend\BackendInterface $carddavBackend, $principalUri) {
-
+    public function __construct(Backend\BackendInterface $carddavBackend, $principalUri)
+    {
         $this->carddavBackend = $carddavBackend;
         $this->principalUri = $principalUri;
-
     }
 
     /**
@@ -52,11 +51,10 @@ class AddressBookHome extends DAV\Collection implements DAV\IExtendedCollection,
      *
      * @return string
      */
-    function getName() {
-
+    public function getName()
+    {
         list(, $name) = Uri\split($this->principalUri);
         return $name;
-
     }
 
     /**
@@ -65,10 +63,9 @@ class AddressBookHome extends DAV\Collection implements DAV\IExtendedCollection,
      * @param string $name
      * @return void
      */
-    function setName($name) {
-
+    public function setName($name)
+    {
         throw new DAV\Exception\MethodNotAllowed();
-
     }
 
     /**
@@ -76,10 +73,9 @@ class AddressBookHome extends DAV\Collection implements DAV\IExtendedCollection,
      *
      * @return void
      */
-    function delete() {
-
+    public function delete()
+    {
         throw new DAV\Exception\MethodNotAllowed();
-
     }
 
     /**
@@ -87,10 +83,9 @@ class AddressBookHome extends DAV\Collection implements DAV\IExtendedCollection,
      *
      * @return int
      */
-    function getLastModified() {
-
+    public function getLastModified()
+    {
         return null;
-
     }
 
     /**
@@ -102,10 +97,9 @@ class AddressBookHome extends DAV\Collection implements DAV\IExtendedCollection,
      * @param resource $data
      * @return void
      */
-    function createFile($filename, $data = null) {
-
+    public function createFile($filename, $data = null)
+    {
         throw new DAV\Exception\MethodNotAllowed('Creating new files in this collection is not supported');
-
     }
 
     /**
@@ -116,10 +110,9 @@ class AddressBookHome extends DAV\Collection implements DAV\IExtendedCollection,
      * @param string $filename
      * @return void
      */
-    function createDirectory($filename) {
-
+    public function createDirectory($filename)
+    {
         throw new DAV\Exception\MethodNotAllowed('Creating new collections in this collection is not supported');
-
     }
 
     /**
@@ -129,15 +122,14 @@ class AddressBookHome extends DAV\Collection implements DAV\IExtendedCollection,
      * @todo needs optimizing
      * @return AddressBook
      */
-    function getChild($name) {
-
+    public function getChild($name)
+    {
         foreach ($this->getChildren() as $child) {
-            if ($name == $child->getName())
+            if ($name == $child->getName()) {
                 return $child;
-
+            }
         }
         throw new DAV\Exception\NotFound('Addressbook with name \'' . $name . '\' could not be found');
-
     }
 
     /**
@@ -145,15 +137,14 @@ class AddressBookHome extends DAV\Collection implements DAV\IExtendedCollection,
      *
      * @return array
      */
-    function getChildren() {
-
+    public function getChildren()
+    {
         $addressbooks = $this->carddavBackend->getAddressBooksForUser($this->principalUri);
         $objs = [];
         foreach ($addressbooks as $addressbook) {
             $objs[] = new AddressBook($this->carddavBackend, $addressbook);
         }
         return $objs;
-
     }
 
     /**
@@ -164,15 +155,14 @@ class AddressBookHome extends DAV\Collection implements DAV\IExtendedCollection,
      * @throws DAV\Exception\InvalidResourceType
      * @return void
      */
-    function createExtendedCollection($name, MkCol $mkCol) {
-
+    public function createExtendedCollection($name, MkCol $mkCol)
+    {
         if (!$mkCol->hasResourceType('{' . Plugin::NS_CARDDAV . '}addressbook')) {
             throw new DAV\Exception\InvalidResourceType('Unknown resourceType for this collection');
         }
         $properties = $mkCol->getRemainingValues();
         $mkCol->setRemainingResultCode(201);
         $this->carddavBackend->createAddressBook($this->principalUri, $name, $properties);
-
     }
 
     /**
@@ -182,10 +172,8 @@ class AddressBookHome extends DAV\Collection implements DAV\IExtendedCollection,
      *
      * @return string|null
      */
-    function getOwner() {
-
+    public function getOwner()
+    {
         return $this->principalUri;
-
     }
-
 }

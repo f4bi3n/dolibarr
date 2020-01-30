@@ -162,7 +162,7 @@ if ($result) {
             $tick['read'] = $objp->nb;
         }
         if ($objp->fk_statut == Ticket::STATUS_NEED_MORE_INFO) {
-        	$tick['needmoreinfo'] = $objp->nb;
+            $tick['needmoreinfo'] = $objp->nb;
         }
         if ($objp->fk_statut == Ticket::STATUS_ASSIGNED) {
             $tick['assigned'] = $objp->nb;
@@ -219,12 +219,12 @@ print $stringtoshow;
 
 // don't display graph if no series
 if (!empty($dataseries) && count($dataseries) > 1) {
-	$totalnb = 0;
-	foreach ($dataseries as $key => $value) {
-		$totalnb += $value['data'];
-	}
+    $totalnb = 0;
+    foreach ($dataseries as $key => $value) {
+        $totalnb += $value['data'];
+    }
 
-	$data = array();
+    $data = array();
     foreach ($dataseries as $key => $value) {
         $data[] = array($value['label'], $value['data']);
     }

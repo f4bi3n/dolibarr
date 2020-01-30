@@ -39,7 +39,7 @@ class ZapierApi extends DolibarrApi
     /**
      * @var array   $FIELDS     Mandatory fields, checked when create and update object
      */
-    static $FIELDS = array(
+    public static $FIELDS = array(
         'url',
     );
 
@@ -75,12 +75,12 @@ class ZapierApi extends DolibarrApi
      */
     public function get($id)
     {
-        if(! DolibarrApiAccess::$user->rights->zapier->read) {
+        if (! DolibarrApiAccess::$user->rights->zapier->read) {
             throw new RestException(401);
         }
 
         $result = $this->hook->fetch($id);
-        if (! $result ) {
+        if (! $result) {
             throw new RestException(404, 'Hook not found');
         }
 
@@ -105,7 +105,7 @@ class ZapierApi extends DolibarrApi
      */
     public function getModulesChoices($id)
     {
-        if(! DolibarrApiAccess::$user->rights->zapier->read) {
+        if (! DolibarrApiAccess::$user->rights->zapier->read) {
             throw new RestException(401);
         }
         $arraychoices = array(
@@ -167,7 +167,9 @@ class ZapierApi extends DolibarrApi
         }
         $sql.= " FROM ".MAIN_DB_PREFIX."hook_mytable as t";
 
-        if ($restrictonsocid && (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
+        if ($restrictonsocid && (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) {
+            $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        } // We need this table joined to the select in order to filter by sale
         $sql.= " WHERE 1 = 1";
 
         // Example of use $mode
@@ -201,7 +203,7 @@ class ZapierApi extends DolibarrApi
         }
 
         $sql.= $db->order($sortfield, $sortorder);
-        if ($limit)	{
+        if ($limit) {
             if ($page < 0) {
                 $page = 0;
             }
@@ -210,8 +212,8 @@ class ZapierApi extends DolibarrApi
             $sql.= $db->plimit($limit + 1, $offset);
         }
 
-		$result = $db->query($sql);
-		$i = 0;
+        $result = $db->query($sql);
+        $i = 0;
         if ($result) {
             $num = $db->num_rows($result);
             while ($i < $num) {
@@ -250,12 +252,12 @@ class ZapierApi extends DolibarrApi
         );
         $result = $this->validate($request_data, $fields);
 
-        foreach($request_data as $field => $value) {
+        foreach ($request_data as $field => $value) {
             $this->hook->$field = $value;
         }
         $this->hook->fk_user = DolibarrApiAccess::$user->id;
         // on crée le hook dans la base
-        if( ! $this->hook->create(DolibarrApiAccess::$user)) {
+        if (! $this->hook->create(DolibarrApiAccess::$user)) {
             throw new RestException(500, "Error creating Hook", array_merge(array($this->hook->error), $this->hook->errors));
         }
         return array(

@@ -27,26 +27,26 @@
  */
 class FormSocialContrib
 {
-	/**
+    /**
      * @var DoliDB Database handler.
      */
     public $db;
 
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
+    /**
+     * @var string Error code (or message)
+     */
+    public $error='';
 
 
-	/**
-	* Constructor
-	*
-	* @param		DoliDB		$db      Database handler
-	*/
-	public function __construct($db)
-	{
-	    $this->db = $db;
-	}
+    /**
+    * Constructor
+    *
+    * @param		DoliDB		$db      Database handler
+    */
+    public function __construct($db)
+    {
+        $this->db = $db;
+    }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
@@ -66,22 +66,18 @@ class FormSocialContrib
         // phpcs:enable
         global $conf,$db,$langs,$user,$mysoc;
 
-        if (empty($mysoc->country_id) && empty($mysoc->country_code))
-        {
+        if (empty($mysoc->country_id) && empty($mysoc->country_code)) {
             dol_print_error('', 'Call to select_type_socialcontrib with mysoc country not yet defined');
             exit;
         }
 
-        if (! empty($mysoc->country_id))
-        {
+        if (! empty($mysoc->country_id)) {
             $sql = "SELECT c.id, c.libelle as type";
             $sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
             $sql.= " WHERE c.active = 1";
             $sql.= " AND c.fk_pays = ".$mysoc->country_id;
             $sql.= " ORDER BY c.libelle ASC";
-        }
-        else
-        {
+        } else {
             $sql = "SELECT c.id, c.libelle as type";
             $sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c, ".MAIN_DB_PREFIX."c_country as co";
             $sql.= " WHERE c.active = 1 AND c.fk_pays = co.rowid";
@@ -91,34 +87,35 @@ class FormSocialContrib
 
         dol_syslog("Form::select_type_socialcontrib", LOG_DEBUG);
         $resql=$db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             $num = $db->num_rows($resql);
-            if ($num)
-            {
-            	print '<select class="'.($morecss?$morecss:'').'" id="'.$htmlname.'" name="'.$htmlname.'">';
+            if ($num) {
+                print '<select class="'.($morecss?$morecss:'').'" id="'.$htmlname.'" name="'.$htmlname.'">';
                 $i = 0;
 
-                if ($useempty) print '<option value="0">&nbsp;</option>';
-                while ($i < $num)
-                {
+                if ($useempty) {
+                    print '<option value="0">&nbsp;</option>';
+                }
+                while ($i < $num) {
                     $obj = $db->fetch_object($resql);
                     print '<option value="'.$obj->id.'"';
-                    if ($obj->id == $selected) print ' selected';
+                    if ($obj->id == $selected) {
+                        print ' selected';
+                    }
                     print '>'.dol_trunc($obj->type, $maxlen);
                     $i++;
                 }
                 print '</select>';
-                if ($user->admin && $help) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-                if (! empty($conf->use_javascript_ajax)) print ajax_combobox($htmlname);
-            }
-            else
-            {
+                if ($user->admin && $help) {
+                    print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+                }
+                if (! empty($conf->use_javascript_ajax)) {
+                    print ajax_combobox($htmlname);
+                }
+            } else {
                 print $langs->trans("ErrorNoSocialContributionForSellerCountry", $mysoc->country_code);
             }
-        }
-        else
-        {
+        } else {
             dol_print_error($db, $db->lasterror());
         }
     }

@@ -25,10 +25,14 @@ class Arr
     {
         $copy = array();
         foreach ($arr as $key => $value) {
-            if (is_array($value)) $copy[$key] = static::copy($value);
-            else if (is_object($value)) $copy[$key] = clone $value;
-            else $copy[$key] = $value;
+            if (is_array($value)) {
+                $copy[$key] = static::copy($value);
+            } elseif (is_object($value)) {
+                $copy[$key] = clone $value;
+            } else {
+                $copy[$key] = $value;
+            }
         }
         return $copy;
     }
-} 
+}

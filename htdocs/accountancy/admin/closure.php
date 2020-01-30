@@ -32,13 +32,13 @@ $langs->loadLangs(array("compta","admin","accountancy"));
 
 // Security check
 if (empty($user->rights->accounting->chartofaccount)) {
-	accessforbidden();
+    accessforbidden();
 }
 
 $action = GETPOST('action', 'aZ09');
 
 
-$list_account_main = array (
+$list_account_main = array(
     'ACCOUNTING_RESULT_PROFIT',
     'ACCOUNTING_RESULT_LOSS'
 );
@@ -60,19 +60,19 @@ if ($action == 'update') {
         $error ++;
     }
 
-	foreach ($list_account_main as $constname) {
-		$constvalue = GETPOST($constname, 'alpha');
+    foreach ($list_account_main as $constname) {
+        $constvalue = GETPOST($constname, 'alpha');
 
-		if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
-			$error ++;
-		}
-	}
+        if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+            $error ++;
+        }
+    }
 
-	if (! $error) {
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	} else {
-		setEventMessages($langs->trans("Error"), null, 'errors');
-	}
+    if (! $error) {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    } else {
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
 }
 
 

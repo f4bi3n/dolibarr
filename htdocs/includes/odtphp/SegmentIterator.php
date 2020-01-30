@@ -26,7 +26,7 @@ class SegmentIterator implements RecursiveIterator
     {
         return $this->ref[$this->keys[$this->key]];
     }
-    function getChildren()
+    public function getChildren()
     {
         return new self($this->current()->children);
     }
@@ -47,4 +47,3 @@ class SegmentIterator implements RecursiveIterator
         $this->key ++;
     }
 }
-

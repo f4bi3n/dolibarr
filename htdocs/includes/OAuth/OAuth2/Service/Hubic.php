@@ -66,7 +66,6 @@ class Hubic extends AbstractService
     public function getAuthorizationEndpoint()
     {
         return new Uri('https://api.hubic.com/oauth/auth');
-
     }
 
     /**

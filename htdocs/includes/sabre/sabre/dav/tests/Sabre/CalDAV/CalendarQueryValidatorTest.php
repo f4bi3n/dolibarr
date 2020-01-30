@@ -4,10 +4,10 @@ namespace Sabre\CalDAV;
 
 use Sabre\VObject;
 
-class CalendarQueryValidatorTest extends \PHPUnit_Framework_TestCase {
-
-    function testTopLevelFail() {
-
+class CalendarQueryValidatorTest extends \PHPUnit_Framework_TestCase
+{
+    public function testTopLevelFail()
+    {
         $validator = new CalendarQueryValidator();
         $vcal = <<<ICS
 BEGIN:VCALENDAR
@@ -17,7 +17,6 @@ END:VCALENDAR
 ICS;
         $vcal = VObject\Reader::read($vcal);
         $this->assertFalse($validator->validate($vcal, ['name' => 'VFOO']));
-
     }
 
     /**
@@ -26,8 +25,8 @@ ICS;
      * @param int $outcome
      * @dataProvider provider
      */
-    function testValid($icalObject, $filters, $outcome) {
-
+    public function testValid($icalObject, $filters, $outcome)
+    {
         $validator = new CalendarQueryValidator();
 
         // Wrapping filter in a VCALENDAR component filter, as this is always
@@ -43,13 +42,13 @@ ICS;
         $vObject = VObject\Reader::read($icalObject);
 
         switch ($outcome) {
-            case 0 :
+            case 0:
                 $this->assertFalse($validator->validate($vObject, $filters));
                 break;
-            case 1 :
+            case 1:
                 $this->assertTrue($validator->validate($vObject, $filters));
                 break;
-            case -1 :
+            case -1:
                 try {
                     $validator->validate($vObject, $filters);
                     $this->fail('This test was supposed to fail');
@@ -64,11 +63,10 @@ ICS;
                 break;
 
         }
-
     }
 
-    function provider() {
-
+    public function provider()
+    {
         $blob1 = <<<yow
 BEGIN:VCALENDAR
 BEGIN:VEVENT
@@ -823,7 +821,5 @@ yow;
             // Event in timerange, but filtered alarm is in the far future (88).
             [$blob34, $filter39, 0],
         ];
-
     }
-
 }

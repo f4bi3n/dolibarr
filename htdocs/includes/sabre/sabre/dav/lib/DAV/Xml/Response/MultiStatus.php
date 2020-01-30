@@ -19,7 +19,8 @@ use Sabre\Xml\Writer;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class MultiStatus implements Element {
+class MultiStatus implements Element
+{
 
     /**
      * The responses
@@ -41,11 +42,10 @@ class MultiStatus implements Element {
      * @param \Sabre\DAV\Xml\Element\Response[] $responses
      * @param string $syncToken
      */
-    function __construct(array $responses, $syncToken = null) {
-
+    public function __construct(array $responses, $syncToken = null)
+    {
         $this->responses = $responses;
         $this->syncToken = $syncToken;
-
     }
 
     /**
@@ -53,10 +53,9 @@ class MultiStatus implements Element {
      *
      * @return \Sabre\DAV\Xml\Element\Response[]
      */
-    function getResponses() {
-
+    public function getResponses()
+    {
         return $this->responses;
-
     }
 
     /**
@@ -64,10 +63,9 @@ class MultiStatus implements Element {
      *
      * @return string|null
      */
-    function getSyncToken() {
-
+    public function getSyncToken()
+    {
         return $this->syncToken;
-
     }
 
     /**
@@ -85,15 +83,14 @@ class MultiStatus implements Element {
      * @param Writer $writer
      * @return void
      */
-    function xmlSerialize(Writer $writer) {
-
+    public function xmlSerialize(Writer $writer)
+    {
         foreach ($this->getResponses() as $response) {
             $writer->writeElement('{DAV:}response', $response);
         }
         if ($syncToken = $this->getSyncToken()) {
             $writer->writeElement('{DAV:}sync-token', $syncToken);
         }
-
     }
 
     /**
@@ -117,8 +114,8 @@ class MultiStatus implements Element {
      * @param Reader $reader
      * @return mixed
      */
-    static function xmlDeserialize(Reader $reader) {
-
+    public static function xmlDeserialize(Reader $reader)
+    {
         $elementMap = $reader->elementMap;
         $elementMap['{DAV:}prop'] = 'Sabre\\DAV\\Xml\\Element\\Prop';
         $elements = $reader->parseInnerTree($elementMap);
@@ -126,17 +123,17 @@ class MultiStatus implements Element {
         $responses = [];
         $syncToken = null;
 
-        if ($elements) foreach ($elements as $elem) {
-            if ($elem['name'] === '{DAV:}response') {
-                $responses[] = $elem['value'];
-            }
-            if ($elem['name'] === '{DAV:}sync-token') {
-                $syncToken = $elem['value'];
+        if ($elements) {
+            foreach ($elements as $elem) {
+                if ($elem['name'] === '{DAV:}response') {
+                    $responses[] = $elem['value'];
+                }
+                if ($elem['name'] === '{DAV:}sync-token') {
+                    $syncToken = $elem['value'];
+                }
             }
         }
 
         return new self($responses, $syncToken);
-
     }
-
 }

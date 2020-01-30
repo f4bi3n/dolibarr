@@ -48,8 +48,7 @@ print '<br>';
 
 
 print '<div class="center">';
-if (count($export->array_export_code))
-{
+if (count($export->array_export_code)) {
     print dolGetButtonTitle($langs->trans('NewExport'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/exports/export.php?leftmenu=export', '', $user->rights->export->creer);
 }
 print '</div>';
@@ -71,21 +70,19 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
 $model = new ModeleExports($db);
 $liste = $model->liste_modeles($db); // This is not a static method for exports because method load non static properties
 
-foreach ($liste as $key => $val)
-{
-    if (preg_match('/__\(Disabled\)__/', $liste[$key]))
-    {
-    	$liste[$key] = preg_replace('/__\(Disabled\)__/', '('.$langs->transnoentitiesnoconv("Disabled").')', $liste[$key]);
+foreach ($liste as $key => $val) {
+    if (preg_match('/__\(Disabled\)__/', $liste[$key])) {
+        $liste[$key] = preg_replace('/__\(Disabled\)__/', '('.$langs->transnoentitiesnoconv("Disabled").')', $liste[$key]);
     }
 
-	print '<tr class="oddeven">';
-	print '<td width="16">'.img_picto_common($model->getDriverLabelForKey($key), $model->getPictoForKey($key)).'</td>';
-	$text = $model->getDriverDescForKey($key);
-	$label = $liste[$key];
-	print '<td>'.$form->textwithpicto($label, $text).'</td>';
-	print '<td>'.$model->getLibLabelForKey($key).'</td>';
-	print '<td class="nowrap right">'.$model->getLibVersionForKey($key).'</td>';
-	print '</tr>';
+    print '<tr class="oddeven">';
+    print '<td width="16">'.img_picto_common($model->getDriverLabelForKey($key), $model->getPictoForKey($key)).'</td>';
+    $text = $model->getDriverDescForKey($key);
+    $label = $liste[$key];
+    print '<td>'.$form->textwithpicto($label, $text).'</td>';
+    print '<td>'.$model->getLibLabelForKey($key).'</td>';
+    print '<td class="nowrap right">'.$model->getLibVersionForKey($key).'</td>';
+    print '</tr>';
 }
 
 print '</table>';

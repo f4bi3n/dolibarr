@@ -5,10 +5,10 @@ namespace Sabre\CalDAV\Schedule;
 use Sabre\CalDAV;
 use Sabre\DAV;
 
-class InboxTest extends \PHPUnit_Framework_TestCase {
-
-    function testSetup() {
-
+class InboxTest extends \PHPUnit_Framework_TestCase
+{
+    public function testSetup()
+    {
         $inbox = new Inbox(
             new CalDAV\Backend\MockScheduling(),
             'principals/user1'
@@ -47,14 +47,13 @@ class InboxTest extends \PHPUnit_Framework_TestCase {
         ], $inbox->getACL());
 
         $ok = false;
-
     }
 
     /**
      * @depends testSetup
      */
-    function testGetChildren() {
-
+    public function testGetChildren()
+    {
         $backend = new CalDAV\Backend\MockScheduling();
         $inbox = new Inbox(
             $backend,
@@ -75,14 +74,13 @@ class InboxTest extends \PHPUnit_Framework_TestCase {
             'schedule1.ics',
             $inbox->getChildren()[0]->getName()
         );
-
     }
 
     /**
      * @depends testGetChildren
      */
-    function testCreateFile() {
-
+    public function testCreateFile()
+    {
         $backend = new CalDAV\Backend\MockScheduling();
         $inbox = new Inbox(
             $backend,
@@ -103,14 +101,13 @@ class InboxTest extends \PHPUnit_Framework_TestCase {
             'schedule1.ics',
             $inbox->getChildren()[0]->getName()
         );
-
     }
 
     /**
      * @depends testSetup
      */
-    function testCalendarQuery() {
-
+    public function testCalendarQuery()
+    {
         $backend = new CalDAV\Backend\MockScheduling();
         $inbox = new Inbox(
             $backend,
@@ -131,6 +128,5 @@ class InboxTest extends \PHPUnit_Framework_TestCase {
                 'is-not-defined' => false
             ])
         );
-
     }
 }

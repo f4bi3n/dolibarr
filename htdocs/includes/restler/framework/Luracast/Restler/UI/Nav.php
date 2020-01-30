@@ -8,7 +8,6 @@ use Luracast\Restler\Routes;
 use Luracast\Restler\Scope;
 use Luracast\Restler\Util;
 
-
 /**
  * Utility class for automatically creating data to build an navigation interface
  * based on available routes that are accessible by the current user
@@ -57,23 +56,27 @@ class Nav
         if (empty(static::$tree)) {
             /** @var Restler $restler */
             $restler = Scope::get('Restler');
-            if (static::$addExtension)
+            if (static::$addExtension) {
                 static::$extension = isset($restler->responseFormat)
                     ? '.' . $restler->responseFormat->getExtension()
                     : '.html';
+            }
             static::$url = $restler->getBaseUrl();
-            if (empty(static::$url))
+            if (empty(static::$url)) {
                 static::$url = '';
+            }
             static::$activeTrail = $activeTrail = empty($activeTrail)
-                ? (empty($restler->url) || $restler->url == 'index'
+                ? (
+                    empty($restler->url) || $restler->url == 'index'
                     ? static::$root
                     : $restler->url
                 )
                 : $activeTrail;
-            if (static::$addExtension)
+            if (static::$addExtension) {
                 static::$extension = isset($restler->responseFormat)
                     ? '.' . $restler->responseFormat->getExtension()
                     : '.html';
+            }
             static::addUrls(static::$prepends);
             $map = Routes::findAll(
                 static::$excludedPaths,
@@ -148,7 +151,6 @@ class Nav
                     $url = current(array_keys($label));
                     $label = current($label);
                 }
-
             }
             if (is_numeric($url)) {
                 $url = $label;
@@ -168,8 +170,9 @@ class Nav
         //remove / prefix and / suffixes and any extension
         $trail = strtok(trim($trail, '/'), '.');
         $parts = explode('/', $trail);
-        if (count($parts) == 1 && empty($parts[0]))
+        if (count($parts) == 1 && empty($parts[0])) {
             $parts = array(static::$root);
+        }
         if (isset($r['fragment'])) {
             $parts[] = $r['fragment'];
             if (is_null($label)) {
@@ -206,10 +209,10 @@ class Nav
                 $p[$part]['text'] = $r['label'];
                 $p[$part]['href'] = $r['url'];
                 $p[$part]['class'] = Text::slug($part);
-                /* dynamically do it at run time instead
-                if ($r['path'] == static::$activeTrail)
-                    $p[$part]['active'] = true;
-                */
+            /* dynamically do it at run time instead
+            if ($r['path'] == static::$activeTrail)
+                $p[$part]['active'] = true;
+            */
             } elseif (!isset($p[$part])) {
                 $p[$part] = array();
                 $p[$part]['text'] = Text::title($part);

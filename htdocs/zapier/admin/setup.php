@@ -33,7 +33,9 @@ require_once '../lib/zapier.lib.php';
 $langs->loadLangs(array("admin", "zapier@zapier"));
 
 // Access control
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+    accessforbidden();
+}
 
 // Parameters
 $action = GETPOST('action', 'alpha');
@@ -110,8 +112,7 @@ if ($action == 'edit') {
         print '<div class="tabsAction">';
         print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
         print '</div>';
-    } else
-    {
+    } else {
         print '<br>'.$langs->trans("NothingToSetup");
     }
 }

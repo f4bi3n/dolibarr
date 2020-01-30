@@ -2,10 +2,10 @@
 
 namespace Sabre\HTTP;
 
-class ClientTest extends \PHPUnit_Framework_TestCase {
-
-    function testCreateCurlSettingsArrayGET() {
-
+class ClientTest extends \PHPUnit_Framework_TestCase
+{
+    public function testCreateCurlSettingsArrayGET()
+    {
         $client = new ClientMock();
         $client->addCurlSetting(CURLOPT_POSTREDIR, 0);
 
@@ -33,11 +33,10 @@ class ClientTest extends \PHPUnit_Framework_TestCase {
 
 
         $this->assertEquals($settings, $client->createCurlSettingsArray($request));
-
     }
 
-    function testCreateCurlSettingsArrayHEAD() {
-
+    public function testCreateCurlSettingsArrayHEAD()
+    {
         $client = new ClientMock();
         $request = new Request('HEAD', 'http://example.org/', ['X-Foo' => 'bar']);
 
@@ -62,11 +61,10 @@ class ClientTest extends \PHPUnit_Framework_TestCase {
         }
 
         $this->assertEquals($settings, $client->createCurlSettingsArray($request));
-
     }
 
-    function testCreateCurlSettingsArrayGETAfterHEAD() {
-
+    public function testCreateCurlSettingsArrayGETAfterHEAD()
+    {
         $client = new ClientMock();
         $request = new Request('HEAD', 'http://example.org/', ['X-Foo' => 'bar']);
 
@@ -98,11 +96,10 @@ class ClientTest extends \PHPUnit_Framework_TestCase {
         }
 
         $this->assertEquals($settings, $client->createCurlSettingsArray($request));
-
     }
 
-    function testCreateCurlSettingsArrayPUTStream() {
-
+    public function testCreateCurlSettingsArrayPUTStream()
+    {
         $client = new ClientMock();
 
         $h = fopen('php://memory', 'r+');
@@ -129,11 +126,10 @@ class ClientTest extends \PHPUnit_Framework_TestCase {
         }
 
         $this->assertEquals($settings, $client->createCurlSettingsArray($request));
-
     }
 
-    function testCreateCurlSettingsArrayPUTString() {
-
+    public function testCreateCurlSettingsArrayPUTString()
+    {
         $client = new ClientMock();
         $request = new Request('PUT', 'http://example.org/', ['X-Foo' => 'bar'], 'boo');
 
@@ -156,34 +152,32 @@ class ClientTest extends \PHPUnit_Framework_TestCase {
         }
 
         $this->assertEquals($settings, $client->createCurlSettingsArray($request));
-
     }
 
-    function testSend() {
-
+    public function testSend()
+    {
         $client = new ClientMock();
         $request = new Request('GET', 'http://example.org/');
 
-        $client->on('doRequest', function($request, &$response) {
+        $client->on('doRequest', function ($request, &$response) {
             $response = new Response(200);
         });
 
         $response = $client->send($request);
 
         $this->assertEquals(200, $response->getStatus());
-
     }
 
-    function testSendClientError() {
-
+    public function testSendClientError()
+    {
         $client = new ClientMock();
         $request = new Request('GET', 'http://example.org/');
 
-        $client->on('doRequest', function($request, &$response) {
+        $client->on('doRequest', function ($request, &$response) {
             throw new ClientException('aaah', 1);
         });
         $called = false;
-        $client->on('exception', function() use (&$called) {
+        $client->on('exception', function () use (&$called) {
             $called = true;
         });
 
@@ -191,40 +185,37 @@ class ClientTest extends \PHPUnit_Framework_TestCase {
             $client->send($request);
             $this->fail('send() should have thrown an exception');
         } catch (ClientException $e) {
-
         }
         $this->assertTrue($called);
-
     }
 
-    function testSendHttpError() {
-
+    public function testSendHttpError()
+    {
         $client = new ClientMock();
         $request = new Request('GET', 'http://example.org/');
 
-        $client->on('doRequest', function($request, &$response) {
+        $client->on('doRequest', function ($request, &$response) {
             $response = new Response(404);
         });
         $called = 0;
-        $client->on('error', function() use (&$called) {
+        $client->on('error', function () use (&$called) {
             $called++;
         });
-        $client->on('error:404', function() use (&$called) {
+        $client->on('error:404', function () use (&$called) {
             $called++;
         });
 
         $client->send($request);
         $this->assertEquals(2, $called);
-
     }
 
-    function testSendRetry() {
-
+    public function testSendRetry()
+    {
         $client = new ClientMock();
         $request = new Request('GET', 'http://example.org/');
 
         $called = 0;
-        $client->on('doRequest', function($request, &$response) use (&$called) {
+        $client->on('doRequest', function ($request, &$response) use (&$called) {
             $called++;
             if ($called < 3) {
                 $response = new Response(404);
@@ -234,27 +225,24 @@ class ClientTest extends \PHPUnit_Framework_TestCase {
         });
 
         $errorCalled = 0;
-        $client->on('error', function($request, $response, &$retry, $retryCount) use (&$errorCalled) {
-
+        $client->on('error', function ($request, $response, &$retry, $retryCount) use (&$errorCalled) {
             $errorCalled++;
             $retry = true;
-
         });
 
         $response = $client->send($request);
         $this->assertEquals(3, $called);
         $this->assertEquals(2, $errorCalled);
         $this->assertEquals(200, $response->getStatus());
-
     }
 
-    function testHttpErrorException() {
-
+    public function testHttpErrorException()
+    {
         $client = new ClientMock();
         $client->setThrowExceptions(true);
         $request = new Request('GET', 'http://example.org/');
 
-        $client->on('doRequest', function($request, &$response) {
+        $client->on('doRequest', function ($request, &$response) {
             $response = new Response(404);
         });
 
@@ -265,14 +253,12 @@ class ClientTest extends \PHPUnit_Framework_TestCase {
             $this->assertEquals(404, $e->getHttpStatus());
             $this->assertInstanceOf('Sabre\HTTP\Response', $e->getResponse());
         }
-
     }
 
-    function testParseCurlResult() {
-
+    public function testParseCurlResult()
+    {
         $client = new ClientMock();
-        $client->on('curlStuff', function(&$return) {
-
+        $client->on('curlStuff', function (&$return) {
             $return = [
                 [
                     'header_size' => 33,
@@ -281,7 +267,6 @@ class ClientTest extends \PHPUnit_Framework_TestCase {
                 0,
                 '',
             ];
-
         });
 
         $body = "HTTP/1.1 200 OK\r\nHeader1:Val1\r\n\r\nFoo";
@@ -292,20 +277,17 @@ class ClientTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(200, $result['response']->getStatus());
         $this->assertEquals(['Header1' => ['Val1']], $result['response']->getHeaders());
         $this->assertEquals('Foo', $result['response']->getBodyAsString());
-
     }
 
-    function testParseCurlError() {
-
+    public function testParseCurlError()
+    {
         $client = new ClientMock();
-        $client->on('curlStuff', function(&$return) {
-
+        $client->on('curlStuff', function (&$return) {
             $return = [
                 [],
                 1,
                 'Curl error',
             ];
-
         });
 
         $body = "HTTP/1.1 200 OK\r\nHeader1:Val1\r\n\r\nFoo";
@@ -314,20 +296,16 @@ class ClientTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(Client::STATUS_CURLERROR, $result['status']);
         $this->assertEquals(1, $result['curl_errno']);
         $this->assertEquals('Curl error', $result['curl_errmsg']);
-
     }
 
-    function testDoRequest() {
-
+    public function testDoRequest()
+    {
         $client = new ClientMock();
         $request = new Request('GET', 'http://example.org/');
-        $client->on('curlExec', function(&$return) {
-
+        $client->on('curlExec', function (&$return) {
             $return = "HTTP/1.1 200 OK\r\nHeader1:Val1\r\n\r\nFoo";
-
         });
-        $client->on('curlStuff', function(&$return) {
-
+        $client->on('curlStuff', function (&$return) {
             $return = [
                 [
                     'header_size' => 33,
@@ -336,32 +314,26 @@ class ClientTest extends \PHPUnit_Framework_TestCase {
                 0,
                 '',
             ];
-
         });
         $response = $client->doRequest($request);
         $this->assertEquals(200, $response->getStatus());
         $this->assertEquals(['Header1' => ['Val1']], $response->getHeaders());
         $this->assertEquals('Foo', $response->getBodyAsString());
-
     }
 
-    function testDoRequestCurlError() {
-
+    public function testDoRequestCurlError()
+    {
         $client = new ClientMock();
         $request = new Request('GET', 'http://example.org/');
-        $client->on('curlExec', function(&$return) {
-
+        $client->on('curlExec', function (&$return) {
             $return = "";
-
         });
-        $client->on('curlStuff', function(&$return) {
-
+        $client->on('curlStuff', function (&$return) {
             $return = [
                 [],
                 1,
                 'Curl error',
             ];
-
         });
 
         try {
@@ -371,13 +343,11 @@ class ClientTest extends \PHPUnit_Framework_TestCase {
             $this->assertEquals(1, $e->getCode());
             $this->assertEquals('Curl error', $e->getMessage());
         }
-
     }
-
 }
 
-class ClientMock extends Client {
-
+class ClientMock extends Client
+{
     protected $persistedSettings = [];
 
     /**
@@ -390,21 +360,19 @@ class ClientMock extends Client {
      * methods after subsequent use.
      * forces
      */
-    function createCurlSettingsArray(RequestInterface $request) {
-
+    public function createCurlSettingsArray(RequestInterface $request)
+    {
         $settings = parent::createCurlSettingsArray($request);
         $settings = $settings + $this->persistedSettings;
         $this->persistedSettings = $settings;
         return $settings;
-
     }
     /**
      * Making this method public.
      */
-    function parseCurlResult($response, $curlHandle) {
-
+    public function parseCurlResult($response, $curlHandle)
+    {
         return parent::parseCurlResult($response, $curlHandle);
-
     }
 
     /**
@@ -413,8 +381,8 @@ class ClientMock extends Client {
      * @param RequestInterface $request
      * @return ResponseInterface
      */
-    function doRequest(RequestInterface $request) {
-
+    public function doRequest(RequestInterface $request)
+    {
         $response = null;
         $this->emit('doRequest', [$request, &$response]);
 
@@ -424,7 +392,6 @@ class ClientMock extends Client {
         } else {
             return $response;
         }
-
     }
 
     /**
@@ -435,8 +402,8 @@ class ClientMock extends Client {
      * @param resource $curlHandle
      * @return array
      */
-    protected function curlStuff($curlHandle) {
-
+    protected function curlStuff($curlHandle)
+    {
         $return = null;
         $this->emit('curlStuff', [&$return]);
 
@@ -446,7 +413,6 @@ class ClientMock extends Client {
         } else {
             return $return;
         }
-
     }
 
     /**
@@ -457,8 +423,8 @@ class ClientMock extends Client {
      * @param resource $curlHandle
      * @return string
      */
-    protected function curlExec($curlHandle) {
-
+    protected function curlExec($curlHandle)
+    {
         $return = null;
         $this->emit('curlExec', [&$return]);
 
@@ -468,7 +434,5 @@ class ClientMock extends Client {
         } else {
             return $return;
         }
-
     }
-
 }

@@ -12,25 +12,25 @@ use Sabre\HTTP;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class HttpGetTest extends DAVServerTest {
+class HttpGetTest extends DAVServerTest
+{
 
     /**
      * Sets up the DAV tree.
      *
      * @return void
      */
-    function setUpTree() {
-
+    public function setUpTree()
+    {
         $this->tree = new Mock\Collection('root', [
             'file1' => 'foo',
             new Mock\Collection('dir', []),
             new Mock\StreamingFile('streaming', 'stream')
         ]);
-
     }
 
-    function testGet() {
-
+    public function testGet()
+    {
         $request = new HTTP\Request('GET', '/file1');
         $response = $this->request($request);
 
@@ -50,11 +50,10 @@ class HttpGetTest extends DAVServerTest {
         );
 
         $this->assertEquals('foo', $response->getBodyAsString());
-
     }
 
-    function testGetHttp10() {
-
+    public function testGetHttp10()
+    {
         $request = new HTTP\Request('GET', '/file1');
         $request->setHttpVersion('1.0');
         $response = $this->request($request);
@@ -77,32 +76,29 @@ class HttpGetTest extends DAVServerTest {
         $this->assertEquals('1.0', $response->getHttpVersion());
 
         $this->assertEquals('foo', $response->getBodyAsString());
-
     }
 
-    function testGet404() {
-
+    public function testGet404()
+    {
         $request = new HTTP\Request('GET', '/notfound');
         $response = $this->request($request);
 
         $this->assertEquals(404, $response->getStatus());
-
     }
 
-    function testGet404_aswell() {
-
+    public function testGet404_aswell()
+    {
         $request = new HTTP\Request('GET', '/file1/subfile');
         $response = $this->request($request);
 
         $this->assertEquals(404, $response->getStatus());
-
     }
 
     /**
      * We automatically normalize double slashes.
      */
-    function testGetDoubleSlash() {
-
+    public function testGetDoubleSlash()
+    {
         $request = new HTTP\Request('GET', '//file1');
         $response = $this->request($request);
 
@@ -122,20 +118,18 @@ class HttpGetTest extends DAVServerTest {
         );
 
         $this->assertEquals('foo', $response->getBodyAsString());
-
     }
 
-    function testGetCollection() {
-
+    public function testGetCollection()
+    {
         $request = new HTTP\Request('GET', '/dir');
         $response = $this->request($request);
 
         $this->assertEquals(501, $response->getStatus());
-
     }
 
-    function testGetStreaming() {
-
+    public function testGetStreaming()
+    {
         $request = new HTTP\Request('GET', '/streaming');
         $response = $this->request($request);
 
@@ -153,6 +147,5 @@ class HttpGetTest extends DAVServerTest {
         );
 
         $this->assertEquals('stream', $response->getBodyAsString());
-
     }
 }

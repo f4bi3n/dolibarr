@@ -60,9 +60,9 @@ class SocieteTest extends PHPUnit\Framework\TestCase
      */
     public function __construct()
     {
-    	parent::__construct();
+        parent::__construct();
 
-    	//$this->sharedFixture
+        //$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -79,9 +79,15 @@ class SocieteTest extends PHPUnit\Framework\TestCase
     {
         global $conf,$user,$langs,$db;
 
-        if ($conf->global->SOCIETE_CODECLIENT_ADDON != 'mod_codeclient_monkey') { print "\n".__METHOD__." third party ref checker must be setup to 'mod_codeclient_monkey' not to '".$conf->global->SOCIETE_CODECLIENT_ADDON."'.\n"; die(); }
+        if ($conf->global->SOCIETE_CODECLIENT_ADDON != 'mod_codeclient_monkey') {
+            print "\n".__METHOD__." third party ref checker must be setup to 'mod_codeclient_monkey' not to '".$conf->global->SOCIETE_CODECLIENT_ADDON."'.\n";
+            die();
+        }
 
-        if (! empty($conf->global->MAIN_DISABLEPROFIDRULES)) { print "\n".__METHOD__." constant MAIN_DISABLEPROFIDRULES must be empty (if a module set it, disable module).\n"; die(); }
+        if (! empty($conf->global->MAIN_DISABLEPROFIDRULES)) {
+            print "\n".__METHOD__." constant MAIN_DISABLEPROFIDRULES must be empty (if a module set it, disable module).\n";
+            die();
+        }
 
         $db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
@@ -213,13 +219,13 @@ class SocieteTest extends PHPUnit\Framework\TestCase
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
         $this->assertLessThan($result, 0);
 
-		$result=$localobject->update_note($localobject->note_private, '_private');
-		print __METHOD__." id=".$localobject->id." result=".$result."\n";
-		$this->assertLessThan($result, 0, 'Holiday::update_note (private) error');
+        $result=$localobject->update_note($localobject->note_private, '_private');
+        print __METHOD__." id=".$localobject->id." result=".$result."\n";
+        $this->assertLessThan($result, 0, 'Holiday::update_note (private) error');
 
-		$result=$localobject->update_note($localobject->note_public, '_public');
-		print __METHOD__." id=".$localobject->id." result=".$result."\n";
-		$this->assertLessThan($result, 0, 'Holiday::update_note (public) error');
+        $result=$localobject->update_note($localobject->note_public, '_public');
+        print __METHOD__." id=".$localobject->id." result=".$result."\n";
+        $this->assertLessThan($result, 0, 'Holiday::update_note (public) error');
 
         $newobject=new Societe($this->savdb);
         $result=$newobject->fetch($localobject->id);

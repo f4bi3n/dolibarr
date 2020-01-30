@@ -29,25 +29,25 @@
  */
 abstract class CommonObjectLine extends CommonObject
 {
-	/**
-	 * Id of the line
-	 * @var int
-	 */
-	public $id;
+    /**
+     * Id of the line
+     * @var int
+     */
+    public $id;
 
-	/**
-	 * Id of the line
-	 * @var int
-	 * @deprecated Try to use id property as possible (even if field into database is still rowid)
-	 * @see $id
-	 */
-	public $rowid;
+    /**
+     * Id of the line
+     * @var int
+     * @deprecated Try to use id property as possible (even if field into database is still rowid)
+     * @see $id
+     */
+    public $rowid;
 
-	/**
-	 * Product/service unit code ('km', 'm', 'p', ...)
-	 * @var string
-	 */
-	public $fk_unit;
+    /**
+     * Product/service unit code ('km', 'm', 'p', ...)
+     * @var string
+     */
+    public $fk_unit;
 
 
     /**
@@ -57,40 +57,36 @@ abstract class CommonObjectLine extends CommonObject
      * 	@param	string $type Label type (long or short)
      *	@return	string|int <0 if ko, label if ok
      */
-	public function getLabelOfUnit($type = 'long')
-	{
-		global $langs;
+    public function getLabelOfUnit($type = 'long')
+    {
+        global $langs;
 
-		if (!$this->fk_unit) {
-			return '';
-		}
+        if (!$this->fk_unit) {
+            return '';
+        }
 
-		$langs->load('products');
+        $langs->load('products');
 
-		$label_type = 'label';
+        $label_type = 'label';
 
-		if ($type == 'short')
-		{
-			$label_type = 'short_label';
-		}
+        if ($type == 'short') {
+            $label_type = 'short_label';
+        }
 
-		$sql = 'select '.$label_type.' from '.MAIN_DB_PREFIX.'c_units where rowid='.$this->fk_unit;
-		$resql = $this->db->query($sql);
-		if($resql && $this->db->num_rows($resql) > 0)
-		{
-			$res = $this->db->fetch_array($resql);
-			$label = $res[$label_type];
-			$this->db->free($resql);
-			return $label;
-		}
-		else
-		{
-			$this->error=$this->db->error().' sql='.$sql;
-			dol_syslog(get_class($this)."::getLabelOfUnit Error ".$this->error, LOG_ERR);
-			return -1;
-		}
-	}
-	// Currently we need function at end of file CommonObject for all object lines. Should find a way to avoid duplicate code.
+        $sql = 'select '.$label_type.' from '.MAIN_DB_PREFIX.'c_units where rowid='.$this->fk_unit;
+        $resql = $this->db->query($sql);
+        if ($resql && $this->db->num_rows($resql) > 0) {
+            $res = $this->db->fetch_array($resql);
+            $label = $res[$label_type];
+            $this->db->free($resql);
+            return $label;
+        } else {
+            $this->error=$this->db->error().' sql='.$sql;
+            dol_syslog(get_class($this)."::getLabelOfUnit Error ".$this->error, LOG_ERR);
+            return -1;
+        }
+    }
+    // Currently we need function at end of file CommonObject for all object lines. Should find a way to avoid duplicate code.
 
-	// For the moment we use the extends on CommonObject until PHP min is 5.4 so use Traits.
+    // For the moment we use the extends on CommonObject until PHP min is 5.4 so use Traits.
 }

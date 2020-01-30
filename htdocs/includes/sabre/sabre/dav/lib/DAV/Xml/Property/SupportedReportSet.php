@@ -21,7 +21,8 @@ use Sabre\Xml\XmlSerializable;
  * @author Evert Pot (http://www.rooftopsolutions.nl/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class SupportedReportSet implements XmlSerializable, HtmlOutput {
+class SupportedReportSet implements XmlSerializable, HtmlOutput
+{
 
     /**
      * List of reports
@@ -40,11 +41,11 @@ class SupportedReportSet implements XmlSerializable, HtmlOutput {
      *
      * @param string|string[] $reports
      */
-    function __construct($reports = null) {
-
-        if (!is_null($reports))
+    public function __construct($reports = null)
+    {
+        if (!is_null($reports)) {
             $this->addReport($reports);
-
+        }
     }
 
     /**
@@ -56,19 +57,17 @@ class SupportedReportSet implements XmlSerializable, HtmlOutput {
      * @param mixed $report
      * @return void
      */
-    function addReport($report) {
-
+    public function addReport($report)
+    {
         $report = (array)$report;
 
         foreach ($report as $r) {
-
-            if (!preg_match('/^{([^}]*)}(.*)$/', $r))
+            if (!preg_match('/^{([^}]*)}(.*)$/', $r)) {
                 throw new DAV\Exception('Reportname must be in clark-notation');
+            }
 
             $this->reports[] = $r;
-
         }
-
     }
 
     /**
@@ -76,10 +75,9 @@ class SupportedReportSet implements XmlSerializable, HtmlOutput {
      *
      * @return string[]
      */
-    function getValue() {
-
+    public function getValue()
+    {
         return $this->reports;
-
     }
 
     /**
@@ -88,13 +86,12 @@ class SupportedReportSet implements XmlSerializable, HtmlOutput {
      * @param string $reportName
      * @return bool
      */
-    function has($reportName) {
-
+    public function has($reportName)
+    {
         return in_array(
             $reportName,
             $this->reports
         );
-
     }
 
     /**
@@ -116,8 +113,8 @@ class SupportedReportSet implements XmlSerializable, HtmlOutput {
      * @param Writer $writer
      * @return void
      */
-    function xmlSerialize(Writer $writer) {
-
+    public function xmlSerialize(Writer $writer)
+    {
         foreach ($this->getValue() as $val) {
             $writer->startElement('{DAV:}supported-report');
             $writer->startElement('{DAV:}report');
@@ -125,7 +122,6 @@ class SupportedReportSet implements XmlSerializable, HtmlOutput {
             $writer->endElement();
             $writer->endElement();
         }
-
     }
 
     /**
@@ -142,13 +138,11 @@ class SupportedReportSet implements XmlSerializable, HtmlOutput {
      * @param HtmlOutputHelper $html
      * @return string
      */
-    function toHtml(HtmlOutputHelper $html) {
-
+    public function toHtml(HtmlOutputHelper $html)
+    {
         return implode(
             ', ',
             array_map([$html, 'xmlName'], $this->getValue())
         );
-
     }
-
 }

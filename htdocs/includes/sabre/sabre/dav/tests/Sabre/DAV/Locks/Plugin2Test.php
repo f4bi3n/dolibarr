@@ -4,20 +4,18 @@ namespace Sabre\DAV\Locks;
 
 use Sabre\HTTP\Request;
 
-class Plugin2Test extends \Sabre\DAVServerTest {
-
+class Plugin2Test extends \Sabre\DAVServerTest
+{
     public $setupLocks = true;
 
-    function setUpTree() {
-
+    public function setUpTree()
+    {
         $this->tree = new \Sabre\DAV\FS\Directory(SABRE_TEMPDIR);
-
     }
 
-    function tearDown() {
-
+    public function tearDown()
+    {
         \Sabre\TestUtil::clearTempDir();
-
     }
 
     /**
@@ -28,8 +26,8 @@ class Plugin2Test extends \Sabre\DAVServerTest {
      *
      * Reported in ticket #487
      */
-    function testUnlockAfterDelete() {
-
+    public function testUnlockAfterDelete()
+    {
         $body = '<?xml version="1.0"?>
 <D:lockinfo xmlns:D="DAV:">
     <D:lockscope><D:exclusive/></D:lockscope>
@@ -65,5 +63,4 @@ class Plugin2Test extends \Sabre\DAVServerTest {
             count($this->locksBackend->getLocks('file.txt', true))
         );
     }
-
 }

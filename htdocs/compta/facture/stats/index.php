@@ -33,16 +33,19 @@ $WIDTH=DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
 
 $mode=GETPOST("mode")?GETPOST("mode"):'customer';
-if ($mode == 'customer' && ! $user->rights->facture->lire) accessforbidden();
-if ($mode == 'supplier' && ! $user->rights->fournisseur->facture->lire) accessforbidden();
+if ($mode == 'customer' && ! $user->rights->facture->lire) {
+    accessforbidden();
+}
+if ($mode == 'supplier' && ! $user->rights->fournisseur->facture->lire) {
+    accessforbidden();
+}
 
 $object_status=GETPOST('object_status');
 
 $userid=GETPOST('userid', 'int');
 $socid=GETPOST('socid', 'int');
 // Security check
-if ($user->socid > 0)
-{
+if ($user->socid > 0) {
     $action = '';
     $socid = $user->socid;
 }
@@ -64,15 +67,13 @@ $form=new Form($db);
 
 llxHeader();
 
-if ($mode == 'customer')
-{
-	$title=$langs->trans("BillsStatistics");
-	$dir=$conf->facture->dir_temp;
+if ($mode == 'customer') {
+    $title=$langs->trans("BillsStatistics");
+    $dir=$conf->facture->dir_temp;
 }
-if ($mode == 'supplier')
-{
-	$title=$langs->trans("BillsStatisticsSuppliers");
-	$dir=$conf->fournisseur->facture->dir_temp;
+if ($mode == 'supplier') {
+    $title=$langs->trans("BillsStatisticsSuppliers");
+    $dir=$conf->fournisseur->facture->dir_temp;
 }
 
 print load_fiche_titre($title, '', 'invoicing');
@@ -80,13 +81,15 @@ print load_fiche_titre($title, '', 'invoicing');
 dol_mkdir($dir);
 
 $stats = new FactureStats($db, $socid, $mode, ($userid>0?$userid:0));
-if ($mode == 'customer')
-{
-    if ($object_status != '' && $object_status >= 0) $stats->where .= ' AND f.fk_statut IN ('.$db->escape($object_status).')';
+if ($mode == 'customer') {
+    if ($object_status != '' && $object_status >= 0) {
+        $stats->where .= ' AND f.fk_statut IN ('.$db->escape($object_status).')';
+    }
 }
-if ($mode == 'supplier')
-{
-    if ($object_status != '' && $object_status >= 0) $stats->where .= ' AND f.fk_statut IN ('.$db->escape($object_status).')';
+if ($mode == 'supplier') {
+    if ($object_status != '' && $object_status >= 0) {
+        $stats->where .= ' AND f.fk_statut IN ('.$db->escape($object_status).')';
+    }
 }
 
 // Build graphic number of object
@@ -95,31 +98,34 @@ $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 //var_dump($data);
 
 $filenamenb = $dir."/invoicesnbinyear-".$year.".png";
-if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=invoicesnbinyear-'.$year.'.png';
-if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&amp;file=invoicesnbinyear-'.$year.'.png';
+if ($mode == 'customer') {
+    $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=invoicesnbinyear-'.$year.'.png';
+}
+if ($mode == 'supplier') {
+    $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&amp;file=invoicesnbinyear-'.$year.'.png';
+}
 
 $px1 = new DolGraph();
 $mesg = $px1->isGraphKo();
-if (! $mesg)
-{
-	$px1->SetData($data);
-	$i=$startyear;$legend=array();
-	while ($i <= $endyear)
-	{
-		$legend[]=$i;
-		$i++;
-	}
-	$px1->SetLegend($legend);
-	$px1->SetMaxValue($px1->GetCeilMaxValue());
-	$px1->SetWidth($WIDTH);
-	$px1->SetHeight($HEIGHT);
-	$px1->SetYLabel($langs->trans("NumberOfBills"));
-	$px1->SetShading(3);
-	$px1->SetHorizTickIncrement(1);
-	$px1->mode='depth';
-	$px1->SetTitle($langs->trans("NumberOfBillsByMonth"));
+if (! $mesg) {
+    $px1->SetData($data);
+    $i=$startyear;
+    $legend=array();
+    while ($i <= $endyear) {
+        $legend[]=$i;
+        $i++;
+    }
+    $px1->SetLegend($legend);
+    $px1->SetMaxValue($px1->GetCeilMaxValue());
+    $px1->SetWidth($WIDTH);
+    $px1->SetHeight($HEIGHT);
+    $px1->SetYLabel($langs->trans("NumberOfBills"));
+    $px1->SetShading(3);
+    $px1->SetHorizTickIncrement(1);
+    $px1->mode='depth';
+    $px1->SetTitle($langs->trans("NumberOfBillsByMonth"));
 
-	$px1->draw($filenamenb, $fileurlnb);
+    $px1->draw($filenamenb, $fileurlnb);
 }
 
 // Build graphic amount of object
@@ -128,58 +134,65 @@ $data = $stats->getAmountByMonthWithPrevYear($endyear, $startyear);
 // $data = array(array('Lib',val1,val2,val3),...)
 
 $filenameamount = $dir."/invoicesamountinyear-".$year.".png";
-if ($mode == 'customer') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=invoicesamountinyear-'.$year.'.png';
-if ($mode == 'supplier') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&amp;file=invoicesamountinyear-'.$year.'.png';
+if ($mode == 'customer') {
+    $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=invoicesamountinyear-'.$year.'.png';
+}
+if ($mode == 'supplier') {
+    $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&amp;file=invoicesamountinyear-'.$year.'.png';
+}
 
 $px2 = new DolGraph();
 $mesg = $px2->isGraphKo();
-if (! $mesg)
-{
-	$px2->SetData($data);
-	$i=$startyear;$legend=array();
-	while ($i <= $endyear)
-	{
-		$legend[]=$i;
-		$i++;
-	}
-	$px2->SetLegend($legend);
-	$px2->SetMaxValue($px2->GetCeilMaxValue());
-	$px2->SetMinValue(min(0, $px2->GetFloorMinValue()));
-	$px2->SetWidth($WIDTH);
-	$px2->SetHeight($HEIGHT);
-	$px2->SetYLabel($langs->trans("AmountOfBills"));
-	$px2->SetShading(3);
-	$px2->SetHorizTickIncrement(1);
-	$px2->mode='depth';
-	$px2->SetTitle($langs->trans("AmountOfBillsByMonthHT"));
+if (! $mesg) {
+    $px2->SetData($data);
+    $i=$startyear;
+    $legend=array();
+    while ($i <= $endyear) {
+        $legend[]=$i;
+        $i++;
+    }
+    $px2->SetLegend($legend);
+    $px2->SetMaxValue($px2->GetCeilMaxValue());
+    $px2->SetMinValue(min(0, $px2->GetFloorMinValue()));
+    $px2->SetWidth($WIDTH);
+    $px2->SetHeight($HEIGHT);
+    $px2->SetYLabel($langs->trans("AmountOfBills"));
+    $px2->SetShading(3);
+    $px2->SetHorizTickIncrement(1);
+    $px2->mode='depth';
+    $px2->SetTitle($langs->trans("AmountOfBillsByMonthHT"));
 
-	$px2->draw($filenameamount, $fileurlamount);
+    $px2->draw($filenameamount, $fileurlamount);
 }
 
 
 $data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
-if (!$user->rights->societe->client->voir || $user->socid)
-{
+if (!$user->rights->societe->client->voir || $user->socid) {
     $filename_avg = $dir.'/ordersaverage-'.$user->id.'-'.$year.'.png';
-    if ($mode == 'customer') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$user->id.'-'.$year.'.png';
-    if ($mode == 'supplier') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersaverage-'.$user->id.'-'.$year.'.png';
-}
-else
-{
+    if ($mode == 'customer') {
+        $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$user->id.'-'.$year.'.png';
+    }
+    if ($mode == 'supplier') {
+        $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersaverage-'.$user->id.'-'.$year.'.png';
+    }
+} else {
     $filename_avg = $dir.'/ordersaverage-'.$year.'.png';
-    if ($mode == 'customer') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$year.'.png';
-    if ($mode == 'supplier') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersaverage-'.$year.'.png';
+    if ($mode == 'customer') {
+        $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$year.'.png';
+    }
+    if ($mode == 'supplier') {
+        $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersaverage-'.$year.'.png';
+    }
 }
 
 $px3 = new DolGraph();
 $mesg = $px3->isGraphKo();
-if (! $mesg)
-{
+if (! $mesg) {
     $px3->SetData($data);
-    $i = $startyear;$legend=array();
-    while ($i <= $endyear)
-    {
+    $i = $startyear;
+    $legend=array();
+    while ($i <= $endyear) {
         $legend[]=$i;
         $i++;
     }
@@ -201,10 +214,12 @@ if (! $mesg)
 // Show array
 $data = $stats->getAllByYear();
 $arrayyears=array();
-foreach($data as $val) {
+foreach ($data as $val) {
     $arrayyears[$val['year']]=$val['year'];
 }
-if (! count($arrayyears)) $arrayyears[$nowyear]=$nowyear;
+if (! count($arrayyears)) {
+    $arrayyears[$nowyear]=$nowyear;
+}
 
 
 $h=0;
@@ -214,8 +229,12 @@ $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;
 
-if ($mode == 'customer') $type='invoice_stats';
-if ($mode == 'supplier') $type='supplier_invoice_stats';
+if ($mode == 'customer') {
+    $type='invoice_stats';
+}
+if ($mode == 'supplier') {
+    $type='supplier_invoice_stats';
+}
 
 complete_head_from_modules($conf, $langs, null, $head, $h, $type);
 
@@ -227,7 +246,7 @@ $tmp_companies = $form->select_thirdparty_list($socid, 'socid', $filter, 1, 0, 0
 $companies = array();
 
 foreach ($tmp_companies as $value) {
-	$companies[$value['key']] = $value['label'];
+    $companies[$value['key']] = $value['label'];
 }
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -240,8 +259,12 @@ print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 // Company
 print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-if ($mode == 'customer') $filter='s.client in (1,2,3)';
-if ($mode == 'supplier') $filter='s.fournisseur = 1';
+if ($mode == 'customer') {
+    $filter='s.client in (1,2,3)';
+}
+if ($mode == 'supplier') {
+    $filter='s.fournisseur = 1';
+}
 print $form->selectarray('socid', $companies, $socid, 1, 0, 0, 'style="width: 95%"', 0, 0, 0, '', '', 1);
 print '</td></tr>';
 // User
@@ -250,21 +273,23 @@ print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0
 print '</td></tr>';
 // Status
 print '<tr><td class="left">'.$langs->trans("Status").'</td><td class="left">';
-if ($mode == 'customer')
-{
+if ($mode == 'customer') {
     $liststatus=array('0'=>$langs->trans("BillStatusDraft"), '1'=>$langs->trans("BillStatusNotPaid"), '2'=>$langs->trans("BillStatusPaid"), '3'=>$langs->trans("BillStatusCanceled"));
     print $form->selectarray('object_status', $liststatus, $object_status, 1);
 }
-if ($mode == 'supplier')
-{
+if ($mode == 'supplier') {
     $liststatus=array('0'=>$langs->trans("BillStatusDraft"),'1'=>$langs->trans("BillStatusNotPaid"), '2'=>$langs->trans("BillStatusPaid"));
     print $form->selectarray('object_status', $liststatus, $object_status, 1);
 }
 print '</td></tr>';
 // Year
 print '<tr><td>'.$langs->trans("Year").'</td><td>';
-if (! in_array($year, $arrayyears)) $arrayyears[$year]=$year;
-if (! in_array($nowyear, $arrayyears)) $arrayyears[$nowyear]=$nowyear;
+if (! in_array($year, $arrayyears)) {
+    $arrayyears[$year]=$year;
+}
+if (! in_array($nowyear, $arrayyears)) {
+    $arrayyears[$nowyear]=$nowyear;
+}
 arsort($arrayyears);
 print $form->selectarray('year', $arrayyears, $year, 0);
 print '</td></tr>';
@@ -286,34 +311,32 @@ print '<td class="right">%</td>';
 print '</tr>';
 
 $oldyear=0;
-foreach ($data as $val)
-{
-	$year = $val['year'];
-	while ($year && $oldyear > $year+1)
-	{	// If we have empty year
-		$oldyear--;
+foreach ($data as $val) {
+    $year = $val['year'];
+    while ($year && $oldyear > $year+1) {	// If we have empty year
+        $oldyear--;
 
-		print '<tr class="oddeven" height="24">';
-		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$oldyear.'</a></td>';
-		print '<td class="right">0</td>';
-		print '<td class="right"></td>';
-		print '<td class="right">0</td>';
-		print '<td class="right"></td>';
-		print '<td class="right">0</td>';
-		print '<td class="right"></td>';
-		print '</tr>';
-	}
+        print '<tr class="oddeven" height="24">';
+        print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$oldyear.'</a></td>';
+        print '<td class="right">0</td>';
+        print '<td class="right"></td>';
+        print '<td class="right">0</td>';
+        print '<td class="right"></td>';
+        print '<td class="right">0</td>';
+        print '<td class="right"></td>';
+        print '</tr>';
+    }
 
-	print '<tr class="oddeven" height="24">';
-	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$year.'</a></td>';
-	print '<td class="right">'.$val['nb'].'</td>';
-	print '<td class="right" style="'.(($val['nb_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['nb_diff']).'</td>';
-	print '<td class="right">'.price(price2num($val['total'], 'MT'), 1).'</td>';
-	print '<td class="right" style="'.(($val['total_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['total_diff']).'</td>';
-	print '<td class="right">'.price(price2num($val['avg'], 'MT'), 1).'</td>';
-	print '<td class="right" style="'.(($val['avg_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['avg_diff']).'</td>';
-	print '</tr>';
-	$oldyear=$year;
+    print '<tr class="oddeven" height="24">';
+    print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$year.'</a></td>';
+    print '<td class="right">'.$val['nb'].'</td>';
+    print '<td class="right" style="'.(($val['nb_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['nb_diff']).'</td>';
+    print '<td class="right">'.price(price2num($val['total'], 'MT'), 1).'</td>';
+    print '<td class="right" style="'.(($val['total_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['total_diff']).'</td>';
+    print '<td class="right">'.price(price2num($val['avg'], 'MT'), 1).'</td>';
+    print '<td class="right" style="'.(($val['avg_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['avg_diff']).'</td>';
+    print '</tr>';
+    $oldyear=$year;
 }
 
 print '</table>';
@@ -324,11 +347,12 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 // Show graphs
 print '<table class="border centpercent"><tr class="pair nohover"><td align="center">';
-if ($mesg) { print $mesg; }
-else {
-	print $px1->show();
-	print "<br>\n";
-	print $px2->show();
+if ($mesg) {
+    print $mesg;
+} else {
+    print $px1->show();
+    print "<br>\n";
+    print $px2->show();
     print "<br>\n";
     print $px3->show();
 }

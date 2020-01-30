@@ -4,14 +4,14 @@ namespace Sabre\CardDAV\Xml\Request;
 
 use Sabre\DAV\Xml\XmlTest;
 
-class AddressBookQueryReportTest extends XmlTest {
-
+class AddressBookQueryReportTest extends XmlTest
+{
     protected $elementMap = [
         '{urn:ietf:params:xml:ns:carddav}addressbook-query' => 'Sabre\\CardDAV\\Xml\\Request\AddressBookQueryReport',
     ];
 
-    function testDeserialize() {
-
+    public function testDeserialize()
+    {
         $xml = <<<XML
 <?xml version="1.0"?>
 <c:addressbook-query xmlns:d="DAV:" xmlns:c="urn:ietf:params:xml:ns:carddav">
@@ -44,11 +44,10 @@ XML;
             $addressBookQueryReport,
             $result['value']
         );
-
     }
 
-    function testDeserializeAllOf() {
-
+    public function testDeserializeAllOf()
+    {
         $xml = <<<XML
 <?xml version="1.0"?>
 <c:addressbook-query xmlns:d="DAV:" xmlns:c="urn:ietf:params:xml:ns:carddav">
@@ -81,14 +80,13 @@ XML;
             $addressBookQueryReport,
             $result['value']
         );
-
     }
 
     /**
      * @expectedException \Sabre\DAV\Exception\BadRequest
      */
-    function testDeserializeBadTest() {
-
+    public function testDeserializeBadTest()
+    {
         $xml = <<<XML
 <?xml version="1.0"?>
 <c:addressbook-query xmlns:d="DAV:" xmlns:c="urn:ietf:params:xml:ns:carddav">
@@ -102,14 +100,13 @@ XML;
 XML;
 
         $this->parse($xml);
-
     }
 
     /**
      * We should error on this, but KDE does this, so we chose to support it.
      */
-    function testDeserializeNoFilter() {
-
+    public function testDeserializeNoFilter()
+    {
         $xml = <<<XML
 <?xml version="1.0"?>
 <c:addressbook-query xmlns:d="DAV:" xmlns:c="urn:ietf:params:xml:ns:carddav">
@@ -131,11 +128,10 @@ XML;
             $addressBookQueryReport,
             $result['value']
         );
-
     }
 
-    function testDeserializeComplex() {
-
+    public function testDeserializeComplex()
+    {
         $xml = <<<XML
 <?xml version="1.0"?>
 <c:addressbook-query xmlns:d="DAV:" xmlns:c="urn:ietf:params:xml:ns:carddav">
@@ -231,14 +227,13 @@ XML;
             $addressBookQueryReport,
             $result['value']
         );
-
     }
 
     /**
      * @expectedException \Sabre\DAV\Exception\BadRequest
      */
-    function testDeserializeBadMatchType() {
-
+    public function testDeserializeBadMatchType()
+    {
         $xml = <<<XML
 <?xml version="1.0"?>
 <c:addressbook-query xmlns:d="DAV:" xmlns:c="urn:ietf:params:xml:ns:carddav">
@@ -255,14 +250,13 @@ XML;
 </c:addressbook-query>
 XML;
         $this->parse($xml);
-
     }
 
     /**
      * @expectedException \Sabre\DAV\Exception\BadRequest
      */
-    function testDeserializeBadMatchType2() {
-
+    public function testDeserializeBadMatchType2()
+    {
         $xml = <<<XML
 <?xml version="1.0"?>
 <c:addressbook-query xmlns:d="DAV:" xmlns:c="urn:ietf:params:xml:ns:carddav">
@@ -277,14 +271,13 @@ XML;
 </c:addressbook-query>
 XML;
         $this->parse($xml);
-
     }
 
     /**
      * @expectedException \Sabre\DAV\Exception\BadRequest
      */
-    function testDeserializeDoubleFilter() {
-
+    public function testDeserializeDoubleFilter()
+    {
         $xml = <<<XML
 <?xml version="1.0"?>
 <c:addressbook-query xmlns:d="DAV:" xmlns:c="urn:ietf:params:xml:ns:carddav">
@@ -298,11 +291,10 @@ XML;
 </c:addressbook-query>
 XML;
         $this->parse($xml);
-
     }
 
-    function testDeserializeAddressbookElements() {
-
+    public function testDeserializeAddressbookElements()
+    {
         $xml = <<<XML
 <?xml version="1.0"?>
 <c:addressbook-query xmlns:d="DAV:" xmlns:c="urn:ietf:params:xml:ns:carddav">
@@ -343,8 +335,5 @@ XML;
             $addressBookQueryReport,
             $result['value']
         );
-
     }
-
-
 }

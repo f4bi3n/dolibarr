@@ -60,12 +60,9 @@ if ($action == 'updateMask') {
         $error++;
     }
 
-    if (!$error)
-    {
+    if (!$error) {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
+    } else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
 } elseif ($action == 'setmod') {
@@ -131,22 +128,20 @@ if ($action == 'setvarother') {
         $error++;
     }
 
-    if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
-    {
-    	$param_show_module_logo = GETPOST('TICKET_SHOW_MODULE_LOGO', 'alpha');
-    	$res = dolibarr_set_const($db, 'TICKET_SHOW_MODULE_LOGO', $param_show_module_logo, 'chaine', 0, '', $conf->entity);
-    	if (!$res > 0) {
-        	$error++;
-    	}
+    if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
+        $param_show_module_logo = GETPOST('TICKET_SHOW_MODULE_LOGO', 'alpha');
+        $res = dolibarr_set_const($db, 'TICKET_SHOW_MODULE_LOGO', $param_show_module_logo, 'chaine', 0, '', $conf->entity);
+        if (!$res > 0) {
+            $error++;
+        }
     }
 
-    if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
-    {
-    	$param_notification_also_main_addressemail = GETPOST('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS', 'alpha');
-	    $res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS', $param_notification_also_main_addressemail, 'chaine', 0, '', $conf->entity);
-	    if (!$res > 0) {
-	        $error++;
-	    }
+    if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
+        $param_notification_also_main_addressemail = GETPOST('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS', 'alpha');
+        $res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS', $param_notification_also_main_addressemail, 'chaine', 0, '', $conf->entity);
+        if (!$res > 0) {
+            $error++;
+        }
     }
 
     $param_limit_view = GETPOST('TICKET_LIMIT_VIEW_ASSIGNED_ONLY', 'alpha');
@@ -337,21 +332,20 @@ print '</tr>';
 */
 
 // Also send to main email address
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
-{
-	print '<tr class="oddeven"><td>'.$langs->trans("TicketsEmailAlsoSendToMainAddress").'</td>';
-	print '<td class="left">';
-	if ($conf->use_javascript_ajax) {
-	    print ajax_constantonoff('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS');
-	} else {
-	    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	    print $form->selectarray("TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS", $arrval, $conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS);
-	}
-	print '</td>';
-	print '<td class="center">';
-	print $form->textwithpicto('', $langs->trans("TicketsEmailAlsoSendToMainAddressHelp"), 1, 'help');
-	print '</td>';
-	print '</tr>';
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
+    print '<tr class="oddeven"><td>'.$langs->trans("TicketsEmailAlsoSendToMainAddress").'</td>';
+    print '<td class="left">';
+    if ($conf->use_javascript_ajax) {
+        print ajax_constantonoff('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS');
+    } else {
+        $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+        print $form->selectarray("TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS", $arrval, $conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS);
+    }
+    print '</td>';
+    print '<td class="center">';
+    print $form->textwithpicto('', $langs->trans("TicketsEmailAlsoSendToMainAddressHelp"), 1, 'help');
+    print '</td>';
+    print '</tr>';
 }
 
 // Limiter la vue des tickets à ceux assignés à l'utilisateur

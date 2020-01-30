@@ -19,7 +19,8 @@ use Sabre\Xml\XmlDeserializable;
  * @author Evert Pot (http://www.rooftopsolutions.nl/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class AddressBookQueryReport implements XmlDeserializable {
+class AddressBookQueryReport implements XmlDeserializable
+{
 
     /**
      * An array with requested properties.
@@ -117,8 +118,8 @@ class AddressBookQueryReport implements XmlDeserializable {
      * @param Reader $reader
      * @return mixed
      */
-    static function xmlDeserialize(Reader $reader) {
-
+    public static function xmlDeserialize(Reader $reader)
+    {
         $elems = (array)$reader->parseInnerTree([
             '{urn:ietf:params:xml:ns:carddav}prop-filter'  => 'Sabre\\CardDAV\\Xml\\Filter\\PropFilter',
             '{urn:ietf:params:xml:ns:carddav}param-filter' => 'Sabre\\CardDAV\\Xml\\Filter\\ParamFilter',
@@ -133,19 +134,20 @@ class AddressBookQueryReport implements XmlDeserializable {
             'limit'      => null,
         ];
 
-        if (!is_array($elems)) $elems = [];
+        if (!is_array($elems)) {
+            $elems = [];
+        }
 
         foreach ($elems as $elem) {
-
             switch ($elem['name']) {
 
-                case '{DAV:}prop' :
+                case '{DAV:}prop':
                     $newProps['properties'] = array_keys($elem['value']);
                     if (isset($elem['value']['{' . Plugin::NS_CARDDAV . '}address-data'])) {
                         $newProps += $elem['value']['{' . Plugin::NS_CARDDAV . '}address-data'];
                     }
                     break;
-                case '{' . Plugin::NS_CARDDAV . '}filter' :
+                case '{' . Plugin::NS_CARDDAV . '}filter':
 
                     if (!is_null($newProps['filters'])) {
                         throw new BadRequest('You can only include 1 {' . Plugin::NS_CARDDAV . '}filter element');
@@ -164,7 +166,7 @@ class AddressBookQueryReport implements XmlDeserializable {
                         }
                     }
                     break;
-                case '{' . Plugin::NS_CARDDAV . '}limit' :
+                case '{' . Plugin::NS_CARDDAV . '}limit':
                     foreach ($elem['value'] as $child) {
                         if ($child['name'] === '{' . Plugin::NS_CARDDAV . '}nresults') {
                             $newProps['limit'] = (int)$child['value'];
@@ -173,7 +175,6 @@ class AddressBookQueryReport implements XmlDeserializable {
                     break;
 
             }
-
         }
 
         if (is_null($newProps['filters'])) {
@@ -184,7 +185,6 @@ class AddressBookQueryReport implements XmlDeserializable {
              */
             //throw new BadRequest('The {' . Plugin::NS_CARDDAV . '}filter element is required for this request');
             $newProps['filters'] = [];
-
         }
 
         $obj = new self();
@@ -193,7 +193,5 @@ class AddressBookQueryReport implements XmlDeserializable {
         }
 
         return $obj;
-
     }
-
 }

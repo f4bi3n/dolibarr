@@ -9,7 +9,8 @@ namespace Sabre\DAV\Xml;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Service extends \Sabre\Xml\Service {
+class Service extends \Sabre\Xml\Service
+{
 
     /**
      * This is a list of XML elements that we automatically map to PHP classes.
@@ -43,5 +44,4 @@ class Service extends \Sabre\Xml\Service {
         'DAV:'                   => 'd',
         'http://sabredav.org/ns' => 's',
     ];
-
 }

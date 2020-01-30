@@ -4,13 +4,14 @@ namespace Sabre\VObject\Component;
 
 use Sabre\VObject;
 
-class VCardTest extends \PHPUnit_Framework_TestCase {
+class VCardTest extends \PHPUnit_Framework_TestCase
+{
 
     /**
      * @dataProvider validateData
      */
-    function testValidate($input, $expectedWarnings, $expectedRepairedOutput) {
-
+    public function testValidate($input, $expectedWarnings, $expectedRepairedOutput)
+    {
         $vcard = VObject\Reader::read($input);
 
         $warnings = $vcard->validate();
@@ -28,11 +29,10 @@ class VCardTest extends \PHPUnit_Framework_TestCase {
             $expectedRepairedOutput,
             $vcard->serialize()
         );
-
     }
 
-    function validateData() {
-
+    public function validateData()
+    {
         $tests = [];
 
         // Correct
@@ -94,11 +94,10 @@ class VCardTest extends \PHPUnit_Framework_TestCase {
             "BEGIN:VCARD\r\nVERSION:4.0\r\nUID:foo\r\nORG:Acme Co.\r\nFN:Acme Co.\r\nEND:VCARD\r\n",
         ];
         return $tests;
-
     }
 
-    function testGetDocumentType() {
-
+    public function testGetDocumentType()
+    {
         $vcard = new VCard([], false);
         $vcard->VERSION = '2.1';
         $this->assertEquals(VCard::VCARD21, $vcard->getDocumentType());
@@ -115,7 +114,8 @@ class VCardTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(VCard::UNKNOWN, $vcard->getDocumentType());
     }
 
-    function testGetByType() {
+    public function testGetByType()
+    {
         $vcard = <<<VCF
 BEGIN:VCARD
 VERSION:3.0
@@ -131,8 +131,8 @@ VCF;
         $this->assertNull($vcard->getByType('ADR', 'non-existant'));
     }
 
-    function testPreferredNoPref() {
-
+    public function testPreferredNoPref()
+    {
         $vcard = <<<VCF
 BEGIN:VCARD
 VERSION:3.0
@@ -143,11 +143,10 @@ VCF;
 
         $vcard = VObject\Reader::read($vcard);
         $this->assertEquals('1@example.org', $vcard->preferred('EMAIL')->getValue());
-
     }
 
-    function testPreferredWithPref() {
-
+    public function testPreferredWithPref()
+    {
         $vcard = <<<VCF
 BEGIN:VCARD
 VERSION:3.0
@@ -158,11 +157,10 @@ VCF;
 
         $vcard = VObject\Reader::read($vcard);
         $this->assertEquals('2@example.org', $vcard->preferred('EMAIL')->getValue());
-
     }
 
-    function testPreferredWith40Pref() {
-
+    public function testPreferredWith40Pref()
+    {
         $vcard = <<<VCF
 BEGIN:VCARD
 VERSION:4.0
@@ -174,11 +172,10 @@ VCF;
 
         $vcard = VObject\Reader::read($vcard);
         $this->assertEquals('3@example.org', $vcard->preferred('EMAIL')->getValue());
-
     }
 
-    function testPreferredNotFound() {
-
+    public function testPreferredNotFound()
+    {
         $vcard = <<<VCF
 BEGIN:VCARD
 VERSION:4.0
@@ -187,11 +184,10 @@ VCF;
 
         $vcard = VObject\Reader::read($vcard);
         $this->assertNull($vcard->preferred('EMAIL'));
-
     }
 
-    function testNoUIDCardDAV() {
-
+    public function testNoUIDCardDAV()
+    {
         $vcard = <<<VCF
 BEGIN:VCARD
 VERSION:4.0
@@ -204,11 +200,10 @@ VCF;
             3,
             'vCards on CardDAV servers MUST have a UID property.'
         );
-
     }
 
-    function testNoUIDNoCardDAV() {
-
+    public function testNoUIDNoCardDAV()
+    {
         $vcard = <<<VCF
 BEGIN:VCARD
 VERSION:4.0
@@ -221,10 +216,9 @@ VCF;
             2,
             'Adding a UID to a vCard property is recommended.'
         );
-
     }
-    function testNoUIDNoCardDAVRepair() {
-
+    public function testNoUIDNoCardDAVRepair()
+    {
         $vcard = <<<VCF
 BEGIN:VCARD
 VERSION:4.0
@@ -237,11 +231,10 @@ VCF;
             1,
             'Adding a UID to a vCard property is recommended.'
         );
-
     }
 
-    function testVCard21CardDAV() {
-
+    public function testVCard21CardDAV()
+    {
         $vcard = <<<VCF
 BEGIN:VCARD
 VERSION:2.1
@@ -255,11 +248,10 @@ VCF;
             3,
             'CardDAV servers are not allowed to accept vCard 2.1.'
         );
-
     }
 
-    function testVCard21NoCardDAV() {
-
+    public function testVCard21NoCardDAV()
+    {
         $vcard = <<<VCF
 BEGIN:VCARD
 VERSION:2.1
@@ -272,20 +264,18 @@ VCF;
             0,
             0
         );
-
     }
 
-    function assertValidate($vcf, $options, $expectedLevel, $expectedMessage = null) {
-
+    public function assertValidate($vcf, $options, $expectedLevel, $expectedMessage = null)
+    {
         $vcal = VObject\Reader::read($vcf);
         $result = $vcal->validate($options);
 
         $this->assertValidateResult($result, $expectedLevel, $expectedMessage);
-
     }
 
-    function assertValidateResult($input, $expectedLevel, $expectedMessage = null) {
-
+    public function assertValidateResult($input, $expectedLevel, $expectedMessage = null)
+    {
         $messages = [];
         foreach ($input as $warning) {
             $messages[] = $warning['message'];
@@ -299,6 +289,5 @@ VCF;
             $this->assertEquals($expectedMessage, $input[0]['message']);
             $this->assertEquals($expectedLevel, $input[0]['level']);
         }
-
     }
 }

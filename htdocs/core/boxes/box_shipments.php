@@ -37,7 +37,7 @@ class box_shipments extends ModeleBoxes
     public $boxlabel = "BoxLastCustomerShipments";
     public $depends = array("expedition");
 
-	/**
+    /**
      * @var DoliDB Database handler.
      */
     public $db;
@@ -85,8 +85,7 @@ class box_shipments extends ModeleBoxes
 
         $this->info_box_head = array('text' => $langs->trans("BoxTitleLastCustomerShipments", $max));
 
-        if ($user->rights->expedition->lire)
-        {
+        if ($user->rights->expedition->lire) {
             $sql = "SELECT s.nom as name";
             $sql .= ", s.rowid as socid";
             $sql .= ", s.code_client";
@@ -102,11 +101,18 @@ class box_shipments extends ModeleBoxes
             $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON e.rowid = el.fk_target AND el.targettype = 'shipping' AND el.sourcetype IN ('commande')";
             $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON el.fk_source = c.rowid AND el.sourcetype IN ('commande') AND el.targettype = 'shipping'";
             $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
-            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON e.fk_soc = sc.fk_soc";
+            if (!$user->rights->societe->client->voir && !$user->societe_id) {
+                $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON e.fk_soc = sc.fk_soc";
+            }
             $sql .= " WHERE e.entity = ".$conf->entity;
-            if (!empty($conf->global->ORDER_BOX_LAST_SHIPMENTS_VALIDATED_ONLY)) $sql .= " AND e.fk_statut = 1";
-            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= " AND sc.fk_user = ".$user->id;
-            else $sql .= " ORDER BY e.date_delivery, e.ref DESC ";
+            if (!empty($conf->global->ORDER_BOX_LAST_SHIPMENTS_VALIDATED_ONLY)) {
+                $sql .= " AND e.fk_statut = 1";
+            }
+            if (!$user->rights->societe->client->voir && !$user->societe_id) {
+                $sql .= " AND sc.fk_user = ".$user->id;
+            } else {
+                $sql .= " ORDER BY e.date_delivery, e.ref DESC ";
+            }
             $sql .= $this->db->plimit($max, 0);
 
             $result = $this->db->query($sql);
@@ -157,7 +163,9 @@ class box_shipments extends ModeleBoxes
                     $line++;
                 }
 
-                if ($num == 0) $this->info_box_contents[$line][0] = array('td' => 'class="center"', 'text'=>$langs->trans("NoRecordedShipments"));
+                if ($num == 0) {
+                    $this->info_box_contents[$line][0] = array('td' => 'class="center"', 'text'=>$langs->trans("NoRecordedShipments"));
+                }
 
                 $this->db->free($result);
             } else {
@@ -175,14 +183,14 @@ class box_shipments extends ModeleBoxes
         }
     }
 
-	/**
-	 *	Method to show box
-	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
-	 *	@return	string
-	 */
+    /**
+     *	Method to show box
+     *
+     *	@param	array	$head       Array with properties of box title
+     *	@param  array	$contents   Array with properties of box lines
+     *  @param	int		$nooutput	No print, only return string
+     *	@return	string
+     */
     public function showBox($head = null, $contents = null, $nooutput = 0)
     {
         return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);

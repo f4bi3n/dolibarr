@@ -39,7 +39,7 @@ class box_prospect extends ModeleBoxes
     public $boxlabel="BoxLastProspects";
     public $depends = array("societe");
 
-	/**
+    /**
      * @var DoliDB Database handler.
      */
     public $db;
@@ -50,71 +50,76 @@ class box_prospect extends ModeleBoxes
     public $info_box_contents = array();
 
 
-	/**
-	 *  Constructor
-	 *
-	 *  @param  DoliDB	$db      	Database handler
+    /**
+     *  Constructor
+     *
+     *  @param  DoliDB	$db      	Database handler
      *  @param	string	$param		More parameters
-	 */
-	public function __construct($db, $param = '')
-	{
-		global $conf, $user;
+     */
+    public function __construct($db, $param = '')
+    {
+        global $conf, $user;
 
-		$this->db = $db;
+        $this->db = $db;
 
-		// disable box for such cases
-		if (! empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) $this->enabled=0;	// disabled by this option
+        // disable box for such cases
+        if (! empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) {
+            $this->enabled=0;
+        }	// disabled by this option
 
-		$this->hidden = ! ($user->rights->societe->lire && empty($user->socid));
-	}
+        $this->hidden = ! ($user->rights->societe->lire && empty($user->socid));
+    }
 
-	/**
-	 *  Load data into info_box_contents array to show array later.
-	 *
-	 *  @param	int		$max        Maximum number of records to load
+    /**
+     *  Load data into info_box_contents array to show array later.
+     *
+     *  @param	int		$max        Maximum number of records to load
      *  @return	void
-	 */
-	public function loadBox($max = 5)
-	{
-		global $user, $langs, $conf;
+     */
+    public function loadBox($max = 5)
+    {
+        global $user, $langs, $conf;
 
-		$this->max=$max;
+        $this->max=$max;
 
-		$thirdpartystatic=new Client($this->db);
+        $thirdpartystatic=new Client($this->db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedProspects", $max));
+        $this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedProspects", $max));
 
-		if ($user->rights->societe->lire)
-		{
-			$sql = "SELECT s.nom as name, s.rowid as socid";
-			$sql.= ", s.code_client";
+        if ($user->rights->societe->lire) {
+            $sql = "SELECT s.nom as name, s.rowid as socid";
+            $sql.= ", s.code_client";
             $sql.= ", s.client, s.email";
             $sql.= ", s.code_fournisseur";
             $sql.= ", s.fournisseur";
             $sql.= ", s.logo";
-			$sql.= ", s.fk_stcomm, s.datec, s.tms, s.status";
-			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-			if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-			$sql.= " WHERE s.client IN (2, 3)";
-			$sql.= " AND s.entity IN (".getEntity('societe').")";
-			if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-			if ($user->socid) $sql.= " AND s.rowid = ".$user->socid;
-			$sql.= " ORDER BY s.tms DESC";
-			$sql.= $this->db->plimit($max, 0);
+            $sql.= ", s.fk_stcomm, s.datec, s.tms, s.status";
+            $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+            if (!$user->rights->societe->client->voir && !$user->socid) {
+                $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+            }
+            $sql.= " WHERE s.client IN (2, 3)";
+            $sql.= " AND s.entity IN (".getEntity('societe').")";
+            if (!$user->rights->societe->client->voir && !$user->socid) {
+                $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+            }
+            if ($user->socid) {
+                $sql.= " AND s.rowid = ".$user->socid;
+            }
+            $sql.= " ORDER BY s.tms DESC";
+            $sql.= $this->db->plimit($max, 0);
 
-			dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if ($resql)
-			{
-				$num = $this->db->num_rows($resql);
+            dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
+            $resql = $this->db->query($sql);
+            if ($resql) {
+                $num = $this->db->num_rows($resql);
 
-				$line = 0;
-				while ($line < $num)
-				{
-					$objp = $this->db->fetch_object($resql);
-					$datec=$this->db->jdate($objp->datec);
-					$datem=$this->db->jdate($objp->tms);
-					$thirdpartystatic->id = $objp->socid;
+                $line = 0;
+                while ($line < $num) {
+                    $objp = $this->db->fetch_object($resql);
+                    $datec=$this->db->jdate($objp->datec);
+                    $datem=$this->db->jdate($objp->tms);
+                    $thirdpartystatic->id = $objp->socid;
                     $thirdpartystatic->name = $objp->name;
                     $thirdpartystatic->email = $objp->email;
                     $thirdpartystatic->code_client = $objp->code_client;
@@ -126,7 +131,7 @@ class box_prospect extends ModeleBoxes
                     $this->info_box_contents[$line][] = array(
                         'td' => '',
                         'text' => $thirdpartystatic->getNomUrl(1),
-                    	'asis' => 1,
+                        'asis' => 1,
                     );
 
                     $this->info_box_contents[$line][] = array(
@@ -167,19 +172,19 @@ class box_prospect extends ModeleBoxes
                 'td' => 'class="nohover opacitymedium left"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")
             );
-		}
-	}
+        }
+    }
 
-	/**
-	 *	Method to show box
-	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
-	 *	@return	string
-	 */
+    /**
+     *	Method to show box
+     *
+     *	@param	array	$head       Array with properties of box title
+     *	@param  array	$contents   Array with properties of box lines
+     *  @param	int		$nooutput	No print, only return string
+     *	@return	string
+     */
     public function showBox($head = null, $contents = null, $nooutput = 0)
     {
-		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
-	}
+        return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+    }
 }

@@ -33,7 +33,7 @@ class box_bookmarks extends ModeleBoxes
     public $boxlabel = "BoxMyLastBookmarks";
     public $depends = array("bookmark");
 
-	/**
+    /**
      * @var DoliDB Database handler.
      */
     public $db;
@@ -44,63 +44,59 @@ class box_bookmarks extends ModeleBoxes
     public $info_box_contents = array();
 
 
-	/**
-	 *  Constructor
-	 *
-	 *  @param  DoliDB  $db         Database handler
-	 *  @param  string  $param      More parameters
-	 */
-	public function __construct($db, $param)
-	{
-	    global $user;
+    /**
+     *  Constructor
+     *
+     *  @param  DoliDB  $db         Database handler
+     *  @param  string  $param      More parameters
+     */
+    public function __construct($db, $param)
+    {
+        global $user;
 
-	    $this->db = $db;
+        $this->db = $db;
 
-	    $this->hidden = !($user->rights->bookmark->lire);
-	}
+        $this->hidden = !($user->rights->bookmark->lire);
+    }
 
-	/**
+    /**
      *  Load data for box to show them later
      *
      *  @param	int		$max        Maximum number of records to load
      *  @return	void
-	 */
-	public function loadBox($max = 5)
-	{
-		global $user, $langs, $conf;
-		$langs->load("boxes");
+     */
+    public function loadBox($max = 5)
+    {
+        global $user, $langs, $conf;
+        $langs->load("boxes");
 
-		$this->max = $max;
+        $this->max = $max;
 
-		$this->info_box_head = array(
+        $this->info_box_head = array(
             'text' => $langs->trans("BoxMyLastBookmarks", $max),
             'sublink' => DOL_URL_ROOT.'/bookmarks/list.php',
         );
         if ($user->rights->bookmark->creer) {
-			$this->info_box_head['subpicto'] = 'bookmark';
-			$this->info_box_head['subtext'] = $langs->trans("BookmarksManagement");
-		}
-		else
-		{
-			$this->info_box_head['subpicto'] = 'bookmark';
-			$this->info_box_head['subtext'] = $langs->trans("ListOfBookmark");
-		}
+            $this->info_box_head['subpicto'] = 'bookmark';
+            $this->info_box_head['subtext'] = $langs->trans("BookmarksManagement");
+        } else {
+            $this->info_box_head['subpicto'] = 'bookmark';
+            $this->info_box_head['subtext'] = $langs->trans("ListOfBookmark");
+        }
 
-		if ($user->rights->bookmark->lire)
-		{
-			$sql = "SELECT b.title, b.url, b.target, b.favicon";
-			$sql .= " FROM ".MAIN_DB_PREFIX."bookmark as b";
-			$sql .= " WHERE fk_user = ".$user->id;
+        if ($user->rights->bookmark->lire) {
+            $sql = "SELECT b.title, b.url, b.target, b.favicon";
+            $sql .= " FROM ".MAIN_DB_PREFIX."bookmark as b";
+            $sql .= " WHERE fk_user = ".$user->id;
             $sql .= " AND b.entity = ".$conf->entity;
-			$sql .= $this->db->order("position", "ASC");
-			$sql .= $this->db->plimit($max, 0);
+            $sql .= $this->db->order("position", "ASC");
+            $sql .= $this->db->plimit($max, 0);
 
-			$result = $this->db->query($sql);
-			if ($result)
-			{
-				$num = $this->db->num_rows($result);
+            $result = $this->db->query($sql);
+            if ($result) {
+                $num = $this->db->num_rows($result);
 
-				$line = 0;
+                $line = 0;
 
                 while ($line < $num) {
                     $objp = $this->db->fetch_object($result);
@@ -125,7 +121,9 @@ class box_bookmarks extends ModeleBoxes
 
                 if ($num == 0) {
                     $mytxt = $langs->trans("NoRecordedBookmarks");
-                    if ($user->rights->bookmark->creer) $mytxt .= ' '.$langs->trans("ClickToAdd");
+                    if ($user->rights->bookmark->creer) {
+                        $mytxt .= ' '.$langs->trans("ClickToAdd");
+                    }
                     $this->info_box_contents[$line][0] = array(
                         'td' => 'class="center" colspan="2"',
                         'tooltip' => $mytxt,

@@ -6,10 +6,10 @@ use Sabre\DAV\Xml\Property\Complex;
 use Sabre\DAV\Xml\Property\Href;
 use Sabre\DAV\Xml\XmlTest;
 
-class PropTest extends XmlTest {
-
-    function testDeserializeSimple() {
-
+class PropTest extends XmlTest
+{
+    public function testDeserializeSimple()
+    {
         $input = <<<XML
 <?xml version="1.0"?>
 <root xmlns="DAV:">
@@ -22,10 +22,9 @@ XML;
         ];
         
         $this->assertDecodeProp($input, $expected);
-
     }
-    function testDeserializeEmpty() {
-
+    public function testDeserializeEmpty()
+    {
         $input = <<<XML
 <?xml version="1.0"?>
 <root xmlns="DAV:" />
@@ -35,10 +34,9 @@ XML;
         ];
         
         $this->assertDecodeProp($input, $expected);
-
     }
-    function testDeserializeComplex() {
-
+    public function testDeserializeComplex()
+    {
         $input = <<<XML
 <?xml version="1.0"?>
 <root xmlns="DAV:">
@@ -51,10 +49,9 @@ XML;
         ];
         
         $this->assertDecodeProp($input, $expected);
-
     }
-    function testDeserializeCustom() {
-
+    public function testDeserializeCustom()
+    {
         $input = <<<XML
 <?xml version="1.0"?>
 <root xmlns="DAV:">
@@ -71,10 +68,9 @@ XML;
         ];
 
         $this->assertDecodeProp($input, $expected, $elementMap);
-
     }
-    function testDeserializeCustomCallback() {
-
+    public function testDeserializeCustomCallback()
+    {
         $input = <<<XML
 <?xml version="1.0"?>
 <root xmlns="DAV:">
@@ -87,21 +83,20 @@ XML;
         ];
 
         $elementMap = [
-            '{DAV:}foo' => function($reader) {
+            '{DAV:}foo' => function ($reader) {
                 $reader->next();
                 return 'zim';
             }
         ];
 
         $this->assertDecodeProp($input, $expected, $elementMap);
-
     }
 
     /**
      * @expectedException \LogicException
      */
-    function testDeserializeCustomBad() {
-
+    public function testDeserializeCustomBad()
+    {
         $input = <<<XML
 <?xml version="1.0"?>
 <root xmlns="DAV:">
@@ -116,14 +111,13 @@ XML;
         ];
 
         $this->assertDecodeProp($input, $expected, $elementMap);
-
     }
 
     /**
      * @expectedException \LogicException
      */
-    function testDeserializeCustomBadObj() {
-
+    public function testDeserializeCustomBadObj()
+    {
         $input = <<<XML
 <?xml version="1.0"?>
 <root xmlns="DAV:">
@@ -138,17 +132,14 @@ XML;
         ];
 
         $this->assertDecodeProp($input, $expected, $elementMap);
-
     }
 
-    function assertDecodeProp($input, array $expected, array $elementMap = []) {
-
+    public function assertDecodeProp($input, array $expected, array $elementMap = [])
+    {
         $elementMap['{DAV:}root'] = 'Sabre\DAV\Xml\Element\Prop';
 
         $result = $this->parse($input, $elementMap);
         $this->assertInternalType('array', $result);
         $this->assertEquals($expected, $result['value']);
-
     }
-
 }

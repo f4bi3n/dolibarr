@@ -8,7 +8,8 @@ use Sabre\HTTP;
 require_once 'Sabre/CalDAV/Backend/Mock.php';
 require_once 'Sabre/HTTP/ResponseMock.php';
 
-class FreeBusyReportTest extends \PHPUnit_Framework_TestCase {
+class FreeBusyReportTest extends \PHPUnit_Framework_TestCase
+{
 
     /**
      * @var Plugin
@@ -19,8 +20,8 @@ class FreeBusyReportTest extends \PHPUnit_Framework_TestCase {
      */
     protected $server;
 
-    function setUp() {
-
+    public function setUp()
+    {
         $obj1 = <<<ics
 BEGIN:VCALENDAR
 BEGIN:VEVENT
@@ -31,7 +32,9 @@ END:VCALENDAR
 ics;
 
         $obj2 = fopen('php://memory', 'r+');
-        fwrite($obj2, <<<ics
+        fwrite(
+            $obj2,
+            <<<ics
 BEGIN:VCALENDAR
 BEGIN:VEVENT
 DTSTART:20121005T120000Z
@@ -91,11 +94,10 @@ ics;
 
         $this->plugin = new Plugin();
         $this->server->addPlugin($this->plugin);
-
     }
 
-    function testFreeBusyReport() {
-
+    public function testFreeBusyReport()
+    {
         $reportXML = <<<XML
 <?xml version="1.0"?>
 <c:free-busy-query xmlns:c="urn:ietf:params:xml:ns:caldav">
@@ -111,14 +113,13 @@ XML;
         $this->assertTrue(strpos($this->server->httpResponse->body, 'BEGIN:VFREEBUSY') !== false);
         $this->assertTrue(strpos($this->server->httpResponse->body, '20111005T120000Z/20111005T130000Z') !== false);
         $this->assertTrue(strpos($this->server->httpResponse->body, '20111006T100000Z/20111006T110000Z') !== false);
-
     }
 
     /**
      * @expectedException Sabre\DAV\Exception\BadRequest
      */
-    function testFreeBusyReportNoTimeRange() {
-
+    public function testFreeBusyReportNoTimeRange()
+    {
         $reportXML = <<<XML
 <?xml version="1.0"?>
 <c:free-busy-query xmlns:c="urn:ietf:params:xml:ns:caldav">
@@ -126,14 +127,13 @@ XML;
 XML;
 
         $report = $this->server->xml->parse($reportXML, null, $rootElem);
-
     }
 
     /**
      * @expectedException Sabre\DAV\Exception\NotImplemented
      */
-    function testFreeBusyReportWrongNode() {
-
+    public function testFreeBusyReportWrongNode()
+    {
         $request = HTTP\Sapi::createFromServerArray([
             'REQUEST_URI' => '/',
         ]);
@@ -148,14 +148,13 @@ XML;
 
         $report = $this->server->xml->parse($reportXML, null, $rootElem);
         $this->plugin->report($rootElem, $report, null);
-
     }
 
     /**
      * @expectedException Sabre\DAV\Exception
      */
-    function testFreeBusyReportNoACLPlugin() {
-
+    public function testFreeBusyReportNoACLPlugin()
+    {
         $this->server = new DAV\Server();
         $this->plugin = new Plugin();
         $this->server->addPlugin($this->plugin);
@@ -169,6 +168,5 @@ XML;
 
         $report = $this->server->xml->parse($reportXML, null, $rootElem);
         $this->plugin->report($rootElem, $report, null);
-
     }
 }

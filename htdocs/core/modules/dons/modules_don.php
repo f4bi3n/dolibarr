@@ -35,9 +35,9 @@ require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 abstract class ModeleDon extends CommonDocGenerator
 {
     /**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
+     * @var string Error code (or message)
+     */
+    public $error='';
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
@@ -69,9 +69,9 @@ abstract class ModeleDon extends CommonDocGenerator
 abstract class ModeleNumRefDons
 {
     /**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
+     * @var string Error code (or message)
+     */
+    public $error='';
 
     /**
      * 	Return if a module can be used or not
@@ -139,10 +139,18 @@ abstract class ModeleNumRefDons
         global $langs;
         $langs->load("admin");
 
-        if ($this->version == 'development') return $langs->trans("VersionDevelopment");
-        if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-        if ($this->version == 'dolibarr') return DOL_VERSION;
-        if ($this->version) return $this->version;
+        if ($this->version == 'development') {
+            return $langs->trans("VersionDevelopment");
+        }
+        if ($this->version == 'experimental') {
+            return $langs->trans("VersionExperimental");
+        }
+        if ($this->version == 'dolibarr') {
+            return DOL_VERSION;
+        }
+        if ($this->version) {
+            return $this->version;
+        }
         return $langs->trans("NotAvailable");
     }
 }

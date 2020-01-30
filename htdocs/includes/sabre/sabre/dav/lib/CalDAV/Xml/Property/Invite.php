@@ -20,7 +20,8 @@ use Sabre\Xml\XmlSerializable;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Invite implements XmlSerializable {
+class Invite implements XmlSerializable
+{
 
     /**
      * The list of users a calendar has been shared to.
@@ -34,10 +35,9 @@ class Invite implements XmlSerializable {
      *
      * @param Sharee[] $sharees
      */
-    function __construct(array $sharees) {
-
+    public function __construct(array $sharees)
+    {
         $this->sharees = $sharees;
-
     }
 
     /**
@@ -45,10 +45,9 @@ class Invite implements XmlSerializable {
      *
      * @return array
      */
-    function getValue() {
-
+    public function getValue()
+    {
         return $this->sharees;
-
     }
 
     /**
@@ -70,44 +69,42 @@ class Invite implements XmlSerializable {
      * @param Writer $writer
      * @return void
      */
-    function xmlSerialize(Writer $writer) {
-
+    public function xmlSerialize(Writer $writer)
+    {
         $cs = '{' . Plugin::NS_CALENDARSERVER . '}';
 
         foreach ($this->sharees as $sharee) {
-
             if ($sharee->access === DAV\Sharing\Plugin::ACCESS_SHAREDOWNER) {
                 $writer->startElement($cs . 'organizer');
             } else {
                 $writer->startElement($cs . 'user');
 
                 switch ($sharee->inviteStatus) {
-                    case DAV\Sharing\Plugin::INVITE_ACCEPTED :
+                    case DAV\Sharing\Plugin::INVITE_ACCEPTED:
                         $writer->writeElement($cs . 'invite-accepted');
                         break;
-                    case DAV\Sharing\Plugin::INVITE_DECLINED :
+                    case DAV\Sharing\Plugin::INVITE_DECLINED:
                         $writer->writeElement($cs . 'invite-declined');
                         break;
-                    case DAV\Sharing\Plugin::INVITE_NORESPONSE :
+                    case DAV\Sharing\Plugin::INVITE_NORESPONSE:
                         $writer->writeElement($cs . 'invite-noresponse');
                         break;
-                    case DAV\Sharing\Plugin::INVITE_INVALID :
+                    case DAV\Sharing\Plugin::INVITE_INVALID:
                         $writer->writeElement($cs . 'invite-invalid');
                         break;
                 }
 
                 $writer->startElement($cs . 'access');
                 switch ($sharee->access) {
-                    case DAV\Sharing\Plugin::ACCESS_READWRITE :
+                    case DAV\Sharing\Plugin::ACCESS_READWRITE:
                         $writer->writeElement($cs . 'read-write');
                         break;
-                    case DAV\Sharing\Plugin::ACCESS_READ :
+                    case DAV\Sharing\Plugin::ACCESS_READ:
                         $writer->writeElement($cs . 'read');
                         break;
 
                 }
                 $writer->endElement(); // access
-
             }
 
             $href = new DAV\Xml\Property\Href($sharee->href);
@@ -120,9 +117,6 @@ class Invite implements XmlSerializable {
                 $writer->writeElement($cs . 'summary', $sharee->comment);
             }
             $writer->endElement(); // organizer or user
-
         }
-
     }
-
 }

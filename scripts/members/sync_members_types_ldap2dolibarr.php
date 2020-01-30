@@ -31,8 +31,8 @@ $path = __DIR__ . '/';
 
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
-	echo "Error: You are using PHP for CGI. To execute " . $script_file . " from command line, you must use PHP for CLI mode.\n";
-	exit(- 1);
+    echo "Error: You are using PHP for CGI. To execute " . $script_file . " from command line, you must use PHP for CLI mode.\n";
+    exit(- 1);
 }
 
 require_once $path . "../../htdocs/master.inc.php";
@@ -63,20 +63,24 @@ $required_fields = array($conf->global->LDAP_KEY_MEMBERS_TYPES,$conf->global->LD
 $required_fields = array_unique(array_values(array_filter($required_fields, "dolValidElementType")));
 
 if (! isset($argv[1])) {
-	// print "Usage: $script_file (nocommitiferror|commitiferror) [id_group]\n";
-	print "Usage:  $script_file (nocommitiferror|commitiferror) [--server=ldapserverhost] [--excludeuser=user1,user2...] [-y]\n";
-	exit(- 1);
+    // print "Usage: $script_file (nocommitiferror|commitiferror) [id_group]\n";
+    print "Usage:  $script_file (nocommitiferror|commitiferror) [--server=ldapserverhost] [--excludeuser=user1,user2...] [-y]\n";
+    exit(- 1);
 }
 
 foreach ($argv as $key => $val) {
-	if ($val == 'commitiferror')
-		$forcecommit = 1;
-	if (preg_match('/--server=([^\s]+)$/', $val, $reg))
-		$conf->global->LDAP_SERVER_HOST = $reg[1];
-	if (preg_match('/--excludeuser=([^\s]+)$/', $val, $reg))
-		$excludeuser = explode(',', $reg[1]);
-	if (preg_match('/-y$/', $val, $reg))
-		$confirmed = 1;
+    if ($val == 'commitiferror') {
+        $forcecommit = 1;
+    }
+    if (preg_match('/--server=([^\s]+)$/', $val, $reg)) {
+        $conf->global->LDAP_SERVER_HOST = $reg[1];
+    }
+    if (preg_match('/--excludeuser=([^\s]+)$/', $val, $reg)) {
+        $excludeuser = explode(',', $reg[1]);
+    }
+    if (preg_match('/-y$/', $val, $reg)) {
+        $confirmed = 1;
+    }
 }
 
 print "Mails sending disabled (useless in batch mode)\n";
@@ -101,82 +105,83 @@ print "Mapped LDAP fields=" . join(',', $required_fields) . "\n";
 print "\n";
 
 if (! $confirmed) {
-	print "Hit Enter to continue or CTRL+C to stop...\n";
-	$input = trim(fgets(STDIN));
+    print "Hit Enter to continue or CTRL+C to stop...\n";
+    $input = trim(fgets(STDIN));
 }
 
 if (empty($conf->global->LDAP_MEMBER_TYPE_DN)) {
-	print $langs->trans("Error") . ': ' . $langs->trans("LDAP setup for members types not defined inside Dolibarr");
-	exit(- 1);
+    print $langs->trans("Error") . ': ' . $langs->trans("LDAP setup for members types not defined inside Dolibarr");
+    exit(- 1);
 }
 
 $ldap = new Ldap();
 $result = $ldap->connect_bind();
 if ($result >= 0) {
-	$justthese = array();
+    $justthese = array();
 
-	// We disable synchro Dolibarr-LDAP
-	$conf->global->LDAP_MEMBER_TYPE_ACTIVE = 0;
+    // We disable synchro Dolibarr-LDAP
+    $conf->global->LDAP_MEMBER_TYPE_ACTIVE = 0;
 
-	$ldaprecords = $ldap->getRecords('*', $conf->global->LDAP_MEMBER_TYPE_DN, $conf->global->LDAP_KEY_MEMBERS_TYPES, $required_fields, 0, array($conf->global->LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS));
-	if (is_array($ldaprecords)) {
-		$db->begin();
+    $ldaprecords = $ldap->getRecords('*', $conf->global->LDAP_MEMBER_TYPE_DN, $conf->global->LDAP_KEY_MEMBERS_TYPES, $required_fields, 0, array($conf->global->LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS));
+    if (is_array($ldaprecords)) {
+        $db->begin();
 
-		// Warning $ldapuser has a key in lowercase
-		foreach ($ldaprecords as $key => $ldapgroup) {
-			$membertype = new AdherentType($db);
-			$membertype->fetch('', $ldapgroup[$conf->global->LDAP_KEY_MEMBERS_TYPES]);
-			$membertype->label = $ldapgroup[$conf->global->LDAP_MEMBER_TYPE_FIELD_FULLNAME];
-			$membertype->description = $ldapgroup[$conf->global->LDAP_MEMBER_TYPE_FIELD_DESCRIPTION];
-			$membertype->entity = $conf->entity;
+        // Warning $ldapuser has a key in lowercase
+        foreach ($ldaprecords as $key => $ldapgroup) {
+            $membertype = new AdherentType($db);
+            $membertype->fetch('', $ldapgroup[$conf->global->LDAP_KEY_MEMBERS_TYPES]);
+            $membertype->label = $ldapgroup[$conf->global->LDAP_MEMBER_TYPE_FIELD_FULLNAME];
+            $membertype->description = $ldapgroup[$conf->global->LDAP_MEMBER_TYPE_FIELD_DESCRIPTION];
+            $membertype->entity = $conf->entity;
 
-			// print_r($ldapgroup);
+            // print_r($ldapgroup);
 
-			if ($membertype->id > 0) { // Member type update
-				print $langs->transnoentities("MemberTypeUpdate") . ' # ' . $key . ': name=' . $membertype->label;
-				$res = $membertype->update($user);
+            if ($membertype->id > 0) { // Member type update
+                print $langs->transnoentities("MemberTypeUpdate") . ' # ' . $key . ': name=' . $membertype->label;
+                $res = $membertype->update($user);
 
-				if ($res > 0) {
-					print ' --> Updated member type id=' . $membertype->id . ' name=' . $membertype->label;
-				} else {
-					$error ++;
-					print ' --> ' . $res . ' ' . $membertype->error;
-				}
-				print "\n";
-			} else { // Member type creation
-				print $langs->transnoentities("MemberTypeCreate") . ' # ' . $key . ': name=' . $membertype->label;
-				$res = $membertype->create($user);
+                if ($res > 0) {
+                    print ' --> Updated member type id=' . $membertype->id . ' name=' . $membertype->label;
+                } else {
+                    $error ++;
+                    print ' --> ' . $res . ' ' . $membertype->error;
+                }
+                print "\n";
+            } else { // Member type creation
+                print $langs->transnoentities("MemberTypeCreate") . ' # ' . $key . ': name=' . $membertype->label;
+                $res = $membertype->create($user);
 
-				if ($res > 0) {
-					print ' --> Created member type id=' . $membertype->id . ' name=' . $membertype->label;
-				} else {
-					$error ++;
-					print ' --> ' . $res . ' ' . $membertype->error;
-				}
-				print "\n";
-			}
+                if ($res > 0) {
+                    print ' --> Created member type id=' . $membertype->id . ' name=' . $membertype->label;
+                } else {
+                    $error ++;
+                    print ' --> ' . $res . ' ' . $membertype->error;
+                }
+                print "\n";
+            }
 
-			// print_r($membertype);
-		}
+            // print_r($membertype);
+        }
 
-		if (! $error || $forcecommit) {
-			if (! $error)
-				print $langs->transnoentities("NoErrorCommitIsDone") . "\n";
-			else
-				print $langs->transnoentities("ErrorButCommitIsDone") . "\n";
-			$db->commit();
-		} else {
-			print $langs->transnoentities("ErrorSomeErrorWereFoundRollbackIsDone", $error) . "\n";
-			$db->rollback();
-		}
-		print "\n";
-	} else {
-		dol_print_error('', $ldap->error);
-		$error ++;
-	}
+        if (! $error || $forcecommit) {
+            if (! $error) {
+                print $langs->transnoentities("NoErrorCommitIsDone") . "\n";
+            } else {
+                print $langs->transnoentities("ErrorButCommitIsDone") . "\n";
+            }
+            $db->commit();
+        } else {
+            print $langs->transnoentities("ErrorSomeErrorWereFoundRollbackIsDone", $error) . "\n";
+            $db->rollback();
+        }
+        print "\n";
+    } else {
+        dol_print_error('', $ldap->error);
+        $error ++;
+    }
 } else {
-	dol_print_error('', $ldap->error);
-	$error ++;
+    dol_print_error('', $ldap->error);
+    $error ++;
 }
 
 exit($error);
@@ -190,5 +195,5 @@ exit($error);
  */
 function dolValidElementType($element)
 {
-	return (trim($element) != '');
+    return (trim($element) != '');
 }

@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 if (! empty($conf->projet->enabled)) {
-	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+    require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 }
 
 // Load translation files required by the page
@@ -40,23 +40,26 @@ $id=GETPOST('id', 'int');
 $ref=GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'alpha');
 
-if (GETPOST('actioncode', 'array'))
-{
+if (GETPOST('actioncode', 'array')) {
     $actioncode=GETPOST('actioncode', 'array', 3);
-    if (! count($actioncode)) $actioncode='0';
-}
-else
-{
+    if (! count($actioncode)) {
+        $actioncode='0';
+    }
+} else {
     $actioncode=GETPOST("actioncode", "alpha", 3)?GETPOST("actioncode", "alpha", 3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECTS)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECTS));
 }
 $search_agenda_label=GETPOST('search_agenda_label');
 
 // Security check
 $socid=0;
-if ($user->socid) $socid=$user->socid;
+if ($user->socid) {
+    $socid=$user->socid;
+}
 $result=restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
 
-if (!$user->rights->fournisseur->commande->lire)	accessforbidden();
+if (!$user->rights->fournisseur->commande->lire) {
+    accessforbidden();
+}
 
 
 
@@ -67,11 +70,12 @@ if (!$user->rights->fournisseur->commande->lire)	accessforbidden();
 
 $parameters = array('id'=>$id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+    setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
 // Purge search criteria
-if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All test are required to be compatible with all browsers
-{
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All test are required to be compatible with all browsers
     $actioncode = '';
     $search_agenda_label = '';
 }
@@ -85,15 +89,16 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 $form = new	Form($db);
 $object = new CommandeFournisseur($db);
 
-if ($id > 0 || !empty($ref))
-{
+if ($id > 0 || !empty($ref)) {
     $object->fetch($id, $ref);
     $object->fetch_thirdparty();
     $object->info($object->id);
 }
 
 $title = $langs->trans("SupplierOrder").' - '.$object->ref.' '.$object->name;
-if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title = $object->ref.' '.$object->name.' - '.$langs->trans("Info");
+if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+    $title = $object->ref.' '.$object->name.' - '.$langs->trans("Info");
+}
 $help_url = 'EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
 llxHeader('', $title, $help_url);
 
@@ -116,12 +121,10 @@ $morehtmlref.=$form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_su
 // Thirdparty
 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
 // Project
-if (! empty($conf->projet->enabled))
-{
+if (! empty($conf->projet->enabled)) {
     $langs->load("projects");
     $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
-    if ($user->rights->fournisseur->commande->creer)
-    {
+    if ($user->rights->fournisseur->commande->creer) {
         if ($action != 'classify') {
             //$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
             $morehtmlref.=' : ';
@@ -172,22 +175,17 @@ dol_fiche_end();
 
 $out = '';
 $permok = $user->rights->agenda->myactions->create;
-if ($permok)
-{
+if ($permok) {
     $out .= '&originid='.$object->id.'&origin=order_supplier';
 }
 
 
 print '<div class="tabsAction">';
 
-if (!empty($conf->agenda->enabled))
-{
-    if (!empty($user->rights->agenda->myactions->create) || !empty($user->rights->agenda->allactions->create))
-    {
+if (!empty($conf->agenda->enabled)) {
+    if (!empty($user->rights->agenda->myactions->create) || !empty($user->rights->agenda->allactions->create)) {
         print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'">'.$langs->trans("AddAction").'</a>';
-    }
-    else
-    {
+    } else {
         print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("AddAction").'</a>';
     }
 }
@@ -195,11 +193,14 @@ if (!empty($conf->agenda->enabled))
 print '</div>';
 
 
-if (!empty($object->id))
-{
+if (!empty($object->id)) {
     $param = '&id='.$object->id;
-    if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
-    if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
+    if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+        $param .= '&contextpage='.$contextpage;
+    }
+    if ($limit > 0 && $limit != $conf->liste_limit) {
+        $param .= '&limit='.$limit;
+    }
 
     print load_fiche_titre($langs->trans("ActionsOnOrder"), '', '');
 

@@ -29,7 +29,6 @@ class AmfFormat extends DependentFormat
 
     public function encode($data, $humanReadable = false)
     {
-
         $stream = new OutputStream();
         $serializer = new Serializer($stream);
         $serializer->writeTypeMarker($data);
@@ -45,4 +44,3 @@ class AmfFormat extends DependentFormat
         return $deserializer->readTypeMarker();
     }
 }
-

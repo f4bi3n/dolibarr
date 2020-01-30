@@ -12,7 +12,8 @@ namespace Sabre\VObject;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-trait PHPUnitAssertions {
+trait PHPUnitAssertions
+{
 
     /**
      * This method tests wether two vcards or icalendar objects are
@@ -32,11 +33,10 @@ trait PHPUnitAssertions {
      * @param resource|string|Component $actual
      * @param string $message
      */
-    function assertVObjectEqualsVObject($expected, $actual, $message = '') {
-
+    public function assertVObjectEqualsVObject($expected, $actual, $message = '')
+    {
         $self = $this;
-        $getObj = function($input) use ($self) {
-
+        $getObj = function ($input) use ($self) {
             if (is_resource($input)) {
                 $input = stream_get_contents($input);
             }
@@ -51,7 +51,6 @@ trait PHPUnitAssertions {
                 unset($input->CALSCALE);
             }
             return $input;
-
         };
 
         $expected = $getObj($expected)->serialize();
@@ -61,13 +60,11 @@ trait PHPUnitAssertions {
         preg_match_all('|^([A-Z]+):\\*\\*ANY\\*\\*\r$|m', $expected, $matches, PREG_SET_ORDER);
 
         foreach ($matches as $match) {
-
             $actual = preg_replace(
                 '|^' . preg_quote($match[1], '|') . ':(.*)\r$|m',
                 $match[1] . ':**ANY**' . "\r",
                 $actual
             );
-
         }
 
         $this->assertEquals(
@@ -75,8 +72,5 @@ trait PHPUnitAssertions {
             $actual,
             $message
         );
-
     }
-
-
 }

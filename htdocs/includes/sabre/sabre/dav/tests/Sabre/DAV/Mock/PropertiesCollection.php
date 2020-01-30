@@ -12,8 +12,8 @@ use Sabre\DAV\PropPatch;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class PropertiesCollection extends Collection implements IProperties {
-
+class PropertiesCollection extends Collection implements IProperties
+{
     public $failMode = false;
 
     public $properties;
@@ -26,11 +26,10 @@ class PropertiesCollection extends Collection implements IProperties {
      * @param array $properties
      * @return void
      */
-    function __construct($name, array $children, array $properties = []) {
-
+    public function __construct($name, array $children, array $properties = [])
+    {
         parent::__construct($name, $children, null);
         $this->properties = $properties;
-
     }
 
     /**
@@ -45,22 +44,21 @@ class PropertiesCollection extends Collection implements IProperties {
      * @param PropPatch $proppatch
      * @return bool|array
      */
-    function propPatch(PropPatch $proppatch) {
-
-        $proppatch->handleRemaining(function($updateProperties) {
-
+    public function propPatch(PropPatch $proppatch)
+    {
+        $proppatch->handleRemaining(function ($updateProperties) {
             switch ($this->failMode) {
-                case 'updatepropsfalse' : return false;
-                case 'updatepropsarray' :
+                case 'updatepropsfalse': return false;
+                case 'updatepropsarray':
                     $r = [];
-                    foreach ($updateProperties as $k => $v) $r[$k] = 402;
+                    foreach ($updateProperties as $k => $v) {
+                        $r[$k] = 402;
+                    }
                     return $r;
-                case 'updatepropsobj' :
+                case 'updatepropsobj':
                     return new \STDClass();
             }
-
         });
-
     }
 
     /**
@@ -78,8 +76,8 @@ class PropertiesCollection extends Collection implements IProperties {
      * @param array $requestedProperties
      * @return array
      */
-    function getProperties($requestedProperties) {
-
+    public function getProperties($requestedProperties)
+    {
         $returnedProperties = [];
         foreach ($requestedProperties as $requestedProperty) {
             if (isset($this->properties[$requestedProperty])) {
@@ -88,7 +86,5 @@ class PropertiesCollection extends Collection implements IProperties {
             }
         }
         return $returnedProperties;
-
     }
-
 }

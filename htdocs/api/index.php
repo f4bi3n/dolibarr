@@ -26,21 +26,39 @@
 
 use Luracast\Restler\Format\UploadFormat;
 
-if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');			// Do not check anti CSRF attack test
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');		// Do not check anti POST attack test
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');		// If there is no need to load and show top and left menu
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');		// If we don't need to load the html.form.class.php
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');       // Do not load ajax.lib.php library
-if (! defined("NOLOGIN"))        define("NOLOGIN", '1');				// If this page is public (can be called outside logged session)
+if (! defined('NOCSRFCHECK')) {
+    define('NOCSRFCHECK', '1');
+}			// Do not check anti CSRF attack test
+if (! defined('NOTOKENRENEWAL')) {
+    define('NOTOKENRENEWAL', '1');
+}		// Do not check anti POST attack test
+if (! defined('NOREQUIREMENU')) {
+    define('NOREQUIREMENU', '1');
+}		// If there is no need to load and show top and left menu
+if (! defined('NOREQUIREHTML')) {
+    define('NOREQUIREHTML', '1');
+}		// If we don't need to load the html.form.class.php
+if (! defined('NOREQUIREAJAX')) {
+    define('NOREQUIREAJAX', '1');
+}       // Do not load ajax.lib.php library
+if (! defined("NOLOGIN")) {
+    define("NOLOGIN", '1');
+}				// If this page is public (can be called outside logged session)
 
 
 // Force entity if a value is provided into HTTP header. Otherwise, will use the entity of user of token used.
-if (! empty($_SERVER['HTTP_DOLAPIENTITY'])) define("DOLENTITY", (int) $_SERVER['HTTP_DOLAPIENTITY']);
+if (! empty($_SERVER['HTTP_DOLAPIENTITY'])) {
+    define("DOLENTITY", (int) $_SERVER['HTTP_DOLAPIENTITY']);
+}
 
 
 $res=0;
-if (! $res && file_exists("../main.inc.php")) $res=include '../main.inc.php';
-if (! $res) die("Include of main fails");
+if (! $res && file_exists("../main.inc.php")) {
+    $res=include '../main.inc.php';
+}
+if (! $res) {
+    die("Include of main fails");
+}
 
 require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/AutoLoader.php';
 
@@ -57,14 +75,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 $url = $_SERVER['PHP_SELF'];
 // Fix for some NGINX setups (this should not be required even with NGINX, however setup of NGINX are often mysterious and this may help is such cases)
-if (! empty($conf->global->MAIN_NGINX_FIX))
-{
-	$url = (isset($_SERVER['SCRIPT_URI']) && $_SERVER["SCRIPT_URI"] !== null) ? $_SERVER["SCRIPT_URI"] : $_SERVER['PHP_SELF'];
+if (! empty($conf->global->MAIN_NGINX_FIX)) {
+    $url = (isset($_SERVER['SCRIPT_URI']) && $_SERVER["SCRIPT_URI"] !== null) ? $_SERVER["SCRIPT_URI"] : $_SERVER['PHP_SELF'];
 }
 
 // Enable and test if module Api is enabled
-if (empty($conf->global->MAIN_MODULE_API))
-{
+if (empty($conf->global->MAIN_MODULE_API)) {
     $langs->load("admin");
     dol_syslog("Call Dolibarr API interfaces with module REST disabled");
     print $langs->trans("WarningModuleNotActive", 'Api').'.<br><br>';
@@ -73,8 +89,7 @@ if (empty($conf->global->MAIN_MODULE_API))
 }
 
 // Test if explorer is not disabled
-if (preg_match('/api\/index\.php\/explorer/', $url) && ! empty($conf->global->API_EXPLORER_DISABLED))
-{
+if (preg_match('/api\/index\.php\/explorer/', $url) && ! empty($conf->global->API_EXPLORER_DISABLED)) {
     $langs->load("admin");
     dol_syslog("Call Dolibarr API interfaces with module REST disabled");
     print $langs->trans("WarningAPIExplorerDisabled").'.<br><br>';
@@ -106,8 +121,7 @@ preg_match('/index\.php\/([^\/]+)(.*)$/', $url, $reg);
 // using the explorer. And when we make another call for another API, the API is not into the api/temp/routes.php and a 404 is returned.
 // So we force refresh to each call.
 $refreshcache=(empty($conf->global->API_PRODUCTION_DO_NOT_ALWAYS_REFRESH_CACHE) ? true : false);
-if (! empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || $reg[2] == '/swagger.json/root' || $reg[2] == '/resources.json' || $reg[2] == '/resources.json/root'))
-{
+if (! empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || $reg[2] == '/swagger.json/root' || $reg[2] == '/resources.json' || $reg[2] == '/resources.json/root')) {
     $refreshcache=true;
 }
 
@@ -126,87 +140,81 @@ UploadFormat::$allowedMimeTypes = array('image/jpeg', 'image/png', 'text/plain',
 
 
 // Restrict API to some IPs
-if (! empty($conf->global->API_RESTRICT_ON_IP))
-{
-	$allowedip=explode(' ', $conf->global->API_RESTRICT_ON_IP);
-	$ipremote = getUserRemoteIP();
-	if (! in_array($ipremote, $allowedip))
-	{
-		dol_syslog('Remote ip is '.$ipremote.', not into list '.$conf->global->API_RESTRICT_ON_IP);
-		print 'APIs are not allowed from the IP '.$ipremote;
-		header('HTTP/1.1 503 API not allowed from your IP '.$ipremote);
-		//print $conf->global->API_RESTRICT_ON_IP;
-		exit(0);
-	}
+if (! empty($conf->global->API_RESTRICT_ON_IP)) {
+    $allowedip=explode(' ', $conf->global->API_RESTRICT_ON_IP);
+    $ipremote = getUserRemoteIP();
+    if (! in_array($ipremote, $allowedip)) {
+        dol_syslog('Remote ip is '.$ipremote.', not into list '.$conf->global->API_RESTRICT_ON_IP);
+        print 'APIs are not allowed from the IP '.$ipremote;
+        header('HTTP/1.1 503 API not allowed from your IP '.$ipremote);
+        //print $conf->global->API_RESTRICT_ON_IP;
+        exit(0);
+    }
 }
 
 
 // Call Explorer file for all APIs definitions (this part is slow)
-if (! empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || $reg[2] == '/swagger.json/root' || $reg[2] == '/resources.json' || $reg[2] == '/resources.json/root'))
-{
+if (! empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || $reg[2] == '/swagger.json/root' || $reg[2] == '/resources.json' || $reg[2] == '/resources.json/root')) {
     // Scan all API files to load them
 
     $listofapis = array();
 
     $modulesdir = dolGetModulesDirs();
-    foreach ($modulesdir as $dir)
-    {
+    foreach ($modulesdir as $dir) {
         // Search available module
         dol_syslog("Scan directory ".$dir." for module descriptor files, then search for API files");
 
         $handle=@opendir(dol_osencode($dir));
-        if (is_resource($handle))
-        {
-            while (($file = readdir($handle))!==false)
-            {
-            	$regmod=array();
-                if (is_readable($dir.$file) && preg_match("/^mod(.*)\.class\.php$/i", $file, $regmod))
-                {
+        if (is_resource($handle)) {
+            while (($file = readdir($handle))!==false) {
+                $regmod=array();
+                if (is_readable($dir.$file) && preg_match("/^mod(.*)\.class\.php$/i", $file, $regmod)) {
                     $module = strtolower($regmod[1]);
                     $moduledirforclass = getModuleDirForApiClass($module);
                     $modulenameforenabled = $module;
-                    if ($module == 'propale') { $modulenameforenabled='propal'; }
-                    if ($module == 'supplierproposal') { $modulenameforenabled='supplier_proposal'; }
-                    if ($module == 'ficheinter') { $modulenameforenabled='ficheinter'; }
+                    if ($module == 'propale') {
+                        $modulenameforenabled='propal';
+                    }
+                    if ($module == 'supplierproposal') {
+                        $modulenameforenabled='supplier_proposal';
+                    }
+                    if ($module == 'ficheinter') {
+                        $modulenameforenabled='ficheinter';
+                    }
 
                     dol_syslog("Found module file ".$file." - module=".$module." - modulenameforenabled=".$modulenameforenabled." - moduledirforclass=".$moduledirforclass);
 
                     // Defined if module is enabled
                     $enabled=true;
-                    if (empty($conf->$modulenameforenabled->enabled)) $enabled=false;
+                    if (empty($conf->$modulenameforenabled->enabled)) {
+                        $enabled=false;
+                    }
 
-                    if ($enabled)
-                    {
+                    if ($enabled) {
                         // If exists, load the API class for enable module
                         // Search files named api_<object>.class.php into /htdocs/<module>/class directory
                         // @todo : use getElementProperties() function ?
                         $dir_part = dol_buildpath('/'.$moduledirforclass.'/class/');
 
                         $handle_part=@opendir(dol_osencode($dir_part));
-                        if (is_resource($handle_part))
-                        {
-                            while (($file_searched = readdir($handle_part))!==false)
-                            {
-                                if ($file_searched == 'api_access.class.php') continue;
+                        if (is_resource($handle_part)) {
+                            while (($file_searched = readdir($handle_part))!==false) {
+                                if ($file_searched == 'api_access.class.php') {
+                                    continue;
+                                }
 
                                 $regapi = array();
-                                if (is_readable($dir_part.$file_searched) && preg_match("/^api_(.*)\.class\.php$/i", $file_searched, $regapi))
-                                {
+                                if (is_readable($dir_part.$file_searched) && preg_match("/^api_(.*)\.class\.php$/i", $file_searched, $regapi)) {
                                     $classname = ucwords($regapi[1]);
                                     $classname = str_replace('_', '', $classname);
                                     require_once $dir_part.$file_searched;
-                                    if (class_exists($classname.'Api'))
-                                    {
+                                    if (class_exists($classname.'Api')) {
                                         //dol_syslog("Found API by index.php: classname=".$classname."Api for module ".$dir." into ".$dir_part.$file_searched);
                                         $listofapis[strtolower($classname.'Api')] = $classname.'Api';
-                                    }
-                                    elseif (class_exists($classname))
-                                    {
+                                    } elseif (class_exists($classname)) {
                                         //dol_syslog("Found API by index.php: classname=".$classname." for module ".$dir." into ".$dir_part.$file_searched);
                                         $listofapis[strtolower($classname)] = $classname;
-                                    }
-                                    else
-                                    {
+                                    } else {
                                         dol_syslog("We found an api_xxx file (".$file_searched.") but class ".$classname." does not exists after loading file", LOG_WARNING);
                                     }
                                 }
@@ -221,8 +229,7 @@ if (! empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || 
     // Sort the classes before adding them to Restler.
     // The Restler API Explorer shows the classes in the order they are added and it's a mess if they are not sorted.
     asort($listofapis);
-    foreach ($listofapis as $apiname => $classname)
-    {
+    foreach ($listofapis as $apiname => $classname) {
         $api->r->addAPIClass($classname, $apiname);
     }
     //var_dump($api->r);
@@ -230,11 +237,9 @@ if (! empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || 
 
 // Call one APIs or one definition of an API
 $regbis = array();
-if (! empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && $reg[2] != '/resources.json' && preg_match('/^\/(swagger|resources)\.json\/(.+)$/', $reg[2], $regbis) && $regbis[2] != 'root')))
-{
+if (! empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && $reg[2] != '/resources.json' && preg_match('/^\/(swagger|resources)\.json\/(.+)$/', $reg[2], $regbis) && $regbis[2] != 'root'))) {
     $module = $reg[1];
-    if ($module == 'explorer')  // If we call page to explore details of a service
-    {
+    if ($module == 'explorer') {  // If we call page to explore details of a service
         $module = $regbis[2];
     }
 
@@ -244,39 +249,47 @@ if (! empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' &&
     // Load a dedicated API file
     dol_syslog("Load a dedicated API file module=".$module." moduledirforclass=".$moduledirforclass);
 
-	$tmpmodule = $module;
-	if ($tmpmodule != 'api')
-		$tmpmodule = preg_replace('/api$/i', '', $tmpmodule);
-	$classfile = str_replace('_', '', $tmpmodule);
-	if ($module == 'supplierproposals')
-		$classfile = 'supplier_proposals';
-	if ($module == 'supplierorders')
-		$classfile = 'supplier_orders';
-	if ($module == 'supplierinvoices')
-		$classfile = 'supplier_invoices';
-	if ($module == 'ficheinter')
-		$classfile = 'interventions';
-	if ($module == 'interventions')
-		$classfile = 'interventions';
+    $tmpmodule = $module;
+    if ($tmpmodule != 'api') {
+        $tmpmodule = preg_replace('/api$/i', '', $tmpmodule);
+    }
+    $classfile = str_replace('_', '', $tmpmodule);
+    if ($module == 'supplierproposals') {
+        $classfile = 'supplier_proposals';
+    }
+    if ($module == 'supplierorders') {
+        $classfile = 'supplier_orders';
+    }
+    if ($module == 'supplierinvoices') {
+        $classfile = 'supplier_invoices';
+    }
+    if ($module == 'ficheinter') {
+        $classfile = 'interventions';
+    }
+    if ($module == 'interventions') {
+        $classfile = 'interventions';
+    }
 
-	$dir_part_file = dol_buildpath('/' . $moduledirforclass . '/class/api_' . $classfile . '.class.php', 0, 2);
+    $dir_part_file = dol_buildpath('/' . $moduledirforclass . '/class/api_' . $classfile . '.class.php', 0, 2);
 
-	$classname = ucwords($module);
+    $classname = ucwords($module);
 
-	dol_syslog('Search api file /' . $moduledirforclass . '/class/api_' . $classfile . '.class.php => dir_part_file=' . $dir_part_file . ' classname=' . $classname);
+    dol_syslog('Search api file /' . $moduledirforclass . '/class/api_' . $classfile . '.class.php => dir_part_file=' . $dir_part_file . ' classname=' . $classname);
 
-	$res = false;
-	if ($dir_part_file)
-		$res = include_once $dir_part_file;
-	if (! $res) {
-	    dol_syslog('Failed to make include_once '.$dir_part_file, LOG_WARNING);
-		print 'API not found (failed to include API file)';
-		header('HTTP/1.1 501 API not found (failed to include API file)');
-		exit(0);
-	}
+    $res = false;
+    if ($dir_part_file) {
+        $res = include_once $dir_part_file;
+    }
+    if (! $res) {
+        dol_syslog('Failed to make include_once '.$dir_part_file, LOG_WARNING);
+        print 'API not found (failed to include API file)';
+        header('HTTP/1.1 501 API not found (failed to include API file)');
+        exit(0);
+    }
 
-	if (class_exists($classname))
-		$api->r->addAPIClass($classname);
+    if (class_exists($classname)) {
+        $api->r->addAPIClass($classname);
+    }
 }
 
 //var_dump($api->r->apiVersionMap);

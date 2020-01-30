@@ -6,15 +6,16 @@ use Sabre\CalDAV;
 use Sabre\DAV;
 use Sabre\Xml\Writer;
 
-class InviteTest extends DAV\Xml\XmlTest {
+class InviteTest extends DAV\Xml\XmlTest
+{
 
     /**
      * @param array $notification
      * @param string $expected
      * @dataProvider dataProvider
      */
-    function testSerializers($notification, $expected) {
-
+    public function testSerializers($notification, $expected)
+    {
         $notification = new Invite($notification);
 
         $this->assertEquals('foo', $notification->getId());
@@ -31,12 +32,10 @@ class InviteTest extends DAV\Xml\XmlTest {
         $xml = $this->writeFull($notification);
 
         $this->assertXmlStringEqualsXmlString($expected, $xml);
-
-
     }
 
-    function dataProvider() {
-
+    public function dataProvider()
+    {
         $dtStamp = new \DateTime('2012-01-01 00:00:00', new \DateTimeZone('GMT'));
         return [
             [
@@ -118,23 +117,21 @@ FOO
             ],
 
         ];
-
     }
 
     /**
      * @expectedException InvalidArgumentException
      */
-    function testMissingArg() {
-
+    public function testMissingArg()
+    {
         new Invite([]);
-
     }
 
     /**
      * @expectedException InvalidArgumentException
      */
-    function testUnknownArg() {
-
+    public function testUnknownArg()
+    {
         new Invite([
             'foo-i-will-break' => true,
 
@@ -147,11 +144,10 @@ FOO
             'hostUrl'   => 'jkl',
             'organizer' => 'mno',
         ]);
-
     }
 
-    function writeFull($input) {
-
+    public function writeFull($input)
+    {
         $writer = new Writer();
         $writer->contextUri = '/';
         $writer->namespaceMap = $this->namespaceMap;
@@ -160,6 +156,5 @@ FOO
         $input->xmlSerializeFull($writer);
         $writer->endElement();
         return $writer->outputMemory();
-
     }
 }

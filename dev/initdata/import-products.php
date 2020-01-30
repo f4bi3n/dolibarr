@@ -79,30 +79,26 @@ if (! file_exists($filepath)) {
 }
 
 $ret=$user->fetch('', 'admin');
-if (! $ret > 0)
-{
-	print 'A user with login "admin" and all permissions must be created to use this script.'."\n";
-	exit;
+if (! $ret > 0) {
+    print 'A user with login "admin" and all permissions must be created to use this script.'."\n";
+    exit;
 }
 $user->getrights();
 
 // Ask confirmation
-if (! $confirmed)
-{
+if (! $confirmed) {
     print "Hit Enter to continue or CTRL+C to stop...\n";
     $input = trim(fgets(STDIN));
 }
 
 // Open input and output files
 $fhandle = fopen($filepath, 'r');
-if (! $fhandle)
-{
+if (! $fhandle) {
     print 'Error: Failed to open file '.$filepath."\n";
     exit(1);
 }
 $fhandleerr = fopen($filepatherr, 'w');
-if (! $fhandleerr)
-{
+if (! $fhandleerr) {
     print 'Error: Failed to open file '.$filepatherr."\n";
     exit(1);
 }
@@ -114,13 +110,16 @@ $db->begin();
 
 $i=0;
 $nboflines++;
-while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
-{
+while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape)) {
     $i++;
     $errorrecord=0;
 
-    if ($startlinenb && $i < $startlinenb) continue;
-    if ($endlinenb && $i > $endlinenb) continue;
+    if ($startlinenb && $i < $startlinenb) {
+        continue;
+    }
+    if ($endlinenb && $i > $endlinenb) {
+        continue;
+    }
 
     $nboflines++;
 
@@ -159,61 +158,49 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
     $produit->array_options['options_ecotaxdeee']=price2num($fields[17]);
 
     $ret=$produit->create($user);
-    if ($ret < 0)
-    {
+    if ($ret < 0) {
         print " - Error in create result code = ".$ret." - ".$produit->errorsToString();
         $errorrecord++;
+    } else {
+        print " - Creation OK with ref ".$produit->ref." - id = ".$ret;
     }
-	else
-	{
-	    print " - Creation OK with ref ".$produit->ref." - id = ".$ret;
-	}
 
-	dol_syslog("Add prices");
+    dol_syslog("Add prices");
 
     // If we use price level, insert price for each level
-	if (! $errorrecord && 1)
-	{
-	    $ret1=$produit->updatePrice($produit->price_ttc, $produit->price_base_type, $user, $produit->tva_tx, $produit->price_min, 1, $produit->tva_npr, 0, 0, array());
-	    $ret2=$produit->updatePrice(price2num($fields[14]), 'HT', $user, $produit->tva_tx, $produit->price_min, 2, $produit->tva_npr, 0, 0, array());
-	    if ($ret1 < 0 || $ret2 < 0)
-        {
+    if (! $errorrecord && 1) {
+        $ret1=$produit->updatePrice($produit->price_ttc, $produit->price_base_type, $user, $produit->tva_tx, $produit->price_min, 1, $produit->tva_npr, 0, 0, array());
+        $ret2=$produit->updatePrice(price2num($fields[14]), 'HT', $user, $produit->tva_tx, $produit->price_min, 2, $produit->tva_npr, 0, 0, array());
+        if ($ret1 < 0 || $ret2 < 0) {
             print " - Error in updatePrice result code = ".$ret1." ".$ret2." - ".$produit->errorsToString();
             $errorrecord++;
+        } else {
+            print " - updatePrice OK";
         }
-    	else
-    	{
-    	    print " - updatePrice OK";
-    	}
-	}
+    }
 
-	dol_syslog("Add multilangs");
+    dol_syslog("Add multilangs");
 
-	// Add alternative languages
-	if (! $errorrecord && 1)
-	{
-    	$produit->multilangs['fr_FR']=array('label'=>$produit->label, 'description'=>$produit->description, 'note'=>$produit->note_private);
-	    $produit->multilangs['en_US']=array('label'=>$fields[3], 'description'=>$produit->description, 'note'=>$produit->note_private);
+    // Add alternative languages
+    if (! $errorrecord && 1) {
+        $produit->multilangs['fr_FR']=array('label'=>$produit->label, 'description'=>$produit->description, 'note'=>$produit->note_private);
+        $produit->multilangs['en_US']=array('label'=>$fields[3], 'description'=>$produit->description, 'note'=>$produit->note_private);
 
-    	$ret=$produit->setMultiLangs($user);
-        if ($ret < 0)
-        {
+        $ret=$produit->setMultiLangs($user);
+        if ($ret < 0) {
             print " - Error in setMultiLangs result code = ".$ret." - ".$produit->errorsToString();
             $errorrecord++;
+        } else {
+            print " - setMultiLangs OK";
         }
-    	else
-    	{
-    	    print " - setMultiLangs OK";
-    	}
-	}
+    }
 
-	print "\n";
+    print "\n";
 
-	if ($errorrecord)
-	{
-	    fwrite($fhandleerr, 'Error on record nb '.$i." - ".$produit->errorsToString()."\n");
-	    $error++;    // $errorrecord will be reset
-	}
+    if ($errorrecord) {
+        fwrite($fhandleerr, 'Error on record nb '.$i." - ".$produit->errorsToString()."\n");
+        $error++;    // $errorrecord will be reset
+    }
 }
 
 
@@ -223,13 +210,10 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
 // commit or rollback
 print "Nb of lines qualified: ".$nboflines."\n";
 print "Nb of errors: ".$error."\n";
-if ($mode != 'confirmforced' && ($error || $mode != 'confirm'))
-{
+if ($mode != 'confirmforced' && ($error || $mode != 'confirm')) {
     print "Rollback any changes.\n";
     $db->rollback();
-}
-else
-{
+} else {
     print "Commit all changes.\n";
     $db->commit();
 }

@@ -6,22 +6,21 @@ use Sabre\DAV\Mock;
 use Sabre\DAV\Xml\Element\Sharee;
 use Sabre\HTTP\Request;
 
-class ShareResourceTest extends \Sabre\DAVServerTest {
-
+class ShareResourceTest extends \Sabre\DAVServerTest
+{
     protected $setupSharing = true;
     protected $sharingNodeMock;
 
-    function setUpTree() {
-
+    public function setUpTree()
+    {
         $this->tree[] = $this->sharingNodeMock = new Mock\SharedNode(
             'shareable',
             Plugin::ACCESS_SHAREDOWNER
         );
-
     }
 
-    function testShareResource() {
-
+    public function testShareResource()
+    {
         $body = <<<XML
 <?xml version="1.0" encoding="utf-8" ?>
 <D:share-resource xmlns:D="DAV:">
@@ -58,13 +57,13 @@ XML;
             $expected,
             $this->sharingNodeMock->getInvites()
         );
-
     }
 
     /**
      * @depends testShareResource
      */
-    function testShareResourceRemoveAccess() {
+    public function testShareResourceRemoveAccess()
+    {
 
         // First we just want to execute all the actions from the first
         // test.
@@ -92,14 +91,13 @@ XML;
             $expected,
             $this->sharingNodeMock->getInvites()
         );
-
-
     }
 
     /**
      * @depends testShareResource
      */
-    function testShareResourceInviteProperty() {
+    public function testShareResourceInviteProperty()
+    {
 
         // First we just want to execute all the actions from the first
         // test.
@@ -147,11 +145,10 @@ XML;
 XML;
 
         $this->assertXmlStringEqualsXmlString($expected, $response->getBodyAsString());
-
     }
 
-    function testShareResourceNotFound() {
-
+    public function testShareResourceNotFound()
+    {
         $body = <<<XML
 <?xml version="1.0" encoding="utf-8" ?>
 <D:share-resource xmlns:D="DAV:">
@@ -170,11 +167,10 @@ XML;
         $request = new Request('POST', '/not-found', ['Content-Type' => 'application/davsharing+xml; charset="utf-8"'], $body);
 
         $response = $this->request($request, 404);
-
     }
 
-    function testShareResourceNotISharedNode() {
-
+    public function testShareResourceNotISharedNode()
+    {
         $body = <<<XML
 <?xml version="1.0" encoding="utf-8" ?>
 <D:share-resource xmlns:D="DAV:">
@@ -193,18 +189,15 @@ XML;
         $request = new Request('POST', '/', ['Content-Type' => 'application/davsharing+xml; charset="utf-8"'], $body);
 
         $response = $this->request($request, 403);
-
     }
 
-    function testShareResourceUnknownDoc() {
-
+    public function testShareResourceUnknownDoc()
+    {
         $body = <<<XML
 <?xml version="1.0" encoding="utf-8" ?>
 <D:blablabla xmlns:D="DAV:" />
 XML;
         $request = new Request('POST', '/shareable', ['Content-Type' => 'application/davsharing+xml; charset="utf-8"'], $body);
         $response = $this->request($request, 400);
-
     }
-
 }

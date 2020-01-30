@@ -353,7 +353,9 @@ class Defaults
      */
     public static function setProperty($name, $value)
     {
-        if (!property_exists(__CLASS__, $name)) return false;
+        if (!property_exists(__CLASS__, $name)) {
+            return false;
+        }
         if (@is_array(Defaults::$validation[$name])) {
             $info = new ValidationInfo(Defaults::$validation[$name]);
             $value = Validator::validate($value, $info);
@@ -361,6 +363,4 @@ class Defaults
         Defaults::$$name = $value;
         return true;
     }
-
 }
-

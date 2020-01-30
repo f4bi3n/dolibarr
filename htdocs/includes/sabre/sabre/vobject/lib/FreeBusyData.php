@@ -9,7 +9,8 @@ namespace Sabre\VObject;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class FreeBusyData {
+class FreeBusyData
+{
 
     /**
      * Start timestamp
@@ -32,8 +33,8 @@ class FreeBusyData {
      */
     protected $data;
 
-    function __construct($start, $end) {
-
+    public function __construct($start, $end)
+    {
         $this->start = $start;
         $this->end = $end;
         $this->data = [];
@@ -43,7 +44,6 @@ class FreeBusyData {
             'end'   => $this->end,
             'type'  => 'FREE',
         ];
-
     }
 
     /**
@@ -54,13 +54,12 @@ class FreeBusyData {
      * @param string $type FREE, BUSY, BUSY-UNAVAILABLE or BUSY-TENTATIVE
      * @return void
      */
-    function add($start, $end, $type) {
-
+    public function add($start, $end, $type)
+    {
         if ($start > $this->end || $end < $this->start) {
 
             // This new data is outside our timerange.
             return;
-
         }
 
         if ($start < $this->start) {
@@ -105,9 +104,7 @@ class FreeBusyData {
         }
 
         while ($end > $this->data[$currentIndex]['end']) {
-
             $currentIndex++;
-
         }
 
         // What we are about to insert into the array
@@ -118,7 +115,9 @@ class FreeBusyData {
         // This is the amount of items that are completely overwritten by the
         // new item.
         $itemsToDelete = $currentIndex - $insertStartIndex;
-        if ($this->data[$currentIndex]['end'] <= $end) $itemsToDelete++;
+        if ($this->data[$currentIndex]['end'] <= $end) {
+            $itemsToDelete++;
+        }
 
         // If itemsToDelete was -1, it means that the newly inserted item is
         // actually sitting inside an existing one. This means we need to split
@@ -171,7 +170,6 @@ class FreeBusyData {
                 $mergeDelete++;
                 $mergeItem['end'] = $this->data[$insertStartIndex + 1]['end'];
             }
-
         }
         if ($doMerge) {
             array_splice(
@@ -181,13 +179,10 @@ class FreeBusyData {
                 [$mergeItem]
             );
         }
-
     }
 
-    function getData() {
-
+    public function getData()
+    {
         return $this->data;
-
     }
-
 }

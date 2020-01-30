@@ -43,7 +43,9 @@ $action = GETPOST('action', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 
 // Security check
-if ($user->socid) $socid=$user->socid;
+if ($user->socid) {
+    $socid=$user->socid;
+}
 $result = restrictedArea($user, 'expensereport', $id, 'expensereport');
 
 
@@ -51,12 +53,18 @@ $result = restrictedArea($user, 'expensereport', $id, 'expensereport');
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
 $page = GETPOST('page', 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+    $page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortorder) $sortorder = "ASC";
-if (!$sortfield) $sortfield = "position_name";
+if (!$sortorder) {
+    $sortorder = "ASC";
+}
+if (!$sortfield) {
+    $sortfield = "position_name";
+}
 
 
 $object = new ExpenseReport($db);
@@ -86,33 +94,31 @@ $title = $langs->trans("ExpenseReport")." - ".$langs->trans("Documents");
 $helpurl = "EN:Module_Expense_Reports";
 llxHeader("", $title, $helpurl);
 
-if ($object->id)
-{
-	$object->fetch_thirdparty();
+if ($object->id) {
+    $object->fetch_thirdparty();
 
-	$head = expensereport_prepare_head($object);
+    $head = expensereport_prepare_head($object);
 
-	dol_fiche_head($head, 'documents', $langs->trans("ExpenseReport"), -1, 'trip');
+    dol_fiche_head($head, 'documents', $langs->trans("ExpenseReport"), -1, 'trip');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
+    $linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
-	$morehtmlref = '<div class="refidno">';
-	$morehtmlref .= '</div>';
-
-
-	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+    $morehtmlref = '<div class="refidno">';
+    $morehtmlref .= '</div>';
 
 
-	// Build file list
-	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
-	$totalsize = 0;
-	foreach ($filearray as $key => $file)
-	{
-		$totalsize += $file['size'];
-	}
+    dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
-	print '<div class="fichecenter">';
-	print '<div class="underbanner clearboth"></div>';
+
+    // Build file list
+    $filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+    $totalsize = 0;
+    foreach ($filearray as $key => $file) {
+        $totalsize += $file['size'];
+    }
+
+    print '<div class="fichecenter">';
+    print '<div class="underbanner clearboth"></div>';
 
     print '<table class="border tableforfield centpercent">';
 
@@ -132,10 +138,8 @@ if ($object->id)
     $permtoedit = $user->rights->expensereport->creer;
     $param = '&id='.$object->id;
     include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
-}
-else
-{
-	print $langs->trans("ErrorUnknown");
+} else {
+    print $langs->trans("ErrorUnknown");
 }
 
 // End of page

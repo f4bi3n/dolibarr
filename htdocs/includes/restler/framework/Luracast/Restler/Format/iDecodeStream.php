@@ -26,5 +26,4 @@ interface iDecodeStream
      * @return array associative array of the parsed data
      */
     public function decodeStream($stream);
-
-} 
+}

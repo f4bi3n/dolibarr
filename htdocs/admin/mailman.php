@@ -35,7 +35,9 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "members", "mailmanspip"));
 
-if (! $user->admin) accessforbidden();
+if (! $user->admin) {
+    accessforbidden();
+}
 
 
 $type=array('yesno','texte','chaine');
@@ -49,59 +51,48 @@ $testunsubscribeemail = GETPOST("testunsubscribeemail");
  */
 
 // Action updated or added a constant
-if ($action == 'update' || $action == 'add')
-{
-	foreach($_POST['constname'] as $key => $val)
-	{
-		$constname=$_POST["constname"][$key];
-		$constvalue=$_POST["constvalue"][$key];
-		$consttype=$_POST["consttype"][$key];
-		$constnote=$_POST["constnote"][$key];
-		$res=dolibarr_set_const($db, $constname, $constvalue, $type[$consttype], 0, $constnote, $conf->entity);
+if ($action == 'update' || $action == 'add') {
+    foreach ($_POST['constname'] as $key => $val) {
+        $constname=$_POST["constname"][$key];
+        $constvalue=$_POST["constvalue"][$key];
+        $consttype=$_POST["consttype"][$key];
+        $constnote=$_POST["constnote"][$key];
+        $res=dolibarr_set_const($db, $constname, $constvalue, $type[$consttype], 0, $constnote, $conf->entity);
 
-		if (! $res > 0) $error++;
-	}
-
- 	if (! $error)
-    {
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+        if (! $res > 0) {
+            $error++;
+        }
     }
-    else
-    {
+
+    if (! $error) {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    } else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
 // Action activation d'un sous module du module adherent
-if ($action == 'set')
-{
+if ($action == 'set') {
     $result=dolibarr_set_const($db, $_GET["name"], $_GET["value"], '', 0, '', $conf->entity);
-    if ($result < 0)
-    {
+    if ($result < 0) {
         dol_print_error($db);
     }
 }
 
 // Action desactivation d'un sous module du module adherent
-if ($action == 'unset')
-{
+if ($action == 'unset') {
     $result=dolibarr_del_const($db, $_GET["name"], $conf->entity);
-    if ($result < 0)
-    {
+    if ($result < 0) {
         dol_print_error($db);
     }
 }
 
-if (($action == 'testsubscribe' || $action == 'testunsubscribe') && ! empty($conf->global->ADHERENT_USE_MAILMAN))
-{
+if (($action == 'testsubscribe' || $action == 'testunsubscribe') && ! empty($conf->global->ADHERENT_USE_MAILMAN)) {
     $email=GETPOST($action.'email');
-    if (! isValidEmail($email))
-    {
+    if (! isValidEmail($email)) {
         $langs->load("errors");
         setEventMessages($langs->trans("ErrorBadEMail", $email), null, 'errors');
-    }
-    else
-    {
+    } else {
         include_once DOL_DOCUMENT_ROOT.'/mailmanspip/class/mailmanspip.class.php';
         $mailmanspip=new MailmanSpip($db);
 
@@ -111,31 +102,23 @@ if (($action == 'testsubscribe' || $action == 'testunsubscribe') && ! empty($con
         /*$object->element='member';
         $object->type='Preferred Partners'; */
 
-        if ($action == 'testsubscribe')
-        {
+        if ($action == 'testsubscribe') {
             $result=$mailmanspip->add_to_mailman($object);
-			if ($result < 0)
-			{
-				$error++;
-				setEventMessages($mailmanspip->error, $mailmanspip->errors, 'errors');
-			}
-			else
-			{
-				setEventMessages($langs->trans("MailmanCreationSuccess"), null);
-			}
+            if ($result < 0) {
+                $error++;
+                setEventMessages($mailmanspip->error, $mailmanspip->errors, 'errors');
+            } else {
+                setEventMessages($langs->trans("MailmanCreationSuccess"), null);
+            }
         }
-        if ($action == 'testunsubscribe')
-        {
+        if ($action == 'testunsubscribe') {
             $result=$mailmanspip->del_to_mailman($object);
-            if ($result < 0)
-			{
-				$error++;
-				setEventMessages($mailmanspip->error, $mailmanspip->errors, 'errors');
-			}
-			else
-			{
-				setEventMessages($langs->trans("MailmanDeletionSuccess"), null);
-			}
+            if ($result < 0) {
+                $error++;
+                setEventMessages($mailmanspip->error, $mailmanspip->errors, 'errors');
+            } else {
+                setEventMessages($langs->trans("MailmanDeletionSuccess"), null);
+            }
         }
     }
 }
@@ -155,8 +138,7 @@ print load_fiche_titre($langs->trans("MailmanSpipSetup"), $linkback, 'title_setu
 
 $head = mailmanspip_admin_prepare_head();
 
-if (! empty($conf->global->ADHERENT_USE_MAILMAN))
-{
+if (! empty($conf->global->ADHERENT_USE_MAILMAN)) {
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
     print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="action" value="update">';
@@ -211,9 +193,7 @@ if (! empty($conf->global->ADHERENT_USE_MAILMAN))
     print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Update").'" name="update"></div>';
 
     print '</form>';
-}
-else
-{
+} else {
     dol_fiche_head($head, 'mailman', $langs->trans("Setup"), 0, 'user');
 
     $link='<a href="'.$_SERVER["PHP_SELF"].'?action=set&value=1&name=ADHERENT_USE_MAILMAN">';
@@ -226,8 +206,7 @@ else
 }
 
 
-if (! empty($conf->global->ADHERENT_USE_MAILMAN))
-{
+if (! empty($conf->global->ADHERENT_USE_MAILMAN)) {
     print '<form action="'.$_SERVER["PHP_SELF"].'">';
     print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="action" value="testsubscribe">';

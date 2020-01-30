@@ -2,10 +2,10 @@
 
 namespace Sabre\VObject;
 
-class JCardTest extends \PHPUnit_Framework_TestCase {
-
-    function testToJCard() {
-
+class JCardTest extends \PHPUnit_Framework_TestCase
+{
+    public function testToJCard()
+    {
         $card = new Component\VCard([
             "VERSION"          => "4.0",
             "UID"              => "foo",
@@ -189,7 +189,5 @@ class JCardTest extends \PHPUnit_Framework_TestCase {
         ];
 
         $this->assertEquals($expected, $card->jsonSerialize());
-
     }
-
 }

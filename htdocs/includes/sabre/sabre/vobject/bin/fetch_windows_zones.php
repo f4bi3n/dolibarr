@@ -13,7 +13,6 @@ $xml = simplexml_load_string($data);
 $map = [];
 
 foreach ($xml->xpath('//mapZone') as $mapZone) {
-
     $from = (string)$mapZone['other'];
     $to = (string)$mapZone['type'];
 
@@ -22,7 +21,6 @@ foreach ($xml->xpath('//mapZone') as $mapZone) {
     if (!isset($map[$from])) {
         $map[$from] = $to;
     }
-
 }
 
 ksort($map);

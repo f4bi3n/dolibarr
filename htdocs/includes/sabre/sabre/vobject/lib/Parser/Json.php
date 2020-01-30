@@ -16,7 +16,8 @@ use Sabre\VObject\ParseException;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Json extends Parser {
+class Json extends Parser
+{
 
     /**
      * The input data.
@@ -45,8 +46,8 @@ class Json extends Parser {
      *
      * @return Sabre\VObject\Document
      */
-    function parse($input = null, $options = 0) {
-
+    public function parse($input = null, $options = 0)
+    {
         if (!is_null($input)) {
             $this->setInput($input);
         }
@@ -59,28 +60,29 @@ class Json extends Parser {
         }
 
         switch ($this->input[0]) {
-            case 'vcalendar' :
+            case 'vcalendar':
                 $this->root = new VCalendar([], false);
                 break;
-            case 'vcard' :
+            case 'vcard':
                 $this->root = new VCard([], false);
                 break;
-            default :
+            default:
                 throw new ParseException('The root component must either be a vcalendar, or a vcard');
 
         }
         foreach ($this->input[1] as $prop) {
             $this->root->add($this->parseProperty($prop));
         }
-        if (isset($this->input[2])) foreach ($this->input[2] as $comp) {
-            $this->root->add($this->parseComponent($comp));
+        if (isset($this->input[2])) {
+            foreach ($this->input[2] as $comp) {
+                $this->root->add($this->parseComponent($comp));
+            }
         }
 
         // Resetting the input so we can throw an feof exception the next time.
         $this->input = null;
 
         return $this->root;
-
     }
 
     /**
@@ -90,35 +92,35 @@ class Json extends Parser {
      *
      * @return \Sabre\VObject\Component
      */
-    function parseComponent(array $jComp) {
+    public function parseComponent(array $jComp)
+    {
 
         // We can remove $self from PHP 5.4 onward.
         $self = $this;
 
         $properties = array_map(
-            function($jProp) use ($self) {
+            function ($jProp) use ($self) {
                 return $self->parseProperty($jProp);
             },
             $jComp[1]
         );
 
         if (isset($jComp[2])) {
-
             $components = array_map(
-                function($jComp) use ($self) {
+                function ($jComp) use ($self) {
                     return $self->parseComponent($jComp);
                 },
                 $jComp[2]
             );
-
-        } else $components = [];
+        } else {
+            $components = [];
+        }
 
         return $this->root->createComponent(
             $jComp[0],
             array_merge($properties, $components),
             $defaults = false
         );
-
     }
 
     /**
@@ -128,8 +130,8 @@ class Json extends Parser {
      *
      * @return \Sabre\VObject\Property
      */
-    function parseProperty(array $jProp) {
-
+    public function parseProperty(array $jProp)
+    {
         list(
             $propertyName,
             $parameters,
@@ -172,7 +174,6 @@ class Json extends Parser {
         }
 
         return $prop;
-
     }
 
     /**
@@ -182,8 +183,8 @@ class Json extends Parser {
      *
      * @return void
      */
-    function setInput($input) {
-
+    public function setInput($input)
+    {
         if (is_resource($input)) {
             $input = stream_get_contents($input);
         }
@@ -191,7 +192,5 @@ class Json extends Parser {
             $input = json_decode($input);
         }
         $this->input = $input;
-
     }
-
 }

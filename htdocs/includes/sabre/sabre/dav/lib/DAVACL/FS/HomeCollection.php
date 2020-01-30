@@ -19,8 +19,8 @@ use Sabre\Uri;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class HomeCollection extends AbstractPrincipalCollection implements IACL {
-
+class HomeCollection extends AbstractPrincipalCollection implements IACL
+{
     use ACLTrait;
 
     /**
@@ -44,11 +44,10 @@ class HomeCollection extends AbstractPrincipalCollection implements IACL {
      * @param string $storagePath Where the actual files are stored.
      * @param string $principalPrefix list of principals to iterate.
      */
-    function __construct(BackendInterface $principalBackend, $storagePath, $principalPrefix = 'principals') {
-
+    public function __construct(BackendInterface $principalBackend, $storagePath, $principalPrefix = 'principals')
+    {
         parent::__construct($principalBackend, $principalPrefix);
         $this->storagePath = $storagePath;
-
     }
 
     /**
@@ -58,10 +57,9 @@ class HomeCollection extends AbstractPrincipalCollection implements IACL {
      *
      * @return string
      */
-    function getName() {
-
+    public function getName()
+    {
         return $this->collectionName;
-
     }
 
     /**
@@ -74,8 +72,8 @@ class HomeCollection extends AbstractPrincipalCollection implements IACL {
      * @param array $principalInfo
      * @return \Sabre\DAV\INode
      */
-    function getChildForPrincipal(array $principalInfo) {
-
+    public function getChildForPrincipal(array $principalInfo)
+    {
         $owner = $principalInfo['uri'];
         $acl = [
             [
@@ -97,7 +95,6 @@ class HomeCollection extends AbstractPrincipalCollection implements IACL {
             $acl,
             $owner
         );
-
     }
 
 
@@ -113,8 +110,8 @@ class HomeCollection extends AbstractPrincipalCollection implements IACL {
      *
      * @return array
      */
-    function getACL() {
-
+    public function getACL()
+    {
         return [
             [
                 'principal' => '{DAV:}authenticated',
@@ -122,7 +119,5 @@ class HomeCollection extends AbstractPrincipalCollection implements IACL {
                 'protected' => true,
             ]
         ];
-
     }
-
 }

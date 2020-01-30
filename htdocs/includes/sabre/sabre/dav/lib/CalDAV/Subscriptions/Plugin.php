@@ -17,7 +17,8 @@ use Sabre\DAV\ServerPlugin;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Plugin extends ServerPlugin {
+class Plugin extends ServerPlugin
+{
 
     /**
      * This initializes the plugin.
@@ -30,8 +31,8 @@ class Plugin extends ServerPlugin {
      * @param Server $server
      * @return void
      */
-    function initialize(Server $server) {
-
+    public function initialize(Server $server)
+    {
         $server->resourceTypeMapping['Sabre\\CalDAV\\Subscriptions\\ISubscription'] =
             '{http://calendarserver.org/ns/}subscribed';
 
@@ -39,7 +40,6 @@ class Plugin extends ServerPlugin {
             'Sabre\\DAV\\Xml\\Property\\Href';
 
         $server->on('propFind', [$this, 'propFind'], 150);
-
     }
 
     /**
@@ -50,10 +50,9 @@ class Plugin extends ServerPlugin {
      *
      * @return array
      */
-    function getFeatures() {
-
+    public function getFeatures()
+    {
         return ['calendarserver-subscribed'];
-
     }
 
     /**
@@ -63,7 +62,8 @@ class Plugin extends ServerPlugin {
      * @param INode $node
      * @return void
      */
-    function propFind(PropFind $propFind, INode $node) {
+    public function propFind(PropFind $propFind, INode $node)
+    {
 
         // There's a bunch of properties that must appear as a self-closing
         // xml-element. This event handler ensures that this will be the case.
@@ -74,13 +74,10 @@ class Plugin extends ServerPlugin {
         ];
 
         foreach ($props as $prop) {
-
             if ($propFind->getStatus($prop) === 200) {
                 $propFind->set($prop, '', 200);
             }
-
         }
-
     }
 
     /**
@@ -91,10 +88,9 @@ class Plugin extends ServerPlugin {
      *
      * @return string
      */
-    function getPluginName() {
-
+    public function getPluginName()
+    {
         return 'subscriptions';
-
     }
 
     /**
@@ -108,13 +104,12 @@ class Plugin extends ServerPlugin {
      *
      * @return array
      */
-    function getPluginInfo() {
-
+    public function getPluginInfo()
+    {
         return [
             'name'        => $this->getPluginName(),
             'description' => 'This plugin allows users to store iCalendar subscriptions in their calendar-home.',
             'link'        => null,
         ];
-
     }
 }

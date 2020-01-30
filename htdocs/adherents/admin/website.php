@@ -35,43 +35,48 @@ $langs->loadLangs(array("admin", "members"));
 
 $action = GETPOST('action', 'alpha');
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+    accessforbidden();
+}
 
 
 /*
  * Actions
  */
 
-if ($action == 'setMEMBER_ENABLE_PUBLIC')
-{
-	if (GETPOST('value')) dolibarr_set_const($db, 'MEMBER_ENABLE_PUBLIC', 1, 'chaine', 0, '', $conf->entity);
-	else dolibarr_set_const($db, 'MEMBER_ENABLE_PUBLIC', 0, 'chaine', 0, '', $conf->entity);
+if ($action == 'setMEMBER_ENABLE_PUBLIC') {
+    if (GETPOST('value')) {
+        dolibarr_set_const($db, 'MEMBER_ENABLE_PUBLIC', 1, 'chaine', 0, '', $conf->entity);
+    } else {
+        dolibarr_set_const($db, 'MEMBER_ENABLE_PUBLIC', 0, 'chaine', 0, '', $conf->entity);
+    }
 }
 
-if ($action == 'update')
-{
-	$public = GETPOST('MEMBER_ENABLE_PUBLIC');
-	$amount = GETPOST('MEMBER_NEWFORM_AMOUNT');
-	$editamount = GETPOST('MEMBER_NEWFORM_EDITAMOUNT');
-	$payonline = GETPOST('MEMBER_NEWFORM_PAYONLINE');
-	$forcetype = GETPOST('MEMBER_NEWFORM_FORCETYPE');
+if ($action == 'update') {
+    $public = GETPOST('MEMBER_ENABLE_PUBLIC');
+    $amount = GETPOST('MEMBER_NEWFORM_AMOUNT');
+    $editamount = GETPOST('MEMBER_NEWFORM_EDITAMOUNT');
+    $payonline = GETPOST('MEMBER_NEWFORM_PAYONLINE');
+    $forcetype = GETPOST('MEMBER_NEWFORM_FORCETYPE');
 
     $res = dolibarr_set_const($db, "MEMBER_ENABLE_PUBLIC", $public, 'chaine', 0, '', $conf->entity);
     $res = dolibarr_set_const($db, "MEMBER_NEWFORM_AMOUNT", $amount, 'chaine', 0, '', $conf->entity);
     $res = dolibarr_set_const($db, "MEMBER_NEWFORM_EDITAMOUNT", $editamount, 'chaine', 0, '', $conf->entity);
     $res = dolibarr_set_const($db, "MEMBER_NEWFORM_PAYONLINE", $payonline, 'chaine', 0, '', $conf->entity);
-    if ($forcetype < 0) $res = dolibarr_del_const($db, "MEMBER_NEWFORM_FORCETYPE", $conf->entity);
-    else                $res = dolibarr_set_const($db, "MEMBER_NEWFORM_FORCETYPE", $forcetype, 'chaine', 0, '', $conf->entity);
-
-    if (!$res > 0) $error++;
-
- 	if (!$error)
-    {
-	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    if ($forcetype < 0) {
+        $res = dolibarr_del_const($db, "MEMBER_NEWFORM_FORCETYPE", $conf->entity);
+    } else {
+        $res = dolibarr_set_const($db, "MEMBER_NEWFORM_FORCETYPE", $forcetype, 'chaine', 0, '', $conf->entity);
     }
-    else
-    {
-	    setEventMessages($langs->trans("Error"), null, 'errors');
+
+    if (!$res > 0) {
+        $error++;
+    }
+
+    if (!$error) {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    } else {
+        setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
@@ -99,8 +104,7 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 
 dol_fiche_head($head, 'website', $langs->trans("Members"), -1, 'user');
 
-if ($conf->use_javascript_ajax)
-{
+if ($conf->use_javascript_ajax) {
     print "\n".'<script type="text/javascript" language="javascript">';
     print 'jQuery(document).ready(function () {
                 function initemail()
@@ -139,19 +143,16 @@ print '<span class="opacitymedium">'.$langs->trans("BlankSubscriptionFormDesc").
 
 
 $enabledisablehtml = $langs->trans("EnablePublicSubscriptionForm").' ';
-if (empty($conf->global->MEMBER_ENABLE_PUBLIC))
-{
-	// Button off, click to enable
-	$enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setMEMBER_ENABLE_PUBLIC&value=1'.$param.'">';
-	$enabledisablehtml .= img_picto($langs->trans("Disabled"), 'switch_off');
-	$enabledisablehtml .= '</a>';
-}
-else
-{
-	// Button on, click to disable
-	$enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setMEMBER_ENABLE_PUBLIC&value=0'.$param.'">';
-	$enabledisablehtml .= img_picto($langs->trans("Activated"), 'switch_on');
-	$enabledisablehtml .= '</a>';
+if (empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
+    // Button off, click to enable
+    $enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setMEMBER_ENABLE_PUBLIC&value=1'.$param.'">';
+    $enabledisablehtml .= img_picto($langs->trans("Disabled"), 'switch_off');
+    $enabledisablehtml .= '</a>';
+} else {
+    // Button on, click to disable
+    $enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setMEMBER_ENABLE_PUBLIC&value=0'.$param.'">';
+    $enabledisablehtml .= img_picto($langs->trans("Activated"), 'switch_on');
+    $enabledisablehtml .= '</a>';
 }
 print $enabledisablehtml;
 print '<input type="hidden" id="MEMBER_ENABLE_PUBLIC" name="MEMBER_ENABLE_PUBLIC" value="'.(empty($conf->global->MEMBER_ENABLE_PUBLIC) ? 0 : 1).'">';
@@ -159,60 +160,65 @@ print '<input type="hidden" id="MEMBER_ENABLE_PUBLIC" name="MEMBER_ENABLE_PUBLIC
 
 print '<br>';
 
-if (!empty($conf->global->MEMBER_ENABLE_PUBLIC))
-{
-	print '<br>';
+if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
+    print '<br>';
 
-	print '<table class="noborder centpercent">';
+    print '<table class="noborder centpercent">';
 
-	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("Parameter").'</td>';
-	print '<td class="right">'.$langs->trans("Value").'</td>';
-	print "</tr>\n";
+    print '<tr class="liste_titre">';
+    print '<td>'.$langs->trans("Parameter").'</td>';
+    print '<td class="right">'.$langs->trans("Value").'</td>';
+    print "</tr>\n";
 
-	// Force Type
-	$adht = new AdherentType($db);
-	print '<tr class="oddeven drag" id="trforcetype"><td>';
-	print $langs->trans("ForceMemberType");
-	print '</td><td class="right">';
-	$listofval = array();
-	$listofval += $adht->liste_array();
-	$forcetype = $conf->global->MEMBER_NEWFORM_FORCETYPE ?: -1;
-	print $form->selectarray("MEMBER_NEWFORM_FORCETYPE", $listofval, $forcetype, count($listofval)>1?1:0);
-	print "</td></tr>\n";
+    // Force Type
+    $adht = new AdherentType($db);
+    print '<tr class="oddeven drag" id="trforcetype"><td>';
+    print $langs->trans("ForceMemberType");
+    print '</td><td class="right">';
+    $listofval = array();
+    $listofval += $adht->liste_array();
+    $forcetype = $conf->global->MEMBER_NEWFORM_FORCETYPE ?: -1;
+    print $form->selectarray("MEMBER_NEWFORM_FORCETYPE", $listofval, $forcetype, count($listofval)>1?1:0);
+    print "</td></tr>\n";
 
-	// Amount
-	print '<tr class="oddeven" id="tramount"><td>';
-	print $langs->trans("DefaultAmount");
-	print '</td><td class="right">';
-	print '<input type="text" id="MEMBER_NEWFORM_AMOUNT" name="MEMBER_NEWFORM_AMOUNT" size="5" value="'.(! empty($conf->global->MEMBER_NEWFORM_AMOUNT)?$conf->global->MEMBER_NEWFORM_AMOUNT:'').'">';
-	print "</td></tr>\n";
+    // Amount
+    print '<tr class="oddeven" id="tramount"><td>';
+    print $langs->trans("DefaultAmount");
+    print '</td><td class="right">';
+    print '<input type="text" id="MEMBER_NEWFORM_AMOUNT" name="MEMBER_NEWFORM_AMOUNT" size="5" value="'.(! empty($conf->global->MEMBER_NEWFORM_AMOUNT)?$conf->global->MEMBER_NEWFORM_AMOUNT:'').'">';
+    print "</td></tr>\n";
 
-	// Can edit
-	print '<tr class="oddeven" id="tredit"><td>';
-	print $langs->trans("CanEditAmount");
-	print '</td><td class="right">';
-	print $form->selectyesno("MEMBER_NEWFORM_EDITAMOUNT", (! empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)?$conf->global->MEMBER_NEWFORM_EDITAMOUNT:0), 1);
-	print "</td></tr>\n";
+    // Can edit
+    print '<tr class="oddeven" id="tredit"><td>';
+    print $langs->trans("CanEditAmount");
+    print '</td><td class="right">';
+    print $form->selectyesno("MEMBER_NEWFORM_EDITAMOUNT", (! empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)?$conf->global->MEMBER_NEWFORM_EDITAMOUNT:0), 1);
+    print "</td></tr>\n";
 
-	// Jump to an online payment page
-	print '<tr class="oddeven" id="trpayment"><td>';
-	print $langs->trans("MEMBER_NEWFORM_PAYONLINE");
-	print '</td><td class="right">';
-	$listofval=array();
-	$listofval['-1']=$langs->trans('No');
-	$listofval['all']=$langs->trans('Yes').' ('.$langs->trans("VisitorCanChooseItsPaymentMode").')';
-	if (! empty($conf->paybox->enabled)) $listofval['paybox']='Paybox';
-	if (! empty($conf->paypal->enabled)) $listofval['paypal']='PayPal';
-	if (! empty($conf->stripe->enabled)) $listofval['stripe']='Stripe';
-	print $form->selectarray("MEMBER_NEWFORM_PAYONLINE", $listofval, (! empty($conf->global->MEMBER_NEWFORM_PAYONLINE)?$conf->global->MEMBER_NEWFORM_PAYONLINE:''), 0);
-	print "</td></tr>\n";
+    // Jump to an online payment page
+    print '<tr class="oddeven" id="trpayment"><td>';
+    print $langs->trans("MEMBER_NEWFORM_PAYONLINE");
+    print '</td><td class="right">';
+    $listofval=array();
+    $listofval['-1']=$langs->trans('No');
+    $listofval['all']=$langs->trans('Yes').' ('.$langs->trans("VisitorCanChooseItsPaymentMode").')';
+    if (! empty($conf->paybox->enabled)) {
+        $listofval['paybox']='Paybox';
+    }
+    if (! empty($conf->paypal->enabled)) {
+        $listofval['paypal']='PayPal';
+    }
+    if (! empty($conf->stripe->enabled)) {
+        $listofval['stripe']='Stripe';
+    }
+    print $form->selectarray("MEMBER_NEWFORM_PAYONLINE", $listofval, (! empty($conf->global->MEMBER_NEWFORM_PAYONLINE)?$conf->global->MEMBER_NEWFORM_PAYONLINE:''), 0);
+    print "</td></tr>\n";
 
-	print '</table>';
+    print '</table>';
 
-	print '<div class="center">';
-	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-	print '</div>';
+    print '<div class="center">';
+    print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+    print '</div>';
 }
 
 
@@ -221,23 +227,22 @@ dol_fiche_end();
 print '</form>';
 
 
-if (!empty($conf->global->MEMBER_ENABLE_PUBLIC))
-{
-	print '<br>';
-	//print $langs->trans('FollowingLinksArePublic').'<br>';
-	print img_picto('', 'globe').' '.$langs->trans('BlankSubscriptionForm').':<br>';
-	if ($conf->multicompany->enabled) {
-		$entity_qr = '?entity='.$conf->entity;
-	} else {
-		$entity_qr = '';
-	}
+if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
+    print '<br>';
+    //print $langs->trans('FollowingLinksArePublic').'<br>';
+    print img_picto('', 'globe').' '.$langs->trans('BlankSubscriptionForm').':<br>';
+    if ($conf->multicompany->enabled) {
+        $entity_qr = '?entity='.$conf->entity;
+    } else {
+        $entity_qr = '';
+    }
 
-	// Define $urlwithroot
-	$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
-	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
-	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+    // Define $urlwithroot
+    $urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+    $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
+    //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
-	print '<a target="_blank" href="'.$urlwithroot.'/public/members/new.php'.$entity_qr.'">'.$urlwithroot.'/public/members/new.php'.$entity_qr.'</a>';
+    print '<a target="_blank" href="'.$urlwithroot.'/public/members/new.php'.$entity_qr.'">'.$urlwithroot.'/public/members/new.php'.$entity_qr.'</a>';
 }
 
 // End of page

@@ -12,8 +12,8 @@ namespace Sabre\DAV\Mock;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class StreamingFile extends File {
-
+class StreamingFile extends File
+{
     protected $size;
 
     /**
@@ -36,8 +36,8 @@ class StreamingFile extends File {
      * @param resource $data
      * @return string|null
      */
-    function put($data) {
-
+    public function put($data)
+    {
         if (is_string($data)) {
             $stream = fopen('php://memory', 'r+');
             fwrite($stream, $data);
@@ -45,7 +45,6 @@ class StreamingFile extends File {
             $data = $stream;
         }
         $this->contents = $data;
-
     }
 
     /**
@@ -55,10 +54,9 @@ class StreamingFile extends File {
      *
      * @return mixed
      */
-    function get() {
-
+    public function get()
+    {
         return $this->contents;
-
     }
 
     /**
@@ -70,10 +68,9 @@ class StreamingFile extends File {
      *
      * @return void
      */
-    function getETag() {
-
+    public function getETag()
+    {
         return null;
-
     }
 
     /**
@@ -81,10 +78,9 @@ class StreamingFile extends File {
      *
      * @return int
      */
-    function getSize() {
-
+    public function getSize()
+    {
         return $this->size;
-
     }
 
     /**
@@ -93,10 +89,8 @@ class StreamingFile extends File {
      * @param int $size
      * @return void
      */
-    function setSize($size) {
-
+    public function setSize($size)
+    {
         $this->size = $size;
-
     }
-
 }

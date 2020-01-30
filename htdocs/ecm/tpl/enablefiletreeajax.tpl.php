@@ -19,10 +19,9 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
-{
-	print "Error, template enablefiletreeajax.tpl.php can't be called as URL";
-	exit;
+if (empty($conf) || ! is_object($conf)) {
+    print "Error, template enablefiletreeajax.tpl.php can't be called as URL";
+    exit;
 }
 
 ?>
@@ -33,7 +32,9 @@ if (empty($conf) || ! is_object($conf))
 <script type="text/javascript">
 
 <?php
-if (empty($module)) $module='ecm';
+if (empty($module)) {
+    $module='ecm';
+}
 $paramwithoutsection=preg_replace('/&?section=(\d+)/', '', $param);
 
 $openeddir='/';		// The root directory shown
@@ -95,7 +96,7 @@ function loadandshowpreview(filedirname,section)
 
 	$('#ecmfileview').empty();
 
-	var url = '<?php echo dol_buildpath('/core/ajax/ajaxdirpreview.php', 1); ?>?action=preview&module=<?php echo $module; ?>&section='+section+'&file='+urlencode(filedirname)<?php echo (empty($paramwithoutsection)?'':"+'".$paramwithoutsection."'"); ?>;
+	var url = '<?php echo dol_buildpath('/core/ajax/ajaxdirpreview.php', 1); ?>?action=preview&module=<?php echo $module; ?>&section='+section+'&file='+urlencode(filedirname)<?php echo(empty($paramwithoutsection)?'':"+'".$paramwithoutsection."'"); ?>;
 	$.get(url, function(data) {
 		//alert('Load of url '+url+' was performed : '+data);
 		pos=data.indexOf("TYPE=directory",0);

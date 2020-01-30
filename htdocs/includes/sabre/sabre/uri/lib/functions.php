@@ -20,20 +20,18 @@ namespace Sabre\Uri;
  * @param string $newPath
  * @return string
  */
-function resolve($basePath, $newPath) {
-
+function resolve($basePath, $newPath)
+{
     $base = parse($basePath);
     $delta = parse($newPath);
 
-    $pick = function($part) use ($base, $delta) {
-
+    $pick = function ($part) use ($base, $delta) {
         if ($delta[$part]) {
             return $delta[$part];
         } elseif ($base[$part]) {
             return $base[$part];
         }
         return null;
-
     };
 
     // If the new path defines a scheme, it's absolute and we can just return
@@ -68,15 +66,14 @@ function resolve($basePath, $newPath) {
     $pathParts = explode('/', $path);
     $newPathParts = [];
     foreach ($pathParts as $pathPart) {
-
         switch ($pathPart) {
             //case '' :
-            case '.' :
+            case '.':
                 break;
-            case '..' :
+            case '..':
                 array_pop($newPathParts);
                 break;
-            default :
+            default:
                 $newPathParts[] = $pathPart;
                 break;
         }
@@ -96,7 +93,6 @@ function resolve($basePath, $newPath) {
         $newParts['fragment'] = $delta['fragment'];
     }
     return build($newParts);
-
 }
 
 /**
@@ -111,8 +107,8 @@ function resolve($basePath, $newPath) {
  * @param string $uri
  * @return string
  */
-function normalize($uri) {
-
+function normalize($uri)
+{
     $parts = parse($uri);
 
     if (!empty($parts['path'])) {
@@ -123,11 +119,11 @@ function normalize($uri) {
                 case '.':
                     // skip
                     break;
-                case '..' :
+                case '..':
                     // One level up in the hierarchy
                     array_pop($newPathParts);
                     break;
-                default :
+                default:
                     // Ensuring that everything is correctly percent-encoded.
                     $newPathParts[] = rawurlencode(rawurldecode($pathPart));
                     break;
@@ -149,8 +145,8 @@ function normalize($uri) {
         }
         // A few HTTP specific rules.
         switch ($parts['scheme']) {
-            case 'http' :
-            case 'https' :
+            case 'http':
+            case 'https':
                 if (empty($parts['path'])) {
                     // An empty path is equivalent to / in http.
                     $parts['path'] = '/';
@@ -159,10 +155,11 @@ function normalize($uri) {
         }
     }
 
-    if ($parts['host']) $parts['host'] = strtolower($parts['host']);
+    if ($parts['host']) {
+        $parts['host'] = strtolower($parts['host']);
+    }
 
     return build($parts);
-
 }
 
 /**
@@ -178,7 +175,8 @@ function normalize($uri) {
  * @param string $uri
  * @return array
  */
-function parse($uri) {
+function parse($uri)
+{
 
     // Normally a URI must be ASCII, however. However, often it's not and
     // parse_url might corrupt these strings.
@@ -187,7 +185,7 @@ function parse($uri) {
     // uriencode them first.
     $uri = preg_replace_callback(
         '/[^[:ascii:]]/u',
-        function($matches) {
+        function ($matches) {
             return rawurlencode($matches[0]);
         },
         $uri
@@ -208,7 +206,6 @@ function parse($uri) {
             'query'    => null,
             'fragment' => null,
         ];
-
 }
 
 /**
@@ -218,8 +215,8 @@ function parse($uri) {
  * @param array $parts
  * @return string
  */
-function build(array $parts) {
-
+function build(array $parts)
+{
     $uri = '';
 
     $authority = '';
@@ -236,12 +233,10 @@ function build(array $parts) {
     if (!empty($parts['scheme'])) {
         // If there's a scheme, there's also a host.
         $uri = $parts['scheme'] . ':';
-
     }
     if ($authority || (!empty($parts['scheme']) && $parts['scheme'] === 'file')) {
         // No scheme, but there is a host.
         $uri .= '//' . $authority;
-
     }
 
     if (!empty($parts['path'])) {
@@ -255,7 +250,6 @@ function build(array $parts) {
     }
 
     return $uri;
-
 }
 
 /**
@@ -276,14 +270,13 @@ function build(array $parts) {
  * @param string $path
  * @return array
  */
-function split($path) {
-
+function split($path)
+{
     $matches = [];
     if (preg_match('/^(?:(?:(.*)(?:\/+))?([^\/]+))(?:\/?)$/u', $path, $matches)) {
         return [$matches[1], $matches[2]];
     }
     return [null,null];
-
 }
 
 /**
@@ -299,7 +292,8 @@ function split($path) {
  * @param string $uri
  * @return array
  */
-function _parse_fallback($uri) {
+function _parse_fallback($uri)
+{
 
     // Normally a URI must be ASCII, however. However, often it's not and
     // parse_url might corrupt these strings.
@@ -308,7 +302,7 @@ function _parse_fallback($uri) {
     // uriencode them first.
     $uri = preg_replace_callback(
         '/[^[:ascii:]]/u',
-        function($matches) {
+        function ($matches) {
             return rawurlencode($matches[0]);
         },
         $uri
@@ -325,11 +319,9 @@ function _parse_fallback($uri) {
     ];
 
     if (preg_match('% ^([A-Za-z][A-Za-z0-9+-\.]+): %x', $uri, $matches)) {
-
         $result['scheme'] = $matches[1];
         // Take what's left.
         $uri = substr($uri, strlen($result['scheme']) + 1);
-
     }
 
     // Taking off a fragment part
@@ -342,10 +334,10 @@ function _parse_fallback($uri) {
     }
 
     if (substr($uri, 0, 3) === '///') {
-      // The triple slash uris are a bit unusual, but we have special handling
-      // for them.
-      $result['path'] = substr($uri, 2);
-      $result['host'] = '';
+        // The triple slash uris are a bit unusual, but we have special handling
+        // for them.
+        $result['path'] = substr($uri, 2);
+        $result['host'] = '';
     } elseif (substr($uri, 0, 2) === '//') {
         // Uris that have an authority part.
         $regex = '
@@ -360,11 +352,21 @@ function _parse_fallback($uri) {
         if (!preg_match($regex, $uri, $matches)) {
             throw new InvalidUriException('Invalid, or could not parse URI');
         }
-        if ($matches['host']) $result['host'] = $matches['host'];
-        if ($matches['port']) $result['port'] = (int)$matches['port'];
-        if (isset($matches['path'])) $result['path'] = $matches['path'];
-        if ($matches['user']) $result['user'] = $matches['user'];
-        if ($matches['pass']) $result['pass'] = $matches['pass'];
+        if ($matches['host']) {
+            $result['host'] = $matches['host'];
+        }
+        if ($matches['port']) {
+            $result['port'] = (int)$matches['port'];
+        }
+        if (isset($matches['path'])) {
+            $result['path'] = $matches['path'];
+        }
+        if ($matches['user']) {
+            $result['user'] = $matches['user'];
+        }
+        if ($matches['pass']) {
+            $result['pass'] = $matches['pass'];
+        }
     } else {
         $result['path'] = $uri;
     }

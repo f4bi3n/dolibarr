@@ -15,7 +15,7 @@ class SameDateForRecurringEventsTest extends \PHPUnit_Framework_TestCase
     /**
      * Checking is all events iterated by EventIterator.
      */
-    function testAllEventsArePresentInIterator()
+    public function testAllEventsArePresentInIterator()
     {
         $ics = <<<ICS
 BEGIN:VCALENDAR

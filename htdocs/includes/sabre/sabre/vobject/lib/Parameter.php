@@ -17,7 +17,8 @@ use Sabre\Xml;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Parameter extends Node {
+class Parameter extends Node
+{
 
     /**
      * Parameter name.
@@ -50,8 +51,8 @@ class Parameter extends Node {
      * @param string $name
      * @param string $value
      */
-    function __construct(Document $root, $name, $value = null) {
-
+    public function __construct(Document $root, $name, $value = null)
+    {
         $this->name = strtoupper($name);
         $this->root = $root;
         if (is_null($name)) {
@@ -68,7 +69,6 @@ class Parameter extends Node {
         } else {
             $this->setValue($value);
         }
-
     }
 
     /**
@@ -82,85 +82,86 @@ class Parameter extends Node {
      *
      * @return string
      */
-    static function guessParameterNameByValue($value) {
+    public static function guessParameterNameByValue($value)
+    {
         switch (strtoupper($value)) {
 
             // Encodings
-            case '7-BIT' :
-            case 'QUOTED-PRINTABLE' :
-            case 'BASE64' :
+            case '7-BIT':
+            case 'QUOTED-PRINTABLE':
+            case 'BASE64':
                 $name = 'ENCODING';
                 break;
 
             // Common types
-            case 'WORK' :
-            case 'HOME' :
-            case 'PREF' :
+            case 'WORK':
+            case 'HOME':
+            case 'PREF':
 
             // Delivery Label Type
-            case 'DOM' :
-            case 'INTL' :
-            case 'POSTAL' :
-            case 'PARCEL' :
+            case 'DOM':
+            case 'INTL':
+            case 'POSTAL':
+            case 'PARCEL':
 
             // Telephone types
-            case 'VOICE' :
-            case 'FAX' :
-            case 'MSG' :
-            case 'CELL' :
-            case 'PAGER' :
-            case 'BBS' :
-            case 'MODEM' :
-            case 'CAR' :
-            case 'ISDN' :
-            case 'VIDEO' :
+            case 'VOICE':
+            case 'FAX':
+            case 'MSG':
+            case 'CELL':
+            case 'PAGER':
+            case 'BBS':
+            case 'MODEM':
+            case 'CAR':
+            case 'ISDN':
+            case 'VIDEO':
 
             // EMAIL types (lol)
-            case 'AOL' :
-            case 'APPLELINK' :
-            case 'ATTMAIL' :
-            case 'CIS' :
-            case 'EWORLD' :
-            case 'INTERNET' :
-            case 'IBMMAIL' :
-            case 'MCIMAIL' :
-            case 'POWERSHARE' :
-            case 'PRODIGY' :
-            case 'TLX' :
-            case 'X400' :
+            case 'AOL':
+            case 'APPLELINK':
+            case 'ATTMAIL':
+            case 'CIS':
+            case 'EWORLD':
+            case 'INTERNET':
+            case 'IBMMAIL':
+            case 'MCIMAIL':
+            case 'POWERSHARE':
+            case 'PRODIGY':
+            case 'TLX':
+            case 'X400':
 
             // Photo / Logo format types
-            case 'GIF' :
-            case 'CGM' :
-            case 'WMF' :
-            case 'BMP' :
-            case 'DIB' :
-            case 'PICT' :
-            case 'TIFF' :
-            case 'PDF' :
-            case 'PS' :
-            case 'JPEG' :
-            case 'MPEG' :
-            case 'MPEG2' :
-            case 'AVI' :
-            case 'QTIME' :
+            case 'GIF':
+            case 'CGM':
+            case 'WMF':
+            case 'BMP':
+            case 'DIB':
+            case 'PICT':
+            case 'TIFF':
+            case 'PDF':
+            case 'PS':
+            case 'JPEG':
+            case 'MPEG':
+            case 'MPEG2':
+            case 'AVI':
+            case 'QTIME':
 
             // Sound Digital Audio Type
-            case 'WAVE' :
-            case 'PCM' :
-            case 'AIFF' :
+            case 'WAVE':
+            case 'PCM':
+            case 'AIFF':
 
             // Key types
-            case 'X509' :
-            case 'PGP' :
+            case 'X509':
+            case 'PGP':
                 $name = 'TYPE';
                 break;
 
             // Value types
-            case 'INLINE' :
-            case 'URL' :
-            case 'CONTENT-ID' :
-            case 'CID' :
+            case 'INLINE':
+            case 'URL':
+            case 'CONTENT-ID':
+            case 'CID':
                 $name = 'VALUE';
                 break;
 
@@ -180,10 +181,9 @@ class Parameter extends Node {
      *
      * @return void
      */
-    function setValue($value) {
-
+    public function setValue($value)
+    {
         $this->value = $value;
-
     }
 
     /**
@@ -194,14 +194,13 @@ class Parameter extends Node {
      *
      * @return string|null
      */
-    function getValue() {
-
+    public function getValue()
+    {
         if (is_array($this->value)) {
             return implode(',', $this->value);
         } else {
             return $this->value;
         }
-
     }
 
     /**
@@ -211,10 +210,9 @@ class Parameter extends Node {
      *
      * @return void
      */
-    function setParts(array $value) {
-
+    public function setParts(array $value)
+    {
         $this->value = $value;
-
     }
 
     /**
@@ -224,8 +222,8 @@ class Parameter extends Node {
      *
      * @return array
      */
-    function getParts() {
-
+    public function getParts()
+    {
         if (is_array($this->value)) {
             return $this->value;
         } elseif (is_null($this->value)) {
@@ -233,7 +231,6 @@ class Parameter extends Node {
         } else {
             return [$this->value];
         }
-
     }
 
     /**
@@ -246,14 +243,13 @@ class Parameter extends Node {
      *
      * @return void
      */
-    function addValue($part) {
-
+    public function addValue($part)
+    {
         if (is_null($this->value)) {
             $this->value = $part;
         } else {
             $this->value = array_merge((array)$this->value, (array)$part);
         }
-
     }
 
     /**
@@ -267,13 +263,12 @@ class Parameter extends Node {
      *
      * @return bool
      */
-    function has($value) {
-
+    public function has($value)
+    {
         return in_array(
             strtolower($value),
             array_map('strtolower', (array)$this->value)
         );
-
     }
 
     /**
@@ -281,8 +276,8 @@ class Parameter extends Node {
      *
      * @return string
      */
-    function serialize() {
-
+    public function serialize()
+    {
         $value = $this->getParts();
 
         if (count($value) === 0) {
@@ -290,16 +285,15 @@ class Parameter extends Node {
         }
 
         if ($this->root->getDocumentType() === Document::VCARD21 && $this->noName) {
-
             return implode(';', $value);
-
         }
 
         return $this->name . '=' . array_reduce(
             $value,
-            function($out, $item) {
-
-                if (!is_null($out)) $out .= ',';
+            function ($out, $item) {
+                if (!is_null($out)) {
+                    $out .= ',';
+                }
 
                 // If there's no special characters in the string, we'll use the simple
                 // format.
@@ -332,10 +326,8 @@ class Parameter extends Node {
                     ) . '"';
                     return $out;
                 }
-
             }
         );
-
     }
 
     /**
@@ -344,10 +336,9 @@ class Parameter extends Node {
      *
      * @return array
      */
-    function jsonSerialize() {
-
+    public function jsonSerialize()
+    {
         return $this->value;
-
     }
 
     /**
@@ -358,12 +349,11 @@ class Parameter extends Node {
      *
      * @return void
      */
-    function xmlSerialize(Xml\Writer $writer) {
-
+    public function xmlSerialize(Xml\Writer $writer)
+    {
         foreach (explode(',', $this->value) as $value) {
             $writer->writeElement('text', $value);
         }
-
     }
 
     /**
@@ -371,10 +361,9 @@ class Parameter extends Node {
      *
      * @return string
      */
-    function __toString() {
-
+    public function __toString()
+    {
         return (string)$this->getValue();
-
     }
 
     /**
@@ -382,13 +371,12 @@ class Parameter extends Node {
      *
      * @return ElementList
      */
-    function getIterator() {
-
-        if (!is_null($this->iterator))
+    public function getIterator()
+    {
+        if (!is_null($this->iterator)) {
             return $this->iterator;
+        }
 
         return $this->iterator = new ArrayIterator((array)$this->value);
-
     }
-
 }

@@ -24,8 +24,8 @@ use Sabre\Xml\Writer;
  * @author Evert Pot (http://www.rooftopsolutions.nl/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class ScheduleCalendarTransp implements Element {
-
+class ScheduleCalendarTransp implements Element
+{
     const TRANSPARENT = 'transparent';
     const OPAQUE = 'opaque';
 
@@ -41,13 +41,12 @@ class ScheduleCalendarTransp implements Element {
      *
      * @param string $value
      */
-    function __construct($value) {
-
+    public function __construct($value)
+    {
         if ($value !== self::TRANSPARENT && $value !== self::OPAQUE) {
             throw new \InvalidArgumentException('The value must either be specified as "transparent" or "opaque"');
         }
         $this->value = $value;
-
     }
 
     /**
@@ -55,10 +54,9 @@ class ScheduleCalendarTransp implements Element {
      *
      * @return string
      */
-    function getValue() {
-
+    public function getValue()
+    {
         return $this->value;
-
     }
 
     /**
@@ -80,17 +78,16 @@ class ScheduleCalendarTransp implements Element {
      * @param Writer $writer
      * @return void
      */
-    function xmlSerialize(Writer $writer) {
-
+    public function xmlSerialize(Writer $writer)
+    {
         switch ($this->value) {
-            case self::TRANSPARENT :
+            case self::TRANSPARENT:
                 $writer->writeElement('{' . Plugin::NS_CALDAV . '}transparent');
                 break;
-            case self::OPAQUE :
+            case self::OPAQUE:
                 $writer->writeElement('{' . Plugin::NS_CALDAV . '}opaque');
                 break;
         }
-
     }
 
     /**
@@ -114,8 +111,8 @@ class ScheduleCalendarTransp implements Element {
      * @param Reader $reader
      * @return mixed
      */
-    static function xmlDeserialize(Reader $reader) {
-
+    public static function xmlDeserialize(Reader $reader)
+    {
         $elems = Deserializer\enum($reader, Plugin::NS_CALDAV);
 
         if (in_array('transparent', $elems)) {
@@ -124,7 +121,5 @@ class ScheduleCalendarTransp implements Element {
             $value = self::OPAQUE;
         }
         return new self($value);
-
     }
-
 }

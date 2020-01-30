@@ -135,9 +135,9 @@ class modMrp extends DolibarrModules
         //                             2 => array('MRP_MYNEWCONST2', 'chaine', 'myvalue', 'This is another constant to add', 0, 'current', 1)
         // );
         $this->const = array(
-        	1=>array('MRP_MO_ADDON_PDF', 'chaine', 'alpha', 'Name of PDF model of MO', 0),
-        	2=>array('MRP_MO_ADDON', 'chaine', 'mod_mo_standard', 'Name of numbering rules of MO', 0),
-        	3=>array('MRP_MO_ADDON_PDF_ODT_PATH', 'chaine', 'DOL_DATA_ROOT/doctemplates/mrps', '', 0)
+            1=>array('MRP_MO_ADDON_PDF', 'chaine', 'alpha', 'Name of PDF model of MO', 0),
+            2=>array('MRP_MO_ADDON', 'chaine', 'mod_mo_standard', 'Name of numbering rules of MO', 0),
+            3=>array('MRP_MO_ADDON_PDF_ODT_PATH', 'chaine', 'DOL_DATA_ROOT/doctemplates/mrps', '', 0)
         );
 
         // Some keys to add into the overwriting translation tables
@@ -261,7 +261,7 @@ class modMrp extends DolibarrModules
         $r=0;
         // Add here entries to declare new menus
         /* BEGIN MODULEBUILDER TOPMENU */
-		/* END MODULEBUILDER LEFTMENU MO */
+        /* END MODULEBUILDER LEFTMENU MO */
 
         // Exports profiles provided by this module
         $r=1;
@@ -314,10 +314,12 @@ class modMrp extends DolibarrModules
      */
     public function init($options = '')
     {
-    	global $conf, $langs;
+        global $conf, $langs;
 
         $result=$this->_load_tables('/mrp/sql/');
-        if ($result < 0) return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
+        if ($result < 0) {
+            return -1;
+        } // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
 
         // Create extrafields during init
         //include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -338,22 +340,20 @@ class modMrp extends DolibarrModules
         $dirodt=DOL_DATA_ROOT.'/doctemplates/mrps';
         $dest=$dirodt.'/template_mo.odt';
 
-        if (file_exists($src) && ! file_exists($dest))
-        {
-        	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-        	dol_mkdir($dirodt);
-        	$result=dol_copy($src, $dest, 0, 0);
-        	if ($result < 0)
-        	{
-        		$langs->load("errors");
-        		$this->error=$langs->trans('ErrorFailToCopyFile', $src, $dest);
-        		return 0;
-        	}
+        if (file_exists($src) && ! file_exists($dest)) {
+            require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+            dol_mkdir($dirodt);
+            $result=dol_copy($src, $dest, 0, 0);
+            if ($result < 0) {
+                $langs->load("errors");
+                $this->error=$langs->trans('ErrorFailToCopyFile', $src, $dest);
+                return 0;
+            }
         }
 
         $sql = array(
-        	//"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape('standard')."' AND type = 'mo' AND entity = ".$conf->entity,
-        	//"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape('standard')."', 'mo', ".$conf->entity.")"
+            //"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape('standard')."' AND type = 'mo' AND entity = ".$conf->entity,
+            //"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape('standard')."', 'mo', ".$conf->entity.")"
         );
 
         return $this->_init($sql, $options);

@@ -35,7 +35,9 @@ $langs->loadLangs(array('banks', 'categories', 'withdrawals', 'companies'));
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->socid) $socid=$user->socid;
+if ($user->socid) {
+    $socid=$user->socid;
+}
 $result = restrictedArea($user, 'prelevement', '', '', 'bons');
 
 // Get supervariables
@@ -53,8 +55,12 @@ $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-if ($sortorder == "") $sortorder="DESC";
-if ($sortfield == "") $sortfield="p.datec";
+if ($sortorder == "") {
+    $sortorder="DESC";
+}
+if ($sortfield == "") {
+    $sortfield="p.datec";
+}
 
 $rej = new RejetPrelevement($db, $user);
 $ligne = new LignePrelevement($db, $user);
@@ -73,51 +79,49 @@ $sql.= " WHERE pr.fk_prelevement_lignes = pl.rowid";
 $sql.= " AND pl.fk_prelevement_bons = p.rowid";
 $sql.= " AND pl.fk_soc = s.rowid";
 $sql.= " AND p.entity = ".$conf->entity;
-if ($socid) $sql.= " AND s.rowid = ".$socid;
+if ($socid) {
+    $sql.= " AND s.rowid = ".$socid;
+}
 $sql.= " ".$db->order($sortfield, $sortorder);
 $sql.= " ".$db->plimit($conf->liste_limit+1, $offset);
 
 $result = $db->query($sql);
-if ($result)
-{
-	$num = $db->num_rows($result);
-	$i = 0;
+if ($result) {
+    $num = $db->num_rows($result);
+    $i = 0;
 
-	print_barre_liste($langs->trans("WithdrawsRefused"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num);
-	print"\n<!-- debut table -->\n";
-	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-	print '<tr class="liste_titre">';
-	print_liste_field_titre("Line", $_SERVER["PHP_SELF"], "p.ref", '', $urladd);
-	print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", '', $urladd);
-	print_liste_field_titre("Reason", $_SERVER["PHP_SELF"], "pr.motif", "", $urladd);
-	print "</tr>\n";
+    print_barre_liste($langs->trans("WithdrawsRefused"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num);
+    print"\n<!-- debut table -->\n";
+    print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+    print '<tr class="liste_titre">';
+    print_liste_field_titre("Line", $_SERVER["PHP_SELF"], "p.ref", '', $urladd);
+    print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", '', $urladd);
+    print_liste_field_titre("Reason", $_SERVER["PHP_SELF"], "pr.motif", "", $urladd);
+    print "</tr>\n";
 
-	$total = 0;
+    $total = 0;
 
-	while ($i < min($num, $conf->liste_limit))
-	{
-		$obj = $db->fetch_object($result);
+    while ($i < min($num, $conf->liste_limit)) {
+        $obj = $db->fetch_object($result);
 
-		print '<tr class="oddeven"><td>';
-		print $ligne->LibStatut($obj->statut, 2).'&nbsp;';
-		print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$obj->rowid.'">';
+        print '<tr class="oddeven"><td>';
+        print $ligne->LibStatut($obj->statut, 2).'&nbsp;';
+        print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$obj->rowid.'">';
 
-		print substr('000000'.$obj->rowid, -6)."</a></td>";
+        print substr('000000'.$obj->rowid, -6)."</a></td>";
 
-		print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.stripslashes($obj->nom)."</a></td>\n";
+        print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.stripslashes($obj->nom)."</a></td>\n";
 
-		print '<td>'.$rej->motifs[$obj->motif].'</td>';
-		print "</tr>\n";
+        print '<td>'.$rej->motifs[$obj->motif].'</td>';
+        print "</tr>\n";
 
-		$i++;
-	}
+        $i++;
+    }
 
-	print "</table>";
-	$db->free($result);
-}
-else
-{
-	dol_print_error($db);
+    print "</table>";
+    $db->free($result);
+} else {
+    dol_print_error($db);
 }
 
 // End of page

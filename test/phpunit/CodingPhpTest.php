@@ -30,19 +30,38 @@ require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security2.lib.php';
 
-if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER', '1');
-if (! defined('NOREQUIREDB'))    define('NOREQUIREDB', '1');
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
-if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN', '1');
-if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1'); // If there is no menu to show
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-if (! defined("NOLOGIN"))        define("NOLOGIN", '1');       // If this page is public (can be called outside logged session)
+if (! defined('NOREQUIREUSER')) {
+    define('NOREQUIREUSER', '1');
+}
+if (! defined('NOREQUIREDB')) {
+    define('NOREQUIREDB', '1');
+}
+if (! defined('NOREQUIRESOC')) {
+    define('NOREQUIRESOC', '1');
+}
+if (! defined('NOREQUIRETRAN')) {
+    define('NOREQUIRETRAN', '1');
+}
+if (! defined('NOCSRFCHECK')) {
+    define('NOCSRFCHECK', '1');
+}
+if (! defined('NOTOKENRENEWAL')) {
+    define('NOTOKENRENEWAL', '1');
+}
+if (! defined('NOREQUIREMENU')) {
+    define('NOREQUIREMENU', '1');
+} // If there is no menu to show
+if (! defined('NOREQUIREHTML')) {
+    define('NOREQUIREHTML', '1');
+} // If we don't need to load the html.form.class.php
+if (! defined('NOREQUIREAJAX')) {
+    define('NOREQUIREAJAX', '1');
+}
+if (! defined("NOLOGIN")) {
+    define("NOLOGIN", '1');
+}       // If this page is public (can be called outside logged session)
 
-if (empty($user->id))
-{
+if (empty($user->id)) {
     print "Load permissions for admin user nb 1\n";
     $user->fetch(1);
     $user->getrights();
@@ -146,13 +165,22 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
         include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
         $filesarray = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, '\.php', null, 'fullname');
 
-        foreach($filesarray as $key => $file)
-        {
-            if (preg_match('/\/htdocs\/includes\//', $file['fullname'])) continue;
-            if (preg_match('/\/htdocs\/custom\//', $file['fullname'])) continue;
-            if (preg_match('/\/htdocs\/dolimed/', $file['fullname'])) continue;
-            if (preg_match('/\/htdocs\/nltechno/', $file['fullname'])) continue;
-            if (preg_match('/\/htdocs\/teclib/', $file['fullname'])) continue;
+        foreach ($filesarray as $key => $file) {
+            if (preg_match('/\/htdocs\/includes\//', $file['fullname'])) {
+                continue;
+            }
+            if (preg_match('/\/htdocs\/custom\//', $file['fullname'])) {
+                continue;
+            }
+            if (preg_match('/\/htdocs\/dolimed/', $file['fullname'])) {
+                continue;
+            }
+            if (preg_match('/\/htdocs\/nltechno/', $file['fullname'])) {
+                continue;
+            }
+            if (preg_match('/\/htdocs\/teclib/', $file['fullname'])) {
+                continue;
+            }
 
             print 'Check php file '.$file['fullname']."\n";
             $filecontent=file_get_contents($file['fullname']);
@@ -162,10 +190,8 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
             $matches=array();
             // Check string   ='".$this->xxx   with xxx that is not 'escape'. It means we forget a db->escape when forging sql request.
             preg_match_all('/(..)\s*\.\s*\$this->db->idate\(/', $filecontent, $matches, PREG_SET_ORDER);
-            foreach($matches as $key => $val)
-            {
-                if ($val[1] != '\'"' && $val[1] != '\'\'')
-                {
+            foreach ($matches as $key => $val) {
+                if ($val[1] != '\'"' && $val[1] != '\'\'') {
                     $ok=false;
                     break;
                 }
@@ -180,10 +206,8 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
             $matches=array();
             // Check string   ='".$this->xxx   with xxx that is not 'escape'. It means we forget a db->escape when forging sql request.
             preg_match_all('/(=|sql.+)\s*\'"\s*\.\s*\$this->(....)/', $filecontent, $matches, PREG_SET_ORDER);
-            foreach($matches as $key => $val)
-            {
-                if ($val[2] != 'db->' && $val[2] != 'esca')
-                {
+            foreach ($matches as $key => $val) {
+                if ($val[2] != 'db->' && $val[2] != 'esca') {
                     $ok=false;
                     break;
                 }
@@ -199,10 +223,8 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
             $matches=array();
             // Check string   ='".$this->xxx   with xxx that is not 'escape'. It means we forget a db->escape when forging sql request.
             preg_match_all('/(..............)\$_SERVER\[\'QUERY_STRING\'\]/', $filecontent, $matches, PREG_SET_ORDER);
-            foreach($matches as $key => $val)
-            {
-                if ($val[1] != 'scape_htmltag(' && $val[1] != 'ing_nohtmltag(' && $val[1] != 'dol_escape_js(')
-                {
+            foreach ($matches as $key => $val) {
+                if ($val[1] != 'scape_htmltag(' && $val[1] != 'ing_nohtmltag(' && $val[1] != 'dol_escape_js(') {
                     $ok=false;
                     break;
                 }
@@ -215,10 +237,9 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
             $matches=array();
             // Check string   ='".$this->xxx   with xxx that is not 'escape'. It means we forget a db->escape when forging sql request.
             preg_match_all('/print_liste_field_titre\(\$langs/', $filecontent, $matches, PREG_SET_ORDER);
-            foreach($matches as $key => $val)
-            {
-                   $ok=false;
-                   break;
+            foreach ($matches as $key => $val) {
+                $ok=false;
+                break;
             }
             $this->assertTrue($ok, 'Found a use of print_liste_field_titre with first parameter that is a translated value instead of just the translation key in file '.$file['fullname'].'. Bad.');
 
@@ -228,10 +249,8 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
             $matches=array();
             // Check string   ='".$this->xxx   with xxx that is not 'escape'. It means we forget a db->escape when forging sql request.
             preg_match_all('/<br \/>/', $filecontent, $matches, PREG_SET_ORDER);
-            foreach($matches as $key => $val)
-            {
-                if ($file['name'] != 'functions.lib.php')
-                {
+            foreach ($matches as $key => $val) {
+                if ($file['name'] != 'functions.lib.php') {
                     $ok=false;
                     break;
                 }
@@ -244,8 +263,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
             $matches=array();
             // Check string   ='".$this->xxx   with xxx that is not 'escape'. It means we forget a db->escape when forging sql request.
             preg_match_all('/@var\s+array\(/', $filecontent, $matches, PREG_SET_ORDER);
-            foreach($matches as $key => $val)
-            {
+            foreach ($matches as $key => $val) {
                 $ok=false;
                 break;
             }

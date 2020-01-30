@@ -15,7 +15,8 @@ use Sabre\DAV\PropPatch;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface BackendInterface {
+interface BackendInterface
+{
 
     /**
      * Fetches properties for a path.
@@ -34,7 +35,7 @@ interface BackendInterface {
      * @param PropFind $propFind
      * @return void
      */
-    function propFind($path, PropFind $propFind);
+    public function propFind($path, PropFind $propFind);
 
     /**
      * Updates properties for a path
@@ -49,7 +50,7 @@ interface BackendInterface {
      * @param PropPatch $propPatch
      * @return void
      */
-    function propPatch($path, PropPatch $propPatch);
+    public function propPatch($path, PropPatch $propPatch);
 
     /**
      * This method is called after a node is deleted.
@@ -62,7 +63,7 @@ interface BackendInterface {
      * @param string $path
      * @return void
      */
-    function delete($path);
+    public function delete($path);
 
     /**
      * This method is called after a successful MOVE
@@ -75,6 +76,5 @@ interface BackendInterface {
      * @param string $destination
      * @return void
      */
-    function move($source, $destination);
-
+    public function move($source, $destination);
 }

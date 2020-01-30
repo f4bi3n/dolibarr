@@ -6,23 +6,22 @@ use Sabre\DAV;
 use Sabre\DAV\Browser\HtmlOutputHelper;
 use Sabre\HTTP;
 
-class SupportedPrivilegeSetTest extends \PHPUnit_Framework_TestCase {
-
-    function testSimple() {
-
+class SupportedPrivilegeSetTest extends \PHPUnit_Framework_TestCase
+{
+    public function testSimple()
+    {
         $prop = new SupportedPrivilegeSet([
             'privilege' => '{DAV:}all',
         ]);
         $this->assertInstanceOf('Sabre\DAVACL\Xml\Property\SupportedPrivilegeSet', $prop);
-
     }
 
 
     /**
      * @depends testSimple
      */
-    function testSerializeSimple() {
-
+    public function testSerializeSimple()
+    {
         $prop = new SupportedPrivilegeSet([]);
 
         $xml = (new DAV\Server())->xml->write('{DAV:}supported-privilege-set', $prop);
@@ -35,14 +34,13 @@ class SupportedPrivilegeSetTest extends \PHPUnit_Framework_TestCase {
     </d:privilege>
   </d:supported-privilege>
 </d:supported-privilege-set>', $xml);
-
     }
 
     /**
      * @depends testSimple
      */
-    function testSerializeAggregate() {
-
+    public function testSerializeAggregate()
+    {
         $prop = new SupportedPrivilegeSet([
             '{DAV:}read'  => [],
             '{DAV:}write' => [
@@ -71,11 +69,10 @@ class SupportedPrivilegeSetTest extends \PHPUnit_Framework_TestCase {
   </d:supported-privilege>
  </d:supported-privilege>
 </d:supported-privilege-set>', $xml);
-
     }
 
-    function testToHtml() {
-
+    public function testToHtml()
+    {
         $prop = new SupportedPrivilegeSet([
             '{DAV:}read'  => [],
             '{DAV:}write' => [
@@ -98,6 +95,5 @@ class SupportedPrivilegeSetTest extends \PHPUnit_Framework_TestCase {
 HTML;
 
         $this->assertEquals($expected, $prop->toHtml($html));
-
     }
 }

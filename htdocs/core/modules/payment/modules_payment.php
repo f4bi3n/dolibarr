@@ -23,83 +23,89 @@
 
 abstract class ModeleNumRefPayments
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
+    /**
+     * @var string Error code (or message)
+     */
+    public $error='';
 
-	/**
-	 *	Return if a module can be used or not
-	 *
-	 *	@return		boolean     true if module can be used
-	 */
-	public function isEnabled()
-	{
-		return true;
-	}
+    /**
+     *	Return if a module can be used or not
+     *
+     *	@return		boolean     true if module can be used
+     */
+    public function isEnabled()
+    {
+        return true;
+    }
 
-	/**
-	 *	Return the default description of numbering module
-	 *
-	 *	@return     string      Texte descripif
-	 */
-	public function info()
-	{
-		global $langs;
-		$langs->load("bills");
-		return $langs->trans("NoDescription");
-	}
+    /**
+     *	Return the default description of numbering module
+     *
+     *	@return     string      Texte descripif
+     */
+    public function info()
+    {
+        global $langs;
+        $langs->load("bills");
+        return $langs->trans("NoDescription");
+    }
 
-	/**
-	 *	Return numbering example
-	 *
-	 *	@return     string      Example
-	 */
-	public function getExample()
-	{
-		global $langs;
-		$langs->load("bills");
-		return $langs->trans("NoExample");
-	}
+    /**
+     *	Return numbering example
+     *
+     *	@return     string      Example
+     */
+    public function getExample()
+    {
+        global $langs;
+        $langs->load("bills");
+        return $langs->trans("NoExample");
+    }
 
-	/**
+    /**
      *  Checks if the numbers already in force in the data base do not
      *  cause conflicts that would prevent this numbering from working.
      *
      *	@return     boolean     false if conflict, true if ok
      */
-	public function canBeActivated()
-	{
-		return true;
-	}
+    public function canBeActivated()
+    {
+        return true;
+    }
 
-	/**
-	 *	Returns the next value
-	 *
-	 *	@param	Societe		$objsoc     Object thirdparty
-	 *	@param	Object		$object		Object we need next value for
-	 *	@return	string      Valeur
-	 */
-	public function getNextValue($objsoc, $object)
-	{
-		global $langs;
-		return $langs->trans("NotAvailable");
-	}
+    /**
+     *	Returns the next value
+     *
+     *	@param	Societe		$objsoc     Object thirdparty
+     *	@param	Object		$object		Object we need next value for
+     *	@return	string      Valeur
+     */
+    public function getNextValue($objsoc, $object)
+    {
+        global $langs;
+        return $langs->trans("NotAvailable");
+    }
 
-	/**
-	 *	Returns the module numbering version
-	 *
-	 *	@return     string      Value
-	 */
-	public function getVersion()
-	{
-		global $langs;
-		$langs->load("admin");
+    /**
+     *	Returns the module numbering version
+     *
+     *	@return     string      Value
+     */
+    public function getVersion()
+    {
+        global $langs;
+        $langs->load("admin");
 
-		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
-		elseif ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-		elseif ($this->version == 'dolibarr') return DOL_VERSION;
-		elseif ($this->version) return $this->version;
-		else return $langs->trans("NotAvailable");
-	}
+        if ($this->version == 'development') {
+            return $langs->trans("VersionDevelopment");
+        } elseif ($this->version == 'experimental') {
+            return $langs->trans("VersionExperimental");
+        } elseif ($this->version == 'dolibarr') {
+            return DOL_VERSION;
+        } elseif ($this->version) {
+            return $this->version;
+        } else {
+            return $langs->trans("NotAvailable");
+        }
+    }
 }

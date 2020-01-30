@@ -28,21 +28,35 @@
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled because need to load personalized language
 //if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');	// Not disabled to increase speed. Language code is found on url.
-if (!defined('NOREQUIRESOC'))    define('NOREQUIRESOC', '1');
+if (!defined('NOREQUIRESOC')) {
+    define('NOREQUIRESOC', '1');
+}
 //if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');	// Not disabled because need to do translations
-if (!defined('NOCSRFCHECK'))     define('NOCSRFCHECK', 1);
-if (!defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
-if (!defined('NOLOGIN'))         define('NOLOGIN', 1); // File must be accessed by logon page so without login
+if (!defined('NOCSRFCHECK')) {
+    define('NOCSRFCHECK', 1);
+}
+if (!defined('NOTOKENRENEWAL')) {
+    define('NOTOKENRENEWAL', 1);
+}
+if (!defined('NOLOGIN')) {
+    define('NOLOGIN', 1);
+} // File must be accessed by logon page so without login
 //if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU',1);  // We need top menu content
-if (!defined('NOREQUIREHTML'))   define('NOREQUIREHTML', 1);
-if (!defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX', '1');
+if (!defined('NOREQUIREHTML')) {
+    define('NOREQUIREHTML', 1);
+}
+if (!defined('NOREQUIREAJAX')) {
+    define('NOREQUIREAJAX', '1');
+}
 
 
 define('ISLOADEDBYSTEELSHEET', '1');
 
 
 require __DIR__.'/theme_vars.inc.php';
-if (defined('THEME_ONLY_CONSTANT')) return;
+if (defined('THEME_ONLY_CONSTANT')) {
+    return;
+}
 
 session_cache_limiter('public');
 
@@ -52,21 +66,27 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 // Load user to have $user->conf loaded (not done into main because of NOLOGIN constant defined)
 // and permission, so we can later calculate number of top menu ($nbtopmenuentries) according to user profile.
-if (empty($user->id) && !empty($_SESSION['dol_login']))
-{
-	$user->fetch('', $_SESSION['dol_login'], '', 1);
-	$user->getrights();
+if (empty($user->id) && !empty($_SESSION['dol_login'])) {
+    $user->fetch('', $_SESSION['dol_login'], '', 1);
+    $user->getrights();
 }
 
 
 // Define css type
 top_httphead('text/css');
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-if (empty($dolibarr_nocache)) header('Cache-Control: max-age=10800, public, must-revalidate');
-else header('Cache-Control: no-cache');
+if (empty($dolibarr_nocache)) {
+    header('Cache-Control: max-age=10800, public, must-revalidate');
+} else {
+    header('Cache-Control: no-cache');
+}
 
-if (GETPOST('theme', 'alpha')) $conf->theme = GETPOST('theme', 'alpha'); // If theme was forced on URL
-if (GETPOST('lang', 'aZ09')) $langs->setDefaultLang(GETPOST('lang', 'aZ09')); // If language was forced on URL
+if (GETPOST('theme', 'alpha')) {
+    $conf->theme = GETPOST('theme', 'alpha');
+} // If theme was forced on URL
+if (GETPOST('lang', 'aZ09')) {
+    $langs->setDefaultLang(GETPOST('lang', 'aZ09'));
+} // If language was forced on URL
 
 $langs->load("main", 0, 1);
 $right = ($langs->trans("DIRECTION") == 'rtl' ? 'left' : 'right');
@@ -74,7 +94,10 @@ $left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');
 
 $path = ''; // This value may be used in future for external module to overwrite theme
 $theme = 'md'; // Value of theme
-if (!empty($conf->global->MAIN_OVERWRITE_THEME_RES)) { $path = '/'.$conf->global->MAIN_OVERWRITE_THEME_RES; $theme = $conf->global->MAIN_OVERWRITE_THEME_RES; }
+if (!empty($conf->global->MAIN_OVERWRITE_THEME_RES)) {
+    $path = '/'.$conf->global->MAIN_OVERWRITE_THEME_RES;
+    $theme = $conf->global->MAIN_OVERWRITE_THEME_RES;
+}
 
 // Define image path files and other constants
 $fontlist = 'roboto,arial,tahoma,verdana,helvetica'; //$fontlist='verdana,helvetica,arial,sans-serif';
@@ -94,25 +117,42 @@ $useboldtitle = (isset($conf->global->THEME_ELDY_USEBOLDTITLE) ? $conf->global->
 $borderwidth = 2;
 
 // Case of option always editable
-if (!isset($conf->global->THEME_ELDY_BACKBODY)) $conf->global->THEME_ELDY_BACKBODY = $colorbackbody;
-if (!isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) $conf->global->THEME_ELDY_TOPMENU_BACK1 = $colorbackhmenu1;
-if (!isset($conf->global->THEME_ELDY_VERMENU_BACK1)) $conf->global->THEME_ELDY_VERMENU_BACK1 = $colorbackvmenu1;
-if (!isset($conf->global->THEME_ELDY_BACKTITLE1)) $conf->global->THEME_ELDY_BACKTITLE1 = $colorbacktitle1;
-if (!isset($conf->global->THEME_ELDY_USE_HOVER)) $conf->global->THEME_ELDY_USE_HOVER = $colorbacklinepairhover;
-if (!isset($conf->global->THEME_ELDY_USE_CHECKED)) $conf->global->THEME_ELDY_USE_CHECKED = $colorbacklinepairchecked;
-if (!isset($conf->global->THEME_ELDY_LINEBREAK)) $conf->global->THEME_ELDY_LINEBREAK = $colorbacklinebreak;
-if (!isset($conf->global->THEME_ELDY_TEXTTITLENOTAB)) $conf->global->THEME_ELDY_TEXTTITLENOTAB = $colortexttitlenotab;
-if (!isset($conf->global->THEME_ELDY_TEXTLINK)) $conf->global->THEME_ELDY_TEXTLINK = $colortextlink;
+if (!isset($conf->global->THEME_ELDY_BACKBODY)) {
+    $conf->global->THEME_ELDY_BACKBODY = $colorbackbody;
+}
+if (!isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) {
+    $conf->global->THEME_ELDY_TOPMENU_BACK1 = $colorbackhmenu1;
+}
+if (!isset($conf->global->THEME_ELDY_VERMENU_BACK1)) {
+    $conf->global->THEME_ELDY_VERMENU_BACK1 = $colorbackvmenu1;
+}
+if (!isset($conf->global->THEME_ELDY_BACKTITLE1)) {
+    $conf->global->THEME_ELDY_BACKTITLE1 = $colorbacktitle1;
+}
+if (!isset($conf->global->THEME_ELDY_USE_HOVER)) {
+    $conf->global->THEME_ELDY_USE_HOVER = $colorbacklinepairhover;
+}
+if (!isset($conf->global->THEME_ELDY_USE_CHECKED)) {
+    $conf->global->THEME_ELDY_USE_CHECKED = $colorbacklinepairchecked;
+}
+if (!isset($conf->global->THEME_ELDY_LINEBREAK)) {
+    $conf->global->THEME_ELDY_LINEBREAK = $colorbacklinebreak;
+}
+if (!isset($conf->global->THEME_ELDY_TEXTTITLENOTAB)) {
+    $conf->global->THEME_ELDY_TEXTTITLENOTAB = $colortexttitlenotab;
+}
+if (!isset($conf->global->THEME_ELDY_TEXTLINK)) {
+    $conf->global->THEME_ELDY_TEXTLINK = $colortextlink;
+}
 
 // Case of option editable only if option THEME_ELDY_ENABLE_PERSONALIZED is on
-if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
-{
-	// 90A4AE, 607D8B, 455A64, 37474F
-	$conf->global->THEME_ELDY_BACKTABCARD1 = '255,255,255'; // card
-	$conf->global->THEME_ELDY_BACKTABACTIVE = '234,234,234';
-	$conf->global->THEME_ELDY_TEXT = '0,0,0';
-	$conf->global->THEME_ELDY_FONT_SIZE1 = $fontsize;
-	$conf->global->THEME_ELDY_FONT_SIZE2 = '11';
+if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED)) {
+    // 90A4AE, 607D8B, 455A64, 37474F
+    $conf->global->THEME_ELDY_BACKTABCARD1 = '255,255,255'; // card
+    $conf->global->THEME_ELDY_BACKTABACTIVE = '234,234,234';
+    $conf->global->THEME_ELDY_TEXT = '0,0,0';
+    $conf->global->THEME_ELDY_FONT_SIZE1 = $fontsize;
+    $conf->global->THEME_ELDY_FONT_SIZE2 = '11';
 }
 
 // Case of option availables only if THEME_ELDY_ENABLE_PERSONALIZED is on
@@ -138,42 +178,57 @@ $fontsizesmaller     = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (emp
 // Hover color
 $colorbacklinepairhover = ((!isset($conf->global->THEME_ELDY_USE_HOVER) || (string) $conf->global->THEME_ELDY_USE_HOVER === '255,255,255') ? '' : ($conf->global->THEME_ELDY_USE_HOVER === '1' ? 'edf4fb' : $conf->global->THEME_ELDY_USE_HOVER));
 $colorbacklinepairchecked = ((!isset($conf->global->THEME_ELDY_USE_CHECKED) || (string) $conf->global->THEME_ELDY_USE_CHECKED === '255,255,255') ? '' : ($conf->global->THEME_ELDY_USE_CHECKED === '1' ? 'edf4fb' : $conf->global->THEME_ELDY_USE_CHECKED));
-if (!empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED))
-{
-	$colorbacklinepairhover = ((!isset($user->conf->THEME_ELDY_USE_HOVER) || $user->conf->THEME_ELDY_USE_HOVER === '255,255,255') ? '' : ($user->conf->THEME_ELDY_USE_HOVER === '1' ? 'edf4fb' : $user->conf->THEME_ELDY_USE_HOVER));
-	$colorbacklinepairchecked = ((!isset($user->conf->THEME_ELDY_USE_CHECKED) || $user->conf->THEME_ELDY_USE_CHECKED === '255,255,255') ? '' : ($user->conf->THEME_ELDY_USE_CHECKED === '1' ? 'edf4fb' : $user->conf->THEME_ELDY_USE_CHECKED));
+if (!empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)) {
+    $colorbacklinepairhover = ((!isset($user->conf->THEME_ELDY_USE_HOVER) || $user->conf->THEME_ELDY_USE_HOVER === '255,255,255') ? '' : ($user->conf->THEME_ELDY_USE_HOVER === '1' ? 'edf4fb' : $user->conf->THEME_ELDY_USE_HOVER));
+    $colorbacklinepairchecked = ((!isset($user->conf->THEME_ELDY_USE_CHECKED) || $user->conf->THEME_ELDY_USE_CHECKED === '255,255,255') ? '' : ($user->conf->THEME_ELDY_USE_CHECKED === '1' ? 'edf4fb' : $user->conf->THEME_ELDY_USE_CHECKED));
 }
 
-if (empty($colortopbordertitle1)) $colortopbordertitle1 = $colorbackhmenu1;
+if (empty($colortopbordertitle1)) {
+    $colortopbordertitle1 = $colorbackhmenu1;
+}
 
 // Set text color to black or white
 $colorbackhmenu1 = join(',', colorStringToArray($colorbackhmenu1)); // Normalize value to 'x,y,z'
 $tmppart = explode(',', $colorbackhmenu1);
 $tmpval = (!empty($tmppart[0]) ? $tmppart[0] : 0) + (!empty($tmppart[1]) ? $tmppart[1] : 0) + (!empty($tmppart[2]) ? $tmppart[2] : 0);
-if ($tmpval <= 460) $colortextbackhmenu = 'FFFFFF';
-else $colortextbackhmenu = '000000';
+if ($tmpval <= 460) {
+    $colortextbackhmenu = 'FFFFFF';
+} else {
+    $colortextbackhmenu = '000000';
+}
 
 $colorbackvmenu1 = join(',', colorStringToArray($colorbackvmenu1)); // Normalize value to 'x,y,z'
 $tmppart = explode(',', $colorbackvmenu1);
 $tmpval = (!empty($tmppart[0]) ? $tmppart[0] : 0) + (!empty($tmppart[1]) ? $tmppart[1] : 0) + (!empty($tmppart[2]) ? $tmppart[2] : 0);
-if ($tmpval <= 460) { $colortextbackvmenu = 'FFFFFF'; }
-else { $colortextbackvmenu = '000000'; }
+if ($tmpval <= 460) {
+    $colortextbackvmenu = 'FFFFFF';
+} else {
+    $colortextbackvmenu = '000000';
+}
 
 $colorbacktitle1 = join(',', colorStringToArray($colorbacktitle1)); // Normalize value to 'x,y,z'
 $tmppart = explode(',', $colorbacktitle1);
-if ($colortexttitle == '')
-{
-	$tmpval = (!empty($tmppart[0]) ? $tmppart[0] : 0) + (!empty($tmppart[1]) ? $tmppart[1] : 0) + (!empty($tmppart[2]) ? $tmppart[2] : 0);
-	if ($tmpval <= 460) { $colortexttitle = 'FFFFFF'; $colorshadowtitle = '888888'; }
-	else { $colortexttitle = '101010'; $colorshadowtitle = 'FFFFFF'; }
+if ($colortexttitle == '') {
+    $tmpval = (!empty($tmppart[0]) ? $tmppart[0] : 0) + (!empty($tmppart[1]) ? $tmppart[1] : 0) + (!empty($tmppart[2]) ? $tmppart[2] : 0);
+    if ($tmpval <= 460) {
+        $colortexttitle = 'FFFFFF';
+        $colorshadowtitle = '888888';
+    } else {
+        $colortexttitle = '101010';
+        $colorshadowtitle = 'FFFFFF';
+    }
+} else {
+    $colorshadowtitle = '888888';
 }
-else $colorshadowtitle = '888888';
 
 $colorbacktabcard1 = join(',', colorStringToArray($colorbacktabcard1)); // Normalize value to 'x,y,z'
 $tmppart = explode(',', $colorbacktabcard1);
 $tmpval = (!empty($tmppart[0]) ? $tmppart[0] : 0) + (!empty($tmppart[1]) ? $tmppart[1] : 0) + (!empty($tmppart[2]) ? $tmppart[2] : 0);
-if ($tmpval <= 460) { $colortextbacktab = 'FFFFFF'; }
-else { $colortextbacktab = '111111'; }
+if ($tmpval <= 460) {
+    $colortextbacktab = 'FFFFFF';
+} else {
+    $colortextbacktab = '111111';
+}
 
 // Format color value to match expected format (may be 'FFFFFF' or '255,255,255')
 $colorbackhmenu1 = join(',', colorStringToArray($colorbackhmenu1));
@@ -185,8 +240,12 @@ $colorbacklineimpair1 = join(',', colorStringToArray($colorbacklineimpair1));
 $colorbacklineimpair2 = join(',', colorStringToArray($colorbacklineimpair2));
 $colorbacklinepair1 = join(',', colorStringToArray($colorbacklinepair1));
 $colorbacklinepair2 = join(',', colorStringToArray($colorbacklinepair2));
-if ($colorbacklinepairhover != '') $colorbacklinepairhover = join(',', colorStringToArray($colorbacklinepairhover));
-if ($colorbacklinepairchecked != '') $colorbacklinepairchecked = join(',', colorStringToArray($colorbacklinepairchecked));
+if ($colorbacklinepairhover != '') {
+    $colorbacklinepairhover = join(',', colorStringToArray($colorbacklinepairhover));
+}
+if ($colorbacklinepairchecked != '') {
+    $colorbacklinepairchecked = join(',', colorStringToArray($colorbacklinepairchecked));
+}
 $colorbackbody = join(',', colorStringToArray($colorbackbody));
 $colortexttitlenotab = join(',', colorStringToArray($colortexttitlenotab));
 $colortexttitle = join(',', colorStringToArray($colortexttitle));
@@ -194,7 +253,9 @@ $colortext = join(',', colorStringToArray($colortext));
 $colortextlink = join(',', colorStringToArray($colortextlink));
 
 $nbtopmenuentries = $menumanager->showmenu('topnb');
-if ($conf->browser->layout == 'phone') $nbtopmenuentries = max($nbtopmenuentries, 10);
+if ($conf->browser->layout == 'phone') {
+    $nbtopmenuentries = max($nbtopmenuentries, 10);
+}
 
 print '/*'."\n";
 print 'colorbackbody='.$colorbackbody."\n";
@@ -248,7 +309,7 @@ body {
 }
 
 .thumbstat { font-weight: bold !important; }
-th a { font-weight: <?php echo ($useboldtitle ? 'bold' : 'normal'); ?> !important; }
+th a { font-weight: <?php echo($useboldtitle ? 'bold' : 'normal'); ?> !important; }
 a.tab { font-weight: 500 !important; }
 
 a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; font-weight: normal; color: rgb(<?php print $colortextlink; ?>); text-decoration: none;  }
@@ -663,7 +724,7 @@ textarea.centpercent {
     float: right!important;
 }
 .nowrap {
-	white-space: <?php print ($dol_optimize_smallscreen ? 'normal' : 'nowrap'); ?>;
+	white-space: <?php print($dol_optimize_smallscreen ? 'normal' : 'nowrap'); ?>;
 }
 .liste_titre .nowrap {
 	white-space: nowrap;
@@ -802,11 +863,12 @@ div.divsearchfield {
 <?php
 // Add a nowrap on smartphone, so long list of field used for filter are overflowed with clip
 if ($conf->browser->layout == 'phone') {
-	?>
+    ?>
 .divsearchfieldfilter {
    	white-space: nowrap;
 }
-<?php } ?>
+<?php
+} ?>
 div.confirmmessage {
 	padding-top: 6px;
 }
@@ -998,7 +1060,9 @@ div.fiche>form>div.div-table-responsive {
 }
 
 .flexcontainer {
-    <?php if (in_array($conf->browser->name, array('chrome', 'firefox'))) echo 'display: inline-flex;' ?>
+    <?php if (in_array($conf->browser->name, array('chrome', 'firefox'))) {
+        echo 'display: inline-flex;';
+    } ?>
     flex-flow: row wrap;
     justify-content: flex-start;
 }
@@ -1174,7 +1238,7 @@ table[summary="list_of_modules"] .fa-cog {
         white-space: nowrap;
     }
 	div.fiche {
-		    margin-top: <?php print ($dol_hide_topmenu ? '12' : '6'); ?>px !important;
+		    margin-top: <?php print($dol_hide_topmenu ? '12' : '6'); ?>px !important;
 	}
     .border tbody tr, .border tbody tr td, div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col {
     	height: 40px !important;
@@ -1334,8 +1398,8 @@ td.showDragHandle {
 	font-family: "RobotoDraft","Roboto",sans-serif;
 	left: 0;
 	<?php
-	if (in_array($conf->browser->layout, array('phone', 'tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
-	} else { ?>
+    if (in_array($conf->browser->layout, array('phone', 'tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+    } else { ?>
 	position: fixed;
 	top: 50px;
 	<?php } ?>
@@ -1364,8 +1428,8 @@ td.showDragHandle {
 	transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 	-webkit-overflow-scrolling: touch;
 	<?php
-	if (in_array($conf->browser->layout, array('phone', 'tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
-	} else { ?>
+    if (in_array($conf->browser->layout, array('phone', 'tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+    } else { ?>
 	overflow-x: hidden;
 	overflow-y: auto;
 	<?php }
@@ -1422,8 +1486,8 @@ div.login_block {
 
 .side-nav {
 	<?php
-	if (in_array($conf->browser->layout, array('phone', 'tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
-	} else { ?>
+    if (in_array($conf->browser->layout, array('phone', 'tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+    } else { ?>
 	overflow-x: initial !important;
 	overflow-y: scroll;
 	<?php } ?>
@@ -1471,7 +1535,7 @@ div.login_block {
 	background: rgb(<?php echo $colorbackvmenu1; ?>);
 	border-right: 1px solid rgba(0,0,0,0.3);
 	<?php
-	if (in_array($conf->browser->layout, array('phone', 'tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
+    if (in_array($conf->browser->layout, array('phone', 'tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
 	top: 50px ! important;
 	<?php } else { ?>
 	top: 60px ! important;
@@ -1484,9 +1548,11 @@ div.fiche {
 <?php } ?>
 
 div.fiche {
-	margin-<?php print $left; ?>: <?php print (GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '24' : '6')); ?>px;
-	margin-<?php print $right; ?>: <?php print (GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '22' : '6')); ?>px;
-	<?php if (!empty($dol_hide_leftmenu) && !empty($dol_hide_topmenu)) print 'margin-top: 12px;'; ?>
+	margin-<?php print $left; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '24' : '6')); ?>px;
+	margin-<?php print $right; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '22' : '6')); ?>px;
+	<?php if (!empty($dol_hide_leftmenu) && !empty($dol_hide_topmenu)) {
+        print 'margin-top: 12px;';
+    } ?>
 	margin-bottom: 15px;
 }
 body.onlinepaymentbody div.fiche {	/* For online payment page */
@@ -1503,28 +1569,50 @@ div.fichecenterbis {
 	margin-top: 8px;
 }
 div.fichethirdleft {
-	<?php if ($conf->browser->layout != 'phone') { print "float: ".$left.";\n"; } ?>
-	<?php if ($conf->browser->layout != 'phone') { print "width: 50%;\n"; } ?>
-	<?php if ($conf->browser->layout == 'phone') { print "padding-bottom: 6px;\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone') {
+        print "float: ".$left.";\n";
+    } ?>
+	<?php if ($conf->browser->layout != 'phone') {
+        print "width: 50%;\n";
+    } ?>
+	<?php if ($conf->browser->layout == 'phone') {
+        print "padding-bottom: 6px;\n";
+    } ?>
 }
 div.fichetwothirdright {
-	<?php if ($conf->browser->layout != 'phone') { print "float: ".$right.";\n"; } ?>
-	<?php if ($conf->browser->layout != 'phone') { print "width: 50%;\n"; } ?>
-	<?php if ($conf->browser->layout == 'phone') { print "padding-bottom: 6px\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone') {
+        print "float: ".$right.";\n";
+    } ?>
+	<?php if ($conf->browser->layout != 'phone') {
+        print "width: 50%;\n";
+    } ?>
+	<?php if ($conf->browser->layout == 'phone') {
+        print "padding-bottom: 6px\n";
+    } ?>
 }
 div.fichetwothirdright div.ficheaddleft {
     padding-left: 20px;
 }
 div.fichehalfleft {
-	<?php if ($conf->browser->layout != 'phone') { print "float: ".$left.";\n"; } ?>
-	<?php if ($conf->browser->layout != 'phone') { print "width: calc(50% - 10px);\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone') {
+        print "float: ".$left.";\n";
+    } ?>
+	<?php if ($conf->browser->layout != 'phone') {
+        print "width: calc(50% - 10px);\n";
+    } ?>
 }
 div.fichehalfright {
-	<?php if ($conf->browser->layout != 'phone') { print "float: ".$right.";\n"; } ?>
-	<?php if ($conf->browser->layout != 'phone') { print "width: calc(50% - 10px);\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone') {
+        print "float: ".$right.";\n";
+    } ?>
+	<?php if ($conf->browser->layout != 'phone') {
+        print "width: calc(50% - 10px);\n";
+    } ?>
 }
 div.fichehalfright {
-	<?php if ($conf->browser->layout == 'phone') { print "margin-top: 10px;\n"; } ?>
+	<?php if ($conf->browser->layout == 'phone') {
+        print "margin-top: 10px;\n";
+    } ?>
 }
 div.firstcolumn div.box {
 	padding-right: 10px;
@@ -1536,9 +1624,11 @@ div.secondcolumn div.box {
 @media only screen and (max-width: 900px)
 {
     div.fiche {
-    	margin-<?php print $left; ?>: <?php print (GETPOST('optioncss', 'aZ09') == 'print' ? 6 : ($dol_hide_leftmenu ? '4' : '20')); ?>px;
-    	margin-<?php print $right; ?>: <?php print (GETPOST('optioncss', 'aZ09') == 'print' ? 8 : 16); ?>px;
-    	<?php if (!empty($conf->dol_hide_leftmenu) && !empty($conf->dol_hide_topmenu)) print 'margin-top: 4px;'; ?>
+    	margin-<?php print $left; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : ($dol_hide_leftmenu ? '4' : '20')); ?>px;
+    	margin-<?php print $right; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 8 : 16); ?>px;
+    	<?php if (!empty($conf->dol_hide_leftmenu) && !empty($conf->dol_hide_topmenu)) {
+        print 'margin-top: 4px;';
+    } ?>
     	margin-bottom: 15px;
     }
     div.fichecenter {
@@ -1736,7 +1826,12 @@ $heightmenu = 48; /* height of top menu, part with image */
 $heightmenu2 = 48; /* height of top menu, ârt with login  */
 $disableimages = 0;
 $maxwidthloginblock = 110;
-if (!empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE)) { $heightmenu = 30; $disableimages = 1; $maxwidthloginblock = 180; $minwidthtmenu = 0; }
+if (!empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE)) {
+    $heightmenu = 30;
+    $disableimages = 1;
+    $maxwidthloginblock = 180;
+    $minwidthtmenu = 0;
+}
 ?>
 
 div#tmenu_tooltip {
@@ -1759,7 +1854,7 @@ div#tmenu_tooltip {
 <?php if (GETPOST('optioncss', 'aZ09') == 'print') {  ?>
 	display:none;
 <?php } else { ?>
-	/* padding-<?php echo $right; ?>: <?php echo ($maxwidthloginblock - 10); ?>px; */
+	/* padding-<?php echo $right; ?>: <?php echo($maxwidthloginblock - 10); ?>px; */
 <?php } ?>
 }
 
@@ -1899,7 +1994,7 @@ div.mainmenu {
 	position : relative;
 	background-repeat:no-repeat;
 	background-position:center top;
-	height: <?php echo ($heightmenu - 22); ?>px;
+	height: <?php echo($heightmenu - 22); ?>px;
 	margin-left: 0px;
 	min-width: 40px;
 }
@@ -1998,79 +2093,73 @@ div.mainmenu.website {
 }
 
 	<?php
-	// Add here more div for other menu entries. moduletomainmenu=array('module name'=>'name of class for div')
+    // Add here more div for other menu entries. moduletomainmenu=array('module name'=>'name of class for div')
 
-	$moduletomainmenu = array(
-		'user'=>'', 'syslog'=>'', 'societe'=>'companies', 'projet'=>'project', 'propale'=>'commercial', 'commande'=>'commercial',
-		'produit'=>'products', 'service'=>'products', 'stock'=>'products',
-		'don'=>'accountancy', 'tax'=>'accountancy', 'banque'=>'accountancy', 'facture'=>'accountancy', 'compta'=>'accountancy', 'accounting'=>'accountancy', 'adherent'=>'members', 'import'=>'tools', 'export'=>'tools', 'mailing'=>'tools',
-		'contrat'=>'commercial', 'ficheinter'=>'commercial', 'ticket'=>'ticket', 'deplacement'=>'commercial',
-		'fournisseur'=>'companies',
-		'barcode'=>'', 'fckeditor'=>'', 'categorie'=>'',
-	);
-	$mainmenuused = 'home';
-	foreach ($conf->modules as $val)
-	{
-		$mainmenuused .= ','.(isset($moduletomainmenu[$val]) ? $moduletomainmenu[$val] : $val);
-	}
-	$mainmenuusedarray = array_unique(explode(',', $mainmenuused));
+    $moduletomainmenu = array(
+        'user'=>'', 'syslog'=>'', 'societe'=>'companies', 'projet'=>'project', 'propale'=>'commercial', 'commande'=>'commercial',
+        'produit'=>'products', 'service'=>'products', 'stock'=>'products',
+        'don'=>'accountancy', 'tax'=>'accountancy', 'banque'=>'accountancy', 'facture'=>'accountancy', 'compta'=>'accountancy', 'accounting'=>'accountancy', 'adherent'=>'members', 'import'=>'tools', 'export'=>'tools', 'mailing'=>'tools',
+        'contrat'=>'commercial', 'ficheinter'=>'commercial', 'ticket'=>'ticket', 'deplacement'=>'commercial',
+        'fournisseur'=>'companies',
+        'barcode'=>'', 'fckeditor'=>'', 'categorie'=>'',
+    );
+    $mainmenuused = 'home';
+    foreach ($conf->modules as $val) {
+        $mainmenuused .= ','.(isset($moduletomainmenu[$val]) ? $moduletomainmenu[$val] : $val);
+    }
+    $mainmenuusedarray = array_unique(explode(',', $mainmenuused));
 
-	$generic = 1;
-	// Put here list of menu entries when the div.mainmenu.menuentry was previously defined
-	$divalreadydefined = array('home', 'companies', 'products', 'mrp', 'commercial', 'externalsite', 'accountancy', 'project', 'tools', 'members', 'agenda', 'ftp', 'holiday', 'hrm', 'bookmark', 'cashdesk', 'takepos', 'ecm', 'geoipmaxmind', 'gravatar', 'clicktodial', 'paypal', 'stripe', 'webservices', 'website');
-	// Put here list of menu entries we are sure we don't want
-	$divnotrequired = array('multicurrency', 'salaries', 'ticket', 'margin', 'opensurvey', 'paybox', 'expensereport', 'incoterm', 'prelevement', 'propal', 'workflow', 'notification', 'supplier_proposal', 'cron', 'product', 'productbatch', 'expedition');
-	foreach ($mainmenuusedarray as $val)
-	{
-		if (empty($val) || in_array($val, $divalreadydefined)) continue;
-		if (in_array($val, $divnotrequired)) continue;
-		//print "XXX".$val;
+    $generic = 1;
+    // Put here list of menu entries when the div.mainmenu.menuentry was previously defined
+    $divalreadydefined = array('home', 'companies', 'products', 'mrp', 'commercial', 'externalsite', 'accountancy', 'project', 'tools', 'members', 'agenda', 'ftp', 'holiday', 'hrm', 'bookmark', 'cashdesk', 'takepos', 'ecm', 'geoipmaxmind', 'gravatar', 'clicktodial', 'paypal', 'stripe', 'webservices', 'website');
+    // Put here list of menu entries we are sure we don't want
+    $divnotrequired = array('multicurrency', 'salaries', 'ticket', 'margin', 'opensurvey', 'paybox', 'expensereport', 'incoterm', 'prelevement', 'propal', 'workflow', 'notification', 'supplier_proposal', 'cron', 'product', 'productbatch', 'expedition');
+    foreach ($mainmenuusedarray as $val) {
+        if (empty($val) || in_array($val, $divalreadydefined)) {
+            continue;
+        }
+        if (in_array($val, $divnotrequired)) {
+            continue;
+        }
+        //print "XXX".$val;
 
-		// Search img file in module dir
-		$found = 0; $url = '';
-		foreach ($conf->file->dol_document_root as $dirroot)
-		{
-		    if (file_exists($dirroot."/".$val."/img/".$val."_over.png"))
-		    {
-		        $url = dol_buildpath('/'.$val.'/img/'.$val.'_over.png', 1);
-		        $found = 1;
-		        break;
-		    }
-		    elseif (file_exists($dirroot."/".$val."/img/".$val.".png"))    // Retro compatibilité
-			{
-			    $url = dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
-			    $found = 1;
-			    break;
-			}
-		}
-		// Img file not found
-		if (!$found)
-		{
-		    if (!defined('DISABLE_FONT_AWSOME')) {
-		        print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
-		        print 'div.mainmenu.'.$val.'::before {
+        // Search img file in module dir
+        $found = 0;
+        $url = '';
+        foreach ($conf->file->dol_document_root as $dirroot) {
+            if (file_exists($dirroot."/".$val."/img/".$val."_over.png")) {
+                $url = dol_buildpath('/'.$val.'/img/'.$val.'_over.png', 1);
+                $found = 1;
+                break;
+            } elseif (file_exists($dirroot."/".$val."/img/".$val.".png")) {    // Retro compatibilité
+                $url = dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
+                $found = 1;
+                break;
+            }
+        }
+        // Img file not found
+        if (!$found) {
+            if (!defined('DISABLE_FONT_AWSOME')) {
+                print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
+                print 'div.mainmenu.'.$val.'::before {
 	                    content: "\f249";
 	                }';
-		    }
-		    else
-		    {
-		        print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
-		        $url = dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.(min($generic, 4))."_over.png", 1);
-		        print "div.mainmenu.".$val." {\n";
-		        print "	background-image: url(".$url.");\n";
-		        print "}\n";
-	    	}
-	    	$generic++;
-		}
-		else
-		{
-			print "div.mainmenu.".$val." {\n";
-			print "	background-image: url(".$url.");\n";
-			print "}\n";
-		}
-	}
-	// End of part to add more div class css
-}	// End test if $dol_hide_topmenu ?>
+            } else {
+                print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
+                $url = dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.(min($generic, 4))."_over.png", 1);
+                print "div.mainmenu.".$val." {\n";
+                print "	background-image: url(".$url.");\n";
+                print "}\n";
+            }
+            $generic++;
+        } else {
+            print "div.mainmenu.".$val." {\n";
+            print "	background-image: url(".$url.");\n";
+            print "}\n";
+        }
+    }
+    // End of part to add more div class css
+}	// End test if $dol_hide_topmenu?>
 
 .tmenuimage {
     padding:0 0 0 0 !important;
@@ -2726,7 +2815,7 @@ span.tabspan {
 
 #undertopmenu {
 	background-repeat: repeat-x;
-	margin-top: <?php echo ($dol_hide_topmenu ? '6' : '0'); ?>px;
+	margin-top: <?php echo($dol_hide_topmenu ? '6' : '0'); ?>px;
 }
 
 .paddingrightonly {
@@ -3767,7 +3856,7 @@ div.titre {
 	padding-top: 5px;
     padding-bottom: 5px;
 	/* text-shadow: 1px 1px 2px #FFFFFF; */
-	<?php print (empty($conf->dol_optimize_smallscreen) ? '' : 'margin-top: 4px;'); ?>
+	<?php print(empty($conf->dol_optimize_smallscreen) ? '' : 'margin-top: 4px;'); ?>
 }
 div.titre, .secondary {
 	font-family: <?php print $fontlist ?>;
@@ -4425,7 +4514,7 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 .ui-widget {
     font-family:<?php echo $fontlist; ?>;
 }
-.ui-button { margin-left: -2px; <?php print (preg_match('/chrome/', $conf->browser->name) ? 'padding-top: 1px;' : ''); ?> }
+.ui-button { margin-left: -2px; <?php print(preg_match('/chrome/', $conf->browser->name) ? 'padding-top: 1px;' : ''); ?> }
 .ui-button-icon-only .ui-button-text { height: 8px; }
 .ui-button-icon-only .ui-button-text, .ui-button-icons-only .ui-button-text { padding: 2px 0px 6px 0px; }
 .ui-button-text
@@ -6130,6 +6219,10 @@ include dol_buildpath($path.'/theme/'.$theme.'/info-box.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/progress.inc.php', 0);
 include dol_buildpath($path.'/theme/eldy/timeline.inc.php', 0); // actually md use same style as eldy theme
 
-if (!empty($conf->global->THEME_CUSTOM_CSS)) print $conf->global->THEME_CUSTOM_CSS;
+if (!empty($conf->global->THEME_CUSTOM_CSS)) {
+    print $conf->global->THEME_CUSTOM_CSS;
+}
 
-if (is_object($db)) $db->close();
+if (is_object($db)) {
+    $db->close();
+}

@@ -2,22 +2,22 @@
 
 namespace Sabre\HTTP;
 
-class FunctionsTest extends \PHPUnit_Framework_TestCase {
+class FunctionsTest extends \PHPUnit_Framework_TestCase
+{
 
     /**
      * @dataProvider getHeaderValuesData
      */
-    function testGetHeaderValues($input, $output) {
-
+    public function testGetHeaderValues($input, $output)
+    {
         $this->assertEquals(
             $output,
             getHeaderValues($input)
         );
-
     }
 
-    function getHeaderValuesData() {
-
+    public function getHeaderValuesData()
+    {
         return [
             [
                 "a",
@@ -40,23 +40,21 @@ class FunctionsTest extends \PHPUnit_Framework_TestCase {
                 ["a", "b", "c", "d", "e"]
             ],
         ];
-
     }
 
     /**
      * @dataProvider preferData
      */
-    function testPrefer($input, $output) {
-
+    public function testPrefer($input, $output)
+    {
         $this->assertEquals(
             $output,
             parsePrefer($input)
         );
-
     }
 
-    function preferData() {
-
+    public function preferData()
+    {
         return [
             [
                 'foo; bar',
@@ -115,7 +113,5 @@ class FunctionsTest extends \PHPUnit_Framework_TestCase {
                 [],
             ]
         ];
-
     }
-
 }

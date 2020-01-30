@@ -54,7 +54,7 @@ class CupsPrintConnector implements PrintConnector
             throw new BadMethodCallException("'$dest' is not a printer on this system. " .
                 "Printers are: [" . implode(", ", $valid) . "]");
         }
-        $this->buffer = array ();
+        $this->buffer = array();
         $this->printerName = $dest;
     }
     
@@ -102,12 +102,12 @@ class CupsPrintConnector implements PrintConnector
      */
     protected function getCmdOutput($cmd)
     {
-        $descriptors = array (
-                1 => array (
+        $descriptors = array(
+                1 => array(
                         "pipe",
                         "w"
                 ),
-                2 => array (
+                2 => array(
                         "pipe",
                         "w"
                 )

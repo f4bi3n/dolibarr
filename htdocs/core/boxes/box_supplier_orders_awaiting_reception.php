@@ -30,7 +30,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_supplier_orders_awaiting_reception extends ModeleBoxes
 {
-
     public $boxcode = "supplierordersawaitingreception";
     public $boximg = "object_order";
     public $boxlabel="BoxLatestSupplierOrdersAwaitingReception";
@@ -81,8 +80,7 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
 
         $this->info_box_head = array('text' => $langs->trans("BoxTitleSupplierOrdersAwaitingReception", $max));
 
-        if ($user->rights->fournisseur->commande->lire)
-        {
+        if ($user->rights->fournisseur->commande->lire) {
             $sql = "SELECT s.nom as name, s.rowid as socid,";
             $sql.= " s.code_client, s.code_fournisseur, s.email,";
             $sql.= " s.logo,";
@@ -93,20 +91,28 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
             $sql.= " c.fk_statut";
             $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
             $sql.= ", ".MAIN_DB_PREFIX."commande_fournisseur as c";
-            if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+            if (!$user->rights->societe->client->voir && !$user->socid) {
+                $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+            }
             $sql.= " WHERE c.fk_soc = s.rowid";
             $sql.= " AND c.entity = ".$conf->entity;
 
             $sql.= " AND c.fk_statut = ".CommandeFournisseur::STATUS_ORDERSENT;
-            if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-            if ($user->socid) $sql.= " AND s.rowid = ".$user->socid;
-            if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql.= " ORDER BY c.date_commande DESC, c.ref DESC ";
-            else $sql.= " ORDER BY c.date_livraison ASC, c.fk_statut ASC ";
+            if (!$user->rights->societe->client->voir && !$user->socid) {
+                $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+            }
+            if ($user->socid) {
+                $sql.= " AND s.rowid = ".$user->socid;
+            }
+            if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) {
+                $sql.= " ORDER BY c.date_commande DESC, c.ref DESC ";
+            } else {
+                $sql.= " ORDER BY c.date_livraison ASC, c.fk_statut ASC ";
+            }
             $sql.= $this->db->plimit($max, 0);
 
             $result = $this->db->query($sql);
-            if ($result)
-            {
+            if ($result) {
                 $num = $this->db->num_rows($result);
 
                 $line = 0;
@@ -114,15 +120,15 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
                     $objp = $this->db->fetch_object($result);
                     $date=$this->db->jdate($objp->date_commande);
                     $date_livraison=$this->db->jdate($objp->date_livraison);
-					$datem=$this->db->jdate($objp->tms);
+                    $datem=$this->db->jdate($objp->tms);
 
                     $supplierorderstatic->date_livraison = $date_livraison;
                     $supplierorderstatic->statut = $objp->fk_statut;
 
-					$supplierorderstatic->id = $objp->rowid;
-					$supplierorderstatic->ref = $objp->ref;
+                    $supplierorderstatic->id = $objp->rowid;
+                    $supplierorderstatic->ref = $objp->ref;
 
-					$thirdpartytmp->id = $objp->socid;
+                    $thirdpartytmp->id = $objp->socid;
                     $thirdpartytmp->name = $objp->name;
                     $thirdpartytmp->email = $objp->email;
                     $thirdpartytmp->fournisseur = 1;
@@ -132,7 +138,7 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
                     $this->info_box_contents[$line][] = array(
                         'td' => 'class="nowraponall"',
                         'text' => $supplierorderstatic->getNomUrl(1),
-                    	'asis' => 1
+                        'asis' => 1
                     );
 
                     $this->info_box_contents[$line][] = array(
@@ -160,11 +166,12 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
                     $line++;
                 }
 
-                if ($num == 0)
+                if ($num == 0) {
                     $this->info_box_contents[$line][] = array(
                         'td' => 'class="center"',
                         'text' => $langs->trans("NoSupplierOrder"),
                     );
+                }
 
                 $this->db->free($result);
             } else {
@@ -174,9 +181,7 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
                     'text' => ($this->db->error().' sql='.$sql),
                 );
             }
-        }
-        else
-        {
+        } else {
             $this->info_box_contents[0][] = array(
                 'td' => 'class="nohover opacitymedium left"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")

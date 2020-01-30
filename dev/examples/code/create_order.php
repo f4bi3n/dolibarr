@@ -49,7 +49,10 @@ $langs->load("main");				// To load language file for default language
 
 // Load user and its permissions
 $result=$user->fetch('', 'admin');	// Load user for login 'admin'. Comment line to run as anonymous user.
-if (! $result > 0) { dol_print_error('', $user->error); exit; }
+if (! $result > 0) {
+    dol_print_error('', $user->error);
+    exit;
+}
 $user->getrights();
 
 
@@ -79,35 +82,29 @@ $com->lines[]=$orderline1;
 
 // Create order
 $idobject=$com->create($user);
-if ($idobject > 0)
-{
-	// Change status to validated
-	$result=$com->valid($user);
-	if ($result > 0) print "OK Object created with id ".$idobject."\n";
-	else
-	{
-		$error++;
-		dol_print_error($db, $com->error);
-	}
-}
-else
-{
-	$error++;
-	dol_print_error($db, $com->error);
+if ($idobject > 0) {
+    // Change status to validated
+    $result=$com->valid($user);
+    if ($result > 0) {
+        print "OK Object created with id ".$idobject."\n";
+    } else {
+        $error++;
+        dol_print_error($db, $com->error);
+    }
+} else {
+    $error++;
+    dol_print_error($db, $com->error);
 }
 
 
 // -------------------- END OF YOUR CODE --------------------
 
-if (! $error)
-{
-	$db->commit();
-	print '--- end ok'."\n";
-}
-else
-{
-	print '--- end error code='.$error."\n";
-	$db->rollback();
+if (! $error) {
+    $db->commit();
+    print '--- end ok'."\n";
+} else {
+    print '--- end error code='.$error."\n";
+    $db->rollback();
 }
 
 $db->close();

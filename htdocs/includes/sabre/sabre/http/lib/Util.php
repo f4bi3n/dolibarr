@@ -11,7 +11,8 @@ namespace Sabre\HTTP;
  * @deprecated All these functions moved to functions.php
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Util {
+class Util
+{
 
     /**
      * Content negotiation
@@ -21,10 +22,9 @@ class Util {
      * @param array $availableOptions
      * @return string|null
      */
-    static function negotiateContentType($acceptHeaderValue, array $availableOptions) {
-
+    public static function negotiateContentType($acceptHeaderValue, array $availableOptions)
+    {
         return negotiateContentType($acceptHeaderValue, $availableOptions);
-
     }
 
     /**
@@ -35,10 +35,9 @@ class Util {
      * @param array $availableOptions
      * @return string|null
      */
-    static function negotiate($acceptHeaderValue, array $availableOptions) {
-
+    public static function negotiate($acceptHeaderValue, array $availableOptions)
+    {
         return negotiateContentType($acceptHeaderValue, $availableOptions);
-
     }
 
     /**
@@ -50,10 +49,9 @@ class Util {
      * @param string $dateHeader
      * @return bool|DateTime
      */
-    static function parseHTTPDate($dateHeader) {
-
+    public static function parseHTTPDate($dateHeader)
+    {
         return parseDate($dateHeader);
-
     }
 
     /**
@@ -66,9 +64,8 @@ class Util {
      * @param \DateTime $dateTime
      * @return string
      */
-    static function toHTTPDate(\DateTime $dateTime) {
-
+    public static function toHTTPDate(\DateTime $dateTime)
+    {
         return toDate($dateTime);
-
     }
 }

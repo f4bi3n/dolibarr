@@ -15,8 +15,8 @@ use Sabre\DAVACL\IACL;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Collection extends BaseCollection implements IACL {
-
+class Collection extends BaseCollection implements IACL
+{
     use ACLTrait;
 
     /**
@@ -40,12 +40,11 @@ class Collection extends BaseCollection implements IACL {
      * @param array $acl ACL rules.
      * @param string|null $owner principal owner string.
      */
-    function __construct($path, array $acl, $owner = null) {
-
+    public function __construct($path, array $acl, $owner = null)
+    {
         parent::__construct($path);
         $this->acl = $acl;
         $this->owner = $owner;
-
     }
 
     /**
@@ -58,23 +57,22 @@ class Collection extends BaseCollection implements IACL {
      * @throws NotFound
      * @return \Sabre\DAV\INode
      */
-    function getChild($name) {
-
+    public function getChild($name)
+    {
         $path = $this->path . '/' . $name;
 
-        if (!file_exists($path)) throw new NotFound('File could not be located');
-        if ($name == '.' || $name == '..') throw new Forbidden('Permission denied to . and ..');
-
-        if (is_dir($path)) {
-
-            return new self($path, $this->acl, $this->owner);
-
-        } else {
-
-            return new File($path, $this->acl, $this->owner);
-
+        if (!file_exists($path)) {
+            throw new NotFound('File could not be located');
+        }
+        if ($name == '.' || $name == '..') {
+            throw new Forbidden('Permission denied to . and ..');
         }
 
+        if (is_dir($path)) {
+            return new self($path, $this->acl, $this->owner);
+        } else {
+            return new File($path, $this->acl, $this->owner);
+        }
     }
 
     /**
@@ -84,10 +82,9 @@ class Collection extends BaseCollection implements IACL {
      *
      * @return string|null
      */
-    function getOwner() {
-
+    public function getOwner()
+    {
         return $this->owner;
-
     }
 
     /**
@@ -102,10 +99,8 @@ class Collection extends BaseCollection implements IACL {
      *
      * @return array
      */
-    function getACL() {
-
+    public function getACL()
+    {
         return $this->acl;
-
     }
-
 }

@@ -50,12 +50,18 @@ $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
 $page = GETPOST('page', 'int');
-if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
+if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) {
+    $page = 0;
+}     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortfield) $sortfield = "e.ref";
-if (!$sortorder) $sortorder = "ASC";
+if (!$sortfield) {
+    $sortfield = "e.ref";
+}
+if (!$sortorder) {
+    $sortorder = "ASC";
+}
 
 // Security check
 $result = restrictedArea($user, 'stock');
@@ -87,23 +93,23 @@ $fieldstosearchall = array(
 
 // Definition of fields for list
 $arrayfields = array(
-	'stockqty'=>array('type'=>'float', 'label'=>'PhysicalStock', 'enabled'=>1, 'visible'=>-2, 'position'=>70),
-	'estimatedvalue'=>array('type'=>'float', 'label'=>'EstimatedStockValue', 'enabled'=>1, 'visible'=>-2, 'position'=>71),
-	'sellvalue'=>array('type'=>'float', 'label'=>'EstimatedStockValueSell', 'enabled'=>1, 'visible'=>-2, 'position'=>72),
+    'stockqty'=>array('type'=>'float', 'label'=>'PhysicalStock', 'enabled'=>1, 'visible'=>-2, 'position'=>70),
+    'estimatedvalue'=>array('type'=>'float', 'label'=>'EstimatedStockValue', 'enabled'=>1, 'visible'=>-2, 'position'=>71),
+    'sellvalue'=>array('type'=>'float', 'label'=>'EstimatedStockValueSell', 'enabled'=>1, 'visible'=>-2, 'position'=>72),
 );
-foreach ($object->fields as $key => $val)
-{
-	// If $val['visible']==0, then we never show the field
-	if (!empty($val['visible'])) $arrayfields['t.'.$key] = array('label'=>$val['label'], 'checked'=>(($val['visible'] < 0) ? 0 : 1), 'enabled'=>($val['enabled'] && ($val['visible'] != 3)), 'position'=>$val['position']);
+foreach ($object->fields as $key => $val) {
+    // If $val['visible']==0, then we never show the field
+    if (!empty($val['visible'])) {
+        $arrayfields['t.'.$key] = array('label'=>$val['label'], 'checked'=>(($val['visible'] < 0) ? 0 : 1), 'enabled'=>($val['enabled'] && ($val['visible'] != 3)), 'position'=>$val['position']);
+    }
 }
 // Extra fields
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
-{
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
-	{
-		if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
-			$arrayfields["ef.".$key] = array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
-	}
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0) {
+    foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
+        if (!empty($extrafields->attributes[$object->table_element]['list'][$key])) {
+            $arrayfields["ef.".$key] = array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
+        }
+    }
 }
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -113,41 +119,45 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
  * Actions
  */
 
-if (GETPOST('cancel', 'alpha')) { $action = 'list'; $massaction = ''; }
-if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction = ''; }
+if (GETPOST('cancel', 'alpha')) {
+    $action = 'list';
+    $massaction = '';
+}
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
+    $massaction = '';
+}
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+    setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
-if (empty($reshook))
-{
-	// Selection of new fields
-	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+if (empty($reshook)) {
+    // Selection of new fields
+    include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
-	// Purge search criteria
-	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
-	{
-	    $search_ref = "";
-	    $sall = "";
-	    $search_label = "";
-	    $search_status = "";
-	    $toselect = '';
-	    $search_array_options = array();
-	}
-	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
-		|| GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha'))
-	{
-		$massaction = ''; // Protection to avoid mass action if we force a new search during a mass action confirmation
-	}
+    // Purge search criteria
+    if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
+        $search_ref = "";
+        $sall = "";
+        $search_label = "";
+        $search_status = "";
+        $toselect = '';
+        $search_array_options = array();
+    }
+    if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
+        || GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha')) {
+        $massaction = ''; // Protection to avoid mass action if we force a new search during a mass action confirmation
+    }
 
-	// Mass actions
-	$objectclass = 'Entrepot';
-	$objectlabel = 'Warehouse';
-	$permissiontoread = $user->rights->stock->lire;
-	$permissiontodelete = $user->rights->stock->supprimer;
-	$uploaddir = $conf->stock->dir_output;
-	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+    // Mass actions
+    $objectclass = 'Entrepot';
+    $objectlabel = 'Warehouse';
+    $permissiontoread = $user->rights->stock->lire;
+    $permissiontodelete = $user->rights->stock->supprimer;
+    $uploaddir = $conf->stock->dir_output;
+    include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
 
@@ -170,9 +180,9 @@ $sql = "SELECT e.rowid, e.ref, e.statut, e.lieu, e.address, e.zip, e.town, e.fk_
 $sql .= " SUM(p.pmp * ps.reel) as estimatedvalue, SUM(p.price * ps.reel) as sellvalue, SUM(ps.reel) as stockqty";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
-	}
+    foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
+        $sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+    }
 }
 // Add fields from hooks
 $parameters = array();
@@ -180,14 +190,24 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $obje
 $sql .= $hookmanager->resPrint;
 $sql = preg_replace('/,\s*$/', '', $sql);
 $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as e";
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (e.rowid = ef.fk_object)";
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+    $sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (e.rowid = ef.fk_object)";
+}
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON e.rowid = ps.fk_entrepot";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON ps.fk_product = p.rowid";
 $sql .= " WHERE e.entity IN (".getEntity('stock').")";
-if ($search_ref) $sql .= natural_search("e.ref", $search_ref); // ref
-if ($search_label) $sql .= natural_search("e.lieu", $search_label); // label
-if ($search_status != '' && $search_status >= 0) $sql .= " AND e.statut = ".$search_status;
-if ($search_all) $sql .= natural_search(array_keys($fieldstosearchall), $search_all);
+if ($search_ref) {
+    $sql .= natural_search("e.ref", $search_ref);
+} // ref
+if ($search_label) {
+    $sql .= natural_search("e.lieu", $search_label);
+} // label
+if ($search_status != '' && $search_status >= 0) {
+    $sql .= " AND e.statut = ".$search_status;
+}
+if ($search_all) {
+    $sql .= natural_search(array_keys($fieldstosearchall), $search_all);
+}
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
@@ -197,60 +217,51 @@ $sql .= $hookmanager->resPrint;
 $sql .= " GROUP BY e.rowid, e.ref, e.statut, e.lieu, e.address, e.zip, e.town, e.fk_pays, e.fk_parent";
 $totalnboflines = 0;
 $result = $db->query($sql);
-if ($result)
-{
+if ($result) {
     $totalnboflines = $db->num_rows($result);
-	// fetch totals
-	$line = $total = $totalsell = $totalStock = 0;
-	while ($line < $totalnboflines)
-	{
-		$objp = $db->fetch_object($result);
-		$total += price2num($objp->estimatedvalue, 'MU');
-		$totalsell += price2num($objp->sellvalue, 'MU');
-		$totalStock += $objp->stockqty;
-		$line++;
-	}
+    // fetch totals
+    $line = $total = $totalsell = $totalStock = 0;
+    while ($line < $totalnboflines) {
+        $objp = $db->fetch_object($result);
+        $total += price2num($objp->estimatedvalue, 'MU');
+        $totalsell += price2num($objp->sellvalue, 'MU');
+        $totalStock += $objp->stockqty;
+        $line++;
+    }
 }
 $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
-{
-	$resql = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($resql);
-	if (($page * $limit) > $nbtotalofrecords)	// if total of record found is smaller than page * limit, goto and load page 0
-	{
-		$page = 0;
-		$offset = 0;
-	}
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+    $resql = $db->query($sql);
+    $nbtotalofrecords = $db->num_rows($resql);
+    if (($page * $limit) > $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
+        $page = 0;
+        $offset = 0;
+    }
 }
 // if total of record found is smaller than limit, no need to do paging and to restart another select with limits set.
-if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords)
-{
-	$num = $nbtotalofrecords;
-}
-else
-{
-	$sql .= $db->plimit($limit + 1, $offset);
+if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords) {
+    $num = $nbtotalofrecords;
+} else {
+    $sql .= $db->plimit($limit + 1, $offset);
 
-	$resql = $db->query($sql);
-	if (!$resql)
-	{
-		dol_print_error($db);
-		exit;
-	}
+    $resql = $db->query($sql);
+    if (!$resql) {
+        dol_print_error($db);
+        exit;
+    }
 
-	$num = $db->num_rows($resql);
+    $num = $db->num_rows($resql);
 }
 
 // Direct jump if only one record found
-if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all)
-{
-	$obj = $db->fetch_object($resql);
-	$id = $obj->rowid;
-	header("Location: ".DOL_URL_ROOT.'/product/stock/card.php?id='.$id);
-	exit;
+if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all) {
+    $obj = $db->fetch_object($resql);
+    $id = $obj->rowid;
+    header("Location: ".DOL_URL_ROOT.'/product/stock/card.php?id='.$id);
+    exit;
 }
 
 
@@ -262,27 +273,45 @@ llxHeader('', $title, $help_url);
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
 $param = '';
-if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
-if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
-if ($search_ref)	$param .= "&search_ref=".urlencode($search_ref);
-if ($search_label)	$param .= "&search_label=".urlencode($search_label);
-if ($search_status)	$param .= "&search_status=".urlencode($search_status);
-if ($search_all)	$param .= "&search_all=".urlencode($search_all);
-if ($optioncss != '')     $param .= '&optioncss='.urlencode($optioncss);
+if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+    $param .= '&contextpage='.urlencode($contextpage);
+}
+if ($limit > 0 && $limit != $conf->liste_limit) {
+    $param .= '&limit='.urlencode($limit);
+}
+if ($search_ref) {
+    $param .= "&search_ref=".urlencode($search_ref);
+}
+if ($search_label) {
+    $param .= "&search_label=".urlencode($search_label);
+}
+if ($search_status) {
+    $param .= "&search_status=".urlencode($search_status);
+}
+if ($search_all) {
+    $param .= "&search_all=".urlencode($search_all);
+}
+if ($optioncss != '') {
+    $param .= '&optioncss='.urlencode($optioncss);
+}
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 // List of mass actions available
 $arrayofmassactions = array(
-	//'presend'=>$langs->trans("SendByMail"),
-	//'builddoc'=>$langs->trans("PDFMerge"),
+    //'presend'=>$langs->trans("SendByMail"),
+    //'builddoc'=>$langs->trans("PDFMerge"),
 );
 //if ($user->rights->stock->supprimer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
+if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) {
+    $arrayofmassactions = array();
+}
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" id="searchFormList" method="POST" name="formulaire">';
-if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+if ($optioncss != '') {
+    print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+}
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="action" value="list">';
@@ -303,10 +332,11 @@ $trackid = 'ware'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 
-if ($search_all)
-{
-	foreach ($fieldstosearchall as $key => $val) $fieldstosearchall[$key] = $langs->trans($val);
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall).join(', ', $fieldstosearchall).'</div>';
+if ($search_all) {
+    foreach ($fieldstosearchall as $key => $val) {
+        $fieldstosearchall[$key] = $langs->trans($val);
+    }
+    print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall).join(', ', $fieldstosearchall).'</div>';
 }
 
 $moreforfilter = '';
@@ -316,14 +346,16 @@ $moreforfilter = '';
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
-if (empty($reshook)) $moreforfilter .= $hookmanager->resPrint;
-else $moreforfilter = $hookmanager->resPrint;
+if (empty($reshook)) {
+    $moreforfilter .= $hookmanager->resPrint;
+} else {
+    $moreforfilter = $hookmanager->resPrint;
+}
 
-if (!empty($moreforfilter))
-{
-	print '<div class="liste_titre liste_titre_bydiv centpercent">';
-	print $moreforfilter;
-	print '</div>';
+if (!empty($moreforfilter)) {
+    print '<div class="liste_titre liste_titre_bydiv centpercent">';
+    print $moreforfilter;
+    print '</div>';
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
@@ -391,99 +423,116 @@ print '</tr>'."\n";
 // --------------------------------------------------------------------
 $i = 0;
 $totalarray = array();
-if ($num)
-{
-	$warehouse = new Entrepot($db);
+if ($num) {
+    $warehouse = new Entrepot($db);
 
-	$totalarray = array();
-	while ($i < min($num, $limit))
-	{
-		$obj = $db->fetch_object($resql);
-		if (empty($obj)) break; // Should not happen
+    $totalarray = array();
+    while ($i < min($num, $limit)) {
+        $obj = $db->fetch_object($resql);
+        if (empty($obj)) {
+            break;
+        } // Should not happen
 
-		$warehouse->id = $obj->rowid;
-		$warehouse->ref = $obj->ref;
-		$warehouse->label = $obj->ref;
-		$warehouse->lieu = $obj->lieu;
-		$warehouse->fk_parent = $obj->fk_parent;
-		$warehouse->statut = $obj->statut;
+        $warehouse->id = $obj->rowid;
+        $warehouse->ref = $obj->ref;
+        $warehouse->label = $obj->ref;
+        $warehouse->lieu = $obj->lieu;
+        $warehouse->fk_parent = $obj->fk_parent;
+        $warehouse->statut = $obj->statut;
 
-		// Show here line of result
-		print '<tr class="oddeven">';
-		print '<td>'.$warehouse->getNomUrl(1).'</td>';
-		if (!$i) $totalarray['nbfield']++;
-		// Location
-		print '<td>'.$obj->lieu.'</td>';
-		if (!$i) $totalarray['nbfield']++;
+        // Show here line of result
+        print '<tr class="oddeven">';
+        print '<td>'.$warehouse->getNomUrl(1).'</td>';
+        if (!$i) {
+            $totalarray['nbfield']++;
+        }
+        // Location
+        print '<td>'.$obj->lieu.'</td>';
+        if (!$i) {
+            $totalarray['nbfield']++;
+        }
 
-		// Stock qty
-		print '<td class="right">'.price2num($obj->stockqty, 5).'</td>';
-		if (!$i) $totalarray['nbfield']++;
+        // Stock qty
+        print '<td class="right">'.price2num($obj->stockqty, 5).'</td>';
+        if (!$i) {
+            $totalarray['nbfield']++;
+        }
 
-		// PMP value
-		print '<td class="right">';
-		if (price2num($obj->estimatedvalue, 'MT')) print price(price2num($obj->estimatedvalue, 'MT'), 1);
-		else print '';
-		print '</td>';
-		if (!$i) $totalarray['nbfield']++;
+        // PMP value
+        print '<td class="right">';
+        if (price2num($obj->estimatedvalue, 'MT')) {
+            print price(price2num($obj->estimatedvalue, 'MT'), 1);
+        } else {
+            print '';
+        }
+        print '</td>';
+        if (!$i) {
+            $totalarray['nbfield']++;
+        }
 
-		// Selling value
-		print '<td class="right">';
-		if (empty($conf->global->PRODUIT_MULTIPRICES)) print price(price2num($obj->sellvalue, 'MT'), 1);
-		else
-		{
-			$htmltext = $langs->trans("OptionMULTIPRICESIsOn");
-			print $form->textwithtooltip($langs->trans("Variable"), $htmltext);
-		}
-		print '</td>';
-		if (!$i) $totalarray['nbfield']++;
+        // Selling value
+        print '<td class="right">';
+        if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+            print price(price2num($obj->sellvalue, 'MT'), 1);
+        } else {
+            $htmltext = $langs->trans("OptionMULTIPRICESIsOn");
+            print $form->textwithtooltip($langs->trans("Variable"), $htmltext);
+        }
+        print '</td>';
+        if (!$i) {
+            $totalarray['nbfield']++;
+        }
 
-		// Extra fields
-		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
-		// Fields from hook
-		$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj);
-		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object); // Note that $action and $object may have been modified by hook
-		print $hookmanager->resPrint;
+        // Extra fields
+        include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
+        // Fields from hook
+        $parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+        $reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object); // Note that $action and $object may have been modified by hook
+        print $hookmanager->resPrint;
 
-		// Status
-		print '<td class="right">'.$warehouse->LibStatut($obj->statut, 5).'</td>';
-		if (!$i) $totalarray['nbfield']++;
+        // Status
+        print '<td class="right">'.$warehouse->LibStatut($obj->statut, 5).'</td>';
+        if (!$i) {
+            $totalarray['nbfield']++;
+        }
 
-		// Action column
-		print '<td class="nowrap center">';
-		if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-		{
-			$selected = 0;
-			if (in_array($obj->rowid, $arrayofselected)) $selected = 1;
-			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
-		}
-		print '</td>';
-		if (!$i) $totalarray['nbfield']++;
+        // Action column
+        print '<td class="nowrap center">';
+        if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+            $selected = 0;
+            if (in_array($obj->rowid, $arrayofselected)) {
+                $selected = 1;
+            }
+            print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+        }
+        print '</td>';
+        if (!$i) {
+            $totalarray['nbfield']++;
+        }
 
-		print '</tr>'."\n";
+        print '</tr>'."\n";
 
 
-		$i++;
-	}
+        $i++;
+    }
 
-	if ($totalnboflines - $offset <= $limit)
-	{
-		print '<tr class="liste_total">';
-		print '<td colspan="2" class="right">'.$langs->trans("Total").'</td>';
-		print '<td class="right">'.price2num($totalStock, 5).'</td>';
-		print '<td class="right">'.price(price2num($total, 'MT'), 1, $langs, 0, 0, -1, $conf->currency).'</td>';
-		print '<td class="right">';
-		if (empty($conf->global->PRODUIT_MULTIPRICES)) print price(price2num($totalsell, 'MT'), 1, $langs, 0, 0, -1, $conf->currency);
-		else
-		{
-			$htmltext = $langs->trans("OptionMULTIPRICESIsOn");
-			print $form->textwithtooltip($langs->trans("Variable"), $htmltext);
-		}
-		print '</td>';
-		print '<td></td>';
-		print '<td></td>';
-		print "</tr>\n";
-	}
+    if ($totalnboflines - $offset <= $limit) {
+        print '<tr class="liste_total">';
+        print '<td colspan="2" class="right">'.$langs->trans("Total").'</td>';
+        print '<td class="right">'.price2num($totalStock, 5).'</td>';
+        print '<td class="right">'.price(price2num($total, 'MT'), 1, $langs, 0, 0, -1, $conf->currency).'</td>';
+        print '<td class="right">';
+        if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+            print price(price2num($totalsell, 'MT'), 1, $langs, 0, 0, -1, $conf->currency);
+        } else {
+            $htmltext = $langs->trans("OptionMULTIPRICESIsOn");
+            print $form->textwithtooltip($langs->trans("Variable"), $htmltext);
+        }
+        print '</td>';
+        print '<td></td>';
+        print '<td></td>';
+        print "</tr>\n";
+    }
 }
 
 $db->free($resql);
@@ -497,23 +546,24 @@ print '</div>'."\n";
 
 print '</form>'."\n";
 
-if (in_array('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $nbtotalofrecords))
-{
-	$hidegeneratedfilelistifempty = 1;
-	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) $hidegeneratedfilelistifempty = 0;
+if (in_array('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $nbtotalofrecords)) {
+    $hidegeneratedfilelistifempty = 1;
+    if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) {
+        $hidegeneratedfilelistifempty = 0;
+    }
 
-	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-	$formfile = new FormFile($db);
+    require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+    $formfile = new FormFile($db);
 
-	// Show list of available documents
-	$urlsource = $_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
-	$urlsource .= str_replace('&amp;', '&', $param);
+    // Show list of available documents
+    $urlsource = $_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
+    $urlsource .= str_replace('&amp;', '&', $param);
 
-	$filedir = $diroutputmassaction;
-	$genallowed = $user->rights->mymodule->read;
-	$delallowed = $user->rights->mymodule->create;
+    $filedir = $diroutputmassaction;
+    $genallowed = $user->rights->mymodule->read;
+    $delallowed = $user->rights->mymodule->create;
 
-	print $formfile->showdocuments('massfilesarea_mymodule', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
+    print $formfile->showdocuments('massfilesarea_mymodule', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 }
 
 // End of page

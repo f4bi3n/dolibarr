@@ -76,9 +76,9 @@ class Validator implements iValidate
     public static function uuid($input, ValidationInfo $info = null)
     {
         if (is_string($input) && preg_match(
-                '/^\{?[0-9a-f]{8}\-?[0-9a-f]{4}\-?[0-9a-f]{4}\-?[0-9a-f]{4}\-?[0-9a-f]{12}\}?$/i',
-                $input
-            )) {
+            '/^\{?[0-9a-f]{8}\-?[0-9a-f]{4}\-?[0-9a-f]{4}\-?[0-9a-f]{4}\-?[0-9a-f]{12}\}?$/i',
+            $input
+        )) {
             return strtolower($input);
         }
         throw new Invalid('Expecting a Universally Unique IDentifier (UUID) string.');
@@ -302,10 +302,13 @@ class Validator implements iValidate
     public static function datetime($input, ValidationInfo $info = null)
     {
         if (
-            preg_match('/^(?P<year>19\d\d|20\d\d)\-(?P<month>0[1-9]|1[0-2])\-' .
+            preg_match(
+                '/^(?P<year>19\d\d|20\d\d)\-(?P<month>0[1-9]|1[0-2])\-' .
                 '(?P<day>0\d|[1-2]\d|3[0-1]) (?P<h>0\d|1\d|2[0-3]' .
                 ')\:(?P<i>[0-5][0-9])\:(?P<s>[0-5][0-9])$/',
-                $input, $date)
+                $input,
+                $date
+            )
             && checkdate($date['month'], $date['day'], $date['year'])
         ) {
             return $input;
@@ -369,7 +372,8 @@ class Validator implements iValidate
     {
         if (preg_match(
             '/^([1-9]|1[0-2]|0[1-9]){1}(:[0-5][0-9])?\s?([aApP][mM]{1})?$/',
-            $input)
+            $input
+        )
         ) {
             return $input;
         }
@@ -433,12 +437,14 @@ class Validator implements iValidate
         try {
             if (is_null($input)) {
                 if ($info->required) {
-                    throw new RestException (400,
-                        "$name is required.");
+                    throw new RestException(
+                        400,
+                        "$name is required."
+                    );
                 }
                 return null;
             }
-            $error = isset ($info->message)
+            $error = isset($info->message)
                 ? $info->message
                 : "Invalid value specified for $name";
 
@@ -465,21 +471,21 @@ class Validator implements iValidate
                         // just continue
                     }
                 }
-                throw new RestException (400, $error);
+                throw new RestException(400, $error);
             }
 
             //patterns are supported only for non numeric types
-            if (isset ($info->pattern)
+            if (isset($info->pattern)
                 && $info->type != 'int'
                 && $info->type != 'float'
                 && $info->type != 'number'
             ) {
                 if (!preg_match($info->pattern, $input)) {
-                    throw new RestException (400, $error);
+                    throw new RestException(400, $error);
                 }
             }
 
-            if (isset ($info->choice)) {
+            if (isset($info->choice)) {
                 if (!$info->required && empty($input)) {
                     //since its optional, and empty let it pass.
                     $input = null;
@@ -487,12 +493,12 @@ class Validator implements iValidate
                     foreach ($input as $i) {
                         if (!in_array($i, $info->choice)) {
                             $error .= ". Expected one of (" . implode(',', $info->choice) . ").";
-                            throw new RestException (400, $error);
+                            throw new RestException(400, $error);
                         }
                     }
                 } elseif (!in_array($input, $info->choice)) {
                     $error .= ". Expected one of (" . implode(',', $info->choice) . ").";
-                    throw new RestException (400, $error);
+                    throw new RestException(400, $error);
                 }
             }
 
@@ -509,9 +515,9 @@ class Validator implements iValidate
             }
 
             switch ($info->type) {
-                case 'int' :
-                case 'float' :
-                case 'number' :
+                case 'int':
+                case 'float':
+                case 'number':
                     if (!is_numeric($input)) {
                         $error .= '. Expecting '
                             . ($info->type == 'int' ? 'integer' : 'numeric')
@@ -528,7 +534,7 @@ class Validator implements iValidate
                     } else {
                         $r = $info->numericValue($input);
                     }
-                    if (isset ($info->min) && $r < $info->min) {
+                    if (isset($info->min) && $r < $info->min) {
                         if ($info->fix) {
                             $r = $info->min;
                         } else {
@@ -536,7 +542,7 @@ class Validator implements iValidate
                             break;
                         }
                     }
-                    if (isset ($info->max) && $r > $info->max) {
+                    if (isset($info->max) && $r > $info->max) {
                         if ($info->fix) {
                             $r = $info->max;
                         } else {
@@ -546,10 +552,12 @@ class Validator implements iValidate
                     }
                     return $r;
 
-                case 'string' :
-                case 'password' : //password fields with string
-                case 'search' : //search field with string
-                    if (is_bool($input)) $input = $input ? 'true' : 'false';
+                case 'string':
+                case 'password': //password fields with string
+                case 'search': //search field with string
+                    if (is_bool($input)) {
+                        $input = $input ? 'true' : 'false';
+                    }
                     if (!is_string($input)) {
                         $error .= '. Expecting alpha numeric value';
                         break;
@@ -559,7 +567,7 @@ class Validator implements iValidate
                         break;
                     }
                     $r = strlen($input);
-                    if (isset ($info->min) && $r < $info->min) {
+                    if (isset($info->min) && $r < $info->min) {
                         if ($info->fix) {
                             $input = str_pad($input, $info->min, $input);
                         } else {
@@ -568,7 +576,7 @@ class Validator implements iValidate
                             break;
                         }
                     }
-                    if (isset ($info->max) && $r > $info->max) {
+                    if (isset($info->max) && $r > $info->max) {
                         if ($info->fix) {
                             $input = substr($input, 0, $info->max);
                         } else {
@@ -632,12 +640,12 @@ class Validator implements iValidate
                             break;
                         }
                         $r = count($input);
-                        if (isset ($info->min) && $r < $info->min) {
+                        if (isset($info->min) && $r < $info->min) {
                             $item = $info->max > 1 ? 'items' : 'item';
                             $error .= ". Minimum $info->min $item required.";
                             break;
                         }
-                        if (isset ($info->max) && $r > $info->max) {
+                        if (isset($info->max) && $r > $info->max) {
                             if ($info->fix) {
                                 $input = array_slice($input, 0, $info->max);
                             } else {
@@ -673,7 +681,7 @@ class Validator implements iValidate
                 case 'unknown':
                 case null: //treat as unknown
                     return $input;
-                default :
+                default:
                     if (!is_array($input)) {
                         break;
                     }
@@ -686,7 +694,8 @@ class Validator implements iValidate
                             in_array('Luracast\\Restler\\Data\\iValueObject', $implements)
                         ) {
                             return call_user_func(
-                                "{$info->type}::__set_state", $input
+                                "{$info->type}::__set_state",
+                                $input
                             );
                         }
                         $class = $info->type;
@@ -715,7 +724,7 @@ class Validator implements iValidate
                         return $instance;
                     }
             }
-            throw new RestException (400, $error);
+            throw new RestException(400, $error);
         } catch (\Exception $e) {
             static::$exceptions[$info->name] = $e;
             if (static::$holdException) {

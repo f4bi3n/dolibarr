@@ -38,33 +38,32 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 $langs->loadLangs(array("compta", "bills", "admin", "accountancy", "salaries", "loan"));
 
 // Security check
-if (empty($user->rights->accounting->chartofaccount))
-{
-	accessforbidden();
+if (empty($user->rights->accounting->chartofaccount)) {
+    accessforbidden();
 }
 
 $action = GETPOST('action', 'aZ09');
 
 
-$list_account_main = array (
+$list_account_main = array(
     'ACCOUNTING_ACCOUNT_CUSTOMER',
     'ACCOUNTING_ACCOUNT_SUPPLIER',
     'SALARIES_ACCOUNTING_ACCOUNT_PAYMENT',
 );
 
-$list_account = array ();
+$list_account = array();
 $list_account[] = '---Product---';
 $list_account[] = 'ACCOUNTING_PRODUCT_BUY_ACCOUNT';
 $list_account[] = 'ACCOUNTING_PRODUCT_SOLD_ACCOUNT';
 if ($mysoc->isInEEC()) {
-	$list_account[] = 'ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT';
+    $list_account[] = 'ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT';
 }
 $list_account[] = 'ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT';
 $list_account[] = '---Service---';
 $list_account[] = 'ACCOUNTING_SERVICE_BUY_ACCOUNT';
 $list_account[] = 'ACCOUNTING_SERVICE_SOLD_ACCOUNT';
 if ($mysoc->isInEEC()) {
-	$list_account[] = 'ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT';
+    $list_account[] = 'ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT';
 }
 $list_account[] = 'ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT';
 $list_account[] = '---Other---';
@@ -73,18 +72,18 @@ $list_account[] = 'ACCOUNTING_VAT_SOLD_ACCOUNT';
 $list_account[] = 'ACCOUNTING_VAT_PAY_ACCOUNT';
 $list_account[] = 'ACCOUNTING_ACCOUNT_SUSPENSE';
 if ($conf->banque->enabled) {
-	$list_account[] = 'ACCOUNTING_ACCOUNT_TRANSFER_CASH';
+    $list_account[] = 'ACCOUNTING_ACCOUNT_TRANSFER_CASH';
 }
 if ($conf->don->enabled) {
-	$list_account[] = 'DONATION_ACCOUNTINGACCOUNT';
+    $list_account[] = 'DONATION_ACCOUNTINGACCOUNT';
 }
 if ($conf->adherent->enabled) {
-	$list_account[] = 'ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT';
+    $list_account[] = 'ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT';
 }
 if ($conf->loan->enabled) {
-	$list_account[] = 'LOAN_ACCOUNTING_ACCOUNT_CAPITAL';
-	$list_account[] = 'LOAN_ACCOUNTING_ACCOUNT_INTEREST';
-	$list_account[] = 'LOAN_ACCOUNTING_ACCOUNT_INSURANCE';
+    $list_account[] = 'LOAN_ACCOUNTING_ACCOUNT_CAPITAL';
+    $list_account[] = 'LOAN_ACCOUNTING_ACCOUNT_INTEREST';
+    $list_account[] = 'LOAN_ACCOUNTING_ACCOUNT_INSURANCE';
 }
 
 /*
@@ -93,8 +92,7 @@ if ($conf->loan->enabled) {
 
 $accounting_mode = empty($conf->global->ACCOUNTING_MODE) ? 'RECETTES-DEPENSES' : $conf->global->ACCOUNTING_MODE;
 
-if (GETPOST('change_chart', 'alpha'))
-{
+if (GETPOST('change_chart', 'alpha')) {
     $chartofaccounts = GETPOST('chartofaccounts', 'int');
 
     if (!empty($chartofaccounts)) {
@@ -107,34 +105,34 @@ if (GETPOST('change_chart', 'alpha'))
 }
 
 if ($action == 'update') {
-	$error = 0;
+    $error = 0;
 
-	foreach ($list_account_main as $constname) {
-		$constvalue = GETPOST($constname, 'alpha');
+    foreach ($list_account_main as $constname) {
+        $constvalue = GETPOST($constname, 'alpha');
 
-		if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
-			$error ++;
-		}
-	}
+        if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+            $error ++;
+        }
+    }
 
-	foreach ($list_account as $constname) {
-		$reg=array();
-		if (preg_match('/---(.*)---/', $constname, $reg)) {	// This is a separator
-			continue;
-		}
+    foreach ($list_account as $constname) {
+        $reg=array();
+        if (preg_match('/---(.*)---/', $constname, $reg)) {	// This is a separator
+            continue;
+        }
 
-		$constvalue = GETPOST($constname, 'alpha');
+        $constvalue = GETPOST($constname, 'alpha');
 
-	    if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
-	        $error ++;
-	    }
-	}
+        if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+            $error ++;
+        }
+    }
 
-	if (! $error) {
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	} else {
-		setEventMessages($langs->trans("Error"), null, 'errors');
-	}
+    if (! $error) {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    } else {
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
 }
 
 
@@ -190,21 +188,20 @@ print '<br>';
 print '<table class="noborder centpercent">';
 
 foreach ($list_account as $key) {
-	$reg=array();
-	if (preg_match('/---(.*)---/', $key, $reg)) {
-		print '<tr class="liste_titre"><td>'.$langs->trans($reg[1]).'</td><td></td></tr>';
-	}
-	else {
-		print '<tr class="oddeven value">';
-		// Param
-		$label = $langs->trans($key);
-		print '<td width="50%">' . $label . '</td>';
-		// Value
-		print '<td>';  // Do not force class=right, or it align also the content of the select box
-		print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1);
-		print '</td>';
-		print '</tr>';
-	}
+    $reg=array();
+    if (preg_match('/---(.*)---/', $key, $reg)) {
+        print '<tr class="liste_titre"><td>'.$langs->trans($reg[1]).'</td><td></td></tr>';
+    } else {
+        print '<tr class="oddeven value">';
+        // Param
+        $label = $langs->trans($key);
+        print '<td width="50%">' . $label . '</td>';
+        // Value
+        print '<td>';  // Do not force class=right, or it align also the content of the select box
+        print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1);
+        print '</td>';
+        print '</tr>';
+    }
 }
 
 

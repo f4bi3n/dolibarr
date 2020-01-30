@@ -5,8 +5,8 @@ namespace Sabre\CardDAV\Backend;
 use Sabre\CardDAV;
 use Sabre\DAV\PropPatch;
 
-abstract class AbstractPDOTest extends \PHPUnit_Framework_TestCase {
-
+abstract class AbstractPDOTest extends \PHPUnit_Framework_TestCase
+{
     use \Sabre\DAV\DbTestHelperTrait;
 
     /**
@@ -14,8 +14,8 @@ abstract class AbstractPDOTest extends \PHPUnit_Framework_TestCase {
      */
     protected $backend;
 
-    function setUp() {
-
+    public function setUp()
+    {
         $this->dropTables([
             'addressbooks',
             'cards',
@@ -27,11 +27,10 @@ abstract class AbstractPDOTest extends \PHPUnit_Framework_TestCase {
         $this->backend = new PDO($pdo);
         $pdo->exec("INSERT INTO addressbooks (principaluri, displayname, uri, description, synctoken) VALUES ('principals/user1', 'book1', 'book1', 'addressbook 1', 1)");
         $pdo->exec("INSERT INTO cards (addressbookid, carddata, uri, lastmodified, etag, size) VALUES (1, 'card1', 'card1', 0, '" . md5('card1') . "', 5)");
-
     }
 
-    function testGetAddressBooksForUser() {
-
+    public function testGetAddressBooksForUser()
+    {
         $result = $this->backend->getAddressBooksForUser('principals/user1');
 
         $expected = [
@@ -47,11 +46,10 @@ abstract class AbstractPDOTest extends \PHPUnit_Framework_TestCase {
         ];
 
         $this->assertEquals($expected, $result);
-
     }
 
-    function testUpdateAddressBookInvalidProp() {
-
+    public function testUpdateAddressBookInvalidProp()
+    {
         $propPatch = new PropPatch([
             '{DAV:}displayname'                                           => 'updated',
             '{' . CardDAV\Plugin::NS_CARDDAV . '}addressbook-description' => 'updated',
@@ -78,11 +76,10 @@ abstract class AbstractPDOTest extends \PHPUnit_Framework_TestCase {
         ];
 
         $this->assertEquals($expected, $result);
-
     }
 
-    function testUpdateAddressBookNoProps() {
-
+    public function testUpdateAddressBookNoProps()
+    {
         $propPatch = new PropPatch([
         ]);
 
@@ -105,12 +102,10 @@ abstract class AbstractPDOTest extends \PHPUnit_Framework_TestCase {
         ];
 
         $this->assertEquals($expected, $result);
-
-
     }
 
-    function testUpdateAddressBookSuccess() {
-
+    public function testUpdateAddressBookSuccess()
+    {
         $propPatch = new PropPatch([
             '{DAV:}displayname'                                           => 'updated',
             '{' . CardDAV\Plugin::NS_CARDDAV . '}addressbook-description' => 'updated',
@@ -136,31 +131,27 @@ abstract class AbstractPDOTest extends \PHPUnit_Framework_TestCase {
         ];
 
         $this->assertEquals($expected, $result);
-
-
     }
 
-    function testDeleteAddressBook() {
-
+    public function testDeleteAddressBook()
+    {
         $this->backend->deleteAddressBook(1);
 
         $this->assertEquals([], $this->backend->getAddressBooksForUser('principals/user1'));
-
     }
 
     /**
      * @expectedException Sabre\DAV\Exception\BadRequest
      */
-    function testCreateAddressBookUnsupportedProp() {
-
+    public function testCreateAddressBookUnsupportedProp()
+    {
         $this->backend->createAddressBook('principals/user1', 'book2', [
             '{DAV:}foo' => 'bar',
         ]);
-
     }
 
-    function testCreateAddressBookSuccess() {
-
+    public function testCreateAddressBookSuccess()
+    {
         $this->backend->createAddressBook('principals/user1', 'book2', [
             '{DAV:}displayname'                                           => 'book2',
             '{' . CardDAV\Plugin::NS_CARDDAV . '}addressbook-description' => 'addressbook 2',
@@ -188,11 +179,10 @@ abstract class AbstractPDOTest extends \PHPUnit_Framework_TestCase {
         ];
         $result = $this->backend->getAddressBooksForUser('principals/user1');
         $this->assertEquals($expected, $result);
-
     }
 
-    function testGetCards() {
-
+    public function testGetCards()
+    {
         $result = $this->backend->getCards(1);
 
         $expected = [
@@ -206,11 +196,10 @@ abstract class AbstractPDOTest extends \PHPUnit_Framework_TestCase {
         ];
 
         $this->assertEquals($expected, $result);
-
     }
 
-    function testGetCard() {
-
+    public function testGetCard()
+    {
         $result = $this->backend->getCard(1, 'card1');
 
         $expected = [
@@ -227,14 +216,13 @@ abstract class AbstractPDOTest extends \PHPUnit_Framework_TestCase {
         }
 
         $this->assertEquals($expected, $result);
-
     }
 
     /**
      * @depends testGetCard
      */
-    function testCreateCard() {
-
+    public function testCreateCard()
+    {
         $result = $this->backend->createCard(1, 'card2', 'data2');
         $this->assertEquals('"' . md5('data2') . '"', $result);
         $result = $this->backend->getCard(1, 'card2');
@@ -244,14 +232,13 @@ abstract class AbstractPDOTest extends \PHPUnit_Framework_TestCase {
             $result['carddata'] = stream_get_contents($result['carddata']);
         }
         $this->assertEquals('data2', $result['carddata']);
-
     }
 
     /**
      * @depends testCreateCard
      */
-    function testGetMultiple() {
-
+    public function testGetMultiple()
+    {
         $result = $this->backend->createCard(1, 'card2', 'data2');
         $result = $this->backend->createCard(1, 'card3', 'data3');
         $check = [
@@ -278,38 +265,32 @@ abstract class AbstractPDOTest extends \PHPUnit_Framework_TestCase {
         $result = $this->backend->getMultipleCards(1, ['card1', 'card2', 'card3']);
 
         foreach ($check as $index => $node) {
-
             foreach ($node as $k => $v) {
-
                 $expected = $v;
                 $actual = $result[$index][$k];
 
                 switch ($k) {
-                    case 'lastmodified' :
+                    case 'lastmodified':
                         $this->assertInternalType('int', $actual);
                         break;
-                    case 'carddata' :
+                    case 'carddata':
                         if (is_resource($actual)) {
                             $actual = stream_get_contents($actual);
                         }
-                        // No break intended.
-                    default :
+                        // no break intended.
+                    default:
                         $this->assertEquals($expected, $actual);
                         break;
                 }
-
             }
-
         }
-
-
     }
 
     /**
      * @depends testGetCard
      */
-    function testUpdateCard() {
-
+    public function testUpdateCard()
+    {
         $result = $this->backend->updateCard(1, 'card1', 'newdata');
         $this->assertEquals('"' . md5('newdata') . '"', $result);
 
@@ -319,22 +300,20 @@ abstract class AbstractPDOTest extends \PHPUnit_Framework_TestCase {
             $result['carddata'] = stream_get_contents($result['carddata']);
         }
         $this->assertEquals('newdata', $result['carddata']);
-
     }
 
     /**
      * @depends testGetCard
      */
-    function testDeleteCard() {
-
+    public function testDeleteCard()
+    {
         $this->backend->deleteCard(1, 'card1');
         $result = $this->backend->getCard(1, 'card1');
         $this->assertFalse($result);
-
     }
 
-    function testGetChanges() {
-
+    public function testGetChanges()
+    {
         $backend = $this->backend;
         $id = $backend->createAddressBook(
             'principals/user1',
@@ -368,6 +347,5 @@ abstract class AbstractPDOTest extends \PHPUnit_Framework_TestCase {
             'deleted'   => ["card2.ics"],
             "added"     => ["card3.ics"],
         ], $result);
-
     }
 }

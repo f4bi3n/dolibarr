@@ -2,24 +2,22 @@
 
 namespace Sabre\VObject;
 
-class DocumentTest extends \PHPUnit_Framework_TestCase {
-
-    function testGetDocumentType() {
-
+class DocumentTest extends \PHPUnit_Framework_TestCase
+{
+    public function testGetDocumentType()
+    {
         $doc = new MockDocument();
         $this->assertEquals(Document::UNKNOWN, $doc->getDocumentType());
-
     }
 
-    function testConstruct() {
-
+    public function testConstruct()
+    {
         $doc = new MockDocument('VLIST');
         $this->assertEquals('VLIST', $doc->name);
-
     }
 
-    function testCreateComponent() {
-
+    public function testCreateComponent()
+    {
         $vcal = new Component\VCalendar([], false);
 
         $event = $vcal->createComponent('VEVENT');
@@ -39,11 +37,10 @@ class DocumentTest extends \PHPUnit_Framework_TestCase {
 
         $out = $vcal->serialize();
         $this->assertEquals("BEGIN:VCALENDAR\r\nBEGIN:VEVENT\r\nX-PROP;X-PARAM=3:1234256\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n", $out);
-
     }
 
-    function testCreate() {
-
+    public function testCreate()
+    {
         $vcal = new Component\VCalendar([], false);
 
         $event = $vcal->create('VEVENT');
@@ -51,19 +48,17 @@ class DocumentTest extends \PHPUnit_Framework_TestCase {
 
         $prop = $vcal->create('CALSCALE');
         $this->assertInstanceOf('Sabre\VObject\Property\Text', $prop);
-
     }
 
-    function testGetClassNameForPropertyValue() {
-
+    public function testGetClassNameForPropertyValue()
+    {
         $vcal = new Component\VCalendar([], false);
         $this->assertEquals('Sabre\\VObject\\Property\\Text', $vcal->getClassNameForPropertyValue('TEXT'));
         $this->assertNull($vcal->getClassNameForPropertyValue('FOO'));
-
     }
 
-    function testDestroy() {
-
+    public function testDestroy()
+    {
         $vcal = new Component\VCalendar([], false);
         $event = $vcal->createComponent('VEVENT');
 
@@ -79,13 +74,10 @@ class DocumentTest extends \PHPUnit_Framework_TestCase {
         $vcal->destroy();
 
         $this->assertNull($prop->parent);
-
-
     }
-
 }
 
 
-class MockDocument extends Document {
-
+class MockDocument extends Document
+{
 }

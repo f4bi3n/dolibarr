@@ -25,8 +25,9 @@ class Text
      */
     public static function contains($haystack, $needle, $caseSensitive = true)
     {
-        if (empty($needle))
+        if (empty($needle)) {
             return true;
+        }
         return $caseSensitive
             ? strpos($haystack, $needle) !== false
             : stripos($haystack, $needle) !== false;
@@ -93,4 +94,4 @@ class Text
     {
         return preg_replace('/[^a-zA-Z]+/', '-', strtolower(strip_tags($name)));
     }
-} 
+}

@@ -2,12 +2,14 @@
 
 namespace Sabre\HTTP;
 
-class URLUtilTest extends \PHPUnit_Framework_TestCase{
-
-    function testEncodePath() {
-
+class URLUtilTest extends \PHPUnit_Framework_TestCase
+{
+    public function testEncodePath()
+    {
         $str = '';
-        for ($i = 0;$i < 128;$i++) $str .= chr($i);
+        for ($i = 0;$i < 128;$i++) {
+            $str .= chr($i);
+        }
 
         $newStr = URLUtil::encodePath($str);
 
@@ -20,16 +22,18 @@ class URLUtilTest extends \PHPUnit_Framework_TestCase{
             'PQRSTUVWXYZ%5b%5c%5d%5e_' .
             '%60abcdefghijklmno' .
             'pqrstuvwxyz%7b%7c%7d~%7f',
-            $newStr);
+            $newStr
+        );
 
         $this->assertEquals($str, URLUtil::decodePath($newStr));
-
     }
 
-    function testEncodePathSegment() {
-
+    public function testEncodePathSegment()
+    {
         $str = '';
-        for ($i = 0;$i < 128;$i++) $str .= chr($i);
+        for ($i = 0;$i < 128;$i++) {
+            $str .= chr($i);
+        }
 
         $newStr = URLUtil::encodePathSegment($str);
 
@@ -44,40 +48,37 @@ class URLUtilTest extends \PHPUnit_Framework_TestCase{
             'PQRSTUVWXYZ%5b%5c%5d%5e_' .
             '%60abcdefghijklmno' .
             'pqrstuvwxyz%7b%7c%7d~%7f',
-            $newStr);
+            $newStr
+        );
 
         $this->assertEquals($str, URLUtil::decodePathSegment($newStr));
-
     }
 
-    function testDecode() {
-
+    public function testDecode()
+    {
         $str = 'Hello%20Test+Test2.txt';
         $newStr = URLUtil::decodePath($str);
         $this->assertEquals('Hello Test+Test2.txt', $newStr);
-
     }
 
     /**
      * @depends testDecode
      */
-    function testDecodeUmlaut() {
-
+    public function testDecodeUmlaut()
+    {
         $str = 'Hello%C3%BC.txt';
         $newStr = URLUtil::decodePath($str);
         $this->assertEquals("Hello\xC3\xBC.txt", $newStr);
-
     }
 
     /**
      * @depends testDecodeUmlaut
      */
-    function testDecodeUmlautLatin1() {
-
+    public function testDecodeUmlautLatin1()
+    {
         $str = 'Hello%FC.txt';
         $newStr = URLUtil::decodePath($str);
         $this->assertEquals("Hello\xC3\xBC.txt", $newStr);
-
     }
 
     /**
@@ -85,16 +86,15 @@ class URLUtilTest extends \PHPUnit_Framework_TestCase{
      *
      * @depends testDecode
      */
-    function testDecodeAccentsWindows7() {
-
+    public function testDecodeAccentsWindows7()
+    {
         $str = '/webdav/%C3%A0fo%C3%B3';
         $newStr = URLUtil::decodePath($str);
         $this->assertEquals(strtolower($str), URLUtil::encodePath($newStr));
-
     }
 
-    function testSplitPath() {
-
+    public function testSplitPath()
+    {
         $strings = [
 
             // input       // expected result
@@ -118,29 +118,24 @@ class URLUtilTest extends \PHPUnit_Framework_TestCase{
         ];
 
         foreach ($strings as $input => $expected) {
-
             $output = URLUtil::splitPath($input);
             $this->assertEquals($expected, $output, 'The expected output for \'' . $input . '\' was incorrect');
-
-
         }
-
     }
 
     /**
      * @dataProvider resolveData
      */
-    function testResolve($base, $update, $expected) {
-
+    public function testResolve($base, $update, $expected)
+    {
         $this->assertEquals(
             $expected,
             URLUtil::resolve($base, $update)
         );
-
     }
 
-    function resolveData() {
-
+    public function resolveData()
+    {
         return [
             [
                 'http://example.org/foo/baz',
@@ -181,7 +176,5 @@ class URLUtilTest extends \PHPUnit_Framework_TestCase{
                 'http://example.org/foo/bar/bar2/bar3',
             ],
         ];
-
     }
-
 }

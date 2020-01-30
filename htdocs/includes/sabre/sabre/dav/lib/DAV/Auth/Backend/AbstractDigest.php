@@ -18,7 +18,8 @@ use Sabre\HTTP\ResponseInterface;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-abstract class AbstractDigest implements BackendInterface {
+abstract class AbstractDigest implements BackendInterface
+{
 
     /**
      * Authentication Realm.
@@ -47,10 +48,9 @@ abstract class AbstractDigest implements BackendInterface {
      * @param string $realm
      * @return void
      */
-    function setRealm($realm) {
-
+    public function setRealm($realm)
+    {
         $this->realm = $realm;
-
     }
 
     /**
@@ -62,7 +62,7 @@ abstract class AbstractDigest implements BackendInterface {
      * @param string $username
      * @return string|null
      */
-    abstract function getDigestHash($realm, $username);
+    abstract public function getDigestHash($realm, $username);
 
     /**
      * When this method is called, the backend must check if authentication was
@@ -92,8 +92,8 @@ abstract class AbstractDigest implements BackendInterface {
      * @param ResponseInterface $response
      * @return array
      */
-    function check(RequestInterface $request, ResponseInterface $response) {
-
+    public function check(RequestInterface $request, ResponseInterface $response)
+    {
         $digest = new HTTP\Auth\Digest(
             $this->realm,
             $request,
@@ -123,7 +123,6 @@ abstract class AbstractDigest implements BackendInterface {
         }
 
         return [true, $this->principalPrefix . $username];
-
     }
 
     /**
@@ -147,8 +146,8 @@ abstract class AbstractDigest implements BackendInterface {
      * @param ResponseInterface $response
      * @return void
      */
-    function challenge(RequestInterface $request, ResponseInterface $response) {
-
+    public function challenge(RequestInterface $request, ResponseInterface $response)
+    {
         $auth = new HTTP\Auth\Digest(
             $this->realm,
             $request,
@@ -162,7 +161,5 @@ abstract class AbstractDigest implements BackendInterface {
         // Preventing the digest utility from modifying the http status code,
         // this should be handled by the main plugin.
         $response->setStatus($oldStatus);
-
     }
-
 }

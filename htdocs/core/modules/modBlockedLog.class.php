@@ -168,9 +168,9 @@ class modBlockedLog extends DolibarrModules
         $sql = array();
 
         // If already used, we add an entry to show we enable module
-           require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
+        require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 
-           $object=new stdClass();
+        $object=new stdClass();
         $object->id = 1;
         $object->element = 'module';
         $object->ref = 'systemevent';
@@ -179,8 +179,7 @@ class modBlockedLog extends DolibarrModules
 
         $b=new BlockedLog($this->db);
         $result = $b->setObjectData($object, 'MODULE_SET', 0);
-        if ($result < 0)
-        {
+        if ($result < 0) {
             $this->error = $b->error;
             $this->errors = $b->erros;
             return 0;
@@ -206,7 +205,6 @@ class modBlockedLog extends DolibarrModules
      */
     public function remove($options = '')
     {
-
         global $conf, $user;
 
         $sql = array();
@@ -223,19 +221,15 @@ class modBlockedLog extends DolibarrModules
 
         $b=new BlockedLog($this->db);
         $result = $b->setObjectData($object, 'MODULE_RESET', 0);
-        if ($result < 0)
-        {
+        if ($result < 0) {
             $this->error = $b->error;
             $this->errors = $b->erros;
             return 0;
         }
 
-        if ($b->alreadyUsed(1))
-        {
+        if ($b->alreadyUsed(1)) {
             $res = $b->create($user, '0000000000'); // If already used for something else than SET or UNSET, we log with error
-        }
-        else
-        {
+        } else {
             $res = $b->create($user);
         }
         if ($res<=0) {

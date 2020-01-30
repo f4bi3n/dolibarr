@@ -36,8 +36,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'errors'));
 
-if (!$user->admin)
-  accessforbidden();
+if (!$user->admin) {
+    accessforbidden();
+}
 
 $action = GETPOST('action', 'aZ09');
 
@@ -45,62 +46,122 @@ $action = GETPOST('action', 'aZ09');
  * Actions
  */
 
-if ($action == 'setvalue' && $user->admin)
-{
-	$error=0;
+if ($action == 'setvalue' && $user->admin) {
+    $error=0;
 
-	$db->begin();
+    $db->begin();
 
-	if (! dolibarr_set_const($db, 'LDAP_MEMBER_DN', GETPOST("user"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_MEMBER_OBJECT_CLASS', GETPOST("objectclass"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_MEMBER_FILTER', GETPOST("filterconnection"), 'chaine', 0, '', $conf->entity)) $error++;
-	// Members
-	if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_FULLNAME', GETPOST("fieldfullname"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_LOGIN', GETPOST("fieldlogin"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_LOGIN_SAMBA', GETPOST("fieldloginsamba"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_PASSWORD', GETPOST("fieldpassword"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_PASSWORD_CRYPTED', GETPOST("fieldpasswordcrypted"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_NAME', GETPOST("fieldname"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_FIRSTNAME', GETPOST("fieldfirstname"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_MAIL', GETPOST("fieldmail"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_PHONE', GETPOST("fieldphone"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_PHONE_PERSO', GETPOST("fieldphoneperso"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_MOBILE', GETPOST("fieldmobile"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_SKYPE', GETPOST("fieldskype"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_FAX', GETPOST("fieldfax"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_COMPANY', GETPOST("fieldcompany"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_ADDRESS', GETPOST("fieldaddress"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_ZIP', GETPOST("fieldzip"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_TOWN', GETPOST("fieldtown"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_COUNTRY', GETPOST("fieldcountry"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_DESCRIPTION', GETPOST("fielddescription"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_NOTE_PUBLIC', GETPOST("fieldnotepublic"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_BIRTHDATE', GETPOST("fieldbirthdate"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_MEMBER_STATUS', GETPOST("fieldstatus"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION', GETPOST("fieldendlastsubscription"), 'chaine', 0, '', $conf->entity)) $error++;
+    if (! dolibarr_set_const($db, 'LDAP_MEMBER_DN', GETPOST("user"), 'chaine', 0, '', $conf->entity)) {
+        $error++;
+    }
+    if (! dolibarr_set_const($db, 'LDAP_MEMBER_OBJECT_CLASS', GETPOST("objectclass"), 'chaine', 0, '', $conf->entity)) {
+        $error++;
+    }
+    if (! dolibarr_set_const($db, 'LDAP_MEMBER_FILTER', GETPOST("filterconnection"), 'chaine', 0, '', $conf->entity)) {
+        $error++;
+    }
+    // Members
+    if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_FULLNAME', GETPOST("fieldfullname"), 'chaine', 0, '', $conf->entity)) {
+        $error++;
+    }
+    if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_LOGIN', GETPOST("fieldlogin"), 'chaine', 0, '', $conf->entity)) {
+        $error++;
+    }
+    if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_LOGIN_SAMBA', GETPOST("fieldloginsamba"), 'chaine', 0, '', $conf->entity)) {
+        $error++;
+    }
+    if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_PASSWORD', GETPOST("fieldpassword"), 'chaine', 0, '', $conf->entity)) {
+        $error++;
+    }
+    if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_PASSWORD_CRYPTED', GETPOST("fieldpasswordcrypted"), 'chaine', 0, '', $conf->entity)) {
+        $error++;
+    }
+    if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_NAME', GETPOST("fieldname"), 'chaine', 0, '', $conf->entity)) {
+        $error++;
+    }
+    if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_FIRSTNAME', GETPOST("fieldfirstname"), 'chaine', 0, '', $conf->entity)) {
+        $error++;
+    }
+    if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_MAIL', GETPOST("fieldmail"), 'chaine', 0, '', $conf->entity)) {
+        $error++;
+    }
+    if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_PHONE', GETPOST("fieldphone"), 'chaine', 0, '', $conf->entity)) {
+        $error++;
+    }
+    if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_PHONE_PERSO', GETPOST("fieldphoneperso"), 'chaine', 0, '', $conf->entity)) {
+        $error++;
+    }
+    if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_MOBILE', GETPOST("fieldmobile"), 'chaine', 0, '', $conf->entity)) {
+        $error++;
+    }
+    if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_SKYPE', GETPOST("fieldskype"), 'chaine', 0, '', $conf->entity)) {
+        $error++;
+    }
+    if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_FAX', GETPOST("fieldfax"), 'chaine', 0, '', $conf->entity)) {
+        $error++;
+    }
+    if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_COMPANY', GETPOST("fieldcompany"), 'chaine', 0, '', $conf->entity)) {
+        $error++;
+    }
+    if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_ADDRESS', GETPOST("fieldaddress"), 'chaine', 0, '', $conf->entity)) {
+        $error++;
+    }
+    if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_ZIP', GETPOST("fieldzip"), 'chaine', 0, '', $conf->entity)) {
+        $error++;
+    }
+    if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_TOWN', GETPOST("fieldtown"), 'chaine', 0, '', $conf->entity)) {
+        $error++;
+    }
+    if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_COUNTRY', GETPOST("fieldcountry"), 'chaine', 0, '', $conf->entity)) {
+        $error++;
+    }
+    if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_DESCRIPTION', GETPOST("fielddescription"), 'chaine', 0, '', $conf->entity)) {
+        $error++;
+    }
+    if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_NOTE_PUBLIC', GETPOST("fieldnotepublic"), 'chaine', 0, '', $conf->entity)) {
+        $error++;
+    }
+    if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_BIRTHDATE', GETPOST("fieldbirthdate"), 'chaine', 0, '', $conf->entity)) {
+        $error++;
+    }
+    if (! dolibarr_set_const($db, 'LDAP_FIELD_MEMBER_STATUS', GETPOST("fieldstatus"), 'chaine', 0, '', $conf->entity)) {
+        $error++;
+    }
+    if (! dolibarr_set_const($db, 'LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION', GETPOST("fieldendlastsubscription"), 'chaine', 0, '', $conf->entity)) {
+        $error++;
+    }
 
-	// Subscriptions
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE', GETPOST("fieldfirstsubscriptiondate"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT', GETPOST("fieldfirstsubscriptionamount"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE', GETPOST("fieldlastsubscriptiondate"), 'chaine', 0, '', $conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT', GETPOST("fieldlastsubscriptionamount"), 'chaine', 0, '', $conf->entity)) $error++;
+    // Subscriptions
+    if (! dolibarr_set_const($db, 'LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE', GETPOST("fieldfirstsubscriptiondate"), 'chaine', 0, '', $conf->entity)) {
+        $error++;
+    }
+    if (! dolibarr_set_const($db, 'LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT', GETPOST("fieldfirstsubscriptionamount"), 'chaine', 0, '', $conf->entity)) {
+        $error++;
+    }
+    if (! dolibarr_set_const($db, 'LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE', GETPOST("fieldlastsubscriptiondate"), 'chaine', 0, '', $conf->entity)) {
+        $error++;
+    }
+    if (! dolibarr_set_const($db, 'LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT', GETPOST("fieldlastsubscriptionamount"), 'chaine', 0, '', $conf->entity)) {
+        $error++;
+    }
 
-	// This one must be after the others
-	$valkey='';
-	$key=GETPOST("key");
-	if ($key) $valkey=$conf->global->$key;
-	if (! dolibarr_set_const($db, 'LDAP_KEY_MEMBERS', $valkey, 'chaine', 0, '', $conf->entity)) $error++;
+    // This one must be after the others
+    $valkey='';
+    $key=GETPOST("key");
+    if ($key) {
+        $valkey=$conf->global->$key;
+    }
+    if (! dolibarr_set_const($db, 'LDAP_KEY_MEMBERS', $valkey, 'chaine', 0, '', $conf->entity)) {
+        $error++;
+    }
 
-	if (! $error)
-	{
-		$db->commit();
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
-		$db->rollback();
-		dol_print_error($db);
-	}
+    if (! $error) {
+        $db->commit();
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    } else {
+        $db->rollback();
+        dol_print_error($db);
+    }
 }
 
 
@@ -119,9 +180,8 @@ print load_fiche_titre($langs->trans("LDAPSetup"), $linkback, 'title_setup');
 $head = ldap_prepare_head();
 
 // Test si fonction LDAP actives
-if (! function_exists("ldap_connect"))
-{
-	setEventMessages($langs->trans("LDAPFunctionsNotAvailableOnPHP"), null, 'errors');
+if (! function_exists("ldap_connect")) {
+    setEventMessages($langs->trans("LDAPFunctionsNotAvailableOnPHP"), null, 'errors');
 }
 
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue">';
@@ -379,66 +439,57 @@ print '</form>';
 /*
  * Test de la connexion
  */
-if (! empty($conf->global->LDAP_MEMBER_ACTIVE))
-{
-	$butlabel=$langs->trans("LDAPTestSynchroMember");
-	$testlabel='testmember';
-	$key=$conf->global->LDAP_KEY_MEMBERS;
-	$dn=$conf->global->LDAP_MEMBER_DN;
-	$objectclass=$conf->global->LDAP_MEMBER_OBJECT_CLASS;
+if (! empty($conf->global->LDAP_MEMBER_ACTIVE)) {
+    $butlabel=$langs->trans("LDAPTestSynchroMember");
+    $testlabel='testmember';
+    $key=$conf->global->LDAP_KEY_MEMBERS;
+    $dn=$conf->global->LDAP_MEMBER_DN;
+    $objectclass=$conf->global->LDAP_MEMBER_OBJECT_CLASS;
 
-	show_ldap_test_button($butlabel, $testlabel, $key, $dn, $objectclass);
+    show_ldap_test_button($butlabel, $testlabel, $key, $dn, $objectclass);
 }
 
-if (function_exists("ldap_connect"))
-{
-	if ($_GET["action"] == 'testmember')
-	{
-		// Creation objet
-		$object=new Adherent($db);
-		$object->initAsSpecimen();
+if (function_exists("ldap_connect")) {
+    if ($_GET["action"] == 'testmember') {
+        // Creation objet
+        $object=new Adherent($db);
+        $object->initAsSpecimen();
 
-		// Test synchro
-		$ldap=new Ldap();
-		$result=$ldap->connect_bind();
+        // Test synchro
+        $ldap=new Ldap();
+        $result=$ldap->connect_bind();
 
-		if ($result > 0)
-		{
-			$info=$object->_load_ldap_info();
-			$dn=$object->_load_ldap_dn($info);
+        if ($result > 0) {
+            $info=$object->_load_ldap_info();
+            $dn=$object->_load_ldap_dn($info);
 
-			$result1=$ldap->delete($dn);			// To be sure to delete existing records
-			$result2=$ldap->add($dn, $info, $user);	// Now the test
-			$result3=$ldap->delete($dn);			// Clean what we did
+            $result1=$ldap->delete($dn);			// To be sure to delete existing records
+            $result2=$ldap->add($dn, $info, $user);	// Now the test
+            $result3=$ldap->delete($dn);			// Clean what we did
 
-			if ($result2 > 0)
-			{
-				print img_picto('', 'info').' ';
-				print '<font class="ok">'.$langs->trans("LDAPSynchroOK").'</font><br>';
-			}
-			else
-			{
-				print img_picto('', 'error').' ';
-				print '<font class="error">'.$langs->trans("LDAPSynchroKOMayBePermissions");
-				print ': '.$ldap->error;
-				print '</font><br>';
-				print $langs->trans("ErrorLDAPMakeManualTest", $conf->ldap->dir_temp).'<br>';
-			}
+            if ($result2 > 0) {
+                print img_picto('', 'info').' ';
+                print '<font class="ok">'.$langs->trans("LDAPSynchroOK").'</font><br>';
+            } else {
+                print img_picto('', 'error').' ';
+                print '<font class="error">'.$langs->trans("LDAPSynchroKOMayBePermissions");
+                print ': '.$ldap->error;
+                print '</font><br>';
+                print $langs->trans("ErrorLDAPMakeManualTest", $conf->ldap->dir_temp).'<br>';
+            }
 
-			print "<br>\n";
-			print "LDAP input file used for test:<br><br>\n";
-			print nl2br($ldap->dump_content($dn, $info));
-			print "\n<br>";
-		}
-		else
-		{
-			print img_picto('', 'error').' ';
-			print '<font class="error">'.$langs->trans("LDAPSynchroKO");
-			print ': '.$ldap->error;
-			print '</font><br>';
-			print $langs->trans("ErrorLDAPMakeManualTest", $conf->ldap->dir_temp).'<br>';
-		}
-	}
+            print "<br>\n";
+            print "LDAP input file used for test:<br><br>\n";
+            print nl2br($ldap->dump_content($dn, $info));
+            print "\n<br>";
+        } else {
+            print img_picto('', 'error').' ';
+            print '<font class="error">'.$langs->trans("LDAPSynchroKO");
+            print ': '.$ldap->error;
+            print '</font><br>';
+            print $langs->trans("ErrorLDAPMakeManualTest", $conf->ldap->dir_temp).'<br>';
+        }
+    }
 }
 
 // End of page

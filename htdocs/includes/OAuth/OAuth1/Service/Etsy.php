@@ -13,7 +13,6 @@ use OAuth\Common\Http\Client\ClientInterface;
 
 class Etsy extends AbstractService
 {
-
     protected $scopes = array();
 
     public function __construct(

@@ -15,7 +15,8 @@ namespace Sabre\CardDAV\Backend;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface BackendInterface {
+interface BackendInterface
+{
 
     /**
      * Returns the list of addressbooks for a specific user.
@@ -34,7 +35,7 @@ interface BackendInterface {
      * @param string $principalUri
      * @return array
      */
-    function getAddressBooksForUser($principalUri);
+    public function getAddressBooksForUser($principalUri);
 
     /**
      * Updates properties for an address book.
@@ -52,7 +53,7 @@ interface BackendInterface {
      * @param \Sabre\DAV\PropPatch $propPatch
      * @return void
      */
-    function updateAddressBook($addressBookId, \Sabre\DAV\PropPatch $propPatch);
+    public function updateAddressBook($addressBookId, \Sabre\DAV\PropPatch $propPatch);
 
     /**
      * Creates a new address book.
@@ -65,7 +66,7 @@ interface BackendInterface {
      * @param array $properties
      * @return mixed
      */
-    function createAddressBook($principalUri, $url, array $properties);
+    public function createAddressBook($principalUri, $url, array $properties);
 
     /**
      * Deletes an entire addressbook and all its contents
@@ -73,7 +74,7 @@ interface BackendInterface {
      * @param mixed $addressBookId
      * @return void
      */
-    function deleteAddressBook($addressBookId);
+    public function deleteAddressBook($addressBookId);
 
     /**
      * Returns all cards for a specific addressbook id.
@@ -94,7 +95,7 @@ interface BackendInterface {
      * @param mixed $addressbookId
      * @return array
      */
-    function getCards($addressbookId);
+    public function getCards($addressbookId);
 
     /**
      * Returns a specfic card.
@@ -108,7 +109,7 @@ interface BackendInterface {
      * @param string $cardUri
      * @return array
      */
-    function getCard($addressBookId, $cardUri);
+    public function getCard($addressBookId, $cardUri);
 
     /**
      * Returns a list of cards.
@@ -122,7 +123,7 @@ interface BackendInterface {
      * @param array $uris
      * @return array
      */
-    function getMultipleCards($addressBookId, array $uris);
+    public function getMultipleCards($addressBookId, array $uris);
 
     /**
      * Creates a new card.
@@ -149,7 +150,7 @@ interface BackendInterface {
      * @param string $cardData
      * @return string|null
      */
-    function createCard($addressBookId, $cardUri, $cardData);
+    public function createCard($addressBookId, $cardUri, $cardData);
 
     /**
      * Updates a card.
@@ -176,7 +177,7 @@ interface BackendInterface {
      * @param string $cardData
      * @return string|null
      */
-    function updateCard($addressBookId, $cardUri, $cardData);
+    public function updateCard($addressBookId, $cardUri, $cardData);
 
     /**
      * Deletes a card
@@ -185,6 +186,5 @@ interface BackendInterface {
      * @param string $cardUri
      * @return bool
      */
-    function deleteCard($addressBookId, $cardUri);
-
+    public function deleteCard($addressBookId, $cardUri);
 }

@@ -84,7 +84,8 @@ class HtmlFormat extends DependentFormat
         }
     }
 
-    public function getDependencyMap(){
+    public function getDependencyMap()
+    {
         return array(
             'Illuminate\View\View' => 'illuminate/view:4.2.*',
             'Twig_Environment' => 'twig/twig:v1.13.*',
@@ -136,8 +137,9 @@ class HtmlFormat extends DependentFormat
             'debug' => $debug,
             'use_strict_variables' => $debug,
         ));
-        if ($debug)
+        if ($debug) {
             $twig->addExtension(new \Twig_Extension_Debug());
+        }
 
         $twig->addFunction(
             new \Twig_SimpleFunction(
@@ -183,8 +185,9 @@ class HtmlFormat extends DependentFormat
 
     public static function mustache(array $data, $debug = true)
     {
-        if (!isset($data['nav']))
+        if (!isset($data['nav'])) {
             $data['nav'] = array_values(Nav::get());
+        }
         $options = array(
             'loader' => new \Mustache_Loader_FilesystemLoader(
                 static::$viewPath,
@@ -200,16 +203,18 @@ class HtmlFormat extends DependentFormat
                 },
             )
         );
-        if (!$debug)
+        if (!$debug) {
             $options['cache'] = static::$cacheDirectory;
+        }
         $m = new \Mustache_Engine($options);
         return $m->render(static::getViewFile(), $data);
     }
 
     public static function php(array $data, $debug = true)
     {
-        if (static::$view == 'debug')
+        if (static::$view == 'debug') {
             static::$viewPath = dirname(__DIR__) . '/views';
+        }
         $view = static::getViewFile(true);
 
         if (!is_readable($view)) {
@@ -228,16 +233,18 @@ class HtmlFormat extends DependentFormat
                     func_get_args()
                 );
             };
-            if (!isset($data['form']))
+            if (!isset($data['form'])) {
                 $data['form'] = $form;
+            }
             $nav = function () {
                 return call_user_func_array(
                     'Luracast\Restler\UI\Nav::get',
                     func_get_args()
                 );
             };
-            if (!isset($data['nav']))
+            if (!isset($data['nav'])) {
                 $data['nav'] = $nav;
+            }
 
             $_ = function () use ($data, $path) {
                 extract($data);
@@ -264,15 +271,18 @@ class HtmlFormat extends DependentFormat
                         }
                         break;
                     case 'if':
-                        if (count($args) < 2)
+                        if (count($args) < 2) {
                             $args[1] = '';
-                        if (count($args) < 3)
+                        }
+                        if (count($args) < 3) {
                             $args[2] = '';
+                        }
                         return $args[0] ? $args[1] : $args[2];
                         break;
                     default:
-                        if (isset($data[$task]) && is_callable($data[$task]))
+                        if (isset($data[$task]) && is_callable($data[$task])) {
                             return call_user_func_array($data[$task], $args);
+                        }
                 }
                 return '';
             };
@@ -280,8 +290,9 @@ class HtmlFormat extends DependentFormat
             return @include $view;
         };
         $value = $template($view);
-        if (is_string($value))
+        if (is_string($value)) {
             return $value;
+        }
     }
 
     /**
@@ -323,7 +334,9 @@ class HtmlFormat extends DependentFormat
             );
             $info = $data['api'] = $this->restler->apiMethodInfo;
             $metadata = Util::nestedValue(
-                $this->restler, 'apiMethodInfo', 'metadata'
+                $this->restler,
+                'apiMethodInfo',
+                'metadata'
             );
             $view = $success ? 'view' : 'errorView';
             $value = false;
@@ -331,7 +344,9 @@ class HtmlFormat extends DependentFormat
                 if (is_array($metadata[$view])) {
                     self::$view = $metadata[$view]['description'];
                     $value = Util::nestedValue(
-                        $metadata[$view], 'properties', 'value'
+                        $metadata[$view],
+                        'properties',
+                        'value'
                     );
                 } else {
                     self::$view = $metadata[$view];
@@ -416,8 +431,9 @@ class HtmlFormat extends DependentFormat
     {
         $v = $fullPath ? static::$viewPath . '/' : '';
         $v .= static::$view;
-        if ($includeExtension)
+        if ($includeExtension) {
             $v .= '.' . static::getViewExtension();
+        }
         return $v;
     }
 

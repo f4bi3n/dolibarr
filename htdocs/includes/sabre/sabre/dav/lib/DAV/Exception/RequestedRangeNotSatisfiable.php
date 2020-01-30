@@ -14,17 +14,16 @@ use Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class RequestedRangeNotSatisfiable extends DAV\Exception {
+class RequestedRangeNotSatisfiable extends DAV\Exception
+{
 
     /**
      * returns the http statuscode for this exception
      *
      * @return int
      */
-    function getHTTPCode() {
-
+    public function getHTTPCode()
+    {
         return 416;
-
     }
-
 }

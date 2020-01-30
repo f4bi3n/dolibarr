@@ -2,20 +2,19 @@
 
 // SabreDAV test server.
 
-class CliLog {
-
+class CliLog
+{
     protected $stream;
 
-    function __construct() {
-
+    public function __construct()
+    {
         $this->stream = fopen('php://stdout', 'w');
-
     }
 
-    function log($msg) {
+    public function log($msg)
+    {
         fwrite($this->stream, $msg . "\n");
     }
-
 }
 
 $log = new CliLog();
@@ -41,7 +40,7 @@ foreach ($paths as $path) {
 
 use Sabre\DAV;
 
-// Root 
+// Root
 $root = new DAV\FS\Directory(getcwd());
 
 // Setting up server.

@@ -19,7 +19,8 @@ use Sabre\VObject;
  * @author Thomas Tanghus (http://tanghus.net/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class VCFExportPlugin extends DAV\ServerPlugin {
+class VCFExportPlugin extends DAV\ServerPlugin
+{
 
     /**
      * Reference to Server class
@@ -34,11 +35,11 @@ class VCFExportPlugin extends DAV\ServerPlugin {
      * @param DAV\Server $server
      * @return void
      */
-    function initialize(DAV\Server $server) {
-
+    public function initialize(DAV\Server $server)
+    {
         $this->server = $server;
         $this->server->on('method:GET', [$this, 'httpGet'], 90);
-        $server->on('browserButtonActions', function($path, $node, &$actions) {
+        $server->on('browserButtonActions', function ($path, $node, &$actions) {
             if ($node instanceof IAddressBook) {
                 $actions .= '<a href="' . htmlspecialchars($path, ENT_QUOTES, 'UTF-8') . '?export"><span class="oi" data-glyph="book"></span></a>';
             }
@@ -52,16 +53,20 @@ class VCFExportPlugin extends DAV\ServerPlugin {
      * @param ResponseInterface $response
      * @return bool
      */
-    function httpGet(RequestInterface $request, ResponseInterface $response) {
-
+    public function httpGet(RequestInterface $request, ResponseInterface $response)
+    {
         $queryParams = $request->getQueryParameters();
-        if (!array_key_exists('export', $queryParams)) return;
+        if (!array_key_exists('export', $queryParams)) {
+            return;
+        }
 
         $path = $request->getPath();
 
         $node = $this->server->tree->getNodeForPath($path);
 
-        if (!($node instanceof IAddressBook)) return;
+        if (!($node instanceof IAddressBook)) {
+            return;
+        }
 
         $this->server->transactionType = 'get-addressbook-export';
 
@@ -101,7 +106,6 @@ class VCFExportPlugin extends DAV\ServerPlugin {
 
         // Returning false to break the event chain
         return false;
-
     }
 
     /**
@@ -110,12 +114,11 @@ class VCFExportPlugin extends DAV\ServerPlugin {
      * @param array $nodes
      * @return string
      */
-    function generateVCF(array $nodes) {
-
+    public function generateVCF(array $nodes)
+    {
         $output = "";
 
         foreach ($nodes as $node) {
-
             if (!isset($node[200]['{' . Plugin::NS_CARDDAV . '}address-data'])) {
                 continue;
             }
@@ -127,11 +130,9 @@ class VCFExportPlugin extends DAV\ServerPlugin {
 
             // Destroy circular references to PHP will GC the object.
             $vcard->destroy();
-
         }
 
         return $output;
-
     }
 
     /**
@@ -142,10 +143,9 @@ class VCFExportPlugin extends DAV\ServerPlugin {
      *
      * @return string
      */
-    function getPluginName() {
-
+    public function getPluginName()
+    {
         return 'vcf-export';
-
     }
 
     /**
@@ -159,14 +159,12 @@ class VCFExportPlugin extends DAV\ServerPlugin {
      *
      * @return array
      */
-    function getPluginInfo() {
-
+    public function getPluginInfo()
+    {
         return [
             'name'        => $this->getPluginName(),
             'description' => 'Adds the ability to export CardDAV addressbooks as a single vCard file.',
             'link'        => 'http://sabre.io/dav/vcf-export-plugin/',
         ];
-
     }
-
 }

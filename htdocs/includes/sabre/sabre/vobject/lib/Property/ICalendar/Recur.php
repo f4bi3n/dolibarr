@@ -22,7 +22,8 @@ use Sabre\Xml;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Recur extends Property {
+class Recur extends Property
+{
 
     /**
      * Updates the current value.
@@ -33,7 +34,8 @@ class Recur extends Property {
      *
      * @return void
      */
-    function setValue($value) {
+    public function setValue($value)
+    {
 
         // If we're getting the data from json, we'll be receiving an object
         if ($value instanceof \StdClass) {
@@ -43,7 +45,6 @@ class Recur extends Property {
         if (is_array($value)) {
             $newVal = [];
             foreach ($value as $k => $v) {
-
                 if (is_string($v)) {
                     $v = strtoupper($v);
 
@@ -66,7 +67,6 @@ class Recur extends Property {
         } else {
             throw new \InvalidArgumentException('You must either pass a string, or a key=>value array');
         }
-
     }
 
     /**
@@ -80,14 +80,13 @@ class Recur extends Property {
      *
      * @return string
      */
-    function getValue() {
-
+    public function getValue()
+    {
         $out = [];
         foreach ($this->value as $key => $value) {
             $out[] = $key . '=' . (is_array($value) ? implode(',', $value) : $value);
         }
         return strtoupper(implode(';', $out));
-
     }
 
     /**
@@ -96,10 +95,9 @@ class Recur extends Property {
      * @param array $parts
      * @return void
      */
-    function setParts(array $parts) {
-
+    public function setParts(array $parts)
+    {
         $this->setValue($parts);
-
     }
 
     /**
@@ -110,10 +108,9 @@ class Recur extends Property {
      *
      * @return array
      */
-    function getParts() {
-
+    public function getParts()
+    {
         return $this->value;
-
     }
 
     /**
@@ -126,10 +123,9 @@ class Recur extends Property {
      *
      * @return void
      */
-    function setRawMimeDirValue($val) {
-
+    public function setRawMimeDirValue($val)
+    {
         $this->setValue($val);
-
     }
 
     /**
@@ -137,10 +133,9 @@ class Recur extends Property {
      *
      * @return string
      */
-    function getRawMimeDirValue() {
-
+    public function getRawMimeDirValue()
+    {
         return $this->getValue();
-
     }
 
     /**
@@ -151,10 +146,9 @@ class Recur extends Property {
      *
      * @return string
      */
-    function getValueType() {
-
+    public function getValueType()
+    {
         return 'RECUR';
-
     }
 
     /**
@@ -164,8 +158,8 @@ class Recur extends Property {
      *
      * @return array
      */
-    function getJsonValue() {
-
+    public function getJsonValue()
+    {
         $values = [];
         foreach ($this->getParts() as $k => $v) {
             if (strcmp($k, 'UNTIL') === 0) {
@@ -178,7 +172,6 @@ class Recur extends Property {
             }
         }
         return [$values];
-
     }
 
     /**
@@ -189,14 +182,13 @@ class Recur extends Property {
      *
      * @return void
      */
-    protected function xmlSerializeValue(Xml\Writer $writer) {
-
+    protected function xmlSerializeValue(Xml\Writer $writer)
+    {
         $valueType = strtolower($this->getValueType());
 
         foreach ($this->getJsonValue() as $value) {
             $writer->writeElement($valueType, $value);
         }
-
     }
 
     /**
@@ -206,8 +198,8 @@ class Recur extends Property {
      *
      * @return array
      */
-    static function stringToArray($value) {
-
+    public static function stringToArray($value)
+    {
         $value = strtoupper($value);
         $newValue = [];
         foreach (explode(';', $value) as $part) {
@@ -223,7 +215,6 @@ class Recur extends Property {
                 $partValue = explode(',', $partValue);
             }
             $newValue[$partName] = $partValue;
-
         }
 
         return $newValue;
@@ -251,15 +242,14 @@ class Recur extends Property {
      *
      * @return array
      */
-    function validate($options = 0) {
-
+    public function validate($options = 0)
+    {
         $repair = ($options & self::REPAIR);
 
         $warnings = parent::validate($options);
         $values = $this->getParts();
 
         foreach ($values as $key => $value) {
-
             if ($value === '') {
                 $warnings[] = [
                     'level'   => $repair ? 1 : 3,
@@ -336,7 +326,6 @@ class Recur extends Property {
                     unset($values[$key]);
                 }
             }
-
         }
         if (!isset($values['FREQ'])) {
             $warnings[] = [
@@ -353,7 +342,5 @@ class Recur extends Property {
         }
 
         return $warnings;
-
     }
-
 }

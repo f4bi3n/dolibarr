@@ -12,7 +12,8 @@ use Sabre\Xml\XmlSerializable;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface NotificationInterface extends XmlSerializable {
+interface NotificationInterface extends XmlSerializable
+{
 
     /**
      * This method serializes the entire notification, as it is used in the
@@ -21,7 +22,7 @@ interface NotificationInterface extends XmlSerializable {
      * @param Writer $writer
      * @return void
      */
-    function xmlSerializeFull(Writer $writer);
+    public function xmlSerializeFull(Writer $writer);
 
     /**
      * Returns a unique id for this notification
@@ -31,7 +32,7 @@ interface NotificationInterface extends XmlSerializable {
      *
      * @return string
      */
-    function getId();
+    public function getId();
 
     /**
      * Returns the ETag for this notification.
@@ -40,6 +41,5 @@ interface NotificationInterface extends XmlSerializable {
      *
      * @return string
      */
-    function getETag();
-
+    public function getETag();
 }

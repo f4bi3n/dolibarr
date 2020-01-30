@@ -5,19 +5,19 @@ namespace Sabre\VObject\Component;
 use DateTime;
 use Sabre\VObject\Reader;
 
-class VAlarmTest extends \PHPUnit_Framework_TestCase {
+class VAlarmTest extends \PHPUnit_Framework_TestCase
+{
 
     /**
      * @dataProvider timeRangeTestData
      */
-    function testInTimeRange(VAlarm $valarm, $start, $end, $outcome) {
-
+    public function testInTimeRange(VAlarm $valarm, $start, $end, $outcome)
+    {
         $this->assertEquals($outcome, $valarm->isInTimeRange($start, $end));
-
     }
 
-    function timeRangeTestData() {
-
+    public function timeRangeTestData()
+    {
         $tests = [];
 
         $calendar = new VCalendar();
@@ -131,8 +131,8 @@ class VAlarmTest extends \PHPUnit_Framework_TestCase {
     /**
      * @expectedException \Sabre\VObject\InvalidDataException
      */
-    function testInTimeRangeInvalidComponent() {
-
+    public function testInTimeRangeInvalidComponent()
+    {
         $calendar = new VCalendar();
         $valarm = $calendar->createComponent('VALARM');
         $valarm->TRIGGER = '-P1D';
@@ -142,15 +142,14 @@ class VAlarmTest extends \PHPUnit_Framework_TestCase {
         $vjournal->add($valarm);
 
         $valarm->isInTimeRange(new DateTime('2012-02-25 01:00:00'), new DateTime('2012-03-05 01:00:00'));
-
     }
 
     /**
      * This bug was found and reported on the mailing list.
      */
-    function testInTimeRangeBuggy() {
-
-$input = <<<BLA
+    public function testInTimeRangeBuggy()
+    {
+        $input = <<<BLA
 BEGIN:VCALENDAR
 BEGIN:VTODO
 DTSTAMP:20121003T064931Z
@@ -171,7 +170,5 @@ BLA;
         $vobj = Reader::read($input);
 
         $this->assertTrue($vobj->VTODO->VALARM->isInTimeRange(new \DateTime('2012-10-01 00:00:00'), new \DateTime('2012-11-01 00:00:00')));
-
     }
-
 }

@@ -30,16 +30,36 @@ global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/date.lib.php';
 
-if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER', '1');
-if (! defined('NOREQUIREDB'))    define('NOREQUIREDB', '1');
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
-if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN', '1');
-if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1'); // If there is no menu to show
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-if (! defined("NOLOGIN"))        define("NOLOGIN", '1');       // If this page is public (can be called outside logged session)
+if (! defined('NOREQUIREUSER')) {
+    define('NOREQUIREUSER', '1');
+}
+if (! defined('NOREQUIREDB')) {
+    define('NOREQUIREDB', '1');
+}
+if (! defined('NOREQUIRESOC')) {
+    define('NOREQUIRESOC', '1');
+}
+if (! defined('NOREQUIRETRAN')) {
+    define('NOREQUIRETRAN', '1');
+}
+if (! defined('NOCSRFCHECK')) {
+    define('NOCSRFCHECK', '1');
+}
+if (! defined('NOTOKENRENEWAL')) {
+    define('NOTOKENRENEWAL', '1');
+}
+if (! defined('NOREQUIREMENU')) {
+    define('NOREQUIREMENU', '1');
+} // If there is no menu to show
+if (! defined('NOREQUIREHTML')) {
+    define('NOREQUIREHTML', '1');
+} // If we don't need to load the html.form.class.php
+if (! defined('NOREQUIREAJAX')) {
+    define('NOREQUIREAJAX', '1');
+}
+if (! defined("NOLOGIN")) {
+    define("NOLOGIN", '1');
+}       // If this page is public (can be called outside logged session)
 
 /**
  * Class for PHPUnit tests
@@ -83,7 +103,10 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
         global $conf,$user,$langs,$db;
         //$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
-        if (! function_exists('mb_substr')) { print "\n".__METHOD__." function mb_substr must be enabled.\n"; die(); }
+        if (! function_exists('mb_substr')) {
+            print "\n".__METHOD__." function mb_substr must be enabled.\n";
+            die();
+        }
 
         print __METHOD__."\n";
     }
@@ -491,15 +514,18 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
      */
     public function testDolConcat()
     {
-        $text1="A string 1"; $text2="A string 2";	// text 1 and 2 are text, concat need only \n
+        $text1="A string 1";
+        $text2="A string 2";	// text 1 and 2 are text, concat need only \n
         $after=dol_concatdesc($text1, $text2);
         $this->assertEquals("A string 1\nA string 2", $after);
 
-        $text1="A<br>string 1"; $text2="A string 2";	// text 1 is html, concat need <br>\n
+        $text1="A<br>string 1";
+        $text2="A string 2";	// text 1 is html, concat need <br>\n
         $after=dol_concatdesc($text1, $text2);
         $this->assertEquals("A<br>string 1<br>\nA string 2", $after);
 
-        $text1="A string 1"; $text2="A <b>string</b> 2";	// text 2 is html, concat need <br>\n
+        $text1="A string 1";
+        $text2="A <b>string</b> 2";	// text 2 is html, concat need <br>\n
         $after=dol_concatdesc($text1, $text2);
         $this->assertEquals("A string 1<br>\nA <b>string</b> 2", $after);
 
@@ -1272,16 +1298,16 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
      */
     public function testDolStringIsGoodIso()
     {
-    	global $conf, $langs;
+        global $conf, $langs;
 
-    	$chaine='This is an ISO string';
-    	$result = dol_string_is_good_iso($chaine);
-    	$this->assertEquals($result, 1);
+        $chaine='This is an ISO string';
+        $result = dol_string_is_good_iso($chaine);
+        $this->assertEquals($result, 1);
 
-    	$chaine='This is a not ISO string '.chr(0);
-    	$result = dol_string_is_good_iso($chaine);
-    	$this->assertEquals($result, 0);
+        $chaine='This is a not ISO string '.chr(0);
+        $result = dol_string_is_good_iso($chaine);
+        $this->assertEquals($result, 0);
 
-    	return true;
+        return true;
     }
 }

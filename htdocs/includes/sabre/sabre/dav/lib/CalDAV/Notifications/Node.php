@@ -18,8 +18,8 @@ use Sabre\DAVACL;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Node extends DAV\File implements INode, DAVACL\IACL {
-
+class Node extends DAV\File implements INode, DAVACL\IACL
+{
     use DAVACL\ACLTrait;
 
     /**
@@ -50,12 +50,11 @@ class Node extends DAV\File implements INode, DAVACL\IACL {
      * @param string $principalUri
      * @param NotificationInterface $notification
      */
-    function __construct(CalDAV\Backend\NotificationSupport $caldavBackend, $principalUri, NotificationInterface $notification) {
-
+    public function __construct(CalDAV\Backend\NotificationSupport $caldavBackend, $principalUri, NotificationInterface $notification)
+    {
         $this->caldavBackend = $caldavBackend;
         $this->principalUri = $principalUri;
         $this->notification = $notification;
-
     }
 
     /**
@@ -63,10 +62,9 @@ class Node extends DAV\File implements INode, DAVACL\IACL {
      *
      * @return string
      */
-    function getName() {
-
+    public function getName()
+    {
         return $this->notification->getId() . '.xml';
-
     }
 
     /**
@@ -76,10 +74,9 @@ class Node extends DAV\File implements INode, DAVACL\IACL {
      *
      * @return string
      */
-    function getETag() {
-
+    public function getETag()
+    {
         return $this->notification->getETag();
-
     }
 
     /**
@@ -88,10 +85,9 @@ class Node extends DAV\File implements INode, DAVACL\IACL {
      *
      * @return NotificationInterface
      */
-    function getNotificationType() {
-
+    public function getNotificationType()
+    {
         return $this->notification;
-
     }
 
     /**
@@ -99,10 +95,9 @@ class Node extends DAV\File implements INode, DAVACL\IACL {
      *
      * @return void
      */
-    function delete() {
-
+    public function delete()
+    {
         $this->caldavBackend->deleteNotification($this->getOwner(), $this->notification);
-
     }
 
     /**
@@ -112,10 +107,8 @@ class Node extends DAV\File implements INode, DAVACL\IACL {
      *
      * @return string|null
      */
-    function getOwner() {
-
+    public function getOwner()
+    {
         return $this->principalUri;
-
     }
-
 }

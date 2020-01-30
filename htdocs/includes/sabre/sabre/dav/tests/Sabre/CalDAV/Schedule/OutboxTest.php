@@ -5,10 +5,10 @@ namespace Sabre\CalDAV\Schedule;
 use Sabre\CalDAV;
 use Sabre\DAV;
 
-class OutboxTest extends \PHPUnit_Framework_TestCase {
-
-    function testSetup() {
-
+class OutboxTest extends \PHPUnit_Framework_TestCase
+{
+    public function testSetup()
+    {
         $outbox = new Outbox('principals/user1');
         $this->assertEquals('outbox', $outbox->getName());
         $this->assertEquals([], $outbox->getChildren());
@@ -42,7 +42,5 @@ class OutboxTest extends \PHPUnit_Framework_TestCase {
                 'protected' => true,
             ],
         ], $outbox->getACL());
-
     }
-
 }

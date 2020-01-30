@@ -33,8 +33,7 @@ $mode=GETPOST('mode')?GETPOST('mode'):'';
 
 
 // Security check
-if ($user->socid > 0)
-{
+if ($user->socid > 0) {
     $action = '';
     $socid = $user->socid;
 }
@@ -77,26 +76,26 @@ $foundphy=$foundmor=0;
 // Define $data array
 dol_syslog("Count member", LOG_DEBUG);
 $resql=$db->query($sql);
-if ($resql)
-{
-	$num=$db->num_rows($resql);
-	$i=0;
-	while ($i < $num)
-	{
-		$obj=$db->fetch_object($resql);
+if ($resql) {
+    $num=$db->num_rows($resql);
+    $i=0;
+    while ($i < $num) {
+        $obj=$db->fetch_object($resql);
 
-		if ($obj->code == 'phy') $foundphy++;
-		if ($obj->code == 'mor') $foundmor++;
+        if ($obj->code == 'phy') {
+            $foundphy++;
+        }
+        if ($obj->code == 'mor') {
+            $foundmor++;
+        }
 
-		$data[]=array('label'=>$obj->code, 'nb'=>$obj->nb, 'lastdate'=>$db->jdate($obj->lastdate), 'lastsubscriptiondate'=>$db->jdate($obj->lastsubscriptiondate));
+        $data[]=array('label'=>$obj->code, 'nb'=>$obj->nb, 'lastdate'=>$db->jdate($obj->lastdate), 'lastsubscriptiondate'=>$db->jdate($obj->lastsubscriptiondate));
 
-		$i++;
-	}
-	$db->free($resql);
-}
-else
-{
-	dol_print_error($db);
+        $i++;
+    }
+    $db->free($resql);
+} else {
+    dol_print_error($db);
 }
 
 
@@ -106,14 +105,11 @@ dol_fiche_head($head, 'statsbyproperties', $langs->trans("Statistics"), -1, 'use
 
 
 // Print title
-if (! count($data))
-{
-	print $langs->trans("NoValidatedMemberYet").'<br>';
-	print '<br>';
-}
-else
-{
-	print load_fiche_titre($langs->trans("MembersByNature"), '', '');
+if (! count($data)) {
+    print $langs->trans("NoValidatedMemberYet").'<br>';
+    print '<br>';
+} else {
+    print load_fiche_titre($langs->trans("MembersByNature"), '', '');
 }
 
 // Print array
@@ -125,17 +121,20 @@ print '<td class="center">'.$langs->trans("LastMemberDate").'</td>';
 print '<td class="center">'.$langs->trans("LatestSubscriptionDate").'</td>';
 print '</tr>';
 
-if (! $foundphy) $data[]=array('label'=>'phy','nb'=>'0','lastdate'=>'', 'lastsubscriptiondate'=>'');
-if (! $foundmor) $data[]=array('label'=>'mor','nb'=>'0','lastdate'=>'', 'lastsubscriptiondate'=>'');
+if (! $foundphy) {
+    $data[]=array('label'=>'phy','nb'=>'0','lastdate'=>'', 'lastsubscriptiondate'=>'');
+}
+if (! $foundmor) {
+    $data[]=array('label'=>'mor','nb'=>'0','lastdate'=>'', 'lastsubscriptiondate'=>'');
+}
 
-foreach ($data as $val)
-{
-	print '<tr class="oddeven">';
-	print '<td>'.$memberstatic->getmorphylib($val['label']).'</td>';
-	print '<td class="right">'.$val['nb'].'</td>';
-	print '<td class="center">'.dol_print_date($val['lastdate'], 'dayhour').'</td>';
-	print '<td class="center">'.dol_print_date($val['lastsubscriptiondate'], 'dayhour').'</td>';
-	print '</tr>';
+foreach ($data as $val) {
+    print '<tr class="oddeven">';
+    print '<td>'.$memberstatic->getmorphylib($val['label']).'</td>';
+    print '<td class="right">'.$val['nb'].'</td>';
+    print '<td class="center">'.dol_print_date($val['lastdate'], 'dayhour').'</td>';
+    print '<td class="center">'.dol_print_date($val['lastsubscriptiondate'], 'dayhour').'</td>';
+    print '</tr>';
 }
 
 print '</table>';

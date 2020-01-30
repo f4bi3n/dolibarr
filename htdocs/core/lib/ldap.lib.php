@@ -30,66 +30,61 @@
  */
 function ldap_prepare_head()
 {
-	global $langs, $conf, $user;
+    global $langs, $conf, $user;
 
-	$langs->load("ldap");
+    $langs->load("ldap");
 
-	// Onglets
-	$head = array();
-	$h = 0;
+    // Onglets
+    $head = array();
+    $h = 0;
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/ldap.php";
-	$head[$h][1] = $langs->trans("LDAPGlobalParameters");
-	$head[$h][2] = 'ldap';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT."/admin/ldap.php";
+    $head[$h][1] = $langs->trans("LDAPGlobalParameters");
+    $head[$h][2] = 'ldap';
+    $h++;
 
-	if (!empty($conf->global->LDAP_SYNCHRO_ACTIVE))
-	{
-		$head[$h][0] = DOL_URL_ROOT."/admin/ldap_users.php";
-		$head[$h][1] = $langs->trans("LDAPUsersSynchro");
-		$head[$h][2] = 'users';
-		$h++;
-	}
+    if (!empty($conf->global->LDAP_SYNCHRO_ACTIVE)) {
+        $head[$h][0] = DOL_URL_ROOT."/admin/ldap_users.php";
+        $head[$h][1] = $langs->trans("LDAPUsersSynchro");
+        $head[$h][2] = 'users';
+        $h++;
+    }
 
-	if (!empty($conf->global->LDAP_SYNCHRO_ACTIVE))
-	{
-		$head[$h][0] = DOL_URL_ROOT."/admin/ldap_groups.php";
-		$head[$h][1] = $langs->trans("LDAPGroupsSynchro");
-		$head[$h][2] = 'groups';
-		$h++;
-	}
+    if (!empty($conf->global->LDAP_SYNCHRO_ACTIVE)) {
+        $head[$h][0] = DOL_URL_ROOT."/admin/ldap_groups.php";
+        $head[$h][1] = $langs->trans("LDAPGroupsSynchro");
+        $head[$h][2] = 'groups';
+        $h++;
+    }
 
-	if (!empty($conf->societe->enabled) && !empty($conf->global->LDAP_CONTACT_ACTIVE))
-	{
-		$head[$h][0] = DOL_URL_ROOT."/admin/ldap_contacts.php";
-		$head[$h][1] = $langs->trans("LDAPContactsSynchro");
-		$head[$h][2] = 'contacts';
-		$h++;
-	}
+    if (!empty($conf->societe->enabled) && !empty($conf->global->LDAP_CONTACT_ACTIVE)) {
+        $head[$h][0] = DOL_URL_ROOT."/admin/ldap_contacts.php";
+        $head[$h][1] = $langs->trans("LDAPContactsSynchro");
+        $head[$h][2] = 'contacts';
+        $h++;
+    }
 
-	if (!empty($conf->adherent->enabled) && !empty($conf->global->LDAP_MEMBER_ACTIVE))
-	{
-		$head[$h][0] = DOL_URL_ROOT."/admin/ldap_members.php";
-		$head[$h][1] = $langs->trans("LDAPMembersSynchro");
-		$head[$h][2] = 'members';
-		$h++;
-	}
+    if (!empty($conf->adherent->enabled) && !empty($conf->global->LDAP_MEMBER_ACTIVE)) {
+        $head[$h][0] = DOL_URL_ROOT."/admin/ldap_members.php";
+        $head[$h][1] = $langs->trans("LDAPMembersSynchro");
+        $head[$h][2] = 'members';
+        $h++;
+    }
 
-	if (!empty($conf->adherent->enabled) && !empty($conf->global->LDAP_MEMBER_TYPE_ACTIVE))
-	{
-		$head[$h][0] = DOL_URL_ROOT."/admin/ldap_members_types.php";
-		$head[$h][1] = $langs->trans("LDAPMembersTypesSynchro");
-		$head[$h][2] = 'memberstypes';
-		$h++;
-	}
+    if (!empty($conf->adherent->enabled) && !empty($conf->global->LDAP_MEMBER_TYPE_ACTIVE)) {
+        $head[$h][0] = DOL_URL_ROOT."/admin/ldap_members_types.php";
+        $head[$h][1] = $langs->trans("LDAPMembersTypesSynchro");
+        $head[$h][2] = 'memberstypes';
+        $h++;
+    }
 
-	// Show more tabs from modules
-	// Entries must be declared in modules descriptor with line
-	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-	// $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf, $langs, '', $head, $h, 'ldap');
+    // Show more tabs from modules
+    // Entries must be declared in modules descriptor with line
+    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+    // $this->tabs = array('entity:-tabname);   												to remove a tab
+    complete_head_from_modules($conf, $langs, '', $head, $h, 'ldap');
 
-	return $head;
+    return $head;
 }
 
 
@@ -105,28 +100,21 @@ function ldap_prepare_head()
  */
 function show_ldap_test_button($butlabel, $testlabel, $key, $dn, $objectclass)
 {
-	global $langs, $conf, $user;
-	//print 'key='.$key.' dn='.$dn.' objectclass='.$objectclass;
+    global $langs, $conf, $user;
+    //print 'key='.$key.' dn='.$dn.' objectclass='.$objectclass;
 
-	print '<br>';
-	if (!function_exists("ldap_connect"))
-	{
-		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans('LDAPFunctionsNotAvailableOnPHP').'">'.$butlabel.'</a>';
-	}
-	elseif (empty($conf->global->LDAP_SERVER_HOST))
-	{
-		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans('LDAPSetupNotComplete').'">'.$butlabel.'</a>';
-	}
-	elseif (empty($key) || empty($dn) || empty($objectclass))
-	{
-		$langs->load("errors");
-		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans('ErrorLDAPSetupNotComplete').'">'.$butlabel.'</a>';
-	}
-	else
-	{
-		print '<a class="butAction reposition" href="'.$_SERVER["PHP_SELF"].'?action='.$testlabel.'">'.$butlabel.'</a>';
-	}
-	print '<br><br>';
+    print '<br>';
+    if (!function_exists("ldap_connect")) {
+        print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans('LDAPFunctionsNotAvailableOnPHP').'">'.$butlabel.'</a>';
+    } elseif (empty($conf->global->LDAP_SERVER_HOST)) {
+        print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans('LDAPSetupNotComplete').'">'.$butlabel.'</a>';
+    } elseif (empty($key) || empty($dn) || empty($objectclass)) {
+        $langs->load("errors");
+        print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans('ErrorLDAPSetupNotComplete').'">'.$butlabel.'</a>';
+    } else {
+        print '<a class="butAction reposition" href="'.$_SERVER["PHP_SELF"].'?action='.$testlabel.'">'.$butlabel.'</a>';
+    }
+    print '<br><br>';
 }
 
 
@@ -143,43 +131,57 @@ function show_ldap_test_button($butlabel, $testlabel, $key, $dn, $objectclass)
  */
 function show_ldap_content($result, $level, $count, $var, $hide = 0, $subcount = 0)
 {
-	global $bc, $conf;
+    global $bc, $conf;
 
-	$count--;
-	if ($count == 0) return -1; // To stop loop
-	if (!is_array($result)) return -1;
+    $count--;
+    if ($count == 0) {
+        return -1;
+    } // To stop loop
+    if (!is_array($result)) {
+        return -1;
+    }
 
-	foreach ($result as $key => $val)
-	{
-		if ("$key" == "objectclass") continue;
-		if ("$key" == "count") continue;
-		if ("$key" == "dn") continue;
-		if ("$val" == "objectclass") continue;
+    foreach ($result as $key => $val) {
+        if ("$key" == "objectclass") {
+            continue;
+        }
+        if ("$key" == "count") {
+            continue;
+        }
+        if ("$key" == "dn") {
+            continue;
+        }
+        if ("$val" == "objectclass") {
+            continue;
+        }
 
-		$lastkey[$level] = $key;
+        $lastkey[$level] = $key;
 
-		if (is_array($val))
-		{
-			$hide = 0;
-			if (!is_numeric($key))
-			{
-				print '<tr class="oddeven">';
-				print '<td>';
-				print $key;
-				print '</td><td>';
-				if (strtolower($key) == 'userpassword') $hide = 1;
-			}
-			show_ldap_content($val, $level + 1, $count, $var, $hide, $val["count"]);
-		}
-		elseif ($subcount)
-		{
-			$subcount--;
-			$newstring = dol_htmlentitiesbr($val);
-			if ($hide) print preg_replace('/./i', '*', $newstring);
-			else print $newstring;
-			print '<br>';
-		}
-		if ("$val" != $lastkey[$level] && !$subcount) print '</td></tr>';
-	}
-	return 1;
+        if (is_array($val)) {
+            $hide = 0;
+            if (!is_numeric($key)) {
+                print '<tr class="oddeven">';
+                print '<td>';
+                print $key;
+                print '</td><td>';
+                if (strtolower($key) == 'userpassword') {
+                    $hide = 1;
+                }
+            }
+            show_ldap_content($val, $level + 1, $count, $var, $hide, $val["count"]);
+        } elseif ($subcount) {
+            $subcount--;
+            $newstring = dol_htmlentitiesbr($val);
+            if ($hide) {
+                print preg_replace('/./i', '*', $newstring);
+            } else {
+                print $newstring;
+            }
+            print '<br>';
+        }
+        if ("$val" != $lastkey[$level] && !$subcount) {
+            print '</td></tr>';
+        }
+    }
+    return 1;
 }

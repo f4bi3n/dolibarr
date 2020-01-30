@@ -5,14 +5,14 @@ namespace Sabre\CalDAV\Xml\Request;
 use Sabre\DAV\Xml\Element\Sharee;
 use Sabre\DAV\Xml\XmlTest;
 
-class ShareTest extends XmlTest {
-
+class ShareTest extends XmlTest
+{
     protected $elementMap = [
         '{http://calendarserver.org/ns/}share' => 'Sabre\\CalDAV\\Xml\\Request\\Share',
     ];
 
-    function testDeserialize() {
-
+    public function testDeserialize()
+    {
         $xml = <<<XML
 <?xml version="1.0" encoding="utf-8" ?>
    <CS:share xmlns:D="DAV:"
@@ -49,11 +49,10 @@ XML;
             $share,
             $result['value']
         );
-
     }
 
-    function testDeserializeMinimal() {
-
+    public function testDeserializeMinimal()
+    {
         $xml = <<<XML
 <?xml version="1.0" encoding="utf-8" ?>
    <CS:share xmlns:D="DAV:"
@@ -77,7 +76,5 @@ XML;
             $share,
             $result['value']
         );
-
     }
-
 }

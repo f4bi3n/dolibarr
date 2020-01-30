@@ -24,7 +24,9 @@ require '../../main.inc.php';
 
 $langs->load("admin");
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+    accessforbidden();
+}
 
 $action=GETPOST('action', 'aZ09');
 
@@ -39,11 +41,10 @@ print load_fiche_titre("XCache", '', 'title_setup');
 
 print "<br>\n";
 
-if (!function_exists('xcache_info'))
-{
-	print 'XCache seems to be not installed. Function xcache_info not found.';
-	llxFooter();
-	exit;
+if (!function_exists('xcache_info')) {
+    print 'XCache seems to be not installed. Function xcache_info not found.';
+    llxFooter();
+    exit;
 }
 
 

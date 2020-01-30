@@ -31,7 +31,9 @@ $contextpage=GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'adminacc
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'companies', 'other'));
 
-if (! $user->admin) accessforbidden();
+if (! $user->admin) {
+    accessforbidden();
+}
 
 $error=0;
 
@@ -42,24 +44,24 @@ $error=0;
 
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+    setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
-if ( ($action == 'update' && ! GETPOST("cancel", 'alpha'))
-|| ($action == 'updateedit') )
-{
-	dolibarr_set_const($db, "MAIN_INFO_OPENINGHOURS_MONDAY", GETPOST("monday", 'alpha'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_OPENINGHOURS_TUESDAY", GETPOST("tuesday", 'alpha'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_OPENINGHOURS_WEDNESDAY", GETPOST("wednesday", 'alpha'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_OPENINGHOURS_THURSDAY", GETPOST("thursday", 'alpha'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_OPENINGHOURS_FRIDAY", GETPOST("friday", 'alpha'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_OPENINGHOURS_SATURDAY", GETPOST("saturday", 'alpha'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_OPENINGHOURS_SUNDAY", GETPOST('sunday', 'alpha'), 'chaine', 0, '', $conf->entity);
+if (($action == 'update' && ! GETPOST("cancel", 'alpha'))
+|| ($action == 'updateedit')) {
+    dolibarr_set_const($db, "MAIN_INFO_OPENINGHOURS_MONDAY", GETPOST("monday", 'alpha'), 'chaine', 0, '', $conf->entity);
+    dolibarr_set_const($db, "MAIN_INFO_OPENINGHOURS_TUESDAY", GETPOST("tuesday", 'alpha'), 'chaine', 0, '', $conf->entity);
+    dolibarr_set_const($db, "MAIN_INFO_OPENINGHOURS_WEDNESDAY", GETPOST("wednesday", 'alpha'), 'chaine', 0, '', $conf->entity);
+    dolibarr_set_const($db, "MAIN_INFO_OPENINGHOURS_THURSDAY", GETPOST("thursday", 'alpha'), 'chaine', 0, '', $conf->entity);
+    dolibarr_set_const($db, "MAIN_INFO_OPENINGHOURS_FRIDAY", GETPOST("friday", 'alpha'), 'chaine', 0, '', $conf->entity);
+    dolibarr_set_const($db, "MAIN_INFO_OPENINGHOURS_SATURDAY", GETPOST("saturday", 'alpha'), 'chaine', 0, '', $conf->entity);
+    dolibarr_set_const($db, "MAIN_INFO_OPENINGHOURS_SUNDAY", GETPOST('sunday', 'alpha'), 'chaine', 0, '', $conf->entity);
 
-	if ($action != 'updateedit' && ! $error)
-	{
-		header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
-	}
+    if ($action != 'updateedit' && ! $error) {
+        header("Location: ".$_SERVER["PHP_SELF"]);
+        exit;
+    }
 }
 
 /*
@@ -80,22 +82,21 @@ dol_fiche_head($head, 'openinghours', $langs->trans("Company"), -1, 'company');
 print '<span class="opacitymedium">'.$langs->trans("OpeningHoursDesc")."</span><br>\n";
 print "<br>\n";
 
-if (empty($action) || $action == 'edit' || $action == 'updateedit')
-{
-	/**
-	 * Edit parameters
-	 */
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'" name="form_index">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="action" value="update">';
+if (empty($action) || $action == 'edit' || $action == 'updateedit') {
+    /**
+     * Edit parameters
+     */
+    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'" name="form_index">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
+    print '<input type="hidden" name="action" value="update">';
 
-	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><th class="titlefield wordbreak">'.$langs->trans("Day").'</th><th>'.$langs->trans("Value").'</th></tr>'."\n";
+    print '<table class="noborder centpercent">';
+    print '<tr class="liste_titre"><th class="titlefield wordbreak">'.$langs->trans("Day").'</th><th>'.$langs->trans("Value").'</th></tr>'."\n";
 
-	print '<tr class="oddeven"><td>';
-	print $form->textwithpicto($langs->trans("Monday"), $langs->trans("OpeningHoursFormatDesc"));
-	print '</td><td>';
-	print '<input name="monday" id="monday" class="minwidth100" value="'. ($conf->global->MAIN_INFO_OPENINGHOURS_MONDAY?$conf->global->MAIN_INFO_OPENINGHOURS_MONDAY: GETPOST("monday", 'alpha')) . '"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '' : ' autofocus="autofocus"').'></td></tr>'."\n";
+    print '<tr class="oddeven"><td>';
+    print $form->textwithpicto($langs->trans("Monday"), $langs->trans("OpeningHoursFormatDesc"));
+    print '</td><td>';
+    print '<input name="monday" id="monday" class="minwidth100" value="'. ($conf->global->MAIN_INFO_OPENINGHOURS_MONDAY?$conf->global->MAIN_INFO_OPENINGHOURS_MONDAY: GETPOST("monday", 'alpha')) . '"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '' : ' autofocus="autofocus"').'></td></tr>'."\n";
 
     print '<tr class="oddeven"><td>';
     print $form->textwithpicto($langs->trans("Tuesday"), $langs->trans("OpeningHoursFormatDesc"));
@@ -129,12 +130,12 @@ if (empty($action) || $action == 'edit' || $action == 'updateedit')
 
     print '</table>';
 
-	print '<br><div class="center">';
-	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-	print '</div>';
-	print '<br>';
+    print '<br><div class="center">';
+    print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+    print '</div>';
+    print '<br>';
 
-	print '</form>';
+    print '</form>';
 }
 
 llxFooter();

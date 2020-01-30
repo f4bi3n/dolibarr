@@ -21,9 +21,15 @@
  *       \brief      File to load contacts combobox
  */
 
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (! defined('NOTOKENRENEWAL')) {
+    define('NOTOKENRENEWAL', '1');
+} // Disables token renewal
+if (! defined('NOREQUIREMENU')) {
+    define('NOREQUIREMENU', '1');
+}
+if (! defined('NOREQUIREAJAX')) {
+    define('NOREQUIREAJAX', '1');
+}
 
 require '../../main.inc.php';
 
@@ -41,16 +47,17 @@ top_httphead();
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 // Load original field value
-if (! empty($id) && ! empty($action) && ! empty($htmlname))
-{
-	$form = new Form($db);
+if (! empty($id) && ! empty($action) && ! empty($htmlname)) {
+    $form = new Form($db);
 
-	$return=array();
-	if (empty($showempty)) $showempty=0;
+    $return=array();
+    if (empty($showempty)) {
+        $showempty=0;
+    }
 
-	$return['value']	= $form->selectcontacts($id, '', $htmlname, $showempty, '', '', 0, '', true);
-	$return['num']		= $form->num;
-	$return['error']	= $form->error;
+    $return['value']	= $form->selectcontacts($id, '', $htmlname, $showempty, '', '', 0, '', true);
+    $return['num']		= $form->num;
+    $return['error']	= $form->error;
 
-	echo json_encode($return);
+    echo json_encode($return);
 }

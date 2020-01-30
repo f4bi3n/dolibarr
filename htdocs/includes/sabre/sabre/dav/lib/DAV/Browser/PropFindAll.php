@@ -12,17 +12,17 @@ use Sabre\DAV\PropFind;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class PropFindAll extends PropFind {
+class PropFindAll extends PropFind
+{
 
     /**
      * Creates the PROPFIND object
      *
      * @param string $path
      */
-    function __construct($path) {
-
+    public function __construct($path)
+    {
         parent::__construct($path, []);
-
     }
 
     /**
@@ -47,8 +47,8 @@ class PropFindAll extends PropFind {
      * @param mixed $valueOrCallBack
      * @return void
      */
-    function handle($propertyName, $valueOrCallBack) {
-
+    public function handle($propertyName, $valueOrCallBack)
+    {
         if (is_callable($valueOrCallBack)) {
             $value = $valueOrCallBack();
         } else {
@@ -57,7 +57,6 @@ class PropFindAll extends PropFind {
         if (!is_null($value)) {
             $this->result[$propertyName] = [200, $value];
         }
-
     }
 
     /**
@@ -71,13 +70,12 @@ class PropFindAll extends PropFind {
      * @param int $status
      * @return void
      */
-    function set($propertyName, $value, $status = null) {
-
+    public function set($propertyName, $value, $status = null)
+    {
         if (is_null($status)) {
             $status = is_null($value) ? 404 : 200;
         }
         $this->result[$propertyName] = [$status, $value];
-
     }
 
     /**
@@ -86,10 +84,9 @@ class PropFindAll extends PropFind {
      * @param string $propertyName
      * @return mixed
      */
-    function get($propertyName) {
-
+    public function get($propertyName)
+    {
         return isset($this->result[$propertyName]) ? $this->result[$propertyName][1] : null;
-
     }
 
     /**
@@ -101,10 +98,9 @@ class PropFindAll extends PropFind {
      * @param string $propertyName
      * @return int|null
      */
-    function getStatus($propertyName) {
-
+    public function getStatus($propertyName)
+    {
         return isset($this->result[$propertyName]) ? $this->result[$propertyName][0] : 404;
-
     }
 
     /**
@@ -113,8 +109,8 @@ class PropFindAll extends PropFind {
      *
      * @return array
      */
-    function get404Properties() {
-
+    public function get404Properties()
+    {
         $result = [];
         foreach ($this->result as $propertyName => $stuff) {
             if ($stuff[0] === 404) {
@@ -126,7 +122,5 @@ class PropFindAll extends PropFind {
             $result[] = '{http://sabredav.org/ns}idk';
         }
         return $result;
-
     }
-
 }

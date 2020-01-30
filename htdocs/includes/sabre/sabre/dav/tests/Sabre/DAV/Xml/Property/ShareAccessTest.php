@@ -5,10 +5,10 @@ namespace Sabre\DAV\Xml\Property;
 use Sabre\DAV\Sharing\Plugin;
 use Sabre\DAV\Xml\XmlTest;
 
-class ShareAccessTest extends XmlTest {
-
-    function testSerialize() {
-
+class ShareAccessTest extends XmlTest
+{
+    public function testSerialize()
+    {
         $data = ['{DAV:}root' => [
             [
                 'name'  => '{DAV:}share-access',
@@ -47,11 +47,10 @@ class ShareAccessTest extends XmlTest {
 XML;
 
         $this->assertXmlStringEqualsXmlString($expected, $xml);
-
     }
 
-    function testDeserialize() {
-
+    public function testDeserialize()
+    {
         $input = <<<XML
 <?xml version="1.0"?>
 <d:root xmlns:d="DAV:">
@@ -97,14 +96,13 @@ XML;
             $input,
             ['{DAV:}share-access' => ShareAccess::class]
         );
-
     }
 
     /**
      * @expectedException \Sabre\DAV\Exception\BadRequest
      */
-    function testDeserializeInvalid() {
-
+    public function testDeserializeInvalid()
+    {
         $input = <<<XML
 <?xml version="1.0"?>
 <d:root xmlns:d="DAV:">
@@ -116,6 +114,5 @@ XML;
             $input,
             ['{DAV:}share-access' => ShareAccess::class]
         );
-
     }
 }

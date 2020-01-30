@@ -1,5 +1,7 @@
 <?php
-if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
+if (! defined('ISLOADEDBYSTEELSHEET')) {
+    die('Must be call by steelsheet');
+} ?>
 /* <style type="text/css" > dont remove this line it's an ide hack */
 /*
  * Dropdown of user popup

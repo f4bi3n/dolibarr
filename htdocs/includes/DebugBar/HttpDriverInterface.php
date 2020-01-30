@@ -21,14 +21,14 @@ interface HttpDriverInterface
      *
      * @param string $headers
      */
-    function setHeaders(array $headers);
+    public function setHeaders(array $headers);
 
     /**
      * Checks if the session is started
      *
      * @return boolean
      */
-    function isSessionStarted();
+    public function isSessionStarted();
 
     /**
      * Sets a value in the session
@@ -36,7 +36,7 @@ interface HttpDriverInterface
      * @param string $name
      * @param string $value
      */
-    function setSessionValue($name, $value);
+    public function setSessionValue($name, $value);
 
     /**
      * Checks if a value is in the session
@@ -44,7 +44,7 @@ interface HttpDriverInterface
      * @param string $name
      * @return boolean
      */
-    function hasSessionValue($name);
+    public function hasSessionValue($name);
 
     /**
      * Returns a value from the session
@@ -52,12 +52,12 @@ interface HttpDriverInterface
      * @param string $name
      * @return mixed
      */
-    function getSessionValue($name);
+    public function getSessionValue($name);
 
     /**
      * Deletes a value from the session
      *
      * @param string $name
      */
-    function deleteSessionValue($name);
+    public function deleteSessionValue($name);
 }

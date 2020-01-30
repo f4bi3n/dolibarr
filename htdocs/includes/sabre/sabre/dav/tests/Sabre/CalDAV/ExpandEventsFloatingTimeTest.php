@@ -9,8 +9,8 @@ use Sabre\VObject;
  * This unittest is created to check if expand() works correctly with
  * floating times (using calendar-timezone information).
  */
-class ExpandEventsFloatingTimeTest extends \Sabre\DAVServerTest {
-
+class ExpandEventsFloatingTimeTest extends \Sabre\DAVServerTest
+{
     protected $setupCalDAV = true;
 
     protected $setupCalDAVICSExport = true;
@@ -67,8 +67,8 @@ END:VCALENDAR
         ],
     ];
 
-    function testExpandCalendarQuery() {
-
+    public function testExpandCalendarQuery()
+    {
         $request = new HTTP\Request('REPORT', '/calendars/user1/calendar1', [
             'Depth'        => 1,
             'Content-Type' => 'application/xml',
@@ -119,8 +119,8 @@ END:VCALENDAR
         }
     }
 
-    function testExpandMultiGet() {
-
+    public function testExpandMultiGet()
+    {
         $request = new HTTP\Request('REPORT', '/calendars/user1/calendar1', [
             'Depth'        => 1,
             'Content-Type' => 'application/xml',
@@ -167,8 +167,8 @@ END:VCALENDAR
         }
     }
 
-    function testExpandExport() {
-
+    public function testExpandExport()
+    {
         $request = new HTTP\Request('GET', '/calendars/user1/calendar1?export&start=1&end=2000000000&expand=1', [
             'Depth'        => 1,
             'Content-Type' => 'application/xml',
@@ -203,5 +203,4 @@ END:VCALENDAR
             }
         }
     }
-
 }

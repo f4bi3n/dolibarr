@@ -9,8 +9,8 @@ namespace Sabre\CalDAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class CalendarObject extends \Sabre\DAV\File implements ICalendarObject, \Sabre\DAVACL\IACL {
-
+class CalendarObject extends \Sabre\DAV\File implements ICalendarObject, \Sabre\DAVACL\IACL
+{
     use \Sabre\DAVACL\ACLTrait;
 
     /**
@@ -52,8 +52,8 @@ class CalendarObject extends \Sabre\DAV\File implements ICalendarObject, \Sabre\
      * @param array $calendarInfo
      * @param array $objectData
      */
-    function __construct(Backend\BackendInterface $caldavBackend, array $calendarInfo, array $objectData) {
-
+    public function __construct(Backend\BackendInterface $caldavBackend, array $calendarInfo, array $objectData)
+    {
         $this->caldavBackend = $caldavBackend;
 
         if (!isset($objectData['uri'])) {
@@ -62,7 +62,6 @@ class CalendarObject extends \Sabre\DAV\File implements ICalendarObject, \Sabre\
 
         $this->calendarInfo = $calendarInfo;
         $this->objectData = $objectData;
-
     }
 
     /**
@@ -70,10 +69,9 @@ class CalendarObject extends \Sabre\DAV\File implements ICalendarObject, \Sabre\
      *
      * @return string
      */
-    function getName() {
-
+    public function getName()
+    {
         return $this->objectData['uri'];
-
     }
 
     /**
@@ -81,7 +79,8 @@ class CalendarObject extends \Sabre\DAV\File implements ICalendarObject, \Sabre\
      *
      * @return string
      */
-    function get() {
+    public function get()
+    {
 
         // Pre-populating the 'calendardata' is optional, if we don't have it
         // already we fetch it from the backend.
@@ -89,7 +88,6 @@ class CalendarObject extends \Sabre\DAV\File implements ICalendarObject, \Sabre\
             $this->objectData = $this->caldavBackend->getCalendarObject($this->calendarInfo['id'], $this->objectData['uri']);
         }
         return $this->objectData['calendardata'];
-
     }
 
     /**
@@ -98,8 +96,8 @@ class CalendarObject extends \Sabre\DAV\File implements ICalendarObject, \Sabre\
      * @param string|resource $calendarData
      * @return string
      */
-    function put($calendarData) {
-
+    public function put($calendarData)
+    {
         if (is_resource($calendarData)) {
             $calendarData = stream_get_contents($calendarData);
         }
@@ -108,7 +106,6 @@ class CalendarObject extends \Sabre\DAV\File implements ICalendarObject, \Sabre\
         $this->objectData['etag'] = $etag;
 
         return $etag;
-
     }
 
     /**
@@ -116,10 +113,9 @@ class CalendarObject extends \Sabre\DAV\File implements ICalendarObject, \Sabre\
      *
      * @return void
      */
-    function delete() {
-
+    public function delete()
+    {
         $this->caldavBackend->deleteCalendarObject($this->calendarInfo['id'], $this->objectData['uri']);
-
     }
 
     /**
@@ -127,14 +123,13 @@ class CalendarObject extends \Sabre\DAV\File implements ICalendarObject, \Sabre\
      *
      * @return string
      */
-    function getContentType() {
-
+    public function getContentType()
+    {
         $mime = 'text/calendar; charset=utf-8';
         if (isset($this->objectData['component']) && $this->objectData['component']) {
             $mime .= '; component=' . $this->objectData['component'];
         }
         return $mime;
-
     }
 
     /**
@@ -144,14 +139,13 @@ class CalendarObject extends \Sabre\DAV\File implements ICalendarObject, \Sabre\
      *
      * @return string
      */
-    function getETag() {
-
+    public function getETag()
+    {
         if (isset($this->objectData['etag'])) {
             return $this->objectData['etag'];
         } else {
             return '"' . md5($this->get()) . '"';
         }
-
     }
 
     /**
@@ -159,10 +153,9 @@ class CalendarObject extends \Sabre\DAV\File implements ICalendarObject, \Sabre\
      *
      * @return int
      */
-    function getLastModified() {
-
+    public function getLastModified()
+    {
         return $this->objectData['lastmodified'];
-
     }
 
     /**
@@ -170,14 +163,13 @@ class CalendarObject extends \Sabre\DAV\File implements ICalendarObject, \Sabre\
      *
      * @return int
      */
-    function getSize() {
-
+    public function getSize()
+    {
         if (array_key_exists('size', $this->objectData)) {
             return $this->objectData['size'];
         } else {
             return strlen($this->get());
         }
-
     }
 
     /**
@@ -187,10 +179,9 @@ class CalendarObject extends \Sabre\DAV\File implements ICalendarObject, \Sabre\
      *
      * @return string|null
      */
-    function getOwner() {
-
+    public function getOwner()
+    {
         return $this->calendarInfo['principaluri'];
-
     }
 
     /**
@@ -205,7 +196,8 @@ class CalendarObject extends \Sabre\DAV\File implements ICalendarObject, \Sabre\
      *
      * @return array
      */
-    function getACL() {
+    public function getACL()
+    {
 
         // An alternative acl may be specified in the object data.
         if (isset($this->objectData['acl'])) {
@@ -231,7 +223,5 @@ class CalendarObject extends \Sabre\DAV\File implements ICalendarObject, \Sabre\
             ],
 
         ];
-
     }
-
 }

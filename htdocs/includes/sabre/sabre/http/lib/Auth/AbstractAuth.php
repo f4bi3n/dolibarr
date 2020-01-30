@@ -14,7 +14,8 @@ use Sabre\HTTP\ResponseInterface;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-abstract class AbstractAuth {
+abstract class AbstractAuth
+{
 
     /**
      * Authentication realm
@@ -43,12 +44,11 @@ abstract class AbstractAuth {
      * @param string $realm
      * @return void
      */
-    function __construct($realm = 'SabreTooth', RequestInterface $request, ResponseInterface $response) {
-
+    public function __construct($realm = 'SabreTooth', RequestInterface $request, ResponseInterface $response)
+    {
         $this->realm = $realm;
         $this->request = $request;
         $this->response = $response;
-
     }
 
     /**
@@ -57,17 +57,15 @@ abstract class AbstractAuth {
      *
      * @return void
      */
-    abstract function requireLogin();
+    abstract public function requireLogin();
 
     /**
      * Returns the HTTP realm
      *
      * @return string
      */
-    function getRealm() {
-
+    public function getRealm()
+    {
         return $this->realm;
-
     }
-
 }

@@ -12,7 +12,8 @@ use Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class InvalidComponentType extends DAV\Exception\Forbidden {
+class InvalidComponentType extends DAV\Exception\Forbidden
+{
 
     /**
      * Adds in extra information in the xml response.
@@ -23,13 +24,11 @@ class InvalidComponentType extends DAV\Exception\Forbidden {
      * @param \DOMElement $errorNode
      * @return void
      */
-    function serialize(DAV\Server $server, \DOMElement $errorNode) {
-
+    public function serialize(DAV\Server $server, \DOMElement $errorNode)
+    {
         $doc = $errorNode->ownerDocument;
 
         $np = $doc->createElementNS(CalDAV\Plugin::NS_CALDAV, 'cal:supported-calendar-component');
         $errorNode->appendChild($np);
-
     }
-
 }

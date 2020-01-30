@@ -28,7 +28,6 @@ use OAuth\Common\Token\TokenInterface;
  */
 class ParrotFlowerPower extends AbstractService
 {
-
     public function __construct(
         CredentialsInterface $credentials,
         ClientInterface $httpClient,
@@ -56,7 +55,6 @@ class ParrotFlowerPower extends AbstractService
     public function getAuthorizationEndpoint()
     {
         return new Uri($this->baseApiUri.'oauth2/v1/authorize');
-
     }
 
     /**

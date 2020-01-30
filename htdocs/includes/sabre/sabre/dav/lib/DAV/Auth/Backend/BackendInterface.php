@@ -12,7 +12,8 @@ use Sabre\HTTP\ResponseInterface;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface BackendInterface {
+interface BackendInterface
+{
 
     /**
      * When this method is called, the backend must check if authentication was
@@ -42,7 +43,7 @@ interface BackendInterface {
      * @param ResponseInterface $response
      * @return array
      */
-    function check(RequestInterface $request, ResponseInterface $response);
+    public function check(RequestInterface $request, ResponseInterface $response);
 
     /**
      * This method is called when a user could not be authenticated, and
@@ -65,6 +66,5 @@ interface BackendInterface {
      * @param ResponseInterface $response
      * @return void
      */
-    function challenge(RequestInterface $request, ResponseInterface $response);
-
+    public function challenge(RequestInterface $request, ResponseInterface $response);
 }

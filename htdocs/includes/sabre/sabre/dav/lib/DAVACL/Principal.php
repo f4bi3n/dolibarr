@@ -20,8 +20,8 @@ use Sabre\HTTP\URLUtil;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Principal extends DAV\Node implements IPrincipal, DAV\IProperties, IACL {
-
+class Principal extends DAV\Node implements IPrincipal, DAV\IProperties, IACL
+{
     use ACLTrait;
 
     /**
@@ -44,14 +44,13 @@ class Principal extends DAV\Node implements IPrincipal, DAV\IProperties, IACL {
      * @param PrincipalBackend\BackendInterface $principalBackend
      * @param array $principalProperties
      */
-    function __construct(PrincipalBackend\BackendInterface $principalBackend, array $principalProperties = []) {
-
+    public function __construct(PrincipalBackend\BackendInterface $principalBackend, array $principalProperties = [])
+    {
         if (!isset($principalProperties['uri'])) {
             throw new DAV\Exception('The principal properties must at least contain the \'uri\' key');
         }
         $this->principalBackend = $principalBackend;
         $this->principalProperties = $principalProperties;
-
     }
 
     /**
@@ -59,10 +58,9 @@ class Principal extends DAV\Node implements IPrincipal, DAV\IProperties, IACL {
      *
      * @return string
      */
-    function getPrincipalUrl() {
-
+    public function getPrincipalUrl()
+    {
         return $this->principalProperties['uri'];
-
     }
 
     /**
@@ -72,13 +70,11 @@ class Principal extends DAV\Node implements IPrincipal, DAV\IProperties, IACL {
      *
      * @return array
      */
-    function getAlternateUriSet() {
-
+    public function getAlternateUriSet()
+    {
         $uris = [];
         if (isset($this->principalProperties['{DAV:}alternate-URI-set'])) {
-
             $uris = $this->principalProperties['{DAV:}alternate-URI-set'];
-
         }
 
         if (isset($this->principalProperties['{http://sabredav.org/ns}email-address'])) {
@@ -86,7 +82,6 @@ class Principal extends DAV\Node implements IPrincipal, DAV\IProperties, IACL {
         }
 
         return array_unique($uris);
-
     }
 
     /**
@@ -97,10 +92,9 @@ class Principal extends DAV\Node implements IPrincipal, DAV\IProperties, IACL {
      *
      * @return array
      */
-    function getGroupMemberSet() {
-
+    public function getGroupMemberSet()
+    {
         return $this->principalBackend->getGroupMemberSet($this->principalProperties['uri']);
-
     }
 
     /**
@@ -111,10 +105,9 @@ class Principal extends DAV\Node implements IPrincipal, DAV\IProperties, IACL {
      *
      * @return array
      */
-    function getGroupMembership() {
-
+    public function getGroupMembership()
+    {
         return $this->principalBackend->getGroupMemberShip($this->principalProperties['uri']);
-
     }
 
     /**
@@ -128,10 +121,9 @@ class Principal extends DAV\Node implements IPrincipal, DAV\IProperties, IACL {
      * @param array $groupMembers
      * @return void
      */
-    function setGroupMemberSet(array $groupMembers) {
-
+    public function setGroupMemberSet(array $groupMembers)
+    {
         $this->principalBackend->setGroupMemberSet($this->principalProperties['uri'], $groupMembers);
-
     }
 
     /**
@@ -139,12 +131,11 @@ class Principal extends DAV\Node implements IPrincipal, DAV\IProperties, IACL {
      *
      * @return string
      */
-    function getName() {
-
+    public function getName()
+    {
         $uri = $this->principalProperties['uri'];
         list(, $name) = URLUtil::splitPath($uri);
         return $name;
-
     }
 
     /**
@@ -152,14 +143,13 @@ class Principal extends DAV\Node implements IPrincipal, DAV\IProperties, IACL {
      *
      * @return string
      */
-    function getDisplayName() {
-
+    public function getDisplayName()
+    {
         if (isset($this->principalProperties['{DAV:}displayname'])) {
             return $this->principalProperties['{DAV:}displayname'];
         } else {
             return $this->getName();
         }
-
     }
 
     /**
@@ -168,19 +158,16 @@ class Principal extends DAV\Node implements IPrincipal, DAV\IProperties, IACL {
      * @param array $requestedProperties
      * @return array
      */
-    function getProperties($requestedProperties) {
-
+    public function getProperties($requestedProperties)
+    {
         $newProperties = [];
         foreach ($requestedProperties as $propName) {
-
             if (isset($this->principalProperties[$propName])) {
                 $newProperties[$propName] = $this->principalProperties[$propName];
             }
-
         }
 
         return $newProperties;
-
     }
 
     /**
@@ -195,13 +182,12 @@ class Principal extends DAV\Node implements IPrincipal, DAV\IProperties, IACL {
      * @param DAV\PropPatch $propPatch
      * @return void
      */
-    function propPatch(DAV\PropPatch $propPatch) {
-
+    public function propPatch(DAV\PropPatch $propPatch)
+    {
         return $this->principalBackend->updatePrincipal(
             $this->principalProperties['uri'],
             $propPatch
         );
-
     }
 
     /**
@@ -211,11 +197,8 @@ class Principal extends DAV\Node implements IPrincipal, DAV\IProperties, IACL {
      *
      * @return string|null
      */
-    function getOwner() {
-
+    public function getOwner()
+    {
         return $this->principalProperties['uri'];
-
-
     }
-
 }

@@ -13,17 +13,16 @@ use Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class InsufficientStorage extends DAV\Exception {
+class InsufficientStorage extends DAV\Exception
+{
 
     /**
      * Returns the HTTP statuscode for this exception
      *
      * @return int
      */
-    function getHTTPCode() {
-
+    public function getHTTPCode()
+    {
         return 507;
-
     }
-
 }

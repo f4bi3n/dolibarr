@@ -31,9 +31,9 @@ require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
 class ExpenseReportStats extends Stats
 {
     /**
-	 * @var string Name of table without prefix where object is stored
-	 */
-	public $table_element;
+     * @var string Name of table without prefix where object is stored
+     */
+    public $table_element;
 
     public $socid;
     public $userid;
@@ -45,136 +45,136 @@ class ExpenseReportStats extends Stats
     private $datetouse = 'date_valid';
 
 
-	/**
-	 * Constructor
-	 *
-	 * @param 	DoliDB		$db		   Database handler
-	 * @param 	int			$socid	   Id third party
+    /**
+     * Constructor
+     *
+     * @param 	DoliDB		$db		   Database handler
+     * @param 	int			$socid	   Id third party
      * @param   int			$userid    Id user for filter
-	 * @return 	void
-	 */
-	public function __construct($db, $socid = 0, $userid = 0)
-	{
-		global $conf, $user;
+     * @return 	void
+     */
+    public function __construct($db, $socid = 0, $userid = 0)
+    {
+        global $conf, $user;
 
-		$this->db = $db;
+        $this->db = $db;
         $this->socid = $socid;
         $this->userid = $userid;
 
-		$object=new ExpenseReport($this->db);
-		$this->from = MAIN_DB_PREFIX.$object->table_element." as e";
-		$this->field='total_ht';
+        $object=new ExpenseReport($this->db);
+        $this->from = MAIN_DB_PREFIX.$object->table_element." as e";
+        $this->field='total_ht';
 
-		//$this->where = " e.fk_statut > 0";
-		//$this->where.= " AND e.date_valid > '2000-01-01'";    // To filter only correct "valid date". If date is invalid, the group by on it will fails. Launch a repair.php if you have.
-		$this->where.= ' e.entity IN ('.getEntity('expensereport').')';
+        //$this->where = " e.fk_statut > 0";
+        //$this->where.= " AND e.date_valid > '2000-01-01'";    // To filter only correct "valid date". If date is invalid, the group by on it will fails. Launch a repair.php if you have.
+        $this->where.= ' e.entity IN ('.getEntity('expensereport').')';
 
-		//$this->where.= " AND entity = ".$conf->entity;
-		if ($this->socid)
-		{
-			$this->where.=" AND e.fk_soc = ".$this->socid;
-		}
+        //$this->where.= " AND entity = ".$conf->entity;
+        if ($this->socid) {
+            $this->where.=" AND e.fk_soc = ".$this->socid;
+        }
 
-		// Only me and subordinates
-		if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous))
-		{
-			$childids = $user->getAllChildIds();
-			$childids[]=$user->id;
-			$this->where.=" AND e.fk_user_author IN (".(join(',', $childids)).")";
-		}
+        // Only me and subordinates
+        if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)) {
+            $childids = $user->getAllChildIds();
+            $childids[]=$user->id;
+            $this->where.=" AND e.fk_user_author IN (".(join(',', $childids)).")";
+        }
 
-		if ($this->userid > 0) $this->where.=' AND e.fk_user_author = '.$this->userid;
-	}
-
-
-	/**
-	 * 	Return nb of expense report per year
-	 *
-	 *	@return		array	Array of values
-	 */
-	public function getNbByYear()
-	{
-		$sql = "SELECT YEAR(".$this->db->ifsql('e.'.$this->datetouse.' IS NULL', 'e.date_create', 'e.'.$this->datetouse).") as dm, count(*)";
-		$sql.= " FROM ".$this->from;
-		$sql.= " GROUP BY dm DESC";
-		$sql.= " WHERE ".$this->where;
-
-		return $this->_getNbByYear($sql);
-	}
+        if ($this->userid > 0) {
+            $this->where.=' AND e.fk_user_author = '.$this->userid;
+        }
+    }
 
 
-	/**
-	 * 	Renvoie le nombre de facture par mois pour une annee donnee
-	 *
-	 *	@param	string	$year		Year to scan
+    /**
+     * 	Return nb of expense report per year
+     *
+     *	@return		array	Array of values
+     */
+    public function getNbByYear()
+    {
+        $sql = "SELECT YEAR(".$this->db->ifsql('e.'.$this->datetouse.' IS NULL', 'e.date_create', 'e.'.$this->datetouse).") as dm, count(*)";
+        $sql.= " FROM ".$this->from;
+        $sql.= " GROUP BY dm DESC";
+        $sql.= " WHERE ".$this->where;
+
+        return $this->_getNbByYear($sql);
+    }
+
+
+    /**
+     * 	Renvoie le nombre de facture par mois pour une annee donnee
+     *
+     *	@param	string	$year		Year to scan
      *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 *	@return	array				Array of values
-	 */
-	public function getNbByMonth($year, $format = 0)
-	{
-		$sql = "SELECT MONTH(".$this->db->ifsql('e.'.$this->datetouse.' IS NULL', 'e.date_create', 'e.'.$this->datetouse).") as dm, count(*)";
-		$sql.= " FROM ".$this->from;
-		$sql.= " WHERE YEAR(e.".$this->datetouse.") = ".$year;
-		$sql.= " AND ".$this->where;
-		$sql.= " GROUP BY dm";
+     *	@return	array				Array of values
+     */
+    public function getNbByMonth($year, $format = 0)
+    {
+        $sql = "SELECT MONTH(".$this->db->ifsql('e.'.$this->datetouse.' IS NULL', 'e.date_create', 'e.'.$this->datetouse).") as dm, count(*)";
+        $sql.= " FROM ".$this->from;
+        $sql.= " WHERE YEAR(e.".$this->datetouse.") = ".$year;
+        $sql.= " AND ".$this->where;
+        $sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm', 'DESC');
 
-		$res=$this->_getNbByMonth($year, $sql, $format);
-		//var_dump($res);print '<br>';
-		return $res;
-	}
+        $res=$this->_getNbByMonth($year, $sql, $format);
+        //var_dump($res);print '<br>';
+        return $res;
+    }
 
 
-	/**
-	 * 	Renvoie le montant de facture par mois pour une annee donnee
-	 *
-	 *	@param	int		$year		Year to scan
+    /**
+     * 	Renvoie le montant de facture par mois pour une annee donnee
+     *
+     *	@param	int		$year		Year to scan
      *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 *	@return	array				Array of values
-	 */
-	public function getAmountByMonth($year, $format = 0)
-	{
-		$sql = "SELECT date_format(".$this->db->ifsql('e.'.$this->datetouse.' IS NULL', 'e.date_create', 'e.'.$this->datetouse).",'%m') as dm, sum(".$this->field.")";
-		$sql.= " FROM ".$this->from;
-		$sql.= " WHERE date_format(".$this->db->ifsql('e.'.$this->datetouse.' IS NULL', 'e.date_create', 'e.'.$this->datetouse).",'%Y') = '".$year."'";
-		$sql.= " AND ".$this->where;
-		$sql.= " GROUP BY dm";
-		$sql.= $this->db->order('dm', 'DESC');
-
-		$res=$this->_getAmountByMonth($year, $sql, $format);
-		//var_dump($res);print '<br>';
-		return $res;
-	}
-
-	/**
-	 *	Return average amount
-	 *
-	 *	@param	int		$year		Year to scan
-	 *	@return	array				Array of values
-	 */
-	public function getAverageByMonth($year)
-	{
-		$sql = "SELECT date_format(".$this->db->ifsql('e.'.$this->datetouse.' IS NULL', 'e.date_create', 'e.'.$this->datetouse).",'%m') as dm, avg(".$this->field.")";
-		$sql.= " FROM ".$this->from;
-		$sql.= " WHERE date_format(".$this->db->ifsql('e.'.$this->datetouse.' IS NULL', 'e.date_create', 'e.'.$this->datetouse).",'%Y') = '".$year."'";
-		$sql.= " AND ".$this->where;
-		$sql.= " GROUP BY dm";
+     *	@return	array				Array of values
+     */
+    public function getAmountByMonth($year, $format = 0)
+    {
+        $sql = "SELECT date_format(".$this->db->ifsql('e.'.$this->datetouse.' IS NULL', 'e.date_create', 'e.'.$this->datetouse).",'%m') as dm, sum(".$this->field.")";
+        $sql.= " FROM ".$this->from;
+        $sql.= " WHERE date_format(".$this->db->ifsql('e.'.$this->datetouse.' IS NULL', 'e.date_create', 'e.'.$this->datetouse).",'%Y') = '".$year."'";
+        $sql.= " AND ".$this->where;
+        $sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm', 'DESC');
 
-		return $this->_getAverageByMonth($year, $sql);
-	}
+        $res=$this->_getAmountByMonth($year, $sql, $format);
+        //var_dump($res);print '<br>';
+        return $res;
+    }
 
-	/**
-	 *	Return nb, total and average
-	 *
-	 *	@return	array				Array of values
-	 */
-	public function getAllByYear()
-	{
-		$sql = "SELECT date_format(".$this->db->ifsql('e.'.$this->datetouse.' IS NULL', 'e.date_create', 'e.'.$this->datetouse).",'%Y') as year, count(*) as nb, sum(".$this->field.") as total, avg(".$this->field.") as avg";
-		$sql.= " FROM ".$this->from;
-		$sql.= " WHERE ".$this->where;
-		$sql.= " GROUP BY year";
+    /**
+     *	Return average amount
+     *
+     *	@param	int		$year		Year to scan
+     *	@return	array				Array of values
+     */
+    public function getAverageByMonth($year)
+    {
+        $sql = "SELECT date_format(".$this->db->ifsql('e.'.$this->datetouse.' IS NULL', 'e.date_create', 'e.'.$this->datetouse).",'%m') as dm, avg(".$this->field.")";
+        $sql.= " FROM ".$this->from;
+        $sql.= " WHERE date_format(".$this->db->ifsql('e.'.$this->datetouse.' IS NULL', 'e.date_create', 'e.'.$this->datetouse).",'%Y') = '".$year."'";
+        $sql.= " AND ".$this->where;
+        $sql.= " GROUP BY dm";
+        $sql.= $this->db->order('dm', 'DESC');
+
+        return $this->_getAverageByMonth($year, $sql);
+    }
+
+    /**
+     *	Return nb, total and average
+     *
+     *	@return	array				Array of values
+     */
+    public function getAllByYear()
+    {
+        $sql = "SELECT date_format(".$this->db->ifsql('e.'.$this->datetouse.' IS NULL', 'e.date_create', 'e.'.$this->datetouse).",'%Y') as year, count(*) as nb, sum(".$this->field.") as total, avg(".$this->field.") as avg";
+        $sql.= " FROM ".$this->from;
+        $sql.= " WHERE ".$this->where;
+        $sql.= " GROUP BY year";
         $sql.= $this->db->order('year', 'DESC');
 
         return $this->_getAllByYear($sql);

@@ -7,10 +7,10 @@ use Sabre\HTTP;
 
 require_once 'Sabre/HTTP/ResponseMock.php';
 
-class PrincipalPropertySearchTest extends \PHPUnit_Framework_TestCase {
-
-    function getServer() {
-
+class PrincipalPropertySearchTest extends \PHPUnit_Framework_TestCase
+{
+    public function getServer()
+    {
         $backend = new PrincipalBackend\Mock();
 
         $dir = new DAV\SimpleCollection('root');
@@ -30,11 +30,10 @@ class PrincipalPropertySearchTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals($plugin, $fakeServer->getPlugin('acl'));
 
         return $fakeServer;
-
     }
 
-    function testDepth1() {
-
+    public function testDepth1()
+    {
         $xml = '<?xml version="1.0"?>
 <d:principal-property-search xmlns:d="DAV:">
   <d:property-search>
@@ -68,12 +67,11 @@ class PrincipalPropertySearchTest extends \PHPUnit_Framework_TestCase {
             'X-Sabre-Version' => [DAV\Version::VERSION],
             'Content-Type'    => ['application/xml; charset=utf-8'],
         ], $server->httpResponse->getHeaders());
-
     }
 
 
-    function testUnknownSearchField() {
-
+    public function testUnknownSearchField()
+    {
         $xml = '<?xml version="1.0"?>
 <d:principal-property-search xmlns:d="DAV:">
   <d:property-search>
@@ -108,11 +106,10 @@ class PrincipalPropertySearchTest extends \PHPUnit_Framework_TestCase {
             'Content-Type'    => ['application/xml; charset=utf-8'],
             'Vary'            => ['Brief,Prefer'],
         ], $server->httpResponse->getHeaders());
-
     }
 
-    function testCorrect() {
-
+    public function testCorrect()
+    {
         $xml = '<?xml version="1.0"?>
 <d:principal-property-search xmlns:d="DAV:">
   <d:apply-to-principal-collection-set />
@@ -164,22 +161,21 @@ class PrincipalPropertySearchTest extends \PHPUnit_Framework_TestCase {
         $xml = simplexml_load_string($server->httpResponse->body);
         $xml->registerXPathNamespace('d', 'DAV:');
         foreach ($check as $v1 => $v2) {
-
             $xpath = is_int($v1) ? $v2 : $v1;
 
             $result = $xml->xpath($xpath);
 
             $count = 1;
-            if (!is_int($v1)) $count = $v2;
+            if (!is_int($v1)) {
+                $count = $v2;
+            }
 
             $this->assertEquals($count, count($result), 'we expected ' . $count . ' appearances of ' . $xpath . ' . We found ' . count($result) . '. Full response body: ' . $server->httpResponse->body);
-
         }
-
     }
 
-    function testAND() {
-
+    public function testAND()
+    {
         $xml = '<?xml version="1.0"?>
 <d:principal-property-search xmlns:d="DAV:">
   <d:apply-to-principal-collection-set />
@@ -237,21 +233,20 @@ class PrincipalPropertySearchTest extends \PHPUnit_Framework_TestCase {
         $xml = simplexml_load_string($server->httpResponse->body);
         $xml->registerXPathNamespace('d', 'DAV:');
         foreach ($check as $v1 => $v2) {
-
             $xpath = is_int($v1) ? $v2 : $v1;
 
             $result = $xml->xpath($xpath);
 
             $count = 1;
-            if (!is_int($v1)) $count = $v2;
+            if (!is_int($v1)) {
+                $count = $v2;
+            }
 
             $this->assertEquals($count, count($result), 'we expected ' . $count . ' appearances of ' . $xpath . ' . We found ' . count($result) . '. Full response body: ' . $server->httpResponse->body);
-
         }
-
     }
-    function testOR() {
-
+    public function testOR()
+    {
         $xml = '<?xml version="1.0"?>
 <d:principal-property-search xmlns:d="DAV:" test="anyof">
   <d:apply-to-principal-collection-set />
@@ -309,21 +304,20 @@ class PrincipalPropertySearchTest extends \PHPUnit_Framework_TestCase {
         $xml = simplexml_load_string($server->httpResponse->body);
         $xml->registerXPathNamespace('d', 'DAV:');
         foreach ($check as $v1 => $v2) {
-
             $xpath = is_int($v1) ? $v2 : $v1;
 
             $result = $xml->xpath($xpath);
 
             $count = 1;
-            if (!is_int($v1)) $count = $v2;
+            if (!is_int($v1)) {
+                $count = $v2;
+            }
 
             $this->assertEquals($count, count($result), 'we expected ' . $count . ' appearances of ' . $xpath . ' . We found ' . count($result) . '. Full response body: ' . $server->httpResponse->body);
-
         }
-
     }
-    function testWrongUri() {
-
+    public function testWrongUri()
+    {
         $xml = '<?xml version="1.0"?>
 <d:principal-property-search xmlns:d="DAV:">
   <d:property-search>
@@ -368,30 +362,27 @@ class PrincipalPropertySearchTest extends \PHPUnit_Framework_TestCase {
         $xml = simplexml_load_string($server->httpResponse->body);
         $xml->registerXPathNamespace('d', 'DAV:');
         foreach ($check as $v1 => $v2) {
-
             $xpath = is_int($v1) ? $v2 : $v1;
 
             $result = $xml->xpath($xpath);
 
             $count = 1;
-            if (!is_int($v1)) $count = $v2;
+            if (!is_int($v1)) {
+                $count = $v2;
+            }
 
             $this->assertEquals($count, count($result), 'we expected ' . $count . ' appearances of ' . $xpath . ' . We found ' . count($result) . '. Full response body: ' . $server->httpResponse->body);
-
         }
-
     }
 }
 
-class MockPlugin extends Plugin {
-
-    function getCurrentUserPrivilegeSet($node) {
-
+class MockPlugin extends Plugin
+{
+    public function getCurrentUserPrivilegeSet($node)
+    {
         return [
             '{DAV:}read',
             '{DAV:}write',
         ];
-
     }
-
 }

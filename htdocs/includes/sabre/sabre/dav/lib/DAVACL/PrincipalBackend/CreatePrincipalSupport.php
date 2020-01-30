@@ -12,7 +12,8 @@ use Sabre\DAV\MkCol;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface CreatePrincipalSupport extends BackendInterface {
+interface CreatePrincipalSupport extends BackendInterface
+{
 
     /**
      * Creates a new principal.
@@ -25,6 +26,5 @@ interface CreatePrincipalSupport extends BackendInterface {
      * @param MkCol $mkCol
      * @return void
      */
-    function createPrincipal($path, MkCol $mkCol);
-
+    public function createPrincipal($path, MkCol $mkCol);
 }

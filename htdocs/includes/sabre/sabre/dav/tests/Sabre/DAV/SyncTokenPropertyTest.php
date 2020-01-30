@@ -2,7 +2,8 @@
 
 namespace Sabre\DAV;
 
-class SyncTokenPropertyTest extends \Sabre\DAVServerTest {
+class SyncTokenPropertyTest extends \Sabre\DAVServerTest
+{
 
     /**
      * The assumption in these tests is that a PROPFIND is going on, and to
@@ -14,8 +15,8 @@ class SyncTokenPropertyTest extends \Sabre\DAVServerTest {
      *
      * @dataProvider data
      */
-    function testAlreadyThere1($name, $value) {
-
+    public function testAlreadyThere1($name, $value)
+    {
         $propFind = new PropFind('foo', [
             '{http://calendarserver.org/ns/}getctag',
             $name,
@@ -26,7 +27,6 @@ class SyncTokenPropertyTest extends \Sabre\DAVServerTest {
         $corePlugin->propFindLate($propFind, new SimpleCollection('hi'));
 
         $this->assertEquals("hello", $propFind->get('{http://calendarserver.org/ns/}getctag'));
-
     }
 
     /**
@@ -38,8 +38,8 @@ class SyncTokenPropertyTest extends \Sabre\DAVServerTest {
      *
      * @dataProvider data
      */
-    function testRefetch($name, $value) {
-
+    public function testRefetch($name, $value)
+    {
         $this->server->tree = new Tree(
             new SimpleCollection('root', [
                 new Mock\PropertiesCollection(
@@ -58,11 +58,10 @@ class SyncTokenPropertyTest extends \Sabre\DAVServerTest {
         $corePlugin->propFindLate($propFind, new SimpleCollection('hi'));
 
         $this->assertEquals("hello", $propFind->get('{http://calendarserver.org/ns/}getctag'));
-
     }
 
-    function testNoData() {
-
+    public function testNoData()
+    {
         $this->server->tree = new Tree(
             new SimpleCollection('root', [
                 new Mock\PropertiesCollection(
@@ -81,11 +80,10 @@ class SyncTokenPropertyTest extends \Sabre\DAVServerTest {
         $corePlugin->propFindLate($propFind, new SimpleCollection('hi'));
 
         $this->assertNull($propFind->get('{http://calendarserver.org/ns/}getctag'));
-
     }
 
-    function data() {
-
+    public function data()
+    {
         return [
             [
                 '{http://sabredav.org/ns}sync-token',
@@ -100,7 +98,5 @@ class SyncTokenPropertyTest extends \Sabre\DAVServerTest {
                 new Xml\Property\Href(Sync\Plugin::SYNCTOKEN_PREFIX . "hello", false)
             ]
         ];
-
     }
-
 }

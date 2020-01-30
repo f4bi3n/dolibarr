@@ -16,7 +16,8 @@ use Sabre\DAVACL;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class ProxyWrite implements IProxyWrite {
+class ProxyWrite implements IProxyWrite
+{
 
     /**
      * Parent principal information
@@ -40,11 +41,10 @@ class ProxyWrite implements IProxyWrite {
      * @param DAVACL\PrincipalBackend\BackendInterface $principalBackend
      * @param array $principalInfo
      */
-    function __construct(DAVACL\PrincipalBackend\BackendInterface $principalBackend, array $principalInfo) {
-
+    public function __construct(DAVACL\PrincipalBackend\BackendInterface $principalBackend, array $principalInfo)
+    {
         $this->principalInfo = $principalInfo;
         $this->principalBackend = $principalBackend;
-
     }
 
     /**
@@ -52,10 +52,9 @@ class ProxyWrite implements IProxyWrite {
      *
      * @return string
      */
-    function getName() {
-
+    public function getName()
+    {
         return 'calendar-proxy-write';
-
     }
 
     /**
@@ -63,10 +62,9 @@ class ProxyWrite implements IProxyWrite {
      *
      * @return null
      */
-    function getLastModified() {
-
+    public function getLastModified()
+    {
         return null;
-
     }
 
     /**
@@ -75,10 +73,9 @@ class ProxyWrite implements IProxyWrite {
      * @throws DAV\Exception\Forbidden
      * @return void
      */
-    function delete() {
-
+    public function delete()
+    {
         throw new DAV\Exception\Forbidden('Permission denied to delete node');
-
     }
 
     /**
@@ -88,10 +85,9 @@ class ProxyWrite implements IProxyWrite {
      * @throws DAV\Exception\Forbidden
      * @return void
      */
-    function setName($name) {
-
+    public function setName($name)
+    {
         throw new DAV\Exception\Forbidden('Permission denied to rename file');
-
     }
 
 
@@ -102,10 +98,9 @@ class ProxyWrite implements IProxyWrite {
      *
      * @return array
      */
-    function getAlternateUriSet() {
-
+    public function getAlternateUriSet()
+    {
         return [];
-
     }
 
     /**
@@ -113,10 +108,9 @@ class ProxyWrite implements IProxyWrite {
      *
      * @return string
      */
-    function getPrincipalUrl() {
-
+    public function getPrincipalUrl()
+    {
         return $this->principalInfo['uri'] . '/' . $this->getName();
-
     }
 
     /**
@@ -127,10 +121,9 @@ class ProxyWrite implements IProxyWrite {
      *
      * @return array
      */
-    function getGroupMemberSet() {
-
+    public function getGroupMemberSet()
+    {
         return $this->principalBackend->getGroupMemberSet($this->getPrincipalUrl());
-
     }
 
     /**
@@ -141,10 +134,9 @@ class ProxyWrite implements IProxyWrite {
      *
      * @return array
      */
-    function getGroupMembership() {
-
+    public function getGroupMembership()
+    {
         return $this->principalBackend->getGroupMembership($this->getPrincipalUrl());
-
     }
 
     /**
@@ -158,10 +150,9 @@ class ProxyWrite implements IProxyWrite {
      * @param array $principals
      * @return void
      */
-    function setGroupMemberSet(array $principals) {
-
+    public function setGroupMemberSet(array $principals)
+    {
         $this->principalBackend->setGroupMemberSet($this->getPrincipalUrl(), $principals);
-
     }
 
     /**
@@ -172,10 +163,8 @@ class ProxyWrite implements IProxyWrite {
      *
      * @return string
      */
-    function getDisplayName() {
-
+    public function getDisplayName()
+    {
         return $this->getName();
-
     }
-
 }

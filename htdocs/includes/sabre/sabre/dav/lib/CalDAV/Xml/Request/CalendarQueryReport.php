@@ -19,7 +19,8 @@ use Sabre\Xml\XmlDeserializable;
  * @author Evert Pot (http://www.rooftopsolutions.nl/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class CalendarQueryReport implements XmlDeserializable {
+class CalendarQueryReport implements XmlDeserializable
+{
 
     /**
      * An array with requested properties.
@@ -82,8 +83,8 @@ class CalendarQueryReport implements XmlDeserializable {
      * @param Reader $reader
      * @return mixed
      */
-    static function xmlDeserialize(Reader $reader) {
-
+    public static function xmlDeserialize(Reader $reader)
+    {
         $elems = $reader->parseInnerTree([
             '{urn:ietf:params:xml:ns:caldav}comp-filter'   => 'Sabre\\CalDAV\\Xml\\Filter\\CompFilter',
             '{urn:ietf:params:xml:ns:caldav}prop-filter'   => 'Sabre\\CalDAV\\Xml\\Filter\\PropFilter',
@@ -97,19 +98,20 @@ class CalendarQueryReport implements XmlDeserializable {
             'properties' => [],
         ];
 
-        if (!is_array($elems)) $elems = [];
+        if (!is_array($elems)) {
+            $elems = [];
+        }
 
         foreach ($elems as $elem) {
-
             switch ($elem['name']) {
 
-                case '{DAV:}prop' :
+                case '{DAV:}prop':
                     $newProps['properties'] = array_keys($elem['value']);
                     if (isset($elem['value']['{' . Plugin::NS_CALDAV . '}calendar-data'])) {
                         $newProps += $elem['value']['{' . Plugin::NS_CALDAV . '}calendar-data'];
                     }
                     break;
-                case '{' . Plugin::NS_CALDAV . '}filter' :
+                case '{' . Plugin::NS_CALDAV . '}filter':
                     foreach ($elem['value'] as $subElem) {
                         if ($subElem['name'] === '{' . Plugin::NS_CALDAV . '}comp-filter') {
                             if (!is_null($newProps['filters'])) {
@@ -121,7 +123,6 @@ class CalendarQueryReport implements XmlDeserializable {
                     break;
 
             }
-
         }
 
         if (is_null($newProps['filters'])) {
@@ -133,7 +134,5 @@ class CalendarQueryReport implements XmlDeserializable {
             $obj->$key = $value;
         }
         return $obj;
-
     }
-
 }

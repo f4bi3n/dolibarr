@@ -13,8 +13,8 @@ use Sabre\DAVACL\IACL;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class File extends BaseFile implements IACL {
-
+class File extends BaseFile implements IACL
+{
     use ACLTrait;
 
     /**
@@ -38,12 +38,11 @@ class File extends BaseFile implements IACL {
      * @param array $acl ACL rules.
      * @param string|null $owner principal owner string.
      */
-    function __construct($path, array $acl, $owner = null) {
-
+    public function __construct($path, array $acl, $owner = null)
+    {
         parent::__construct($path);
         $this->acl = $acl;
         $this->owner = $owner;
-
     }
 
     /**
@@ -53,10 +52,9 @@ class File extends BaseFile implements IACL {
      *
      * @return string|null
      */
-    function getOwner() {
-
+    public function getOwner()
+    {
         return $this->owner;
-
     }
 
     /**
@@ -71,10 +69,8 @@ class File extends BaseFile implements IACL {
      *
      * @return array
      */
-    function getACL() {
-
+    public function getACL()
+    {
         return $this->acl;
-
     }
-
 }

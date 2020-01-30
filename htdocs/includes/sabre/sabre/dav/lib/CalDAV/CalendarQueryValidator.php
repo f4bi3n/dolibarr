@@ -18,7 +18,8 @@ use Sabre\VObject;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class CalendarQueryValidator {
+class CalendarQueryValidator
+{
 
     /**
      * Verify if a list of filters applies to the calendar data object
@@ -29,7 +30,8 @@ class CalendarQueryValidator {
      * @param array $filters
      * @return bool
      */
-    function validate(VObject\Component\VCalendar $vObject, array $filters) {
+    public function validate(VObject\Component\VCalendar $vObject, array $filters)
+    {
 
         // The top level object is always a component filter.
         // We'll parse it manually, as it's pretty simple.
@@ -40,8 +42,6 @@ class CalendarQueryValidator {
         return
             $this->validateCompFilters($vObject, $filters['comp-filters']) &&
             $this->validatePropFilters($vObject, $filters['prop-filters']);
-
-
     }
 
     /**
@@ -55,20 +55,17 @@ class CalendarQueryValidator {
      * @param array $filters
      * @return bool
      */
-    protected function validateCompFilters(VObject\Component $parent, array $filters) {
-
+    protected function validateCompFilters(VObject\Component $parent, array $filters)
+    {
         foreach ($filters as $filter) {
-
             $isDefined = isset($parent->{$filter['name']});
 
             if ($filter['is-not-defined']) {
-
                 if ($isDefined) {
                     return false;
                 } else {
                     continue;
                 }
-
             }
             if (!$isDefined) {
                 return false;
@@ -90,27 +87,23 @@ class CalendarQueryValidator {
             // If there are sub-filters, we need to find at least one component
             // for which the subfilters hold true.
             foreach ($parent->{$filter['name']} as $subComponent) {
-
                 if (
                     $this->validateCompFilters($subComponent, $filter['comp-filters']) &&
                     $this->validatePropFilters($subComponent, $filter['prop-filters'])) {
-                        // We had a match, so this comp-filter succeeds
-                        continue 2;
+                    // We had a match, so this comp-filter succeeds
+                    continue 2;
                 }
-
             }
 
             // If we got here it means there were sub-comp-filters or
             // sub-prop-filters and there was no match. This means this filter
             // needs to return false.
             return false;
-
         }
 
         // If we got here it means we got through all comp-filters alive so the
         // filters were all true.
         return true;
-
     }
 
     /**
@@ -124,20 +117,17 @@ class CalendarQueryValidator {
      * @param array $filters
      * @return bool
      */
-    protected function validatePropFilters(VObject\Component $parent, array $filters) {
-
+    protected function validatePropFilters(VObject\Component $parent, array $filters)
+    {
         foreach ($filters as $filter) {
-
             $isDefined = isset($parent->{$filter['name']});
 
             if ($filter['is-not-defined']) {
-
                 if ($isDefined) {
                     return false;
                 } else {
                     continue;
                 }
-
             }
             if (!$isDefined) {
                 return false;
@@ -159,7 +149,6 @@ class CalendarQueryValidator {
             // If there are sub-filters, we need to find at least one property
             // for which the subfilters hold true.
             foreach ($parent->{$filter['name']} as $subComponent) {
-
                 if (
                     $this->validateParamFilters($subComponent, $filter['param-filters']) &&
                     (!$filter['text-match'] || $this->validateTextMatch($subComponent, $filter['text-match']))
@@ -167,20 +156,17 @@ class CalendarQueryValidator {
                     // We had a match, so this prop-filter succeeds
                     continue 2;
                 }
-
             }
 
             // If we got here it means there were sub-param-filters or
             // text-match filters and there was no match. This means the
             // filter needs to return false.
             return false;
-
         }
 
         // If we got here it means we got through all prop-filters alive so the
         // filters were all true.
         return true;
-
     }
 
     /**
@@ -194,20 +180,17 @@ class CalendarQueryValidator {
      * @param array $filters
      * @return bool
      */
-    protected function validateParamFilters(VObject\Property $parent, array $filters) {
-
+    protected function validateParamFilters(VObject\Property $parent, array $filters)
+    {
         foreach ($filters as $filter) {
-
             $isDefined = isset($parent[$filter['name']]);
 
             if ($filter['is-not-defined']) {
-
                 if ($isDefined) {
                     return false;
                 } else {
                     continue;
                 }
-
             }
             if (!$isDefined) {
                 return false;
@@ -220,24 +203,20 @@ class CalendarQueryValidator {
             // If there are sub-filters, we need to find at least one parameter
             // for which the subfilters hold true.
             foreach ($parent[$filter['name']]->getParts() as $paramPart) {
-
                 if ($this->validateTextMatch($paramPart, $filter['text-match'])) {
                     // We had a match, so this param-filter succeeds
                     continue 2;
                 }
-
             }
 
             // If we got here it means there was a text-match filter and there
             // were no matches. This means the filter needs to return false.
             return false;
-
         }
 
         // If we got here it means we got through all param-filters alive so the
         // filters were all true.
         return true;
-
     }
 
     /**
@@ -250,8 +229,8 @@ class CalendarQueryValidator {
      * @param array $textMatch
      * @return bool
      */
-    protected function validateTextMatch($check, array $textMatch) {
-
+    protected function validateTextMatch($check, array $textMatch)
+    {
         if ($check instanceof VObject\Node) {
             $check = $check->getValue();
         }
@@ -259,7 +238,6 @@ class CalendarQueryValidator {
         $isMatching = \Sabre\DAV\StringUtil::textMatch($check, $textMatch['value'], $textMatch['collation']);
 
         return ($textMatch['negate-condition'] xor $isMatching);
-
     }
 
     /**
@@ -273,8 +251,8 @@ class CalendarQueryValidator {
      * @param DateTime $end
      * @return bool
      */
-    protected function validateTimeRange(VObject\Node $component, $start, $end) {
-
+    protected function validateTimeRange(VObject\Node $component, $start, $end)
+    {
         if (is_null($start)) {
             $start = new DateTime('1900-01-01');
         }
@@ -284,13 +262,13 @@ class CalendarQueryValidator {
 
         switch ($component->name) {
 
-            case 'VEVENT' :
-            case 'VTODO' :
-            case 'VJOURNAL' :
+            case 'VEVENT':
+            case 'VTODO':
+            case 'VJOURNAL':
 
                 return $component->isInTimeRange($start, $end);
 
-            case 'VALARM' :
+            case 'VALARM':
 
                 // If the valarm is wrapped in a recurring event, we need to
                 // expand the recursions, and validate each.
@@ -311,7 +289,6 @@ class CalendarQueryValidator {
                         $firstAlarm = null;
                         if ($expandedEvent->VALARM !== null) {
                             foreach ($expandedEvent->VALARM as $expandedAlarm) {
-
                                 $effectiveTrigger = $expandedAlarm->getEffectiveTriggerTime();
                                 if ($expandedAlarm->isInTimeRange($start, $end)) {
                                     return true;
@@ -351,25 +328,24 @@ class CalendarQueryValidator {
                     return $component->isInTimeRange($start, $end);
                 }
 
-            case 'VFREEBUSY' :
+                // no break
+            case 'VFREEBUSY':
                 throw new \Sabre\DAV\Exception\NotImplemented('time-range filters are currently not supported on ' . $component->name . ' components');
 
-            case 'COMPLETED' :
-            case 'CREATED' :
-            case 'DTEND' :
-            case 'DTSTAMP' :
-            case 'DTSTART' :
-            case 'DUE' :
-            case 'LAST-MODIFIED' :
+            case 'COMPLETED':
+            case 'CREATED':
+            case 'DTEND':
+            case 'DTSTAMP':
+            case 'DTSTART':
+            case 'DUE':
+            case 'LAST-MODIFIED':
                 return ($start <= $component->getDateTime() && $end >= $component->getDateTime());
 
 
 
-            default :
+            default:
                 throw new \Sabre\DAV\Exception\BadRequest('You cannot create a time-range filter on a ' . $component->name . ' component');
 
         }
-
     }
-
 }

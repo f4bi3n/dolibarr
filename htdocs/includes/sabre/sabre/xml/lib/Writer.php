@@ -28,8 +28,8 @@ use XMLWriter;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Writer extends XMLWriter {
-
+class Writer extends XMLWriter
+{
     use ContextStackTrait;
 
     /**
@@ -95,10 +95,9 @@ class Writer extends XMLWriter {
      * @param mixed $value
      * @return void
      */
-    function write($value) {
-
+    public function write($value)
+    {
         Serializer\standardSerializer($this, $value);
-
     }
 
     /**
@@ -118,10 +117,9 @@ class Writer extends XMLWriter {
      * @param string $name
      * @return bool
      */
-    function startElement($name) {
-
+    public function startElement($name)
+    {
         if ($name[0] === '{') {
-
             list($namespace, $localName) =
                 Service::parseClarkNotation($name);
 
@@ -145,22 +143,18 @@ class Writer extends XMLWriter {
                     $result = $this->startElementNS($this->adhocNamespaces[$namespace], $localName, $namespace);
                 }
             }
-
         } else {
             $result = parent::startElement($name);
         }
 
         if (!$this->namespacesWritten) {
-
             foreach ($this->namespaceMap as $namespace => $prefix) {
                 $this->writeAttribute(($prefix ? 'xmlns:' . $prefix : 'xmlns'), $namespace);
             }
             $this->namespacesWritten = true;
-
         }
 
         return $result;
-
     }
 
     /**
@@ -186,14 +180,13 @@ class Writer extends XMLWriter {
      * @param string $content
      * @return bool
      */
-    function writeElement($name, $content = null) {
-
+    public function writeElement($name, $content = null)
+    {
         $this->startElement($name);
         if (!is_null($content)) {
             $this->write($content);
         }
         $this->endElement();
-
     }
 
     /**
@@ -208,12 +201,11 @@ class Writer extends XMLWriter {
      * @param array $attributes
      * @return void
      */
-    function writeAttributes(array $attributes) {
-
+    public function writeAttributes(array $attributes)
+    {
         foreach ($attributes as $name => $value) {
             $this->writeAttribute($name, $value);
         }
-
     }
 
     /**
@@ -227,10 +219,9 @@ class Writer extends XMLWriter {
      * @param string $value
      * @return bool
      */
-    function writeAttribute($name, $value) {
-
+    public function writeAttribute($name, $value)
+    {
         if ($name[0] === '{') {
-
             list(
                 $namespace,
                 $localName
@@ -254,13 +245,9 @@ class Writer extends XMLWriter {
                     $namespace,
                     $value
                 );
-
             }
-
         } else {
             return parent::writeAttribute($name, $value);
         }
-
     }
-
 }

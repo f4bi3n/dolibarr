@@ -14,7 +14,8 @@ use Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class NeedPrivileges extends DAV\Exception\Forbidden {
+class NeedPrivileges extends DAV\Exception\Forbidden
+{
 
     /**
      * The relevant uri
@@ -36,13 +37,12 @@ class NeedPrivileges extends DAV\Exception\Forbidden {
      * @param string $uri
      * @param array $privileges
      */
-    function __construct($uri, array $privileges) {
-
+    public function __construct($uri, array $privileges)
+    {
         $this->uri = $uri;
         $this->privileges = $privileges;
 
         parent::__construct('User did not have the required privileges (' . implode(',', $privileges) . ') for path "' . $uri . '"');
-
     }
 
     /**
@@ -54,15 +54,14 @@ class NeedPrivileges extends DAV\Exception\Forbidden {
      * @param \DOMElement $errorNode
      * @return void
      */
-    function serialize(DAV\Server $server, \DOMElement $errorNode) {
-
+    public function serialize(DAV\Server $server, \DOMElement $errorNode)
+    {
         $doc = $errorNode->ownerDocument;
 
         $np = $doc->createElementNS('DAV:', 'd:need-privileges');
         $errorNode->appendChild($np);
 
         foreach ($this->privileges as $privilege) {
-
             $resource = $doc->createElementNS('DAV:', 'd:resource');
             $np->appendChild($resource);
 
@@ -73,10 +72,6 @@ class NeedPrivileges extends DAV\Exception\Forbidden {
 
             preg_match('/^{([^}]*)}(.*)$/', $privilege, $privilegeParts);
             $priv->appendChild($doc->createElementNS($privilegeParts[1], 'd:' . $privilegeParts[2]));
-
-
         }
-
     }
-
 }

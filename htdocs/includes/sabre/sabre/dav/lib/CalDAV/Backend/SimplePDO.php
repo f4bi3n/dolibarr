@@ -31,7 +31,8 @@ use Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class SimplePDO extends AbstractBackend {
+class SimplePDO extends AbstractBackend
+{
 
     /**
      * pdo
@@ -45,10 +46,9 @@ class SimplePDO extends AbstractBackend {
      *
      * @param \PDO $pdo
      */
-    function __construct(\PDO $pdo) {
-
+    public function __construct(\PDO $pdo)
+    {
         $this->pdo = $pdo;
-
     }
 
     /**
@@ -75,7 +75,8 @@ class SimplePDO extends AbstractBackend {
      * @param string $principalUri
      * @return array
      */
-    function getCalendarsForUser($principalUri) {
+    public function getCalendarsForUser($principalUri)
+    {
 
         // Making fields a comma-delimited list
         $stmt = $this->pdo->prepare("SELECT id, uri FROM simple_calendars WHERE principaluri = ? ORDER BY id ASC");
@@ -83,17 +84,14 @@ class SimplePDO extends AbstractBackend {
 
         $calendars = [];
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-
             $calendars[] = [
                 'id'           => $row['id'],
                 'uri'          => $row['uri'],
                 'principaluri' => $principalUri,
             ];
-
         }
 
         return $calendars;
-
     }
 
     /**
@@ -107,13 +105,12 @@ class SimplePDO extends AbstractBackend {
      * @param array $properties
      * @return string
      */
-    function createCalendar($principalUri, $calendarUri, array $properties) {
-
+    public function createCalendar($principalUri, $calendarUri, array $properties)
+    {
         $stmt = $this->pdo->prepare("INSERT INTO simple_calendars (principaluri, uri) VALUES (?, ?)");
         $stmt->execute([$principalUri, $calendarUri]);
 
         return $this->pdo->lastInsertId();
-
     }
 
     /**
@@ -122,14 +119,13 @@ class SimplePDO extends AbstractBackend {
      * @param string $calendarId
      * @return void
      */
-    function deleteCalendar($calendarId) {
-
+    public function deleteCalendar($calendarId)
+    {
         $stmt = $this->pdo->prepare('DELETE FROM simple_calendarobjects WHERE calendarid = ?');
         $stmt->execute([$calendarId]);
 
         $stmt = $this->pdo->prepare('DELETE FROM simple_calendars WHERE id = ?');
         $stmt->execute([$calendarId]);
-
     }
 
     /**
@@ -163,8 +159,8 @@ class SimplePDO extends AbstractBackend {
      * @param string $calendarId
      * @return array
      */
-    function getCalendarObjects($calendarId) {
-
+    public function getCalendarObjects($calendarId)
+    {
         $stmt = $this->pdo->prepare('SELECT id, uri, calendardata FROM simple_calendarobjects WHERE calendarid = ?');
         $stmt->execute([$calendarId]);
 
@@ -181,7 +177,6 @@ class SimplePDO extends AbstractBackend {
         }
 
         return $result;
-
     }
 
     /**
@@ -200,13 +195,15 @@ class SimplePDO extends AbstractBackend {
      * @param string $objectUri
      * @return array|null
      */
-    function getCalendarObject($calendarId, $objectUri) {
-
+    public function getCalendarObject($calendarId, $objectUri)
+    {
         $stmt = $this->pdo->prepare('SELECT id, uri, calendardata FROM simple_calendarobjects WHERE calendarid = ? AND uri = ?');
         $stmt->execute([$calendarId, $objectUri]);
         $row = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-        if (!$row) return null;
+        if (!$row) {
+            return null;
+        }
 
         return [
             'id'           => $row['id'],
@@ -216,7 +213,6 @@ class SimplePDO extends AbstractBackend {
             'size'         => strlen($row['calendardata']),
             'calendardata' => $row['calendardata'],
          ];
-
     }
 
     /**
@@ -237,8 +233,8 @@ class SimplePDO extends AbstractBackend {
      * @param string $calendarData
      * @return string|null
      */
-    function createCalendarObject($calendarId, $objectUri, $calendarData) {
-
+    public function createCalendarObject($calendarId, $objectUri, $calendarData)
+    {
         $stmt = $this->pdo->prepare('INSERT INTO simple_calendarobjects (calendarid, uri, calendardata) VALUES (?,?,?)');
         $stmt->execute([
             $calendarId,
@@ -247,7 +243,6 @@ class SimplePDO extends AbstractBackend {
         ]);
 
         return '"' . md5($calendarData) . '"';
-
     }
 
     /**
@@ -268,13 +263,12 @@ class SimplePDO extends AbstractBackend {
      * @param string $calendarData
      * @return string|null
      */
-    function updateCalendarObject($calendarId, $objectUri, $calendarData) {
-
+    public function updateCalendarObject($calendarId, $objectUri, $calendarData)
+    {
         $stmt = $this->pdo->prepare('UPDATE simple_calendarobjects SET calendardata = ? WHERE calendarid = ? AND uri = ?');
         $stmt->execute([$calendarData, $calendarId, $objectUri]);
 
         return '"' . md5($calendarData) . '"';
-
     }
 
     /**
@@ -286,11 +280,9 @@ class SimplePDO extends AbstractBackend {
      * @param string $objectUri
      * @return void
      */
-    function deleteCalendarObject($calendarId, $objectUri) {
-
+    public function deleteCalendarObject($calendarId, $objectUri)
+    {
         $stmt = $this->pdo->prepare('DELETE FROM simple_calendarobjects WHERE calendarid = ? AND uri = ?');
         $stmt->execute([$calendarId, $objectUri]);
-
     }
-
 }

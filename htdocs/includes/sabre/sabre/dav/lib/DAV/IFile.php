@@ -13,7 +13,8 @@ namespace Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface IFile extends INode {
+interface IFile extends INode
+{
 
     /**
      * Replaces the contents of the file.
@@ -35,7 +36,7 @@ interface IFile extends INode {
      * @param resource|string $data
      * @return string|null
      */
-    function put($data);
+    public function put($data);
 
     /**
      * Returns the data
@@ -44,7 +45,7 @@ interface IFile extends INode {
      *
      * @return mixed
      */
-    function get();
+    public function get();
 
     /**
      * Returns the mime-type for a file
@@ -53,7 +54,7 @@ interface IFile extends INode {
      *
      * @return string|null
      */
-    function getContentType();
+    public function getContentType();
 
     /**
      * Returns the ETag for a file
@@ -69,13 +70,12 @@ interface IFile extends INode {
      *
      * @return string|null
      */
-    function getETag();
+    public function getETag();
 
     /**
      * Returns the size of the node, in bytes
      *
      * @return int
      */
-    function getSize();
-
+    public function getSize();
 }

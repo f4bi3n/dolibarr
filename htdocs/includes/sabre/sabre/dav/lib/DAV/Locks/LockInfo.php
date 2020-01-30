@@ -12,7 +12,8 @@ namespace Sabre\DAV\Locks;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class LockInfo {
+class LockInfo
+{
 
     /**
      * A shared lock
@@ -76,5 +77,4 @@ class LockInfo {
      * @var mixed
      */
     public $uri;
-
 }

@@ -17,12 +17,24 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-if (! defined('NOCSRFCHECK')) define('NOCSRFCHECK', '1');
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+if (! defined('NOCSRFCHECK')) {
+    define('NOCSRFCHECK', '1');
+}
+if (! defined('NOTOKENRENEWAL')) {
+    define('NOTOKENRENEWAL', '1');
+} // Disables token renewal
+if (! defined('NOREQUIREMENU')) {
+    define('NOREQUIREMENU', '1');
+}
+if (! defined('NOREQUIREHTML')) {
+    define('NOREQUIREHTML', '1');
+}
+if (! defined('NOREQUIREAJAX')) {
+    define('NOREQUIREAJAX', '1');
+}
+if (! defined('NOREQUIRESOC')) {
+    define('NOREQUIRESOC', '1');
+}
 
 require '../../main.inc.php';
 
@@ -46,23 +58,18 @@ $eventfound = array();
 //dol_syslog('time='.$time.' $_SESSION[auto_ck_events_not_before]='.$_SESSION['auto_check_events_not_before']);
 
 // TODO Try to make a solution with only a javascript timer that is easier. Difficulty is to avoid notification twice when several tabs are opened.
-if ($time >= $_SESSION['auto_check_events_not_before'])
-{
+if ($time >= $_SESSION['auto_check_events_not_before']) {
     $time_update = (int) $conf->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY;   // Always defined
-    if (! empty($_SESSION['auto_check_events_not_before']))
-    {
+    if (! empty($_SESSION['auto_check_events_not_before'])) {
         // We start scan from the not before so if two tabs were opend at differents seconds and we close one (so the js timer),
         // then we are not losing periods
         $starttime = $_SESSION['auto_check_events_not_before'];
         // Protection to avoid too long sessions
-        if ($starttime < ($time - (int) $conf->global->MAIN_SESSION_TIMEOUT))
-        {
+        if ($starttime < ($time - (int) $conf->global->MAIN_SESSION_TIMEOUT)) {
             dol_syslog("We ask to check browser notification on a too large period. We fix this with current date.");
             $starttime = $time;
         }
-    }
-    else
-    {
+    } else {
         $starttime = $time;
     }
 
@@ -92,8 +99,7 @@ if ($time >= $_SESSION['auto_check_events_not_before'])
     if ($resql) {
         $actionmod = new ActionComm($db);
 
-        while ($obj = $db->fetch_object($resql))
-        {
+        while ($obj = $db->fetch_object($resql)) {
             // Load translation files required by the page
             $langs->loadLangs(array('agenda', 'commercial'));
 
@@ -109,9 +115,7 @@ if ($time >= $_SESSION['auto_check_events_not_before'])
 
             $eventfound[] = $event;
         }
-    }
-    else
-    {
+    } else {
         dol_syslog("Error sql = ".$db->lasterror(), LOG_ERR);
     }
 }

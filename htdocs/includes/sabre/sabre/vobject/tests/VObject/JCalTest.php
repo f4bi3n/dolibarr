@@ -2,10 +2,10 @@
 
 namespace Sabre\VObject;
 
-class JCalTest extends \PHPUnit_Framework_TestCase {
-
-    function testToJCal() {
-
+class JCalTest extends \PHPUnit_Framework_TestCase
+{
+    public function testToJCal()
+    {
         $cal = new Component\VCalendar();
 
         $event = $cal->add('VEVENT', [
@@ -143,7 +143,5 @@ class JCalTest extends \PHPUnit_Framework_TestCase {
         ];
 
         $this->assertEquals($expected, $cal->jsonSerialize());
-
     }
-
 }

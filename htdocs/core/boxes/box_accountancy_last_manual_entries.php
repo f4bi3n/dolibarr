@@ -37,7 +37,7 @@ class box_accountancy_last_manual_entries extends ModeleBoxes
     public $boxlabel = "BoxLastManualEntries";
     public $depends = array("accounting");
 
-	/**
+    /**
      * @var DoliDB Database handler.
      */
     public $db;
@@ -79,8 +79,7 @@ class box_accountancy_last_manual_entries extends ModeleBoxes
 
         $this->info_box_head = array('text' => $langs->trans("BoxTitleLastManualEntries", $max));
 
-        if ($user->rights->accounting->mouvements->lire)
-        {
+        if ($user->rights->accounting->mouvements->lire) {
             $sql = "SELECT DISTINCT b.piece_num";
             $sql.= ", b.doc_date as date_movement";
             $sql.= ", b.label_operation";
@@ -101,18 +100,18 @@ class box_accountancy_last_manual_entries extends ModeleBoxes
                 while ($line < $num) {
                     $objp		= $this->db->fetch_object($result);
                     $date		= $this->db->jdate($objp->date_movement);
-					$journal	= $objp->code_journal;
+                    $journal	= $objp->code_journal;
                     $label		= $objp->label_operation;
-					$amount		= $objp->montant;
+                    $amount		= $objp->montant;
 
-					$bookkeepingstatic->id = $objp->id;
-					$bookkeepingstatic->piece_num = $objp->piece_num;
+                    $bookkeepingstatic->id = $objp->id;
+                    $bookkeepingstatic->piece_num = $objp->piece_num;
 
-					$this->info_box_contents[$line][] = array(
-						'td' => '',
-						'text' => $bookkeepingstatic->getNomUrl(1),
-						'asis' => 1,
-					);
+                    $this->info_box_contents[$line][] = array(
+                        'td' => '',
+                        'text' => $bookkeepingstatic->getNomUrl(1),
+                        'asis' => 1,
+                    );
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'class="right"',
@@ -120,17 +119,17 @@ class box_accountancy_last_manual_entries extends ModeleBoxes
                         'asis' => 1,
                     );
 
-					$this->info_box_contents[$line][] = array(
-						'td' => 'class="center"',
-						'text' => $journal,
-						'asis' => 1,
-					);
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'class="center"',
+                        'text' => $journal,
+                        'asis' => 1,
+                    );
 
-					$this->info_box_contents[$line][] = array(
-						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
-						'text' => $label,
-						'asis' => 1,
-					);
+                    $this->info_box_contents[$line][] = array(
+                        'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
+                        'text' => $label,
+                        'asis' => 1,
+                    );
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'class="nowraponall right"',
@@ -140,7 +139,9 @@ class box_accountancy_last_manual_entries extends ModeleBoxes
                     $line++;
                 }
 
-                if ($num == 0) $this->info_box_contents[$line][0] = array('td' => 'class="center"', 'text'=>$langs->trans("NoRecordedManualEntries"));
+                if ($num == 0) {
+                    $this->info_box_contents[$line][0] = array('td' => 'class="center"', 'text'=>$langs->trans("NoRecordedManualEntries"));
+                }
 
                 $this->db->free($result);
             } else {
@@ -158,14 +159,14 @@ class box_accountancy_last_manual_entries extends ModeleBoxes
         }
     }
 
-	/**
-	 *	Method to show box
-	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
-	 *	@return	string
-	 */
+    /**
+     *	Method to show box
+     *
+     *	@param	array	$head       Array with properties of box title
+     *	@param  array	$contents   Array with properties of box lines
+     *  @param	int		$nooutput	No print, only return string
+     *	@return	string
+     */
     public function showBox($head = null, $contents = null, $nooutput = 0)
     {
         return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);

@@ -2,22 +2,22 @@
 
 namespace Sabre\Uri;
 
-class BuildTest extends \PHPUnit_Framework_TestCase{
+class BuildTest extends \PHPUnit_Framework_TestCase
+{
 
     /**
      * @dataProvider buildUriData
      */
-    function testBuild($value) {
-
+    public function testBuild($value)
+    {
         $this->assertEquals(
             $value,
             build(parse_url($value))
         );
-
     }
 
-    function buildUriData() {
-
+    public function buildUriData()
+    {
         return [
             ['http://example.org/'],
             ['http://example.org/foo/bar'],
@@ -35,7 +35,5 @@ class BuildTest extends \PHPUnit_Framework_TestCase{
             ['file:///etc/hosts'],
             ['file://localhost/etc/hosts'],
         ];
-
     }
-
 }

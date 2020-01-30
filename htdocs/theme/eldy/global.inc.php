@@ -1,4 +1,6 @@
-<?php if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
+<?php if (!defined('ISLOADEDBYSTEELSHEET')) {
+    die('Must be call by steelsheet');
+} ?>
 /* <style type="text/css" > */
 
 /* ============================================================================== */
@@ -24,7 +26,7 @@ body {
 }
 
 .thumbstat { font-weight: bold !important; }
-th a { font-weight: <?php echo ($useboldtitle ? 'bold' : 'normal'); ?> !important; }
+th a { font-weight: <?php echo($useboldtitle ? 'bold' : 'normal'); ?> !important; }
 a.tab { font-weight: 500 !important; }
 
 a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; font-weight: normal; color: rgb(<?php print $colortextlink; ?>); text-decoration: none;  }
@@ -440,7 +442,7 @@ textarea.centpercent {
     float: right!important;
 }
 .nowrap {
-	white-space: <?php print ($dol_optimize_smallscreen ? 'normal' : 'nowrap'); ?>;
+	white-space: <?php print($dol_optimize_smallscreen ? 'normal' : 'nowrap'); ?>;
 }
 .liste_titre .nowrap {
 	white-space: nowrap;
@@ -577,11 +579,12 @@ div.divsearchfield {
 <?php
 // Add a nowrap on smartphone, so long list of field used for filter are overflowed with clip
 if ($conf->browser->layout == 'phone') {
-	?>
+    ?>
 .divsearchfieldfilter {
    	white-space: nowrap;
 }
-<?php } ?>
+<?php
+} ?>
 div.confirmmessage {
 	padding-top: 6px;
 }
@@ -778,7 +781,9 @@ div.fiche {
 }
 
 .flexcontainer {
-    <?php if (in_array($conf->browser->name, array('chrome', 'firefox'))) echo 'display: inline-flex;'."\n"; ?>
+    <?php if (in_array($conf->browser->name, array('chrome', 'firefox'))) {
+        echo 'display: inline-flex;'."\n";
+    } ?>
     flex-flow: row wrap;
     justify-content: flex-start;
 }
@@ -1259,15 +1264,19 @@ div.fiche {
 	margin-<?php print $left; ?>: 9px !important;
 	margin-<?php print $right; ?>: 10px !important;
 }
-<?php //} ?>
+<?php //}?>
 }
 
 
 div.fiche {
-	margin-<?php print $left; ?>: <?php print (GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '30' : '6')); ?>px;
-	margin-<?php print $right; ?>: <?php print (GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '28' : '6')); ?>px;
-	<?php if (!empty($dol_hide_leftmenu)) print 'margin-bottom: 12px;'."\n"; ?>
-	<?php if (!empty($dol_hide_leftmenu)) print 'margin-top: 12px;'."\n"; ?>
+	margin-<?php print $left; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '30' : '6')); ?>px;
+	margin-<?php print $right; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '28' : '6')); ?>px;
+	<?php if (!empty($dol_hide_leftmenu)) {
+        print 'margin-bottom: 12px;'."\n";
+    } ?>
+	<?php if (!empty($dol_hide_leftmenu)) {
+        print 'margin-top: 12px;'."\n";
+    } ?>
 }
 body.onlinepaymentbody div.fiche {	/* For online payment page */
 	margin: 20px !important;
@@ -1283,28 +1292,50 @@ div.fichecenterbis {
 	margin-top: 8px;
 }
 div.fichethirdleft {
-	<?php if ($conf->browser->layout != 'phone') { print "float: ".$left.";\n"; } ?>
-	<?php if ($conf->browser->layout != 'phone') { print "width: 50%;\n"; } ?>
-	<?php if ($conf->browser->layout == 'phone') { print "padding-bottom: 6px;\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone') {
+        print "float: ".$left.";\n";
+    } ?>
+	<?php if ($conf->browser->layout != 'phone') {
+        print "width: 50%;\n";
+    } ?>
+	<?php if ($conf->browser->layout == 'phone') {
+        print "padding-bottom: 6px;\n";
+    } ?>
 }
 div.fichetwothirdright {
-	<?php if ($conf->browser->layout != 'phone') { print "float: ".$right.";\n"; } ?>
-	<?php if ($conf->browser->layout != 'phone') { print "width: 50%;\n"; } ?>
-	<?php if ($conf->browser->layout == 'phone') { print "padding-bottom: 6px\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone') {
+        print "float: ".$right.";\n";
+    } ?>
+	<?php if ($conf->browser->layout != 'phone') {
+        print "width: 50%;\n";
+    } ?>
+	<?php if ($conf->browser->layout == 'phone') {
+        print "padding-bottom: 6px\n";
+    } ?>
 }
 div.fichetwothirdright div.ficheaddleft {
     padding-left: 20px;
 }
 div.fichehalfleft {
-	<?php if ($conf->browser->layout != 'phone') { print "float: ".$left.";\n"; } ?>
-	<?php if ($conf->browser->layout != 'phone') { print "width: calc(50% - 10px);\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone') {
+        print "float: ".$left.";\n";
+    } ?>
+	<?php if ($conf->browser->layout != 'phone') {
+        print "width: calc(50% - 10px);\n";
+    } ?>
 }
 div.fichehalfright {
-	<?php if ($conf->browser->layout != 'phone') { print "float: ".$right.";\n"; } ?>
-	<?php if ($conf->browser->layout != 'phone') { print "width: calc(50% - 10px);\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone') {
+        print "float: ".$right.";\n";
+    } ?>
+	<?php if ($conf->browser->layout != 'phone') {
+        print "width: calc(50% - 10px);\n";
+    } ?>
 }
 div.fichehalfright {
-	<?php if ($conf->browser->layout == 'phone') { print "margin-top: 10px;\n"; } ?>
+	<?php if ($conf->browser->layout == 'phone') {
+        print "margin-top: 10px;\n";
+    } ?>
 }
 div.firstcolumn div.box {
 	padding-right: 10px;
@@ -1316,8 +1347,8 @@ div.secondcolumn div.box {
 @media only screen and (max-width: 1000px)
 {
     div.fiche {
-    	margin-<?php print $left; ?>: <?php print (GETPOST('optioncss', 'aZ09') == 'print' ? 6 : ($dol_hide_leftmenu ? '6' : '20')); ?>px;
-    	margin-<?php print $right; ?>: <?php print (GETPOST('optioncss', 'aZ09') == 'print' ? 8 : 6); ?>px;
+    	margin-<?php print $left; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : ($dol_hide_leftmenu ? '6' : '20')); ?>px;
+    	margin-<?php print $right; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 8 : 6); ?>px;
     }
     div.fichecenter {
     	width: 100%;
@@ -1542,7 +1573,7 @@ div#tmenu_tooltip {
 <?php if (GETPOST('optioncss', 'aZ09') == 'print') {  ?>
 	display:none;
 <?php } else { ?>
-	padding-<?php echo $right; ?>: <?php echo ($maxwidthloginblock - 10); ?>px;
+	padding-<?php echo $right; ?>: <?php echo($maxwidthloginblock - 10); ?>px;
 <?php } ?>
 
   -webkit-touch-callout: none; /* iOS Safari */
@@ -1696,7 +1727,7 @@ div.mainmenu {
 	position : relative;
 	background-repeat:no-repeat;
 	background-position:center top;
-	height: <?php echo ($heightmenu - 22); ?>px;
+	height: <?php echo($heightmenu - 22); ?>px;
 	margin-left: 0px;
 	min-width: 40px;
 }
@@ -1821,8 +1852,7 @@ a.tmenuimage:hover{
         'barcode'=>'', 'fckeditor'=>'', 'categorie'=>'',
     );
     $mainmenuused = 'home';
-    foreach ($conf->modules as $val)
-    {
+    foreach ($conf->modules as $val) {
         $mainmenuused .= ','.(isset($moduletomainmenu[$val]) ? $moduletomainmenu[$val] : $val);
     }
     $mainmenuusedarray = array_unique(explode(',', $mainmenuused));
@@ -1832,40 +1862,37 @@ a.tmenuimage:hover{
     $divalreadydefined = array('home', 'companies', 'products', 'mrp', 'commercial', 'externalsite', 'accountancy', 'project', 'tools', 'members', 'agenda', 'ftp', 'holiday', 'hrm', 'bookmark', 'cashdesk', 'takepos', 'ecm', 'geoipmaxmind', 'gravatar', 'clicktodial', 'paypal', 'stripe', 'webservices', 'website');
     // Put here list of menu entries we are sure we don't want
     $divnotrequired = array('multicurrency', 'salaries', 'ticket', 'margin', 'opensurvey', 'paybox', 'expensereport', 'incoterm', 'prelevement', 'propal', 'workflow', 'notification', 'supplier_proposal', 'cron', 'product', 'productbatch', 'expedition');
-    foreach ($mainmenuusedarray as $val)
-    {
-        if (empty($val) || in_array($val, $divalreadydefined)) continue;
-        if (in_array($val, $divnotrequired)) continue;
+    foreach ($mainmenuusedarray as $val) {
+        if (empty($val) || in_array($val, $divalreadydefined)) {
+            continue;
+        }
+        if (in_array($val, $divnotrequired)) {
+            continue;
+        }
         //print "XXX".$val;
 
         // Search img file in module dir
-        $found = 0; $url = '';
-        foreach ($conf->file->dol_document_root as $dirroot)
-        {
-            if (file_exists($dirroot."/".$val."/img/".$val."_over.png"))
-            {
+        $found = 0;
+        $url = '';
+        foreach ($conf->file->dol_document_root as $dirroot) {
+            if (file_exists($dirroot."/".$val."/img/".$val."_over.png")) {
                 $url = dol_buildpath('/'.$val.'/img/'.$val.'_over.png', 1);
                 $found = 1;
                 break;
+            } elseif (file_exists($dirroot."/".$val."/img/".$val.".png")) {    // Retro compatibilité
+                $url = dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
+                $found = 1;
+                break;
             }
-    		elseif (file_exists($dirroot."/".$val."/img/".$val.".png"))    // Retro compatibilité
-    		{
-    			$url = dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
-    			$found = 1;
-    			break;
-    		}
         }
         // Img file not found
-        if (!$found)
-        {
+        if (!$found) {
             if (!defined('DISABLE_FONT_AWSOME')) {
                 print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
                 print 'div.mainmenu.'.$val.'::before {
                     content: "\f249";
                 }';
-            }
-            else
-            {
+            } else {
                 print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
                 $url = dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.(min($generic, 4))."_over.png", 1);
                 print "div.mainmenu.".$val." {\n";
@@ -1873,9 +1900,7 @@ a.tmenuimage:hover{
                 print "}\n";
             }
             $generic++;
-        }
-        else
-        {
+        } else {
             print "div.mainmenu.".$val." {\n";
             print "	background-image: url(".$url.");\n";
             print "}\n";
@@ -1883,7 +1908,7 @@ a.tmenuimage:hover{
     }
     // End of part to add more div class css
     ?>
-<?php } // End test if $dol_hide_topmenu ?>
+<?php } // End test if $dol_hide_topmenu?>
 
 .tmenuimage {
     padding:0 0 0 0 !important;
@@ -1937,10 +1962,10 @@ form#login {
 	max-width: 560px;
 <?php
 if (!empty($conf->global->MAIN_LOGIN_BACKGROUND)) {
-	print '	background-color: rgba(255, 255, 255, 0.9);';
-} else {
-	print '	background-color: #FFFFFF;';
-}
+        print '	background-color: rgba(255, 255, 255, 0.9);';
+    } else {
+        print '	background-color: #FFFFFF;';
+    }
 ?>
 
 	-webkit-box-shadow: 0 2px 23px 2px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(60,60,60,0.15);
@@ -2039,7 +2064,7 @@ div.login_block {
 	<?php print $right; ?>: 0;
 	top: <?php print $disableimages ? '4px' : '0'; ?>;
 	line-height: 10px;
-	<?php // echo (empty($disableimages) && $maxwidthloginblock)?'max-width: '.$maxwidthloginblock.'px;':''; ?>
+	<?php // echo (empty($disableimages) && $maxwidthloginblock)?'max-width: '.$maxwidthloginblock.'px;':'';?>
 	<?php if (GETPOST('optioncss', 'aZ09') == 'print') { ?>
 	display: none;
 	<?php } ?>
@@ -2549,7 +2574,7 @@ span.tabspan {
 
 #undertopmenu {
 	background-repeat: repeat-x;
-	margin-top: <?php echo ($dol_hide_topmenu ? '6' : '0'); ?>px;
+	margin-top: <?php echo($dol_hide_topmenu ? '6' : '0'); ?>px;
 }
 
 
@@ -4287,7 +4312,7 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 .ui-widget {
     font-family:<?php echo $fontlist; ?>;
 }
-/* .ui-button { margin-left: -2px; <?php print (preg_match('/chrome/', $conf->browser->name) ? 'padding-top: 1px;' : ''); ?> } */
+/* .ui-button { margin-left: -2px; <?php print(preg_match('/chrome/', $conf->browser->name) ? 'padding-top: 1px;' : ''); ?> } */
 .ui-button { margin-left: -2px; }
 .ui-button-icon-only .ui-button-text { height: 8px; }
 .ui-button-icon-only .ui-button-text, .ui-button-icons-only .ui-button-text { padding: 2px 0px 6px 0px; }
@@ -6034,4 +6059,6 @@ include dol_buildpath($path.'/theme/'.$theme.'/info-box.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/progress.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/timeline.inc.php', 0);
 
-if (!empty($conf->global->THEME_CUSTOM_CSS)) print $conf->global->THEME_CUSTOM_CSS;
+if (!empty($conf->global->THEME_CUSTOM_CSS)) {
+    print $conf->global->THEME_CUSTOM_CSS;
+}

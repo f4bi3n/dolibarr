@@ -36,7 +36,7 @@ class box_fournisseurs extends ModeleBoxes
     public $boxlabel="BoxLastSuppliers";
     public $depends = array("fournisseur");
 
-	/**
+    /**
      * @var DoliDB Database handler.
      */
     public $db;
@@ -63,9 +63,9 @@ class box_fournisseurs extends ModeleBoxes
     }
 
     /**
-	 *  Load data into info_box_contents array to show array later.
-	 *
-	 *  @param	int		$max        Maximum number of records to load
+     *  Load data into info_box_contents array to show array later.
+     *
+     *  @param	int		$max        Maximum number of records to load
      *  @return	void
      */
     public function loadBox($max = 5)
@@ -73,47 +73,50 @@ class box_fournisseurs extends ModeleBoxes
         global $conf, $user, $langs;
         $langs->load("boxes");
 
-		$this->max=$max;
+        $this->max=$max;
 
         include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
         $thirdpartystatic=new Societe($this->db);
-		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
-		$thirdpartytmp=new Fournisseur($this->db);
+        include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
+        $thirdpartytmp=new Fournisseur($this->db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedSuppliers", $max));
+        $this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedSuppliers", $max));
 
-        if ($user->rights->societe->lire)
-        {
+        if ($user->rights->societe->lire) {
             $sql = "SELECT s.nom as name, s.rowid as socid, s.datec, s.tms, s.status,";
             $sql.= " s.code_fournisseur, s.email as semail,";
             $sql.= " s.logo";
             $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-            if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+            if (!$user->rights->societe->client->voir && !$user->socid) {
+                $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+            }
             $sql.= " WHERE s.fournisseur = 1";
             $sql.= " AND s.entity IN (".getEntity('societe').")";
-            if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-            if ($user->socid) $sql.= " AND s.rowid = ".$user->socid;
+            if (!$user->rights->societe->client->voir && !$user->socid) {
+                $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+            }
+            if ($user->socid) {
+                $sql.= " AND s.rowid = ".$user->socid;
+            }
             $sql.= " ORDER BY s.tms DESC ";
             $sql.= $this->db->plimit($max, 0);
 
             $result = $this->db->query($sql);
-            if ($result)
-            {
+            if ($result) {
                 $num = $this->db->num_rows($result);
 
                 $line = 0;
-                while ($line < $num)
-                {
+                while ($line < $num) {
                     $objp = $this->db->fetch_object($result);
-    				$datec=$this->db->jdate($objp->datec);
-    				$datem=$this->db->jdate($objp->tms);
-					$thirdpartytmp->id = $objp->socid;
+                    $datec=$this->db->jdate($objp->datec);
+                    $datem=$this->db->jdate($objp->tms);
+                    $thirdpartytmp->id = $objp->socid;
                     $thirdpartytmp->name = $objp->name;
                     $thirdpartytmp->email = $objp->semail;
                     $thirdpartytmp->code_client = $objp->code_client;
                     $thirdpartytmp->logo = $objp->logo;
 
-                   	$this->info_box_contents[$line][] = array(
+                    $this->info_box_contents[$line][] = array(
                         'td' => '',
                         'text' => $thirdpartytmp->getNomUrl(1, '', 40),
                         'asis' => 1,
@@ -132,10 +135,12 @@ class box_fournisseurs extends ModeleBoxes
                     $line++;
                 }
 
-                if ($num==0) $this->info_box_contents[$line][0] = array(
+                if ($num==0) {
+                    $this->info_box_contents[$line][0] = array(
                     'td' => 'class="center"',
                     'text'=>$langs->trans("NoRecordedSuppliers"),
                 );
+                }
 
                 $this->db->free($result);
             } else {
@@ -153,14 +158,14 @@ class box_fournisseurs extends ModeleBoxes
         }
     }
 
-	/**
-	 *	Method to show box
-	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
-	 *	@return	string
-	 */
+    /**
+     *	Method to show box
+     *
+     *	@param	array	$head       Array with properties of box title
+     *	@param  array	$contents   Array with properties of box lines
+     *  @param	int		$nooutput	No print, only return string
+     *	@return	string
+     */
     public function showBox($head = null, $contents = null, $nooutput = 0)
     {
         return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);

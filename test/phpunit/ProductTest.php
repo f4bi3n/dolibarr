@@ -29,8 +29,7 @@ global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/product/class/product.class.php';
 
-if (empty($user->id))
-{
+if (empty($user->id)) {
     print "Load permissions for admin user nb 1\n";
     $user->fetch(1);
     $user->getrights();
@@ -79,7 +78,10 @@ class ProductTest extends PHPUnit\Framework\TestCase
     {
         global $conf,$user,$langs,$db;
 
-        if (empty($conf->produit->enabled)) { print __METHOD__." Module Product must be enabled.\n"; die(); }
+        if (empty($conf->produit->enabled)) {
+            print __METHOD__." Module Product must be enabled.\n";
+            die();
+        }
 
         $db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
 
@@ -175,22 +177,22 @@ class ProductTest extends PHPUnit\Framework\TestCase
      */
     public function testProductGetArboEachProd()
     {
-    	global $conf,$user,$langs,$db;
-    	$conf=$this->savconf;
-    	$user=$this->savuser;
-    	$langs=$this->savlangs;
-    	$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		/*
-    	$localobject=new Product($db);
-    	$localobject->fetch(208);
-    	$localobject->get_sousproduits_arbo();
-    	$localobject->get_arbo_each_prod();
+        /*
+        $localobject=new Product($db);
+        $localobject->fetch(208);
+        $localobject->get_sousproduits_arbo();
+        $localobject->get_arbo_each_prod();
 
-    	var_dump($localobject->res); print (json_encode($localobject->res)); exit;
-		*/
+        var_dump($localobject->res); print (json_encode($localobject->res)); exit;
+        */
 
-    	return;
+        return;
     }
 
     /**

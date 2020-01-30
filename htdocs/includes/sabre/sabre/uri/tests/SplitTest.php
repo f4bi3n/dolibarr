@@ -2,10 +2,10 @@
 
 namespace Sabre\Uri;
 
-class SplitTest extends \PHPUnit_Framework_TestCase{
-
-    function testSplit() {
-
+class SplitTest extends \PHPUnit_Framework_TestCase
+{
+    public function testSplit()
+    {
         $strings = [
 
             // input                    // expected result
@@ -29,13 +29,8 @@ class SplitTest extends \PHPUnit_Framework_TestCase{
         ];
 
         foreach ($strings as $input => $expected) {
-
             $output = split($input);
             $this->assertEquals($expected, $output, 'The expected output for \'' . $input . '\' was incorrect');
-
-
         }
-
     }
-
 }

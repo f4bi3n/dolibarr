@@ -28,5 +28,5 @@
 $files = array(); 	/* An array of files you want to preload */
 
 foreach ($files as $file) {
-	opcache_compile_file($file);
+    opcache_compile_file($file);
 }

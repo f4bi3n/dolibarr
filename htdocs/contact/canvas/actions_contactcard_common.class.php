@@ -37,32 +37,32 @@ abstract class ActionsContactCardCommon
     public $canvas;
     public $card;
 
-	//! Template container
-	public $tpl = array();
-	//! Object container
-	public $object;
+    //! Template container
+    public $tpl = array();
+    //! Object container
+    public $object;
 
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-
-	/**
-	 * @var string[] Error codes (or messages)
-	 */
-	public $errors = array();
+    /**
+     * @var string Error code (or message)
+     */
+    public $error = '';
 
 
-	/**
+    /**
+     * @var string[] Error codes (or messages)
+     */
+    public $errors = array();
+
+
+    /**
      *  Get object
-	 *
+     *
      *  @param	int		$id		Object id
      *  @return	object			Object loaded
      */
     public function getObject($id)
     {
-    	/*$ret = $this->getInstanceDao();
+        /*$ret = $this->getInstanceDao();
 
     	if (is_object($this->object) && method_exists($this->object,'fetch'))
     	{
@@ -70,10 +70,12 @@ abstract class ActionsContactCardCommon
     	}
     	else
     	{*/
-    		$object = new Contact($this->db);
-    		if (!empty($id)) $object->fetch($id);
-            $this->object = $object;
-    	//}
+        $object = new Contact($this->db);
+        if (!empty($id)) {
+            $object->fetch($id);
+        }
+        $this->object = $object;
+        //}
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -90,21 +92,20 @@ abstract class ActionsContactCardCommon
         global $conf, $langs, $user, $canvas;
         global $form, $formcompany, $objsoc;
 
-        if ($action == 'add' || $action == 'update') $this->assign_post();
+        if ($action == 'add' || $action == 'update') {
+            $this->assign_post();
+        }
 
-        foreach ($this->object as $key => $value)
-        {
+        foreach ($this->object as $key => $value) {
             $this->tpl[$key] = $value;
         }
 
         $this->tpl['error'] = $this->error;
         $this->tpl['errors'] = $this->errors;
 
-        if ($action == 'create' || $action == 'edit')
-        {
-        	if ($conf->use_javascript_ajax)
-			{
-				$this->tpl['ajax_selectcountry'] = "\n".'<script type="text/javascript" language="javascript">
+        if ($action == 'create' || $action == 'edit') {
+            if ($conf->use_javascript_ajax) {
+                $this->tpl['ajax_selectcountry'] = "\n".'<script type="text/javascript" language="javascript">
 				jQuery(document).ready(function () {
 						jQuery("#selectcountry_id").change(function() {
 							document.formsoc.action.value="'.$action.'";
@@ -113,31 +114,39 @@ abstract class ActionsContactCardCommon
 						});
 					})
 				</script>'."\n";
-			}
+            }
 
-        	if (is_object($objsoc) && $objsoc->id > 0)
-        	{
-        		$this->tpl['company'] = $objsoc->getNomUrl(1);
-        		$this->tpl['company_id'] = $objsoc->id;
-        	}
-        	else
-        	{
-        		$this->tpl['company'] = $form->select_company($this->object->socid, 'socid', '', 1);
-        	}
+            if (is_object($objsoc) && $objsoc->id > 0) {
+                $this->tpl['company'] = $objsoc->getNomUrl(1);
+                $this->tpl['company_id'] = $objsoc->id;
+            } else {
+                $this->tpl['company'] = $form->select_company($this->object->socid, 'socid', '', 1);
+            }
 
-        	// Civility
-        	$this->tpl['select_civility'] = $formcompany->select_civility($this->object->civility_id);
+            // Civility
+            $this->tpl['select_civility'] = $formcompany->select_civility($this->object->civility_id);
 
-        	// Predefined with third party
-        	if ((isset($objsoc->typent_code) && $objsoc->typent_code == 'TE_PRIVATE') || !empty($conf->global->CONTACT_USE_COMPANY_ADDRESS))
-        	{
-        		if (dol_strlen(trim($this->object->address)) == 0) $this->tpl['address'] = $objsoc->address;
-        		if (dol_strlen(trim($this->object->zip)) == 0) $this->object->zip = $objsoc->zip;
-        		if (dol_strlen(trim($this->object->town)) == 0) $this->object->town = $objsoc->town;
-        		if (dol_strlen(trim($this->object->phone_pro)) == 0) $this->object->phone_pro = $objsoc->phone;
-        		if (dol_strlen(trim($this->object->fax)) == 0) $this->object->fax = $objsoc->fax;
-        		if (dol_strlen(trim($this->object->email)) == 0) $this->object->email = $objsoc->email;
-        	}
+            // Predefined with third party
+            if ((isset($objsoc->typent_code) && $objsoc->typent_code == 'TE_PRIVATE') || !empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) {
+                if (dol_strlen(trim($this->object->address)) == 0) {
+                    $this->tpl['address'] = $objsoc->address;
+                }
+                if (dol_strlen(trim($this->object->zip)) == 0) {
+                    $this->object->zip = $objsoc->zip;
+                }
+                if (dol_strlen(trim($this->object->town)) == 0) {
+                    $this->object->town = $objsoc->town;
+                }
+                if (dol_strlen(trim($this->object->phone_pro)) == 0) {
+                    $this->object->phone_pro = $objsoc->phone;
+                }
+                if (dol_strlen(trim($this->object->fax)) == 0) {
+                    $this->object->fax = $objsoc->fax;
+                }
+                if (dol_strlen(trim($this->object->email)) == 0) {
+                    $this->object->email = $objsoc->email;
+                }
+            }
 
             // Zip
             $this->tpl['select_zip'] = $formcompany->select_ziptown($this->object->zip, 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6);
@@ -145,90 +154,87 @@ abstract class ActionsContactCardCommon
             // Town
             $this->tpl['select_town'] = $formcompany->select_ziptown($this->object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'));
 
-            if (dol_strlen(trim($this->object->country_id)) == 0) $this->object->country_id = $objsoc->country_id;
+            if (dol_strlen(trim($this->object->country_id)) == 0) {
+                $this->object->country_id = $objsoc->country_id;
+            }
 
             // Country
             $this->tpl['select_country'] = $form->select_country($this->object->country_id, 'country_id');
             $countrynotdefined = $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
-            if ($user->admin) $this->tpl['info_admin'] = info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+            if ($user->admin) {
+                $this->tpl['info_admin'] = info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+            }
 
             // State
-            if ($this->object->country_id) $this->tpl['select_state'] = $formcompany->select_state($this->object->state_id, $this->object->country_code);
-            else $this->tpl['select_state'] = $countrynotdefined;
+            if ($this->object->country_id) {
+                $this->tpl['select_state'] = $formcompany->select_state($this->object->state_id, $this->object->country_code);
+            } else {
+                $this->tpl['select_state'] = $countrynotdefined;
+            }
 
             // Public or private
             $selectarray = array('0'=>$langs->trans("ContactPublic"), '1'=>$langs->trans("ContactPrivate"));
             $this->tpl['select_visibility'] = $form->selectarray('priv', $selectarray, $this->object->priv, 0);
         }
 
-        if ($action == 'view' || $action == 'edit' || $action == 'delete')
-        {
-        	// Emailing
-        	if (!empty($conf->mailing->enabled))
-			{
-				$langs->load("mails");
-				$this->tpl['nb_emailing'] = $this->object->getNbOfEMailings();
-			}
+        if ($action == 'view' || $action == 'edit' || $action == 'delete') {
+            // Emailing
+            if (!empty($conf->mailing->enabled)) {
+                $langs->load("mails");
+                $this->tpl['nb_emailing'] = $this->object->getNbOfEMailings();
+            }
 
-        	// Linked element
-        	$this->tpl['contact_element'] = array();
-        	$i = 0;
+            // Linked element
+            $this->tpl['contact_element'] = array();
+            $i = 0;
 
-        	$this->object->load_ref_elements();
+            $this->object->load_ref_elements();
 
-        	if (!empty($conf->commande->enabled))
-        	{
-        		$this->tpl['contact_element'][$i]['linked_element_label'] = $langs->trans("ContactForOrders");
-        		$this->tpl['contact_element'][$i]['linked_element_value'] = $this->object->ref_commande ? $this->object->ref_commande : $langs->trans("NoContactForAnyOrder");
-        		$i++;
-        	}
-        	if (!empty($conf->propal->enabled))
-        	{
-        		$this->tpl['contact_element'][$i]['linked_element_label'] = $langs->trans("ContactForProposals");
-        		$this->tpl['contact_element'][$i]['linked_element_value'] = $this->object->ref_propal ? $this->object->ref_propal : $langs->trans("NoContactForAnyProposal");
-        		$i++;
-        	}
-        	if (!empty($conf->contrat->enabled))
-        	{
-        		$this->tpl['contact_element'][$i]['linked_element_label'] = $langs->trans("ContactForContracts");
-        		$this->tpl['contact_element'][$i]['linked_element_value'] = $this->object->ref_contrat ? $this->object->ref_contrat : $langs->trans("NoContactForAnyContract");
-        		$i++;
-        	}
-        	if (!empty($conf->facture->enabled))
-        	{
-        		$this->tpl['contact_element'][$i]['linked_element_label'] = $langs->trans("ContactForInvoices");
-        		$this->tpl['contact_element'][$i]['linked_element_value'] = $this->object->ref_facturation ? $this->object->ref_facturation : $langs->trans("NoContactForAnyInvoice");
-        		$i++;
-        	}
+            if (!empty($conf->commande->enabled)) {
+                $this->tpl['contact_element'][$i]['linked_element_label'] = $langs->trans("ContactForOrders");
+                $this->tpl['contact_element'][$i]['linked_element_value'] = $this->object->ref_commande ? $this->object->ref_commande : $langs->trans("NoContactForAnyOrder");
+                $i++;
+            }
+            if (!empty($conf->propal->enabled)) {
+                $this->tpl['contact_element'][$i]['linked_element_label'] = $langs->trans("ContactForProposals");
+                $this->tpl['contact_element'][$i]['linked_element_value'] = $this->object->ref_propal ? $this->object->ref_propal : $langs->trans("NoContactForAnyProposal");
+                $i++;
+            }
+            if (!empty($conf->contrat->enabled)) {
+                $this->tpl['contact_element'][$i]['linked_element_label'] = $langs->trans("ContactForContracts");
+                $this->tpl['contact_element'][$i]['linked_element_value'] = $this->object->ref_contrat ? $this->object->ref_contrat : $langs->trans("NoContactForAnyContract");
+                $i++;
+            }
+            if (!empty($conf->facture->enabled)) {
+                $this->tpl['contact_element'][$i]['linked_element_label'] = $langs->trans("ContactForInvoices");
+                $this->tpl['contact_element'][$i]['linked_element_value'] = $this->object->ref_facturation ? $this->object->ref_facturation : $langs->trans("NoContactForAnyInvoice");
+                $i++;
+            }
 
-        	// Dolibarr user
-        	if ($this->object->user_id)
-			{
-				$dolibarr_user = new User($this->db);
-				$result = $dolibarr_user->fetch($this->object->user_id);
-				$this->tpl['dolibarr_user'] = $dolibarr_user->getLoginUrl(1);
-			}
-			else $this->tpl['dolibarr_user'] = $langs->trans("NoDolibarrAccess");
+            // Dolibarr user
+            if ($this->object->user_id) {
+                $dolibarr_user = new User($this->db);
+                $result = $dolibarr_user->fetch($this->object->user_id);
+                $this->tpl['dolibarr_user'] = $dolibarr_user->getLoginUrl(1);
+            } else {
+                $this->tpl['dolibarr_user'] = $langs->trans("NoDolibarrAccess");
+            }
         }
 
-        if ($action == 'view' || $action == 'delete')
-        {
-        	$this->tpl['showrefnav'] = $form->showrefnav($this->object, 'id');
+        if ($action == 'view' || $action == 'delete') {
+            $this->tpl['showrefnav'] = $form->showrefnav($this->object, 'id');
 
-        	if ($this->object->socid > 0)
-        	{
-        		$objsoc = new Societe($this->db);
+            if ($this->object->socid > 0) {
+                $objsoc = new Societe($this->db);
 
-        		$objsoc->fetch($this->object->socid);
-        		$this->tpl['company'] = $objsoc->getNomUrl(1);
-        	}
-        	else
-        	{
-        		$this->tpl['company'] = $langs->trans("ContactNotLinkedToCompany");
-        	}
+                $objsoc->fetch($this->object->socid);
+                $this->tpl['company'] = $objsoc->getNomUrl(1);
+            } else {
+                $this->tpl['company'] = $langs->trans("ContactNotLinkedToCompany");
+            }
 
-        	$this->tpl['civility'] = $this->object->getCivilityLabel();
+            $this->tpl['civility'] = $this->object->getCivilityLabel();
 
             $this->tpl['address'] = dol_nl2br($this->object->address);
 
@@ -248,22 +254,21 @@ abstract class ActionsContactCardCommon
             $this->tpl['note'] = nl2br($this->object->note);
         }
 
-        if ($action == 'create_user')
-        {
-        	// Full firstname and lastname separated with a dot : firstname.lastname
-        	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+        if ($action == 'create_user') {
+            // Full firstname and lastname separated with a dot : firstname.lastname
+            include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
             require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-        	$login = dol_buildlogin($this->object->lastname, $this->object->firstname);
+            $login = dol_buildlogin($this->object->lastname, $this->object->firstname);
 
-       		$generated_password = getRandomPassword(false);
-        	$password = $generated_password;
+            $generated_password = getRandomPassword(false);
+            $password = $generated_password;
 
-        	// Create a form array
-        	$formquestion = array(
-        	array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login),
-        	array('label' => $langs->trans("Password"), 'type' => 'text', 'name' => 'password', 'value' => $password));
+            // Create a form array
+            $formquestion = array(
+            array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login),
+            array('label' => $langs->trans("Password"), 'type' => 'text', 'name' => 'password', 'value' => $password));
 
-        	$this->tpl['action_create_user'] = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$this->object->id, $langs->trans("CreateDolibarrLogin"), $langs->trans("ConfirmCreateContact"), "confirm_create_user", $formquestion, 'no');
+            $this->tpl['action_create_user'] = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$this->object->id, $langs->trans("CreateDolibarrLogin"), $langs->trans("ConfirmCreateContact"), "confirm_create_user", $formquestion, 'no');
         }
     }
 
@@ -302,16 +307,12 @@ abstract class ActionsContactCardCommon
         $this->object->canvas = $_POST["canvas"];
 
         // We set country_id, and country_code label of the chosen country
-        if ($this->object->country_id)
-        {
+        if ($this->object->country_id) {
             $sql = "SELECT code, label FROM ".MAIN_DB_PREFIX."c_country WHERE rowid = ".$this->object->country_id;
             $resql = $this->db->query($sql);
-            if ($resql)
-            {
+            if ($resql) {
                 $obj = $this->db->fetch_object($resql);
-            }
-            else
-            {
+            } else {
                 dol_print_error($this->db);
             }
             $this->object->country_id = $langs->trans("Country".$obj->code) ? $langs->trans("Country".$obj->code) : $obj->label;

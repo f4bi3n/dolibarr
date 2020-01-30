@@ -13,7 +13,8 @@ use Sabre\DAVACL;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class AddressBookRoot extends DAVACL\AbstractPrincipalCollection {
+class AddressBookRoot extends DAVACL\AbstractPrincipalCollection
+{
 
     /**
      * Principal Backend
@@ -43,11 +44,10 @@ class AddressBookRoot extends DAVACL\AbstractPrincipalCollection {
      * @param Backend\BackendInterface $carddavBackend
      * @param string $principalPrefix
      */
-    function __construct(DAVACL\PrincipalBackend\BackendInterface $principalBackend, Backend\BackendInterface $carddavBackend, $principalPrefix = 'principals') {
-
+    public function __construct(DAVACL\PrincipalBackend\BackendInterface $principalBackend, Backend\BackendInterface $carddavBackend, $principalPrefix = 'principals')
+    {
         $this->carddavBackend = $carddavBackend;
         parent::__construct($principalBackend, $principalPrefix);
-
     }
 
     /**
@@ -55,10 +55,9 @@ class AddressBookRoot extends DAVACL\AbstractPrincipalCollection {
      *
      * @return string
      */
-    function getName() {
-
+    public function getName()
+    {
         return Plugin::ADDRESSBOOK_ROOT;
-
     }
 
     /**
@@ -71,10 +70,8 @@ class AddressBookRoot extends DAVACL\AbstractPrincipalCollection {
      * @param array $principal
      * @return \Sabre\DAV\INode
      */
-    function getChildForPrincipal(array $principal) {
-
+    public function getChildForPrincipal(array $principal)
+    {
         return new AddressBookHome($this->carddavBackend, $principal['uri']);
-
     }
-
 }

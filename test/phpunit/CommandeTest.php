@@ -59,9 +59,9 @@ class CommandeTest extends PHPUnit\Framework\TestCase
      */
     public function __construct()
     {
-    	parent::__construct();
+        parent::__construct();
 
-    	//$this->sharedFixture
+        //$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -79,7 +79,10 @@ class CommandeTest extends PHPUnit\Framework\TestCase
         global $conf,$user,$langs,$db;
         $db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
 
-        if (empty($conf->commande->enabled)) { print __METHOD__." module customer order must be enabled.\n"; die(); }
+        if (empty($conf->commande->enabled)) {
+            print __METHOD__." module customer order must be enabled.\n";
+            die();
+        }
 
         print __METHOD__."\n";
     }
@@ -178,18 +181,18 @@ class CommandeTest extends PHPUnit\Framework\TestCase
      */
     public function testCommandeUpdate($localobject)
     {
-    	global $conf,$user,$langs,$db;
-    	$conf=$this->savconf;
-    	$user=$this->savuser;
-    	$langs=$this->savlangs;
-    	$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-    	$localobject->note_private='New note private after update';
-    	$result=$localobject->update($user);
+        $localobject->note_private='New note private after update';
+        $result=$localobject->update($user);
 
-    	$this->assertLessThan($result, 0);
-    	print __METHOD__." id=".$id." result=".$result."\n";
-    	return $localobject;
+        $this->assertLessThan($result, 0);
+        print __METHOD__." id=".$id." result=".$result."\n";
+        return $localobject;
     }
 
     /**

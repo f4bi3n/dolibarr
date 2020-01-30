@@ -16,10 +16,9 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
-{
-	print "Error, template page can't be called as URL";
-	exit;
+if (empty($conf) || ! is_object($conf)) {
+    print "Error, template page can't be called as URL";
+    exit;
 }
 
 
@@ -137,12 +136,12 @@ echo $this->control->tpl['ajax_selectcountry'];
 
 <?php
 if (! empty($this->control->tpl['contact_element'])) {
-	foreach ($this->control->tpl['contact_element'] as $element) {
-		print '<tr>';
-		print '<td>'.$element['linked_element_label'].'</td>';
-		print '<td colspan="3">'.$element['linked_element_value'].'</td>';
-		print '</tr>';
-	}
+    foreach ($this->control->tpl['contact_element'] as $element) {
+        print '<tr>';
+        print '<td>'.$element['linked_element_label'].'</td>';
+        print '<td colspan="3">'.$element['linked_element_value'].'</td>';
+        print '</tr>';
+    }
 } ?>
 
 <tr>

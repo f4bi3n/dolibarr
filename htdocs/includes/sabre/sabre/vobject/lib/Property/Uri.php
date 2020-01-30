@@ -14,7 +14,8 @@ use Sabre\VObject\Property;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Uri extends Text {
+class Uri extends Text
+{
 
     /**
      * In case this is a multi-value property. This string will be used as a
@@ -32,10 +33,9 @@ class Uri extends Text {
      *
      * @return string
      */
-    function getValueType() {
-
+    public function getValueType()
+    {
         return 'URI';
-
     }
 
     /**
@@ -43,8 +43,8 @@ class Uri extends Text {
      *
      * @return array
      */
-    function parameters() {
-
+    public function parameters()
+    {
         $parameters = parent::parameters();
         if (!isset($parameters['VALUE']) && in_array($this->name, ['URL', 'PHOTO'])) {
             // If we are encoding a URI value, and this URI value has no
@@ -58,7 +58,6 @@ class Uri extends Text {
             $parameters['VALUE'] = new Parameter($this->root, 'VALUE', 'URI');
         }
         return $parameters;
-
     }
 
     /**
@@ -71,7 +70,8 @@ class Uri extends Text {
      *
      * @return void
      */
-    function setRawMimeDirValue($val) {
+    public function setRawMimeDirValue($val)
+    {
 
         // Normally we don't need to do any type of unescaping for these
         // properties, however.. we've noticed that Google Contacts
@@ -87,10 +87,10 @@ class Uri extends Text {
             $newVal = '';
             foreach ($matches as $match) {
                 switch ($match) {
-                    case '\:' :
+                    case '\:':
                         $newVal .= ':';
                         break;
-                    default :
+                    default:
                         $newVal .= $match;
                         break;
                 }
@@ -99,7 +99,6 @@ class Uri extends Text {
         } else {
             $this->value = strtr($val, ['\,' => ',']);
         }
-
     }
 
     /**
@@ -107,8 +106,8 @@ class Uri extends Text {
      *
      * @return string
      */
-    function getRawMimeDirValue() {
-
+    public function getRawMimeDirValue()
+    {
         if (is_array($this->value)) {
             $value = $this->value[0];
         } else {
@@ -116,7 +115,5 @@ class Uri extends Text {
         }
 
         return strtr($value, [',' => '\,']);
-
     }
-
 }

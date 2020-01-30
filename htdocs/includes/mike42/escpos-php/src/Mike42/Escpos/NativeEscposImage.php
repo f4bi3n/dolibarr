@@ -20,5 +20,4 @@ use Mike42\Escpos\EscposImage;
  */
 class NativeEscposImage extends EscposImage
 {
-
 }

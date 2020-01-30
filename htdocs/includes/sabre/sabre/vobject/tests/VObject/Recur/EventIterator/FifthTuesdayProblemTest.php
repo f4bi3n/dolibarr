@@ -5,7 +5,8 @@ namespace Sabre\VObject\Recur\EventIterator;
 use Sabre\VObject\Reader;
 use Sabre\VObject\Recur;
 
-class FifthTuesdayProblemTest extends \PHPUnit_Framework_TestCase {
+class FifthTuesdayProblemTest extends \PHPUnit_Framework_TestCase
+{
 
     /**
      * A pretty slow test. Had to be marked as 'medium' for phpunit to not die
@@ -13,8 +14,8 @@ class FifthTuesdayProblemTest extends \PHPUnit_Framework_TestCase {
      *
      * @medium
      */
-    function testGetDTEnd() {
-
+    public function testGetDTEnd()
+    {
         $ics = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -48,7 +49,5 @@ ICS;
         // system before would fail on the 5th tuesday of the month, if the 5th
         // tuesday did not exist.
         $this->assertTrue(true);
-
     }
-
 }

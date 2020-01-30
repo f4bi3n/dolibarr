@@ -4,9 +4,10 @@ namespace Sabre\VObject\Property;
 
 use Sabre\VObject\Reader;
 
-class UriTest extends \PHPUnit_Framework_TestCase {
-
-    function testAlwaysEncodeUriVCalendar() {
+class UriTest extends \PHPUnit_Framework_TestCase
+{
+    public function testAlwaysEncodeUriVCalendar()
+    {
 
         // Apple iCal has issues with URL properties that don't have
         // VALUE=URI specified. We added a workaround to vobject that
@@ -21,7 +22,5 @@ END:VCALENDAR
 ICS;
         $output = Reader::read($input)->serialize();
         $this->assertContains('URL;VALUE=URI:http://example.org/', $output);
-
     }
-
 }

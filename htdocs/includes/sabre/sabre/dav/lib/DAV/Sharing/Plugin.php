@@ -24,8 +24,8 @@ use Sabre\HTTP\ResponseInterface;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Plugin extends ServerPlugin {
-
+class Plugin extends ServerPlugin
+{
     const ACCESS_NOTSHARED = 0;
     const ACCESS_SHAREDOWNER = 1;
     const ACCESS_READ = 2;
@@ -52,10 +52,9 @@ class Plugin extends ServerPlugin {
      *
      * @return array
      */
-    function getFeatures() {
-
+    public function getFeatures()
+    {
         return ['resource-sharing'];
-
     }
 
     /**
@@ -66,10 +65,9 @@ class Plugin extends ServerPlugin {
      *
      * @return string
      */
-    function getPluginName() {
-
+    public function getPluginName()
+    {
         return 'sharing';
-
     }
 
     /**
@@ -83,8 +81,8 @@ class Plugin extends ServerPlugin {
      * @param Server $server
      * @return void
      */
-    function initialize(Server $server) {
-
+    public function initialize(Server $server)
+    {
         $this->server = $server;
 
         $server->xml->elementMap['{DAV:}share-resource'] = 'Sabre\\DAV\\Xml\\Request\\ShareResource';
@@ -94,12 +92,11 @@ class Plugin extends ServerPlugin {
             '{DAV:}share-mode'
         );
 
-        $server->on('method:POST',              [$this, 'httpPost']);
-        $server->on('propFind',                 [$this, 'propFind']);
+        $server->on('method:POST', [$this, 'httpPost']);
+        $server->on('propFind', [$this, 'propFind']);
         $server->on('getSupportedPrivilegeSet', [$this, 'getSupportedPrivilegeSet']);
-        $server->on('onHTMLActionsPanel',       [$this, 'htmlActionsPanel']);
-        $server->on('onBrowserPostAction',      [$this, 'browserPostAction']);
-
+        $server->on('onHTMLActionsPanel', [$this, 'htmlActionsPanel']);
+        $server->on('onBrowserPostAction', [$this, 'browserPostAction']);
     }
 
     /**
@@ -112,14 +109,12 @@ class Plugin extends ServerPlugin {
      * @param Sharee[] $sharees
      * @return void
      */
-    function shareResource($path, array $sharees) {
-
+    public function shareResource($path, array $sharees)
+    {
         $node = $this->server->tree->getNodeForPath($path);
 
         if (!$node instanceof ISharedNode) {
-
             throw new Forbidden('Sharing is not allowed on this node');
-
         }
 
         // Getting ACL info
@@ -138,7 +133,6 @@ class Plugin extends ServerPlugin {
             $sharee->principal = $principal;
         }
         $node->updateInvites($sharees);
-
     }
 
     /**
@@ -150,28 +144,19 @@ class Plugin extends ServerPlugin {
      * @param INode $node
      * @return void
      */
-    function propFind(PropFind $propFind, INode $node) {
-
+    public function propFind(PropFind $propFind, INode $node)
+    {
         if ($node instanceof ISharedNode) {
-
-            $propFind->handle('{DAV:}share-access', function() use ($node) {
-
+            $propFind->handle('{DAV:}share-access', function () use ($node) {
                 return new Property\ShareAccess($node->getShareAccess());
-
             });
-            $propFind->handle('{DAV:}invite', function() use ($node) {
-
+            $propFind->handle('{DAV:}invite', function () use ($node) {
                 return new Property\Invite($node->getInvites());
-
             });
-            $propFind->handle('{DAV:}share-resource-uri', function() use ($node) {
-
+            $propFind->handle('{DAV:}share-resource-uri', function () use ($node) {
                 return new Property\Href($node->getShareResourceUri());
-
             });
-
         }
-
     }
 
     /**
@@ -181,8 +166,8 @@ class Plugin extends ServerPlugin {
      * @param ResponseInterface $response
      * @return null|bool
      */
-    function httpPost(RequestInterface $request, ResponseInterface $response) {
-
+    public function httpPost(RequestInterface $request, ResponseInterface $response)
+    {
         $path = $request->getPath();
         $contentType = $request->getHeader('Content-Type');
 
@@ -210,11 +195,10 @@ class Plugin extends ServerPlugin {
                 // Breaking the event chain
                 return false;
 
-            default :
+            default:
                 throw new BadRequest('Unexpected document type: ' . $documentType . ' for this Content-Type');
 
         }
-
     }
 
     /**
@@ -226,8 +210,8 @@ class Plugin extends ServerPlugin {
      * @param INode $node
      * @param array $supportedPrivilegeSet
      */
-    function getSupportedPrivilegeSet(INode $node, array &$supportedPrivilegeSet) {
-
+    public function getSupportedPrivilegeSet(INode $node, array &$supportedPrivilegeSet)
+    {
         if ($node instanceof ISharedNode) {
             $supportedPrivilegeSet['{DAV:}share'] = [
                 'abstract'   => false,
@@ -247,14 +231,13 @@ class Plugin extends ServerPlugin {
      *
      * @return array
      */
-    function getPluginInfo() {
-
+    public function getPluginInfo()
+    {
         return [
             'name'        => $this->getPluginName(),
             'description' => 'This plugin implements WebDAV resource sharing',
             'link'        => 'https://github.com/evert/webdav-sharing'
         ];
-
     }
 
     /**
@@ -266,8 +249,8 @@ class Plugin extends ServerPlugin {
      * @param string $path
      * @return bool|null
      */
-    function htmlActionsPanel(INode $node, &$output, $path) {
-
+    public function htmlActionsPanel(INode $node, &$output, $path)
+    {
         if (!$node instanceof ISharedNode) {
             return;
         }
@@ -293,7 +276,6 @@ class Plugin extends ServerPlugin {
              <input type="submit" value="share" />
             </form>
             </td></tr>';
-
     }
 
     /**
@@ -304,8 +286,8 @@ class Plugin extends ServerPlugin {
      * @param string $action
      * @param array $postVars
      */
-    function browserPostAction($path, $action, $postVars) {
-
+    public function browserPostAction($path, $action, $postVars)
+    {
         if ($action !== 'share') {
             return;
         }
@@ -336,7 +318,5 @@ class Plugin extends ServerPlugin {
             [$sharee]
         );
         return false;
-
     }
-
 }

@@ -4,7 +4,6 @@
 echo "SabreDAV migrate script for version 2.0\n";
 
 if ($argc < 2) {
-
     echo <<<HELLO
 
 This script help you migrate from a pre-2.0 database to 2.0 and later
@@ -36,7 +35,6 @@ php {$argv[0]} sqlite:data/sabredav.db
 HELLO;
 
     exit();
-
 }
 
 // There's a bunch of places where the autoloader could be, so we'll try all of
@@ -67,19 +65,18 @@ $driver = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
 
 switch ($driver) {
 
-    case 'mysql' :
+    case 'mysql':
         echo "Detected MySQL.\n";
         break;
-    case 'sqlite' :
+    case 'sqlite':
         echo "Detected SQLite.\n";
         break;
-    default :
+    default:
         echo "Error: unsupported driver: " . $driver . "\n";
         die(-1);
 }
 
 foreach (['calendar', 'addressbook'] as $itemType) {
-
     $tableName = $itemType . 's';
     $tableNameOld = $tableName . '_old';
     $changesTable = $itemType . 'changes';
@@ -90,7 +87,6 @@ foreach (['calendar', 'addressbook'] as $itemType) {
     $row = $pdo->query("SELECT * FROM $tableName LIMIT 1")->fetch();
 
     if (!$row) {
-
         echo "No records were found in the '$tableName' table.\n";
         echo "\n";
         echo "We're going to rename the old table to $tableNameOld (just in case).\n";
@@ -98,10 +94,10 @@ foreach (['calendar', 'addressbook'] as $itemType) {
 
         switch ($driver) {
 
-            case 'mysql' :
+            case 'mysql':
                 $pdo->exec("RENAME TABLE $tableName TO $tableNameOld");
                 switch ($itemType) {
-                    case 'calendar' :
+                    case 'calendar':
                         $pdo->exec("
             CREATE TABLE calendars (
                 id INT(11) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -119,7 +115,7 @@ foreach (['calendar', 'addressbook'] as $itemType) {
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
                         ");
                         break;
-                    case 'addressbook' :
+                    case 'addressbook':
                         $pdo->exec("
             CREATE TABLE addressbooks (
                 id INT(11) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -135,12 +131,12 @@ foreach (['calendar', 'addressbook'] as $itemType) {
                 }
                 break;
 
-            case 'sqlite' :
+            case 'sqlite':
 
                 $pdo->exec("ALTER TABLE $tableName RENAME TO $tableNameOld");
 
                 switch ($itemType) {
-                    case 'calendar' :
+                    case 'calendar':
                         $pdo->exec("
             CREATE TABLE calendars (
                 id integer primary key asc,
@@ -157,7 +153,7 @@ foreach (['calendar', 'addressbook'] as $itemType) {
             );
                         ");
                         break;
-                    case 'addressbook' :
+                    case 'addressbook':
                         $pdo->exec("
             CREATE TABLE addressbooks (
                 id integer primary key asc,
@@ -175,7 +171,6 @@ foreach (['calendar', 'addressbook'] as $itemType) {
 
         }
         echo "Creation of 2.0 $tableName table is complete\n";
-
     } else {
 
         // Checking if there's a synctoken field already.
@@ -184,16 +179,15 @@ foreach (['calendar', 'addressbook'] as $itemType) {
             echo "It's likely you already upgraded, so we're simply leaving\n";
             echo "the $tableName table alone\n";
         } else {
-
             echo "1.8 table schema detected\n";
             switch ($driver) {
 
-                case 'mysql' :
+                case 'mysql':
                     $pdo->exec("ALTER TABLE $tableName ADD synctoken INT(11) UNSIGNED NOT NULL DEFAULT '1'");
                     $pdo->exec("ALTER TABLE $tableName DROP ctag");
                     $pdo->exec("UPDATE $tableName SET synctoken = '1'");
                     break;
-                case 'sqlite' :
+                case 'sqlite':
                     $pdo->exec("ALTER TABLE $tableName ADD synctoken integer");
                     $pdo->exec("UPDATE $tableName SET synctoken = '1'");
                     echo "Note: there's no easy way to remove fields in sqlite.\n";
@@ -203,9 +197,7 @@ foreach (['calendar', 'addressbook'] as $itemType) {
             }
 
             echo "Upgraded '$tableName' to 2.0 schema.\n";
-
         }
-
     }
 
     try {
@@ -213,13 +205,12 @@ foreach (['calendar', 'addressbook'] as $itemType) {
 
         echo "'$changesTable' already exists. Assuming that this part of the\n";
         echo "upgrade was already completed.\n";
-
     } catch (Exception $e) {
         echo "Creating '$changesTable' table.\n";
 
         switch ($driver) {
 
-            case 'mysql' :
+            case 'mysql':
                 $pdo->exec("
     CREATE TABLE $changesTable (
         id INT(11) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -232,7 +223,7 @@ foreach (['calendar', 'addressbook'] as $itemType) {
 
                 ");
                 break;
-            case 'sqlite' :
+            case 'sqlite':
                 $pdo->exec("
 
     CREATE TABLE $changesTable (
@@ -248,9 +239,7 @@ foreach (['calendar', 'addressbook'] as $itemType) {
                 break;
 
         }
-
     }
-
 }
 
 try {
@@ -258,13 +247,12 @@ try {
 
     echo "'calendarsubscriptions' already exists. Assuming that this part of the\n";
     echo "upgrade was already completed.\n";
-
 } catch (Exception $e) {
     echo "Creating calendarsubscriptions table.\n";
 
     switch ($driver) {
 
-        case 'mysql' :
+        case 'mysql':
             $pdo->exec("
 CREATE TABLE calendarsubscriptions (
     id INT(11) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -283,7 +271,7 @@ CREATE TABLE calendarsubscriptions (
 );
             ");
             break;
-        case 'sqlite' :
+        case 'sqlite':
             $pdo->exec("
 
 CREATE TABLE calendarsubscriptions (
@@ -306,7 +294,6 @@ CREATE TABLE calendarsubscriptions (
             break;
 
     }
-
 }
 
 try {
@@ -314,13 +301,12 @@ try {
 
     echo "'propertystorage' already exists. Assuming that this part of the\n";
     echo "upgrade was already completed.\n";
-
 } catch (Exception $e) {
     echo "Creating propertystorage table.\n";
 
     switch ($driver) {
 
-        case 'mysql' :
+        case 'mysql':
             $pdo->exec("
 CREATE TABLE propertystorage (
     id INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -333,7 +319,7 @@ CREATE TABLE propertystorage (
 CREATE UNIQUE INDEX path_property ON propertystorage (path(600), name(100));
             ");
             break;
-        case 'sqlite' :
+        case 'sqlite':
             $pdo->exec("
 CREATE TABLE propertystorage (
     id integer primary key asc,
@@ -349,13 +335,11 @@ CREATE UNIQUE INDEX path_property ON propertystorage (path, name);
             break;
 
     }
-
 }
 
 echo "Upgrading cards table to 2.0 schema\n";
 
 try {
-
     $create = false;
     $row = $pdo->query("SELECT * FROM cards LIMIT 1")->fetch();
     if (!$row) {
@@ -366,27 +350,24 @@ try {
         $create = true;
 
         switch ($driver) {
-            case 'mysql' :
+            case 'mysql':
                 $pdo->exec("RENAME TABLE cards TO cards_old$random");
                 break;
-            case 'sqlite' :
+            case 'sqlite':
                 $pdo->exec("ALTER TABLE cards RENAME TO cards_old$random");
                 break;
 
         }
     }
-
 } catch (Exception $e) {
-
     echo "Exception while checking cards table. Assuming that the table does not yet exist.\n";
     echo "Debug: ", $e->getMessage(), "\n";
     $create = true;
-
 }
 
 if ($create) {
     switch ($driver) {
-        case 'mysql' :
+        case 'mysql':
             $pdo->exec("
 CREATE TABLE cards (
     id INT(11) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -401,7 +382,7 @@ CREATE TABLE cards (
             ");
             break;
 
-        case 'sqlite' :
+        case 'sqlite':
 
             $pdo->exec("
 CREATE TABLE cards (
@@ -419,7 +400,7 @@ CREATE TABLE cards (
     }
 } else {
     switch ($driver) {
-        case 'mysql' :
+        case 'mysql':
             $pdo->exec("
                 ALTER TABLE cards
                 ADD etag VARBINARY(32),
@@ -427,7 +408,7 @@ CREATE TABLE cards (
             ");
             break;
 
-        case 'sqlite' :
+        case 'sqlite':
 
             $pdo->exec("
                 ALTER TABLE cards ADD etag text;
@@ -446,8 +427,6 @@ CREATE TABLE cards (
             $row['id']
         ]);
     }
-
-
 }
 
 echo "Upgrade to 2.0 schema completed.\n";

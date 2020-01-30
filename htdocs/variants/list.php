@@ -29,17 +29,17 @@ $object = new ProductAttribute($db);
  */
 
 if ($action == 'up') {
-	$object->fetch($rowid);
-	$object->moveUp();
+    $object->fetch($rowid);
+    $object->moveUp();
 
-	header('Location: '.$_SERVER['PHP_SELF']);
-	exit();
+    header('Location: '.$_SERVER['PHP_SELF']);
+    exit();
 } elseif ($action == 'down') {
-	$object->fetch($rowid);
-	$object->moveDown();
+    $object->fetch($rowid);
+    $object->moveDown();
 
-	header('Location: '.$_SERVER['PHP_SELF']);
-	exit();
+    header('Location: '.$_SERVER['PHP_SELF']);
+    exit();
 }
 
 
@@ -57,8 +57,7 @@ $variants = $object->fetchAll();
 llxHeader('', $title);
 
 $newcardbutton='';
-if ($user->rights->produit->creer)
-{
+if ($user->rights->produit->creer) {
     $newcardbutton.= dolGetButtonTitle($langs->trans('Create'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/variants/create.php');
 }
 
@@ -120,24 +119,24 @@ $forcereloadpage=empty($conf->global->MAIN_FORCE_RELOAD_PAGE)?0:1;
 		</tr>
 <?php
 foreach ($variants as $key => $attribute) {
-	print '<tr id="row-'.$attribute->id.'" class="drag drop oddeven">';
-	print '<td><a href="card.php?id='.$attribute->id.'">'.dol_htmlentities($attribute->ref).'</a></td>';
-	print '<td><a href="card.php?id='.$attribute->id.'">'.dol_htmlentities($attribute->label).'</a></td>';
-	print '<td class="right">'.$attribute->countChildValues().'</td>';
-	print '<td class="right">'.$attribute->countChildProducts().'</td>';
-	print '<td class="right">';
-	print '<a href="card.php?id='.$attribute->id.'&action=edit">'.img_edit().'</a>';
-	print '<a href="card.php?id='.$attribute->id.'&action=delete">'.img_delete().'</a>';
-	print '</td>';
-	print '<td class="center linecolmove tdlineupdown">';
-	if ($key > 0) {
-		print '<a class="lineupdown" href="'.$_SERVER['PHP_SELF'].'?action=up&amp;rowid='.$attribute->id.'">'.img_up('default', 0, 'imgupforline').'</a>';
-	}
-	if ($key < count($variants)-1) {
-		print '<a class="lineupdown" href="'.$_SERVER['PHP_SELF'].'?action=down&amp;rowid='.$attribute->id.'">'.img_down('default', 0, 'imgdownforline').'</a>';
-	}
-	print '</td>';
-	print "</tr>\n";
+    print '<tr id="row-'.$attribute->id.'" class="drag drop oddeven">';
+    print '<td><a href="card.php?id='.$attribute->id.'">'.dol_htmlentities($attribute->ref).'</a></td>';
+    print '<td><a href="card.php?id='.$attribute->id.'">'.dol_htmlentities($attribute->label).'</a></td>';
+    print '<td class="right">'.$attribute->countChildValues().'</td>';
+    print '<td class="right">'.$attribute->countChildProducts().'</td>';
+    print '<td class="right">';
+    print '<a href="card.php?id='.$attribute->id.'&action=edit">'.img_edit().'</a>';
+    print '<a href="card.php?id='.$attribute->id.'&action=delete">'.img_delete().'</a>';
+    print '</td>';
+    print '<td class="center linecolmove tdlineupdown">';
+    if ($key > 0) {
+        print '<a class="lineupdown" href="'.$_SERVER['PHP_SELF'].'?action=up&amp;rowid='.$attribute->id.'">'.img_up('default', 0, 'imgupforline').'</a>';
+    }
+    if ($key < count($variants)-1) {
+        print '<a class="lineupdown" href="'.$_SERVER['PHP_SELF'].'?action=down&amp;rowid='.$attribute->id.'">'.img_down('default', 0, 'imgdownforline').'</a>';
+    }
+    print '</td>';
+    print "</tr>\n";
 }
 
 print '</table>';

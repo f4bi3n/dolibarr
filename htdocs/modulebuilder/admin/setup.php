@@ -26,8 +26,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 global $conf, $langs, $user, $db;
 $langs->loadLangs(array("admin", "other", "modulebuilder"));
 
-if (!$user->admin || empty($conf->modulebuilder->enabled))
+if (!$user->admin || empty($conf->modulebuilder->enabled)) {
     accessforbidden();
+}
 
 $action = GETPOST('action', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
@@ -35,8 +36,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 /*
  * Actions
  */
-if ($action == "update")
-{
+if ($action == "update") {
     $res1 = dolibarr_set_const($db, 'MODULEBUILDER_SPECIFIC_README', GETPOST('MODULEBUILDER_SPECIFIC_README', 'none'), 'chaine', 0, '', $conf->entity);
     $res2 = dolibarr_set_const($db, 'MODULEBUILDER_ASCIIDOCTOR', GETPOST('MODULEBUILDER_ASCIIDOCTOR', 'nohtml'), 'chaine', 0, '', $conf->entity);
     $res3 = dolibarr_set_const($db, 'MODULEBUILDER_ASCIIDOCTORPDF', GETPOST('MODULEBUILDER_ASCIIDOCTORPDF', 'nohtml'), 'chaine', 0, '', $conf->entity);
@@ -48,9 +48,7 @@ if ($action == "update")
     if ($res1 < 0 || $res2 < 0 || $res3 < 0 || $res4 < 0 || $res5 < 0 || $res6 < 0 || $res7 < 0 || $res8 < 0) {
         setEventMessages('ErrorFailedToSaveDate', null, 'errors');
         $db->rollback();
-    }
-    else
-    {
+    } else {
         setEventMessages('RecordModifiedSuccessfully', null, 'mesgs');
         $db->commit();
     }
@@ -59,8 +57,9 @@ if ($action == "update")
 if (preg_match('/set_(.*)/', $action, $reg)) {
     $code = $reg[1];
     $values = GETPOST($code);
-    if (is_array($values))
+    if (is_array($values)) {
         $values = implode(',', $values);
+    }
 
     if (dolibarr_set_const($db, $code, $values, 'chaine', 0, '', $conf->entity) > 0) {
         header("Location: ".$_SERVER["PHP_SELF"]);
@@ -113,23 +112,22 @@ print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
 
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
-{
-	// What is use cas of this 2 options ?
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
+    // What is use cas of this 2 options ?
 
-	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("UseAboutPage").'</td>';
-	print '<td class="center">';
-	if ($conf->use_javascript_ajax) {
-	    print ajax_constantonoff('MODULEBUILDER_USE_ABOUT');
-	} else {
-	    if (empty($conf->global->MODULEBUILDER_USE_ABOUT)) {
-	        print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_MODULEBUILDER_USE_ABOUT">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
-	    } else {
-	        print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MODULEBUILDER_USE_ABOUT">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
-	    }
-	}
-	print '</td></tr>';
+    print '<tr class="oddeven">';
+    print '<td>'.$langs->trans("UseAboutPage").'</td>';
+    print '<td class="center">';
+    if ($conf->use_javascript_ajax) {
+        print ajax_constantonoff('MODULEBUILDER_USE_ABOUT');
+    } else {
+        if (empty($conf->global->MODULEBUILDER_USE_ABOUT)) {
+            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_MODULEBUILDER_USE_ABOUT">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+        } else {
+            print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MODULEBUILDER_USE_ABOUT">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+        }
+    }
+    print '</td></tr>';
 
     print '<tr class="oddeven">';
     print '<td class="tdtop">'.$langs->trans("UseSpecificEditorName").'</td>';

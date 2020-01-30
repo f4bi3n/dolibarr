@@ -2,10 +2,10 @@
 
 namespace Sabre\VObject\ITip;
 
-class BrokerDeleteEventTest extends BrokerTester {
-
-    function testOrganizerDeleteWithDtend() {
-
+class BrokerDeleteEventTest extends BrokerTester
+{
+    public function testOrganizerDeleteWithDtend()
+    {
         $oldMessage = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -87,11 +87,10 @@ ICS
         ];
 
         $this->parse($oldMessage, $newMessage, $expected, 'mailto:strunk@example.org');
-
     }
 
-    function testOrganizerDeleteWithDuration() {
-
+    public function testOrganizerDeleteWithDuration()
+    {
         $oldMessage = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -173,11 +172,10 @@ ICS
         ];
 
         $this->parse($oldMessage, $newMessage, $expected, 'mailto:strunk@example.org');
-
     }
 
-    function testAttendeeDeleteWithDtend() {
-
+    public function testAttendeeDeleteWithDtend()
+    {
         $oldMessage = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -230,12 +228,10 @@ ICS
         ];
 
         $this->parse($oldMessage, $newMessage, $expected, 'mailto:one@example.org');
-
-
     }
 
-    function testAttendeeReplyWithDuration() {
-
+    public function testAttendeeReplyWithDuration()
+    {
         $oldMessage = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -288,12 +284,10 @@ ICS
         ];
 
         $this->parse($oldMessage, $newMessage, $expected, 'mailto:one@example.org');
-
-
     }
 
-    function testAttendeeDeleteCancelledEvent() {
-
+    public function testAttendeeDeleteCancelledEvent()
+    {
         $oldMessage = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -316,18 +310,15 @@ ICS;
         $expected = [];
 
         $this->parse($oldMessage, $newMessage, $expected, 'mailto:one@example.org');
-
-
     }
 
-    function testNoCalendar() {
-
+    public function testNoCalendar()
+    {
         $this->parse(null, null, [], 'mailto:one@example.org');
-
     }
 
-    function testVTodo() {
-
+    public function testVTodo()
+    {
         $oldMessage = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -338,7 +329,5 @@ END:VTODO
 END:VCALENDAR
 ICS;
         $this->parse($oldMessage, null, [], 'mailto:one@example.org');
-
     }
-
 }

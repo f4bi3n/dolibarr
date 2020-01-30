@@ -59,9 +59,9 @@ class AdminLibTest extends PHPUnit\Framework\TestCase
      */
     public function __construct()
     {
-    	parent::__construct();
+        parent::__construct();
 
-    	//$this->sharedFixture
+        //$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -152,18 +152,18 @@ class AdminLibTest extends PHPUnit\Framework\TestCase
      */
     public function testEnableModule()
     {
-    	global $conf, $db, $langs, $user;
+        global $conf, $db, $langs, $user;
 
-		require_once dirname(__FILE__).'/../../htdocs/core/modules/modExpenseReport.class.php';
-		print "Enable module modExpenseReport";
-		$moduledescriptor=new modExpenseReport($db);
-		$moduledescriptor->init();
-		$conf->setValues($db);
+        require_once dirname(__FILE__).'/../../htdocs/core/modules/modExpenseReport.class.php';
+        print "Enable module modExpenseReport";
+        $moduledescriptor=new modExpenseReport($db);
+        $moduledescriptor->init();
+        $conf->setValues($db);
 
-		require_once dirname(__FILE__).'/../../htdocs/core/modules/modApi.class.php';
-		print "Enable module modAPI";
-		$moduledescriptor=new modApi($db);
-		$moduledescriptor->init();
-		$conf->setValues($db);
+        require_once dirname(__FILE__).'/../../htdocs/core/modules/modApi.class.php';
+        print "Enable module modAPI";
+        $moduledescriptor=new modApi($db);
+        $moduledescriptor->init();
+        $conf->setValues($db);
     }
 }

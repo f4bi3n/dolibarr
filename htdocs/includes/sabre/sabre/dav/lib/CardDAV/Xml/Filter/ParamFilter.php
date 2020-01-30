@@ -21,7 +21,8 @@ use Sabre\Xml\Reader;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-abstract class ParamFilter implements Element {
+abstract class ParamFilter implements Element
+{
 
     /**
      * The deserialize method is called during xml parsing.
@@ -44,8 +45,8 @@ abstract class ParamFilter implements Element {
      * @param Reader $reader
      * @return mixed
      */
-    static function xmlDeserialize(Reader $reader) {
-
+    public static function xmlDeserialize(Reader $reader)
+    {
         $result = [
             'name'           => null,
             'is-not-defined' => false,
@@ -57,14 +58,14 @@ abstract class ParamFilter implements Element {
 
         $elems = $reader->parseInnerTree();
 
-        if (is_array($elems)) foreach ($elems as $elem) {
+        if (is_array($elems)) {
+            foreach ($elems as $elem) {
+                switch ($elem['name']) {
 
-            switch ($elem['name']) {
-
-                case '{' . Plugin::NS_CARDDAV . '}is-not-defined' :
+                case '{' . Plugin::NS_CARDDAV . '}is-not-defined':
                     $result['is-not-defined'] = true;
                     break;
-                case '{' . Plugin::NS_CARDDAV . '}text-match' :
+                case '{' . Plugin::NS_CARDDAV . '}text-match':
                     $matchType = isset($elem['attributes']['match-type']) ? $elem['attributes']['match-type'] : 'contains';
 
                     if (!in_array($matchType, ['contains', 'equals', 'starts-with', 'ends-with'])) {
@@ -79,11 +80,9 @@ abstract class ParamFilter implements Element {
                     break;
 
             }
-
+            }
         }
 
         return $result;
-
     }
-
 }

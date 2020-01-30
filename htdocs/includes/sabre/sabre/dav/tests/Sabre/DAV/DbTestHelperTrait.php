@@ -5,13 +5,13 @@ namespace Sabre\DAV;
 use PDO;
 use PDOException;
 
-class DbCache {
-
-    static $cache = [];
-
+class DbCache
+{
+    public static $cache = [];
 }
 
-trait DbTestHelperTrait {
+trait DbTestHelperTrait
+{
 
     /**
      * Should be "mysql", "pgsql", "sqlite".
@@ -23,8 +23,8 @@ trait DbTestHelperTrait {
      *
      * @return PDO
      */
-    function getDb() {
-
+    public function getDb()
+    {
         if (!$this->driver) {
             throw new \Exception('You must set the $driver public property');
         }
@@ -38,16 +38,15 @@ trait DbTestHelperTrait {
         }
 
         try {
-
             switch ($this->driver) {
 
-                case 'mysql' :
+                case 'mysql':
                     $pdo = new PDO(SABRE_MYSQLDSN, SABRE_MYSQLUSER, SABRE_MYSQLPASS);
                     break;
-                case 'sqlite' :
+                case 'sqlite':
                     $pdo = new \PDO('sqlite:' . SABRE_TEMPDIR . '/testdb');
                     break;
-                case 'pgsql' :
+                case 'pgsql':
                     $pdo = new \PDO(SABRE_PGSQLDSN);
                     $version = $pdo->query('SELECT VERSION()')->fetchColumn();
                     preg_match('|([0-9\.]){5,}|', $version, $matches);
@@ -62,16 +61,12 @@ trait DbTestHelperTrait {
 
             }
             $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-
         } catch (PDOException $e) {
-
             $this->markTestSkipped($this->driver . ' was not enabled or not correctly configured. Error message: ' . $e->getMessage());
-
         }
 
         DbCache::$cache[$this->driver] = $pdo;
         return $pdo;
-
     }
 
     /**
@@ -79,10 +74,9 @@ trait DbTestHelperTrait {
      *
      * @return PDO
      */
-    function getPDO() {
-
+    public function getPDO()
+    {
         return $this->getDb();
-
     }
 
     /**
@@ -91,8 +85,8 @@ trait DbTestHelperTrait {
      * @param string $schemaName
      * @return void
      */
-    function createSchema($schemaName) {
-
+    public function createSchema($schemaName)
+    {
         $db = $this->getDb();
 
         $queries = file_get_contents(
@@ -100,15 +94,12 @@ trait DbTestHelperTrait {
         );
 
         foreach (explode(';', $queries) as $query) {
-
             if (trim($query) === '') {
                 continue;
             }
 
             $db->exec($query);
-
         }
-
     }
 
     /**
@@ -117,27 +108,23 @@ trait DbTestHelperTrait {
      * @param string|string[] $tableNames
      * @return void
      */
-    function dropTables($tableNames) {
-
+    public function dropTables($tableNames)
+    {
         $tableNames = (array)$tableNames;
         $db = $this->getDb();
         foreach ($tableNames as $tableName) {
             $db->exec('DROP TABLE IF EXISTS ' . $tableName);
         }
-
-
     }
 
-    function tearDown() {
-
+    public function tearDown()
+    {
         switch ($this->driver) {
 
-            case 'sqlite' :
+            case 'sqlite':
                 // Recreating sqlite, just in case
                 unset(DbCache::$cache[$this->driver]);
                 unlink(SABRE_TEMPDIR . '/testdb');
         }
-
     }
-
 }

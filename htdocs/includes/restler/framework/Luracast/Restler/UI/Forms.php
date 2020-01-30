@@ -18,7 +18,6 @@ use Luracast\Restler\UI\Tags as T;
 use Luracast\Restler\User;
 use Luracast\Restler\Util;
 
-
 /**
  * Utility class for automatically generating forms for the given http method
  * and api url
@@ -99,14 +98,16 @@ class Forms implements iFilter
      */
     public static function get($method = 'POST', $action = null, $dataOnly = false, $prefix = '', $indent = '    ')
     {
-        if (!static::$style)
+        if (!static::$style) {
             static::$style = FormStyles::$html;
+        }
 
         try {
             /** @var Restler $restler */
             $restler = Scope::get('Restler');
-            if (is_null($action))
+            if (is_null($action)) {
                 $action = $restler->url;
+            }
 
             $info = $restler->url == $action
             && Util::getRequestMethod() == $method
@@ -121,23 +122,24 @@ class Forms implements iFilter
                         ? $restler->getRequestData()
                         : array()
                 );
-
         } catch (RestException $e) {
             //echo $e->getErrorMessage();
             $info = false;
         }
-        if (!$info)
+        if (!$info) {
             throw new RestException(500, 'invalid action path for form `' . $method . ' ' . $action . '`');
+        }
         static::$info = $info;
         $m = $info->metadata;
         $r = static::fields($dataOnly);
         if ($method != 'GET' && $method != 'POST') {
-            if (empty(Defaults::$httpMethodOverrideProperty))
+            if (empty(Defaults::$httpMethodOverrideProperty)) {
                 throw new RestException(
                     500,
                     'Forms require `Defaults::\$httpMethodOverrideProperty`' .
                     "for supporting HTTP $method"
                 );
+            }
             if ($dataOnly) {
                 $r[] = array(
                     'tag' => 'input',
@@ -180,8 +182,9 @@ class Forms implements iFilter
                     ? : 'Submit'
         );
 
-        if (!$dataOnly)
+        if (!$dataOnly) {
             $s = Emmet::make(static::style('submit', $m), $s);
+        }
         $r[] = $s;
         $t = array(
             'action' => $restler->getBaseUrl() . '/' . rtrim($action, '/'),
@@ -209,9 +212,11 @@ class Forms implements iFilter
     {
         return isset($metadata[CommentParser::$embeddedDataName][$name])
             ? $metadata[CommentParser::$embeddedDataName][$name]
-            : (!empty($type) && isset(static::$style["$name-$type"])
+            : (
+                !empty($type) && isset(static::$style["$name-$type"])
                 ? static::$style["$name-$type"]
-                : (isset(static::$style[$name])
+                : (
+                    isset(static::$style[$name])
                     ? static::$style[$name]
                     : null
                 )
@@ -230,11 +235,13 @@ class Forms implements iFilter
                 is_scalar($value) ||
                 ($p['type'] == 'array' && is_array($value) && $value == array_values($value)) ||
                 is_object($value) && $p['type'] == get_class($value)
-            )
+            ) {
                 $p['value'] = $value;
+            }
             static::$validationInfo = $v = new ValidationInfo($p);
-            if ($v->from == 'path')
+            if ($v->from == 'path') {
                 continue;
+            }
             if (!empty($v->children)) {
                 $t = Emmet::make(static::style('fieldset', $m), array('label' => $v->label));
                 foreach ($v->children as $n => $c) {
@@ -243,11 +250,13 @@ class Forms implements iFilter
                         is_scalar($value) ||
                         ($c['type'] == 'array' && is_array($value) && $value == array_values($value)) ||
                         is_object($value) && $c['type'] == get_class($value)
-                    )
+                    ) {
                         $c['value'] = $value;
+                    }
                     static::$validationInfo = $vc = new ValidationInfo($c);
-                    if ($vc->from == 'path')
+                    if ($vc->from == 'path') {
                         continue;
+                    }
                     $vc->name = $v->name . '[' . $vc->name . ']';
                     $t [] = static::field($vc, $dataOnly);
                 }
@@ -291,8 +300,9 @@ class Forms implements iFilter
                 $option['text'] = isset($p->rules['select'][$i])
                     ? $p->rules['select'][$i]
                     : $choice;
-                if ($choice == $p->value)
+                if ($choice == $p->value) {
                     $option['selected'] = true;
+                }
                 $options[] = $option;
             }
         } elseif ($p->type == 'boolean' || $p->type == 'bool') {
@@ -301,8 +311,9 @@ class Forms implements iFilter
                     'value' => 'true');
                 $options[] = array('name' => $p->name, 'text' => ' No ',
                     'value' => 'false');
-                if ($p->value || $p->default)
+                if ($p->value || $p->default) {
                     $options[0]['selected'] = true;
+                }
             } else { //checkbox
                 $r = array(
                     'tag' => $tag,
@@ -347,19 +358,23 @@ class Forms implements iFilter
             $r['message'] = Validator::$exceptions[$p->name]->getMessage();
         }
 
-        if (true === $p->required)
+        if (true === $p->required) {
             $r['required'] = 'required';
-        if (isset($p->rules['autofocus']))
+        }
+        if (isset($p->rules['autofocus'])) {
             $r['autofocus'] = 'autofocus';
+        }
         /*
         echo "<pre>";
         print_r($r);
         echo "</pre>";
         */
-        if ($dataOnly)
+        if ($dataOnly) {
             return $r;
-        if (isset($p->rules['form']))
+        }
+        if (isset($p->rules['form'])) {
             return Emmet::make($p->rules['form'], $r);
+        }
         $m = static::$info->metadata;
         $t = Emmet::make(static::style($type, $m, $p->type) ? : static::style($tag, $m, $p->type), $r);
         return $t;
@@ -367,10 +382,12 @@ class Forms implements iFilter
 
     protected static function guessFieldType(ValidationInfo $p, $type = 'type')
     {
-        if (in_array($p->$type, static::$inputTypes))
+        if (in_array($p->$type, static::$inputTypes)) {
             return $p->$type;
-        if ($p->choice)
+        }
+        if ($p->choice) {
             return $p->type == 'array' ? 'checkbox' : 'select';
+        }
         switch ($p->$type) {
             case 'boolean':
                 return 'radio';
@@ -381,8 +398,9 @@ class Forms implements iFilter
             case 'array':
                 return static::guessFieldType($p, 'contentType');
         }
-        if ($p->name == 'password')
+        if ($p->name == 'password') {
             return 'password';
+        }
         return 'text';
     }
 
@@ -397,11 +415,13 @@ class Forms implements iFilter
      */
     public static function key($method = 'POST', $action = null)
     {
-        if (is_null($action))
+        if (is_null($action)) {
             $action = Scope::get('Restler')->url;
+        }
         $target = "$method $action";
-        if (empty(static::$key[$target]))
+        if (empty(static::$key[$target])) {
             static::$key[$target] = md5($target . User::getIpAddress() . uniqid(mt_rand()));
+        }
         $_SESSION[static::FORM_KEY] = static::$key;
         return static::$key[$target];
     }
@@ -425,8 +445,9 @@ class Forms implements iFilter
         $url = $restler->url;
         foreach (static::$excludedPaths as $exclude) {
             if (empty($exclude)) {
-                if ($url == $exclude)
+                if ($url == $exclude) {
                     return true;
+                }
             } elseif (Text::beginsWith($url, $exclude)) {
                 return true;
             }

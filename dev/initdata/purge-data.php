@@ -65,8 +65,8 @@ $sqls=array(
         "DELETE FROM ".MAIN_DB_PREFIX."paiement where rowid NOT IN (SELECT fk_paiement FROM ".MAIN_DB_PREFIX."paiement_facture)",
     ),
     'supplier_payment'=>array(
-    	"DELETE FROM ".MAIN_DB_PREFIX."paiementfourn_facturefourn where fk_facturefourn IN (select rowid FROM ".MAIN_DB_PREFIX."facture_fourn where datec < '__DATE__')",
-    	"DELETE FROM ".MAIN_DB_PREFIX."paiementfourn where rowid NOT IN (SELECT fk_paiementfourn FROM ".MAIN_DB_PREFIX."paiementfourn_facturefourn)",
+        "DELETE FROM ".MAIN_DB_PREFIX."paiementfourn_facturefourn where fk_facturefourn IN (select rowid FROM ".MAIN_DB_PREFIX."facture_fourn where datec < '__DATE__')",
+        "DELETE FROM ".MAIN_DB_PREFIX."paiementfourn where rowid NOT IN (SELECT fk_paiementfourn FROM ".MAIN_DB_PREFIX."paiementfourn_facturefourn)",
     ),
     'bank'=>array(
         "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid IN (SELECT rowid FROM ".MAIN_DB_PREFIX."bank WHERE datec < '__DATE__')",
@@ -106,8 +106,8 @@ $sqls=array(
         "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseurdet WHERE fk_commande IN (select rowid FROM ".MAIN_DB_PREFIX."commande_fournisseur where date_creation < '__DATE__')",
         "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseur where date_creation < '__DATE__'",
     ),
-	'supplier_invoice'=>array(
-		'@supplier_payment',
+    'supplier_invoice'=>array(
+        '@supplier_payment',
         "DELETE FROM ".MAIN_DB_PREFIX."facture_fourn_det WHERE fk_facture_fourn IN (select rowid FROM ".MAIN_DB_PREFIX."facture_fourn where datec < '__DATE__')",
         "DELETE FROM ".MAIN_DB_PREFIX."facture_fourn where datec < '__DATE__'",
     ),
@@ -143,9 +143,9 @@ $sqls=array(
         "DELETE FROM ".MAIN_DB_PREFIX."product_price WHERE fk_product IN (select rowid FROM ".MAIN_DB_PREFIX."product where datec < '__DATE__')",
         "DELETE FROM ".MAIN_DB_PREFIX."product_fournisseur_price WHERE fk_product IN (select rowid FROM ".MAIN_DB_PREFIX."product where datec < '__DATE__')",
         "DELETE FROM ".MAIN_DB_PREFIX."product_batch WHERE fk_product_stock IN (select rowid FROM ".MAIN_DB_PREFIX."product_stock where fk_product IN (select rowid FROM ".MAIN_DB_PREFIX."product where datec < '__DATE__'))",
-    	"DELETE FROM ".MAIN_DB_PREFIX."product_stock WHERE fk_product IN (select rowid FROM ".MAIN_DB_PREFIX."product where datec < '__DATE__')",
+        "DELETE FROM ".MAIN_DB_PREFIX."product_stock WHERE fk_product IN (select rowid FROM ".MAIN_DB_PREFIX."product where datec < '__DATE__')",
         "DELETE FROM ".MAIN_DB_PREFIX."product_lot WHERE fk_product IN (select rowid FROM ".MAIN_DB_PREFIX."product where datec < '__DATE__')",
-    	"DELETE FROM ".MAIN_DB_PREFIX."product where datec < '__DATE__'",
+        "DELETE FROM ".MAIN_DB_PREFIX."product where datec < '__DATE__'",
     ),
     'project'=>array(
         // TODO set fk_project to null on object that refer to project
@@ -165,7 +165,7 @@ $sqls=array(
         "DELETE FROM ".MAIN_DB_PREFIX."categorie_societe WHERE fk_soc IN (select rowid FROM ".MAIN_DB_PREFIX."societe where datec < '__DATE__')",
         "DELETE FROM ".MAIN_DB_PREFIX."societe_remise_except WHERE fk_soc IN (select rowid FROM ".MAIN_DB_PREFIX."societe where datec < '__DATE__')",
         "DELETE FROM ".MAIN_DB_PREFIX."societe_rib WHERE fk_soc IN (select rowid FROM ".MAIN_DB_PREFIX."societe where datec < '__DATE__')",
-    	"DELETE FROM ".MAIN_DB_PREFIX."societe where datec < '__DATE__'",
+        "DELETE FROM ".MAIN_DB_PREFIX."societe where datec < '__DATE__'",
     )
 );
 
@@ -188,18 +188,15 @@ if (empty($mode) || ! in_array($mode, array('test','confirm'))) {
     print "option can be ".implode(',', array_keys($sqls))."\n";
     exit(-1);
 }
-if (empty($option))
-{
+if (empty($option)) {
     print "Usage:  $script_file (test|confirm) (all|option) (all|YYYY-MM-DD) [dbtype dbhost dbuser dbpassword dbname dbport]\n";
     print "\n";
     print "option must be defined with a value in list ".implode(',', array_keys($sqls))."\n";
     exit(-1);
 }
-if ($option != 'all')
-{
+if ($option != 'all') {
     $listofoptions=explode(',', $option);
-    foreach($listofoptions as $cursoroption)
-    {
+    foreach ($listofoptions as $cursoroption) {
         if (! in_array($cursoroption, array_keys($sqls))) {
             print "Usage:  $script_file (test|confirm) (all|option) (all|YYYY-MM-DD) [dbtype dbhost dbuser dbpassword dbname dbport]\n";
             print "\n";
@@ -216,23 +213,23 @@ if (empty($date) || (! preg_match('/\d\d\d\d\-\d\d\-\d\d$/', $date) && $date != 
     exit(-1);
 }
 
-if ($date == 'all') $date = '2199-01-01';
+if ($date == 'all') {
+    $date = '2199-01-01';
+}
 
 // Replace database handler
-if (! empty($argv[4]))
-{
-	$db->close();
-	unset($db);
-	$db=getDoliDBInstance($argv[4], $argv[5], $argv[6], $argv[7], $argv[8], $argv[9]);
-	$user=new User($db);
+if (! empty($argv[4])) {
+    $db->close();
+    unset($db);
+    $db=getDoliDBInstance($argv[4], $argv[5], $argv[6], $argv[7], $argv[8], $argv[9]);
+    $user=new User($db);
 }
 
 //var_dump($user->db->database_name);
 $ret=$user->fetch('', 'admin');
-if (! $ret > 0)
-{
-	print 'An admin user with login "admin" must exists to use this script.'."\n";
-	exit;
+if (! $ret > 0) {
+    print 'An admin user with login "admin" must exists to use this script.'."\n";
+    exit;
 }
 //$user->getrights();
 
@@ -245,8 +242,7 @@ print "Database port = ".$db->database_port."\n";
 print "User = ".$db->database_user."\n";
 print "\n";
 
-if (! $confirmed)
-{
+if (! $confirmed) {
     print "Hit Enter to continue or CTRL+C to stop...\n";
     $input = trim(fgets(STDIN));
 }
@@ -264,10 +260,8 @@ function processfamily($family, $date)
     global $db, $sqls;
 
     $error=0;
-    foreach($sqls[$family] as $sql)
-    {
-        if (preg_match('/^@/', $sql))
-        {
+    foreach ($sqls[$family] as $sql) {
+        if (preg_match('/^@/', $sql)) {
             $newfamily=preg_replace('/@/', '', $sql);
             processfamily($newfamily, $date);
             continue;
@@ -278,56 +272,54 @@ function processfamily($family, $date)
         print "Run sql: ".$sql."\n";
 
         $resql=$db->query($sql);
-        if (! $resql)
-        {
-            if ($db->errno() != 'DB_ERROR_NOSUCHTABLE')
-            {
+        if (! $resql) {
+            if ($db->errno() != 'DB_ERROR_NOSUCHTABLE') {
                 $error++;
             }
         }
 
-        if ($error)
-        {
+        if ($error) {
             print $db->lasterror();
             $error++;
             break;
         }
     }
 
-    if ($error) return -1;
-    else return 1;
+    if ($error) {
+        return -1;
+    } else {
+        return 1;
+    }
 }
 
 
 $db->begin();
 
 $listofoptions=explode(',', $option);
-foreach($listofoptions as $cursoroption)
-{
+foreach ($listofoptions as $cursoroption) {
     $oldfamily='';
-    foreach($sqls as $family => $familysql)
-    {
-        if ($cursoroption && $cursoroption != 'all' && $cursoroption != $family) continue;
+    foreach ($sqls as $family => $familysql) {
+        if ($cursoroption && $cursoroption != 'all' && $cursoroption != $family) {
+            continue;
+        }
 
-        if ($family != $oldfamily) print "Process action for family ".$family."\n";
+        if ($family != $oldfamily) {
+            print "Process action for family ".$family."\n";
+        }
         $oldfamily = $family;
 
         $result=processfamily($family, $date);
-        if ($result < 0)
-        {
+        if ($result < 0) {
             $error++;
             break;
         }
     }
 }
 
-if ($error || $mode != 'confirm')
-{
+if ($error || $mode != 'confirm') {
     print "\nRollback any changes.\n";
     $db->rollback();
-}
-else
-{
+} else {
     print "Commit all changes.\n";
     $db->commit();
 }

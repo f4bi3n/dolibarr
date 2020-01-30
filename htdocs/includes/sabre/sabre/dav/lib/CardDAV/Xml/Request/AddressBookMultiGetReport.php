@@ -19,7 +19,8 @@ use Sabre\Xml\XmlDeserializable;
  * @author Evert Pot (http://www.rooftopsolutions.nl/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class AddressBookMultiGetReport implements XmlDeserializable {
+class AddressBookMultiGetReport implements XmlDeserializable
+{
 
     /**
      * An array with requested properties.
@@ -72,8 +73,8 @@ class AddressBookMultiGetReport implements XmlDeserializable {
      * @param Reader $reader
      * @return mixed
      */
-    static function xmlDeserialize(Reader $reader) {
-
+    public static function xmlDeserialize(Reader $reader)
+    {
         $elems = $reader->parseInnerTree([
             '{urn:ietf:params:xml:ns:carddav}address-data' => 'Sabre\\CardDAV\\Xml\\Filter\\AddressData',
             '{DAV:}prop'                                   => 'Sabre\\Xml\\Element\\KeyValue',
@@ -85,21 +86,19 @@ class AddressBookMultiGetReport implements XmlDeserializable {
         ];
 
         foreach ($elems as $elem) {
-
             switch ($elem['name']) {
 
-                case '{DAV:}prop' :
+                case '{DAV:}prop':
                     $newProps['properties'] = array_keys($elem['value']);
                     if (isset($elem['value']['{' . Plugin::NS_CARDDAV . '}address-data'])) {
                         $newProps += $elem['value']['{' . Plugin::NS_CARDDAV . '}address-data'];
                     }
                     break;
-                case '{DAV:}href' :
+                case '{DAV:}href':
                     $newProps['hrefs'][] = Uri\resolve($reader->contextUri, $elem['value']);
                     break;
 
             }
-
         }
 
         $obj = new self();
@@ -107,7 +106,5 @@ class AddressBookMultiGetReport implements XmlDeserializable {
             $obj->$key = $value;
         }
         return $obj;
-
     }
-
 }

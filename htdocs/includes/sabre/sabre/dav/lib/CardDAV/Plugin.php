@@ -20,7 +20,8 @@ use Sabre\VObject;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Plugin extends DAV\ServerPlugin {
+class Plugin extends DAV\ServerPlugin
+{
 
     /**
      * Url to the addressbooks
@@ -60,16 +61,17 @@ class Plugin extends DAV\ServerPlugin {
      * @param DAV\Server $server
      * @return void
      */
-    function initialize(DAV\Server $server) {
+    public function initialize(DAV\Server $server)
+    {
 
         /* Events */
-        $server->on('propFind',            [$this, 'propFindEarly']);
-        $server->on('propFind',            [$this, 'propFindLate'], 150);
-        $server->on('report',              [$this, 'report']);
-        $server->on('onHTMLActionsPanel',  [$this, 'htmlActionsPanel']);
-        $server->on('beforeWriteContent',  [$this, 'beforeWriteContent']);
-        $server->on('beforeCreateFile',    [$this, 'beforeCreateFile']);
-        $server->on('afterMethod:GET',     [$this, 'httpAfterGet']);
+        $server->on('propFind', [$this, 'propFindEarly']);
+        $server->on('propFind', [$this, 'propFindLate'], 150);
+        $server->on('report', [$this, 'report']);
+        $server->on('onHTMLActionsPanel', [$this, 'htmlActionsPanel']);
+        $server->on('beforeWriteContent', [$this, 'beforeWriteContent']);
+        $server->on('beforeCreateFile', [$this, 'beforeCreateFile']);
+        $server->on('afterMethod:GET', [$this, 'httpAfterGet']);
 
         $server->xml->namespaceMap[self::NS_CARDDAV] = 'card';
 
@@ -89,7 +91,6 @@ class Plugin extends DAV\ServerPlugin {
         $server->xml->elementMap['{http://calendarserver.org/ns/}me-card'] = 'Sabre\\DAV\\Xml\\Property\\Href';
 
         $this->server = $server;
-
     }
 
     /**
@@ -99,10 +100,9 @@ class Plugin extends DAV\ServerPlugin {
      *
      * @return array
      */
-    function getFeatures() {
-
+    public function getFeatures()
+    {
         return ['addressbook'];
-
     }
 
     /**
@@ -115,8 +115,8 @@ class Plugin extends DAV\ServerPlugin {
      * @param string $uri
      * @return array
      */
-    function getSupportedReportSet($uri) {
-
+    public function getSupportedReportSet($uri)
+    {
         $node = $this->server->tree->getNodeForPath($uri);
         if ($node instanceof IAddressBook || $node instanceof ICard) {
             return [
@@ -125,7 +125,6 @@ class Plugin extends DAV\ServerPlugin {
             ];
         }
         return [];
-
     }
 
 
@@ -136,33 +135,31 @@ class Plugin extends DAV\ServerPlugin {
      * @param DAV\INode $node
      * @return void
      */
-    function propFindEarly(DAV\PropFind $propFind, DAV\INode $node) {
-
+    public function propFindEarly(DAV\PropFind $propFind, DAV\INode $node)
+    {
         $ns = '{' . self::NS_CARDDAV . '}';
 
         if ($node instanceof IAddressBook) {
-
             $propFind->handle($ns . 'max-resource-size', $this->maxResourceSize);
-            $propFind->handle($ns . 'supported-address-data', function() {
+            $propFind->handle($ns . 'supported-address-data', function () {
                 return new Xml\Property\SupportedAddressData();
             });
-            $propFind->handle($ns . 'supported-collation-set', function() {
+            $propFind->handle($ns . 'supported-collation-set', function () {
                 return new Xml\Property\SupportedCollationSet();
             });
-
         }
         if ($node instanceof DAVACL\IPrincipal) {
-
             $path = $propFind->getPath();
 
-            $propFind->handle('{' . self::NS_CARDDAV . '}addressbook-home-set', function() use ($path) {
+            $propFind->handle('{' . self::NS_CARDDAV . '}addressbook-home-set', function () use ($path) {
                 return new LocalHref($this->getAddressBookHomeForPrincipal($path) . '/');
             });
 
-            if ($this->directories) $propFind->handle('{' . self::NS_CARDDAV . '}directory-gateway', function() {
-                return new LocalHref($this->directories);
-            });
-
+            if ($this->directories) {
+                $propFind->handle('{' . self::NS_CARDDAV . '}directory-gateway', function () {
+                    return new LocalHref($this->directories);
+                });
+            }
         }
 
         if ($node instanceof ICard) {
@@ -170,17 +167,15 @@ class Plugin extends DAV\ServerPlugin {
             // The address-data property is not supposed to be a 'real'
             // property, but in large chunks of the spec it does act as such.
             // Therefore we simply expose it as a property.
-            $propFind->handle('{' . self::NS_CARDDAV . '}address-data', function() use ($node) {
+            $propFind->handle('{' . self::NS_CARDDAV . '}address-data', function () use ($node) {
                 $val = $node->get();
-                if (is_resource($val))
+                if (is_resource($val)) {
                     $val = stream_get_contents($val);
+                }
 
                 return $val;
-
             });
-
         }
-
     }
 
     /**
@@ -191,23 +186,21 @@ class Plugin extends DAV\ServerPlugin {
      * @param mixed $path
      * @return bool
      */
-    function report($reportName, $dom, $path) {
-
+    public function report($reportName, $dom, $path)
+    {
         switch ($reportName) {
-            case '{' . self::NS_CARDDAV . '}addressbook-multiget' :
+            case '{' . self::NS_CARDDAV . '}addressbook-multiget':
                 $this->server->transactionType = 'report-addressbook-multiget';
                 $this->addressbookMultiGetReport($dom);
                 return false;
-            case '{' . self::NS_CARDDAV . '}addressbook-query' :
+            case '{' . self::NS_CARDDAV . '}addressbook-query':
                 $this->server->transactionType = 'report-addressbook-query';
                 $this->addressBookQueryReport($dom);
                 return false;
-            default :
+            default:
                 return;
 
         }
-
-
     }
 
     /**
@@ -216,11 +209,10 @@ class Plugin extends DAV\ServerPlugin {
      * @param string $principal
      * @return string
      */
-    protected function getAddressbookHomeForPrincipal($principal) {
-
+    protected function getAddressbookHomeForPrincipal($principal)
+    {
         list(, $principalId) = \Sabre\HTTP\URLUtil::splitPath($principal);
         return self::ADDRESSBOOK_ROOT . '/' . $principalId;
-
     }
 
 
@@ -233,8 +225,8 @@ class Plugin extends DAV\ServerPlugin {
      * @param Xml\Request\AddressBookMultiGetReport $report
      * @return void
      */
-    function addressbookMultiGetReport($report) {
-
+    public function addressbookMultiGetReport($report)
+    {
         $contentType = $report->contentType;
         $version = $report->version;
         if ($version) {
@@ -251,17 +243,13 @@ class Plugin extends DAV\ServerPlugin {
             $report->hrefs
         );
         foreach ($this->server->getPropertiesForMultiplePaths($paths, $report->properties) as $props) {
-
             if (isset($props['200']['{' . self::NS_CARDDAV . '}address-data'])) {
-
                 $props['200']['{' . self::NS_CARDDAV . '}address-data'] = $this->convertVCard(
                     $props[200]['{' . self::NS_CARDDAV . '}address-data'],
                     $vcardType
                 );
-
             }
             $propertyList[] = $props;
-
         }
 
         $prefer = $this->server->getHTTPPrefer();
@@ -270,7 +258,6 @@ class Plugin extends DAV\ServerPlugin {
         $this->server->httpResponse->setHeader('Content-Type', 'application/xml; charset=utf-8');
         $this->server->httpResponse->setHeader('Vary', 'Brief,Prefer');
         $this->server->httpResponse->setBody($this->server->generateMultiStatus($propertyList, $prefer['return'] === 'minimal'));
-
     }
 
     /**
@@ -286,13 +273,13 @@ class Plugin extends DAV\ServerPlugin {
      *                       changed &$data.
      * @return void
      */
-    function beforeWriteContent($path, DAV\IFile $node, &$data, &$modified) {
-
-        if (!$node instanceof ICard)
+    public function beforeWriteContent($path, DAV\IFile $node, &$data, &$modified)
+    {
+        if (!$node instanceof ICard) {
             return;
+        }
 
         $this->validateVCard($data, $modified);
-
     }
 
     /**
@@ -308,13 +295,13 @@ class Plugin extends DAV\ServerPlugin {
      *                       changed &$data.
      * @return void
      */
-    function beforeCreateFile($path, &$data, DAV\ICollection $parentNode, &$modified) {
-
-        if (!$parentNode instanceof IAddressBook)
+    public function beforeCreateFile($path, &$data, DAV\ICollection $parentNode, &$modified)
+    {
+        if (!$parentNode instanceof IAddressBook) {
             return;
+        }
 
         $this->validateVCard($data, $modified);
-
     }
 
     /**
@@ -327,7 +314,8 @@ class Plugin extends DAV\ServerPlugin {
      *                       changed &$data.
      * @return void
      */
-    protected function validateVCard(&$data, &$modified) {
+    protected function validateVCard(&$data, &$modified)
+    {
 
         // If it's a stream, we convert it to a string first.
         if (is_resource($data)) {
@@ -350,11 +338,8 @@ class Plugin extends DAV\ServerPlugin {
             } else {
                 $vobj = VObject\Reader::read($data);
             }
-
         } catch (VObject\ParseException $e) {
-
             throw new DAV\Exception\UnsupportedMediaType('This resource only supports valid vCard or jCard data. Parse error: ' . $e->getMessage());
-
         }
 
         if ($vobj->name !== 'VCARD') {
@@ -376,7 +361,6 @@ class Plugin extends DAV\ServerPlugin {
         // $messages contains a list of problems with the vcard, along with
         // their severity.
         foreach ($messages as $message) {
-
             if ($message['level'] > $highestLevel) {
                 // Recording the highest reported error level.
                 $highestLevel = $message['level'];
@@ -385,19 +369,18 @@ class Plugin extends DAV\ServerPlugin {
 
             switch ($message['level']) {
 
-                case 1 :
+                case 1:
                     // Level 1 means that there was a problem, but it was repaired.
                     $modified = true;
                     break;
-                case 2 :
+                case 2:
                     // Level 2 means a warning, but not critical
                     break;
-                case 3 :
+                case 3:
                     // Level 3 means a critical error
                     throw new DAV\Exception\UnsupportedMediaType('Validation error in vCard: ' . $message['message']);
 
             }
-
         }
         if ($warningMessage) {
             $this->server->httpResponse->setHeader(
@@ -427,8 +410,8 @@ class Plugin extends DAV\ServerPlugin {
      * @param Xml\Request\AddressBookQueryReport $report
      * @return void
      */
-    protected function addressbookQueryReport($report) {
-
+    protected function addressbookQueryReport($report)
+    {
         $depth = $this->server->getHTTPDepth(0);
 
         if ($depth == 0) {
@@ -453,9 +436,9 @@ class Plugin extends DAV\ServerPlugin {
 
         $validNodes = [];
         foreach ($candidateNodes as $node) {
-
-            if (!$node instanceof ICard)
+            if (!$node instanceof ICard) {
                 continue;
+            }
 
             $blob = $node->get();
             if (is_resource($blob)) {
@@ -472,12 +455,10 @@ class Plugin extends DAV\ServerPlugin {
                 // We hit the maximum number of items, we can stop now.
                 break;
             }
-
         }
 
         $result = [];
         foreach ($validNodes as $validNode) {
-
             if ($depth == 0) {
                 $href = $this->server->getRequestUri();
             } else {
@@ -487,16 +468,13 @@ class Plugin extends DAV\ServerPlugin {
             list($props) = $this->server->getPropertiesForPath($href, $report->properties, 0);
 
             if (isset($props[200]['{' . self::NS_CARDDAV . '}address-data'])) {
-
                 $props[200]['{' . self::NS_CARDDAV . '}address-data'] = $this->convertVCard(
                     $props[200]['{' . self::NS_CARDDAV . '}address-data'],
                     $vcardType,
                     $report->addressDataProperties
                 );
-
             }
             $result[] = $props;
-
         }
 
         $prefer = $this->server->getHTTPPrefer();
@@ -505,7 +483,6 @@ class Plugin extends DAV\ServerPlugin {
         $this->server->httpResponse->setHeader('Content-Type', 'application/xml; charset=utf-8');
         $this->server->httpResponse->setHeader('Vary', 'Brief,Prefer');
         $this->server->httpResponse->setBody($this->server->generateMultiStatus($result, $prefer['return'] === 'minimal'));
-
     }
 
     /**
@@ -516,14 +493,14 @@ class Plugin extends DAV\ServerPlugin {
      * @param string $test anyof or allof (which means OR or AND)
      * @return bool
      */
-    function validateFilters($vcardData, array $filters, $test) {
-
-
-        if (!$filters) return true;
+    public function validateFilters($vcardData, array $filters, $test)
+    {
+        if (!$filters) {
+            return true;
+        }
         $vcard = VObject\Reader::read($vcardData);
 
         foreach ($filters as $filter) {
-
             $isDefined = isset($vcard->{$filter['name']});
             if ($filter['is-not-defined']) {
                 if ($isDefined) {
@@ -535,9 +512,7 @@ class Plugin extends DAV\ServerPlugin {
 
                 // We only need to check for existence
                 $success = $isDefined;
-
             } else {
-
                 $vProperties = $vcard->select($filter['name']);
 
                 $results = [];
@@ -546,8 +521,9 @@ class Plugin extends DAV\ServerPlugin {
                 }
                 if ($filter['text-matches']) {
                     $texts = [];
-                    foreach ($vProperties as $vProperty)
+                    foreach ($vProperties as $vProperty) {
                         $texts[] = $vProperty->getValue();
+                    }
 
                     $results[] = $this->validateTextMatches($texts, $filter['text-matches'], $filter['test']);
                 }
@@ -561,7 +537,6 @@ class Plugin extends DAV\ServerPlugin {
                         $success = $results[0] && $results[1];
                     }
                 }
-
             } // else
 
             // There are two conditions where we can already determine whether
@@ -580,7 +555,6 @@ class Plugin extends DAV\ServerPlugin {
 
                 return false;
             }
-
         } // foreach
 
 
@@ -593,7 +567,6 @@ class Plugin extends DAV\ServerPlugin {
         // This implies for 'anyof' that the test failed, and for 'allof' that
         // we succeeded. Sounds weird, but makes sense.
         return $test === 'allof';
-
     }
 
     /**
@@ -607,14 +580,15 @@ class Plugin extends DAV\ServerPlugin {
      * @param string $test
      * @return bool
      */
-    protected function validateParamFilters(array $vProperties, array $filters, $test) {
-
+    protected function validateParamFilters(array $vProperties, array $filters, $test)
+    {
         foreach ($filters as $filter) {
-
             $isDefined = false;
             foreach ($vProperties as $vProperty) {
                 $isDefined = isset($vProperty[$filter['name']]);
-                if ($isDefined) break;
+                if ($isDefined) {
+                    break;
+                }
             }
 
             if ($filter['is-not-defined']) {
@@ -624,24 +598,22 @@ class Plugin extends DAV\ServerPlugin {
                     $success = true;
                 }
 
-            // If there's no text-match, we can just check for existence
+                // If there's no text-match, we can just check for existence
             } elseif (!$filter['text-match'] || !$isDefined) {
-
                 $success = $isDefined;
-
             } else {
-
                 $success = false;
                 foreach ($vProperties as $vProperty) {
                     // If we got all the way here, we'll need to validate the
                     // text-match filter.
                     $success = DAV\StringUtil::textMatch($vProperty[$filter['name']]->getValue(), $filter['text-match']['value'], $filter['text-match']['collation'], $filter['text-match']['match-type']);
-                    if ($success) break;
+                    if ($success) {
+                        break;
+                    }
                 }
                 if ($filter['text-match']['negate-condition']) {
                     $success = !$success;
                 }
-
             } // else
 
             // There are two conditions where we can already determine whether
@@ -652,7 +624,6 @@ class Plugin extends DAV\ServerPlugin {
             if ($test === 'allof' && !$success) {
                 return false;
             }
-
         }
 
         // If we got all the way here, it means we haven't been able to
@@ -661,7 +632,6 @@ class Plugin extends DAV\ServerPlugin {
         // This implies for 'anyof' that the test failed, and for 'allof' that
         // we succeeded. Sounds weird, but makes sense.
         return $test === 'allof';
-
     }
 
     /**
@@ -672,28 +642,29 @@ class Plugin extends DAV\ServerPlugin {
      * @param string $test
      * @return bool
      */
-    protected function validateTextMatches(array $texts, array $filters, $test) {
-
+    protected function validateTextMatches(array $texts, array $filters, $test)
+    {
         foreach ($filters as $filter) {
-
             $success = false;
             foreach ($texts as $haystack) {
                 $success = DAV\StringUtil::textMatch($haystack, $filter['value'], $filter['collation'], $filter['match-type']);
 
                 // Breaking on the first match
-                if ($success) break;
+                if ($success) {
+                    break;
+                }
             }
             if ($filter['negate-condition']) {
                 $success = !$success;
             }
 
-            if ($success && $test === 'anyof')
+            if ($success && $test === 'anyof') {
                 return true;
+            }
 
-            if (!$success && $test == 'allof')
+            if (!$success && $test == 'allof') {
                 return false;
-
-
+            }
         }
 
         // If we got all the way here, it means we haven't been able to
@@ -702,7 +673,6 @@ class Plugin extends DAV\ServerPlugin {
         // This implies for 'anyof' that the test failed, and for 'allof' that
         // we succeeded. Sounds weird, but makes sense.
         return $test === 'allof';
-
     }
 
     /**
@@ -715,7 +685,8 @@ class Plugin extends DAV\ServerPlugin {
      * @param DAV\INode $node
      * @return void
      */
-    function propFindLate(DAV\PropFind $propFind, DAV\INode $node) {
+    public function propFindLate(DAV\PropFind $propFind, DAV\INode $node)
+    {
 
         // If the request was made using the SOGO connector, we must rewrite
         // the content-type property. By default SabreDAV will send back
@@ -729,7 +700,6 @@ class Plugin extends DAV\ServerPlugin {
         if ($part === 'text/x-vcard' || $part === 'text/vcard') {
             $propFind->set('{DAV:}getcontenttype', 'text/x-vcard');
         }
-
     }
 
     /**
@@ -741,10 +711,11 @@ class Plugin extends DAV\ServerPlugin {
      * @param string $output
      * @return bool
      */
-    function htmlActionsPanel(DAV\INode $node, &$output) {
-
-        if (!$node instanceof AddressBookHome)
+    public function htmlActionsPanel(DAV\INode $node, &$output)
+    {
+        if (!$node instanceof AddressBookHome) {
             return;
+        }
 
         $output .= '<tr><td colspan="2"><form method="post" action="">
             <h3>Create new address book</h3>
@@ -757,7 +728,6 @@ class Plugin extends DAV\ServerPlugin {
             </td></tr>';
 
         return false;
-
     }
 
     /**
@@ -769,8 +739,8 @@ class Plugin extends DAV\ServerPlugin {
      * @param ResponseInterface $response
      * @return void
      */
-    function httpAfterGet(RequestInterface $request, ResponseInterface $response) {
-
+    public function httpAfterGet(RequestInterface $request, ResponseInterface $response)
+    {
         if (strpos($response->getHeader('Content-Type'), 'text/vcard') === false) {
             return;
         }
@@ -785,7 +755,6 @@ class Plugin extends DAV\ServerPlugin {
         $response->setBody($newBody);
         $response->setHeader('Content-Type', $mimeType . '; charset=utf-8');
         $response->setHeader('Content-Length', strlen($newBody));
-
     }
 
     /**
@@ -802,8 +771,8 @@ class Plugin extends DAV\ServerPlugin {
      * @param string $mimeType
      * @return string
      */
-    protected function negotiateVCard($input, &$mimeType = null) {
-
+    protected function negotiateVCard($input, &$mimeType = null)
+    {
         $result = HTTP\Util::negotiate(
             $input,
             [
@@ -824,21 +793,20 @@ class Plugin extends DAV\ServerPlugin {
         $mimeType = $result;
         switch ($result) {
 
-            default :
-            case 'text/x-vcard' :
-            case 'text/vcard' :
-            case 'text/vcard; version=3.0' :
+            default:
+            case 'text/x-vcard':
+            case 'text/vcard':
+            case 'text/vcard; version=3.0':
                 $mimeType = 'text/vcard';
                 return 'vcard3';
-            case 'text/vcard; version=4.0' :
+            case 'text/vcard; version=4.0':
                 return 'vcard4';
-            case 'application/vcard+json' :
+            case 'application/vcard+json':
                 return 'jcard';
 
         // @codeCoverageIgnoreStart
         }
         // @codeCoverageIgnoreEnd
-
     }
 
     /**
@@ -849,15 +817,15 @@ class Plugin extends DAV\ServerPlugin {
      * @param array $propertiesFilter
      * @return string
      */
-    protected function convertVCard($data, $target, array $propertiesFilter = null) {
-
+    protected function convertVCard($data, $target, array $propertiesFilter = null)
+    {
         if (is_resource($data)) {
             $data = stream_get_contents($data);
         }
         $input = VObject\Reader::read($data);
         if (!empty($propertiesFilter)) {
             $propertiesFilter = array_merge(['UID', 'VERSION', 'FN'], $propertiesFilter);
-            $keys = array_unique(array_map(function($child) {
+            $keys = array_unique(array_map(function ($child) {
                 return $child->name;
             }, $input->children()));
             $keys = array_diff($keys, $propertiesFilter);
@@ -868,29 +836,27 @@ class Plugin extends DAV\ServerPlugin {
         }
         $output = null;
         try {
-
             switch ($target) {
-                default :
-                case 'vcard3' :
+                default:
+                case 'vcard3':
                     if ($input->getDocumentType() === VObject\Document::VCARD30) {
                         // Do nothing
                         return $data;
                     }
                     $output = $input->convert(VObject\Document::VCARD30);
                     return $output->serialize();
-                case 'vcard4' :
+                case 'vcard4':
                     if ($input->getDocumentType() === VObject\Document::VCARD40) {
                         // Do nothing
                         return $data;
                     }
                     $output = $input->convert(VObject\Document::VCARD40);
                     return $output->serialize();
-                case 'jcard' :
+                case 'jcard':
                     $output = $input->convert(VObject\Document::VCARD40);
                     return json_encode($output);
 
             }
-
         } finally {
 
             // Destroy circular references to PHP will GC the object.
@@ -899,7 +865,6 @@ class Plugin extends DAV\ServerPlugin {
                 $output->destroy();
             }
         }
-
     }
 
     /**
@@ -910,10 +875,9 @@ class Plugin extends DAV\ServerPlugin {
      *
      * @return string
      */
-    function getPluginName() {
-
+    public function getPluginName()
+    {
         return 'carddav';
-
     }
 
     /**
@@ -927,14 +891,12 @@ class Plugin extends DAV\ServerPlugin {
      *
      * @return array
      */
-    function getPluginInfo() {
-
+    public function getPluginInfo()
+    {
         return [
             'name'        => $this->getPluginName(),
             'description' => 'Adds support for CardDAV (rfc6352)',
             'link'        => 'http://sabre.io/dav/carddav/',
         ];
-
     }
-
 }

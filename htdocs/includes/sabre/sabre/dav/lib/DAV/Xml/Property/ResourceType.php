@@ -18,7 +18,8 @@ use Sabre\Xml\Reader;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class ResourceType extends Element\Elements implements HtmlOutput {
+class ResourceType extends Element\Elements implements HtmlOutput
+{
 
     /**
      * Constructor
@@ -30,10 +31,9 @@ class ResourceType extends Element\Elements implements HtmlOutput {
      *
      * @param array|string|null $resourceTypes
      */
-    function __construct($resourceTypes = null) {
-
+    public function __construct($resourceTypes = null)
+    {
         parent::__construct((array)$resourceTypes);
-
     }
 
     /**
@@ -43,10 +43,9 @@ class ResourceType extends Element\Elements implements HtmlOutput {
      *
      * @return array
      */
-    function getValue() {
-
+    public function getValue()
+    {
         return $this->value;
-
     }
 
     /**
@@ -55,10 +54,9 @@ class ResourceType extends Element\Elements implements HtmlOutput {
      * @param string $type
      * @return bool
      */
-    function is($type) {
-
+    public function is($type)
+    {
         return in_array($type, $this->value);
-
     }
 
     /**
@@ -67,11 +65,10 @@ class ResourceType extends Element\Elements implements HtmlOutput {
      * @param string $type
      * @return void
      */
-    function add($type) {
-
+    public function add($type)
+    {
         $this->value[] = $type;
         $this->value = array_unique($this->value);
-
     }
 
     /**
@@ -95,11 +92,10 @@ class ResourceType extends Element\Elements implements HtmlOutput {
      * @param Reader $reader
      * @return mixed
      */
-    static function xmlDeserialize(Reader $reader) {
-
+    public static function xmlDeserialize(Reader $reader)
+    {
         return
             new self(parent::xmlDeserialize($reader));
-
     }
 
     /**
@@ -116,13 +112,11 @@ class ResourceType extends Element\Elements implements HtmlOutput {
      * @param HtmlOutputHelper $html
      * @return string
      */
-    function toHtml(HtmlOutputHelper $html) {
-
+    public function toHtml(HtmlOutputHelper $html)
+    {
         return implode(
             ', ',
             array_map([$html, 'xmlName'], $this->getValue())
         );
-
     }
-
 }

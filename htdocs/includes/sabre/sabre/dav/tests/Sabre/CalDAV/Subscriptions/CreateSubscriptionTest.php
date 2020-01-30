@@ -5,16 +5,16 @@ namespace Sabre\CalDAV\Subscriptions;
 use Sabre\CalDAV;
 use Sabre\HTTP\Request;
 
-class CreateSubscriptionTest extends \Sabre\DAVServerTest {
-
+class CreateSubscriptionTest extends \Sabre\DAVServerTest
+{
     protected $setupCalDAV = true;
     protected $setupCalDAVSubscriptions = true;
 
     /**
      * OS X 10.7 - 10.9.1
      */
-    function testMKCOL() {
-
+    public function testMKCOL()
+    {
         $body = <<<XML
 <A:mkcol xmlns:A="DAV:">
     <A:set>
@@ -48,14 +48,12 @@ XML;
         $this->assertEquals(201, $response->getStatus());
         $subscriptions = $this->caldavBackend->getSubscriptionsForUser('principals/user1');
         $this->assertSubscription($subscriptions[0]);
-
-
     }
     /**
      * OS X 10.9.2 and up
      */
-    function testMKCALENDAR() {
-
+    public function testMKCALENDAR()
+    {
         $body = <<<XML
 <B:mkcalendar xmlns:B="urn:ietf:params:xml:ns:caldav">
     <A:set xmlns:A="DAV:">
@@ -94,17 +92,16 @@ XML;
         $this->assertSubscription($subscriptions[0]);
 
         // Also seeing if it works when calling this as a PROPFIND.
-        $this->assertEquals([
+        $this->assertEquals(
+            [
                 '{http://calendarserver.org/ns/}subscribed-strip-alarms' => '',
             ],
             $this->server->getProperties('calendars/user1/subscription1', ['{http://calendarserver.org/ns/}subscribed-strip-alarms'])
         );
-
-
     }
 
-    function assertSubscription($subscription) {
-
+    public function assertSubscription($subscription)
+    {
         $this->assertEquals('', $subscription['{http://calendarserver.org/ns/}subscribed-strip-attachments']);
         $this->assertEquals('', $subscription['{http://calendarserver.org/ns/}subscribed-strip-todos']);
         $this->assertEquals('#1C4587FF', $subscription['{http://apple.com/ns/ical/}calendar-color']);
@@ -117,7 +114,5 @@ XML;
         $this->assertEquals('principals/user1', $subscription['principaluri']);
         $this->assertEquals('webcal://www.example.org/', $subscription['source']);
         $this->assertEquals(['principals/user1', 1], $subscription['id']);
-
     }
-
 }

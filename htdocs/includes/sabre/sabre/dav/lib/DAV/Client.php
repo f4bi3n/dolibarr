@@ -17,7 +17,8 @@ use Sabre\Uri;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Client extends HTTP\Client {
+class Client extends HTTP\Client
+{
 
     /**
      * The xml service.
@@ -112,8 +113,8 @@ class Client extends HTTP\Client {
      *
      * @param array $settings
      */
-    function __construct(array $settings) {
-
+    public function __construct(array $settings)
+    {
         if (!isset($settings['baseUri'])) {
             throw new \InvalidArgumentException('A baseUri must be provided');
         }
@@ -147,7 +148,6 @@ class Client extends HTTP\Client {
 
             $this->addCurlSetting(CURLOPT_HTTPAUTH, $curlType);
             $this->addCurlSetting(CURLOPT_USERPWD, $userName . ':' . $password);
-
         }
 
         if (isset($settings['encoding'])) {
@@ -171,7 +171,6 @@ class Client extends HTTP\Client {
         $this->xml = new Xml\Service();
         // BC
         $this->propertyMap = & $this->xml->elementMap;
-
     }
 
     /**
@@ -195,15 +194,14 @@ class Client extends HTTP\Client {
      * @param int $depth
      * @return array
      */
-    function propFind($url, array $properties, $depth = 0) {
-
+    public function propFind($url, array $properties, $depth = 0)
+    {
         $dom = new \DOMDocument('1.0', 'UTF-8');
         $dom->formatOutput = true;
         $root = $dom->createElementNS('DAV:', 'd:propfind');
         $prop = $dom->createElement('d:prop');
 
         foreach ($properties as $property) {
-
             list(
                 $namespace,
                 $elementName
@@ -245,13 +243,10 @@ class Client extends HTTP\Client {
 
         $newResult = [];
         foreach ($result as $href => $statusList) {
-
             $newResult[$href] = isset($statusList[200]) ? $statusList[200] : [];
-
         }
 
         return $newResult;
-
     }
 
     /**
@@ -265,8 +260,8 @@ class Client extends HTTP\Client {
      * @param array $properties
      * @return bool
      */
-    function propPatch($url, array $properties) {
-
+    public function propPatch($url, array $properties)
+    {
         $propPatch = new Xml\Request\PropPatch();
         $propPatch->properties = $properties;
         $xml = $this->xml->write(
@@ -292,22 +287,18 @@ class Client extends HTTP\Client {
             $errorProperties = [];
             foreach ($result as $href => $statusList) {
                 foreach ($statusList as $status => $properties) {
-
                     if ($status >= 400) {
                         foreach ($properties as $propName => $propValue) {
                             $errorProperties[] = $propName . ' (' . $status . ')';
                         }
                     }
-
                 }
             }
             if ($errorProperties) {
-
                 throw new HTTP\ClientException('PROPPATCH failed. The following properties errored: ' . implode(', ', $errorProperties));
             }
         }
         return true;
-
     }
 
     /**
@@ -319,8 +310,8 @@ class Client extends HTTP\Client {
      *
      * @return array
      */
-    function options() {
-
+    public function options()
+    {
         $request = new HTTP\Request('OPTIONS', $this->getAbsoluteUrl(''));
         $response = $this->send($request);
 
@@ -334,7 +325,6 @@ class Client extends HTTP\Client {
             $v = trim($v);
         }
         return $features;
-
     }
 
     /**
@@ -366,8 +356,8 @@ class Client extends HTTP\Client {
      * @throws ClientException, in case a curl error occurred.
      * @return array
      */
-    function request($method, $url = '', $body = null, array $headers = []) {
-
+    public function request($method, $url = '', $body = null, array $headers = [])
+    {
         $url = $this->getAbsoluteUrl($url);
 
         $response = $this->send(new HTTP\Request($method, $url, $headers, $body));
@@ -376,7 +366,6 @@ class Client extends HTTP\Client {
             'statusCode' => (int)$response->getStatus(),
             'headers'    => array_change_key_case($response->getHeaders()),
         ];
-
     }
 
     /**
@@ -386,13 +375,12 @@ class Client extends HTTP\Client {
      * @param string $url
      * @return string
      */
-    function getAbsoluteUrl($url) {
-
+    public function getAbsoluteUrl($url)
+    {
         return Uri\resolve(
             $this->baseUri,
             $url
         );
-
     }
 
     /**
@@ -420,20 +408,16 @@ class Client extends HTTP\Client {
      * @param string $body xml body
      * @return array
      */
-    function parseMultiStatus($body) {
-
+    public function parseMultiStatus($body)
+    {
         $multistatus = $this->xml->expect('{DAV:}multistatus', $body);
 
         $result = [];
 
         foreach ($multistatus->getResponses() as $response) {
-
             $result[$response->getHref()] = $response->getResponseProperties();
-
         }
 
         return $result;
-
     }
-
 }

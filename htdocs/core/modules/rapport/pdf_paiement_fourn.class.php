@@ -30,14 +30,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/rapport/pdf_paiement.class.php';
  */
 class pdf_paiement_fourn extends pdf_paiement
 {
-	/**
+    /**
      *  Constructor
      *
      *  @param      DoliDb		$db      Database handler
-	 */
-	public function __construct($db)
-	{
-		parent::__construct($db);
-		$this->doc_type = "fourn";
-	}
+     */
+    public function __construct($db)
+    {
+        parent::__construct($db);
+        $this->doc_type = "fourn";
+    }
 }

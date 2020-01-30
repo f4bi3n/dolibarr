@@ -34,33 +34,33 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
  */
 class ModelePDFLabels
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
+    /**
+     * @var string Error code (or message)
+     */
+    public $error='';
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *  Return list of active generation modules
-	 *
+    /**
+     *  Return list of active generation modules
+     *
      *  @param  DoliDB	$db     			Database handler
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
-	 */
-	public function liste_modeles($db, $maxfilenamelength = 0)
-	{
+     */
+    public function liste_modeles($db, $maxfilenamelength = 0)
+    {
         // phpcs:enable
-		global $conf;
+        global $conf;
 
-		$type='members_labels';
-		$liste=array();
+        $type='members_labels';
+        $liste=array();
 
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db, $type, $maxfilenamelength);
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+        $liste=getListOfModels($db, $type, $maxfilenamelength);
 
-		return $liste;
-	}
+        return $liste;
+    }
 }
 
 
@@ -80,92 +80,86 @@ class ModelePDFLabels
 function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outputdir = '', $template = 'standardlabel', $filename = 'tmp_address_sheet.pdf')
 {
     // phpcs:enable
-	global $conf,$langs;
-	$langs->load("members");
+    global $conf,$langs;
+    $langs->load("members");
 
-	$error=0;
+    $error=0;
 
-	// Increase limit for PDF build
-	$err=error_reporting();
-	error_reporting(0);
-	@set_time_limit(120);
-	error_reporting($err);
+    // Increase limit for PDF build
+    $err=error_reporting();
+    error_reporting(0);
+    @set_time_limit(120);
+    error_reporting($err);
 
-	$code='';
-	$srctemplatepath='';
+    $code='';
+    $srctemplatepath='';
 
-	// Positionne le modele sur le nom du modele a utiliser
-	if (! dol_strlen($modele))
-	{
-		if (! empty($conf->global->ADHERENT_ETIQUETTE_TYPE))
-		{
-			$code = $conf->global->ADHERENT_ETIQUETTE_TYPE;
-		}
-		else
-		{
-			$code = $modele;
-		}
-	}
-	else $code=$modele;
+    // Positionne le modele sur le nom du modele a utiliser
+    if (! dol_strlen($modele)) {
+        if (! empty($conf->global->ADHERENT_ETIQUETTE_TYPE)) {
+            $code = $conf->global->ADHERENT_ETIQUETTE_TYPE;
+        } else {
+            $code = $modele;
+        }
+    } else {
+        $code=$modele;
+    }
 
-	// If selected modele is a filename template (then $modele="modelname:filename")
-	$tmp=explode(':', $template, 2);
-	if (! empty($tmp[1]))
-	{
-		$template=$tmp[0];
-		$srctemplatepath=$tmp[1];
-	}
-	else $srctemplatepath=$code;
+    // If selected modele is a filename template (then $modele="modelname:filename")
+    $tmp=explode(':', $template, 2);
+    if (! empty($tmp[1])) {
+        $template=$tmp[0];
+        $srctemplatepath=$tmp[1];
+    } else {
+        $srctemplatepath=$code;
+    }
 
-	dol_syslog("modele=".$modele." outputdir=".$outputdir." template=".$template." code=".$code." srctemplatepath=".$srctemplatepath." filename=".$filename, LOG_DEBUG);
+    dol_syslog("modele=".$modele." outputdir=".$outputdir." template=".$template." code=".$code." srctemplatepath=".$srctemplatepath." filename=".$filename, LOG_DEBUG);
 
-	// Search template files
-	$file=''; $classname=''; $filefound=0;
-	$dirmodels=array('/');
-	if (is_array($conf->modules_parts['models'])) $dirmodels=array_merge($dirmodels, $conf->modules_parts['models']);
-	foreach($dirmodels as $reldir)
-	{
-		foreach(array('doc','pdf') as $prefix)
-		{
-			$file = $prefix."_".$template.".class.php";
+    // Search template files
+    $file='';
+    $classname='';
+    $filefound=0;
+    $dirmodels=array('/');
+    if (is_array($conf->modules_parts['models'])) {
+        $dirmodels=array_merge($dirmodels, $conf->modules_parts['models']);
+    }
+    foreach ($dirmodels as $reldir) {
+        foreach (array('doc','pdf') as $prefix) {
+            $file = $prefix."_".$template.".class.php";
 
-			// On verifie l'emplacement du modele
-			$file=dol_buildpath($reldir."core/modules/printsheet/doc/".$file, 0);
-			if (file_exists($file))
-			{
-				$filefound=1;
-				$classname=$prefix.'_'.$template;
-				break;
-			}
-		}
-		if ($filefound) break;
-	}
+            // On verifie l'emplacement du modele
+            $file=dol_buildpath($reldir."core/modules/printsheet/doc/".$file, 0);
+            if (file_exists($file)) {
+                $filefound=1;
+                $classname=$prefix.'_'.$template;
+                break;
+            }
+        }
+        if ($filefound) {
+            break;
+        }
+    }
 
-	// Charge le modele
-	if ($filefound)
-	{
-		require_once $file;
+    // Charge le modele
+    if ($filefound) {
+        require_once $file;
 
-		$obj = new $classname($db);
+        $obj = new $classname($db);
 
-		// We save charset_output to restore it because write_file can change it if needed for
-		// output format that does not support UTF8.
-		$sav_charset_output=$outputlangs->charset_output;
-		if ($obj->write_file($arrayofrecords, $outputlangs, $srctemplatepath, $outputdir, $filename) > 0)
-		{
-			$outputlangs->charset_output=$sav_charset_output;
-			return 1;
-		}
-		else
-		{
-			$outputlangs->charset_output=$sav_charset_output;
-			dol_print_error($db, "doc_label_pdf_create Error: ".$obj->error);
-			return -1;
-		}
-	}
-	else
-	{
-		dol_print_error('', $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $file));
-		return -1;
-	}
+        // We save charset_output to restore it because write_file can change it if needed for
+        // output format that does not support UTF8.
+        $sav_charset_output=$outputlangs->charset_output;
+        if ($obj->write_file($arrayofrecords, $outputlangs, $srctemplatepath, $outputdir, $filename) > 0) {
+            $outputlangs->charset_output=$sav_charset_output;
+            return 1;
+        } else {
+            $outputlangs->charset_output=$sav_charset_output;
+            dol_print_error($db, "doc_label_pdf_create Error: ".$obj->error);
+            return -1;
+        }
+    } else {
+        dol_print_error('', $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $file));
+        return -1;
+    }
 }

@@ -4,10 +4,10 @@ namespace Sabre\DAV;
 
 use Sabre\HTTP;
 
-class HTTPPreferParsingTest extends \Sabre\DAVServerTest {
-
-    function testParseSimple() {
-
+class HTTPPreferParsingTest extends \Sabre\DAVServerTest
+{
+    public function testParseSimple()
+    {
         $httpRequest = HTTP\Sapi::createFromServerArray([
             'HTTP_PREFER' => 'return-asynch',
         ]);
@@ -21,11 +21,10 @@ class HTTPPreferParsingTest extends \Sabre\DAVServerTest {
             'handling'      => null,
             'wait'          => null,
         ], $server->getHTTPPrefer());
-
     }
 
-    function testParseValue() {
-
+    public function testParseValue()
+    {
         $httpRequest = HTTP\Sapi::createFromServerArray([
             'HTTP_PREFER' => 'wait=10',
         ]);
@@ -39,11 +38,10 @@ class HTTPPreferParsingTest extends \Sabre\DAVServerTest {
             'handling'      => null,
             'wait'          => '10',
         ], $server->getHTTPPrefer());
-
     }
 
-    function testParseMultiple() {
-
+    public function testParseMultiple()
+    {
         $httpRequest = HTTP\Sapi::createFromServerArray([
             'HTTP_PREFER' => 'return-minimal, strict,lenient',
         ]);
@@ -57,11 +55,10 @@ class HTTPPreferParsingTest extends \Sabre\DAVServerTest {
             'handling'      => 'lenient',
             'wait'          => null,
         ], $server->getHTTPPrefer());
-
     }
 
-    function testParseWeirdValue() {
-
+    public function testParseWeirdValue()
+    {
         $httpRequest = HTTP\Sapi::createFromServerArray([
             'HTTP_PREFER' => 'BOOOH',
         ]);
@@ -76,11 +73,10 @@ class HTTPPreferParsingTest extends \Sabre\DAVServerTest {
             'wait'          => null,
             'boooh'         => true,
         ], $server->getHTTPPrefer());
-
     }
 
-    function testBrief() {
-
+    public function testBrief()
+    {
         $httpRequest = HTTP\Sapi::createFromServerArray([
             'HTTP_BRIEF' => 't',
         ]);
@@ -94,7 +90,6 @@ class HTTPPreferParsingTest extends \Sabre\DAVServerTest {
             'handling'      => null,
             'wait'          => null,
         ], $server->getHTTPPrefer());
-
     }
 
     /**
@@ -102,14 +97,15 @@ class HTTPPreferParsingTest extends \Sabre\DAVServerTest {
      *
      * @return void
      */
-    function testpropfindMinimal() {
-
+    public function testpropfindMinimal()
+    {
         $request = HTTP\Sapi::createFromServerArray([
             'REQUEST_METHOD' => 'PROPFIND',
             'REQUEST_URI'    => '/',
             'HTTP_PREFER'    => 'return-minimal',
         ]);
-        $request->setBody(<<<BLA
+        $request->setBody(
+            <<<BLA
 <?xml version="1.0"?>
 <d:propfind xmlns:d="DAV:">
     <d:prop>
@@ -128,13 +124,13 @@ BLA
 
         $this->assertTrue(strpos($body, 'resourcetype') !== false, $body);
         $this->assertTrue(strpos($body, 'something') === false, $body);
-
     }
 
-    function testproppatchMinimal() {
-
+    public function testproppatchMinimal()
+    {
         $request = new HTTP\Request('PROPPATCH', '/', ['Prefer' => 'return-minimal']);
-        $request->setBody(<<<BLA
+        $request->setBody(
+            <<<BLA
 <?xml version="1.0"?>
 <d:propertyupdate xmlns:d="DAV:">
     <d:set>
@@ -146,25 +142,23 @@ BLA
 BLA
         );
 
-        $this->server->on('propPatch', function($path, PropPatch $propPatch) {
-
-            $propPatch->handle('{DAV:}something', function($props) {
+        $this->server->on('propPatch', function ($path, PropPatch $propPatch) {
+            $propPatch->handle('{DAV:}something', function ($props) {
                 return true;
             });
-
         });
 
         $response = $this->request($request);
 
         $this->assertEquals(0, strlen($response->body), 'Expected empty body: ' . $response->body);
         $this->assertEquals(204, $response->status);
-
     }
 
-    function testproppatchMinimalError() {
-
+    public function testproppatchMinimalError()
+    {
         $request = new HTTP\Request('PROPPATCH', '/', ['Prefer' => 'return-minimal']);
-        $request->setBody(<<<BLA
+        $request->setBody(
+            <<<BLA
 <?xml version="1.0"?>
 <d:propertyupdate xmlns:d="DAV:">
     <d:set>
@@ -183,6 +177,5 @@ BLA
         $this->assertEquals(207, $response->status);
         $this->assertTrue(strpos($body, 'something') !== false);
         $this->assertTrue(strpos($body, '403 Forbidden') !== false, $body);
-
     }
 }

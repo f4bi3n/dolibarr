@@ -4,13 +4,13 @@ namespace Sabre\Xml\Serializer;
 
 use Sabre\Xml\Service;
 
-class RepeatingElementsTest extends \PHPUnit_Framework_TestCase {
-
-    function testSerialize() {
-
+class RepeatingElementsTest extends \PHPUnit_Framework_TestCase
+{
+    public function testSerialize()
+    {
         $service = new Service();
         $service->namespaceMap['urn:test'] = null;
-        $xml = $service->write('{urn:test}collection', function($writer) {
+        $xml = $service->write('{urn:test}collection', function ($writer) {
             repeatingElements($writer, [
                 'foo',
                 'bar',
@@ -27,9 +27,5 @@ XML;
 
 
         $this->assertXmlStringEqualsXmlString($expected, $xml);
-
-
     }
-
-
 }

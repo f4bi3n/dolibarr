@@ -11,13 +11,13 @@ namespace Sabre\CalDAV\Schedule\IMip;
  *
  * If you want to customize the email that gets sent out, you can do so by
  * extending this class and overriding the sendMessage method.
- * 
+ *
  * @copyright Copyright (C) fruux GmbH (https://fruux.com/)
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class MockPlugin extends \Sabre\CalDAV\Schedule\IMipPlugin {
-
+class MockPlugin extends \Sabre\CalDAV\Schedule\IMipPlugin
+{
     protected $emails = [];
 
     /**
@@ -29,22 +29,18 @@ class MockPlugin extends \Sabre\CalDAV\Schedule\IMipPlugin {
      * @param array $headers List of headers
      * @return void
      */
-    protected function mail($to, $subject, $body, array $headers) {
-
+    protected function mail($to, $subject, $body, array $headers)
+    {
         $this->emails[] = [
             'to'      => $to,
             'subject' => $subject,
             'body'    => $body,
             'headers' => $headers,
         ];
-
     }
 
-    function getSentEmails() {
-
+    public function getSentEmails()
+    {
         return $this->emails;
-
     }
-
-
 }

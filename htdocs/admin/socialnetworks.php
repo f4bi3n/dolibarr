@@ -30,7 +30,9 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "errors"));
 
-if (! $user->admin) accessforbidden();
+if (! $user->admin) {
+    accessforbidden();
+}
 
 $type=array('yesno','texte','chaine');
 
@@ -41,30 +43,22 @@ $action = GETPOST('action', 'aZ09');
 /*
  * Action
  */
-if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
-{
+if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
     $code=$reg[1];
-    if (dolibarr_set_const($db, $code, 1, 'chaine', 0, '', $conf->entity) > 0)
-    {
+    if (dolibarr_set_const($db, $code, 1, 'chaine', 0, '', $conf->entity) > 0) {
         header("Location: ".$_SERVER["PHP_SELF"]);
         exit;
-    }
-    else
-    {
+    } else {
         dol_print_error($db);
     }
 }
 
-if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
-{
+if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg)) {
     $code=$reg[1];
-    if (dolibarr_del_const($db, $code, $conf->entity) > 0)
-    {
+    if (dolibarr_del_const($db, $code, $conf->entity) > 0) {
         header("Location: ".$_SERVER["PHP_SELF"]);
         exit;
-    }
-    else
-    {
+    } else {
         dol_print_error($db);
     }
 }
@@ -99,7 +93,7 @@ print '<br>';
 
 $arrayofsocialnetworks=array('jabber'=>'Jabber', 'skype'=>'Skype', 'twitter'=>'Twitter', 'facebook'=>'Facebook', 'linkedin'=>'LinkedIn');
 
-foreach($arrayofsocialnetworks as $snkey => $snlabel) {
+foreach ($arrayofsocialnetworks as $snkey => $snlabel) {
     $consttocheck = 'SOCIALNETWORKS_'.strtoupper($snkey);
     if ($conf->use_javascript_ajax) {
         $link = ajax_constantonoff($consttocheck);

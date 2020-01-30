@@ -31,9 +31,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 abstract class ModeleGenPassword
 {
     /**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
+     * @var string Error code (or message)
+     */
+    public $error='';
 
     /**
      * 		Return if a module can be used or not
@@ -68,23 +68,23 @@ abstract class ModeleGenPassword
         return $langs->trans("NoExample");
     }
 
-	/**
-	 *  Build new password
-	 *
- 	 *  @return     string      Return a new generated password
-	 */
+    /**
+     *  Build new password
+     *
+     *  @return     string      Return a new generated password
+     */
     public function getNewGeneratedPassword()
     {
         global $langs;
         return $langs->trans("NotAvailable");
     }
 
-	/**
-	 * 		Validate a password
-	 *
-	 *		@param		string	$password	Password to check
- 	 *      @return     int					0 if KO, >0 if OK
-	 */
+    /**
+     * 		Validate a password
+     *
+     *		@param		string	$password	Password to check
+     *      @return     int					0 if KO, >0 if OK
+     */
     public function validatePassword($password)
     {
         return 1;

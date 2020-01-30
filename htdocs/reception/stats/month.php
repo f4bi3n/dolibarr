@@ -51,15 +51,14 @@ $fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=receptionstats&file=reception
 
 $px = new DolGraph();
 $mesg = $px->isGraphKo();
-if (! $mesg)
-{
+if (! $mesg) {
     $px->SetData($data);
     $px->SetMaxValue($px->GetCeilMaxValue());
     $px->SetWidth($WIDTH);
     $px->SetHeight($HEIGHT);
     $px->SetYLabel($langs->trans("NbOfOrders"));
     $px->SetShading(3);
-	$px->SetHorizTickIncrement(1);
+    $px->SetHorizTickIncrement(1);
     $px->draw($filename, $fileurl);
 }
 

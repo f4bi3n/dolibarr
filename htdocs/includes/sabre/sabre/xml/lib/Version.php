@@ -9,11 +9,11 @@ namespace Sabre\Xml;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/
  */
-class Version {
+class Version
+{
 
     /**
      * Full version number
      */
     const VERSION = '1.5.0';
-
 }

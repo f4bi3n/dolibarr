@@ -14,6 +14,6 @@ use Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface ICard extends DAV\IFile {
-
+interface ICard extends DAV\IFile
+{
 }

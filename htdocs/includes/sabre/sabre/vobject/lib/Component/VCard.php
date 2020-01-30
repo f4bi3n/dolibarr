@@ -15,7 +15,8 @@ use Sabre\Xml;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class VCard extends VObject\Document {
+class VCard extends VObject\Document
+{
 
     /**
      * The default name for this component.
@@ -24,7 +25,7 @@ class VCard extends VObject\Document {
      *
      * @var string
      */
-    static $defaultName = 'VCARD';
+    public static $defaultName = 'VCARD';
 
     /**
      * Caching the version number.
@@ -38,7 +39,7 @@ class VCard extends VObject\Document {
      *
      * @var array
      */
-    static $componentMap = [
+    public static $componentMap = [
         'VCARD' => 'Sabre\\VObject\\Component\\VCard',
     ];
 
@@ -47,7 +48,7 @@ class VCard extends VObject\Document {
      *
      * @var array
      */
-    static $valueMap = [
+    public static $valueMap = [
         'BINARY'           => 'Sabre\\VObject\\Property\\Binary',
         'BOOLEAN'          => 'Sabre\\VObject\\Property\\Boolean',
         'CONTENT-ID'       => 'Sabre\\VObject\\Property\\FlatText',   // vCard 2.1 only
@@ -71,7 +72,7 @@ class VCard extends VObject\Document {
      *
      * @var array
      */
-    static $propertyMap = [
+    public static $propertyMap = [
 
         // vCard 2.1 properties and up
         'N'      => 'Sabre\\VObject\\Property\\Text',
@@ -144,23 +145,22 @@ class VCard extends VObject\Document {
      *
      * @return int
      */
-    function getDocumentType() {
-
+    public function getDocumentType()
+    {
         if (!$this->version) {
-
             $version = (string)$this->VERSION;
 
             switch ($version) {
-                case '2.1' :
+                case '2.1':
                     $this->version = self::VCARD21;
                     break;
-                case '3.0' :
+                case '3.0':
                     $this->version = self::VCARD30;
                     break;
-                case '4.0' :
+                case '4.0':
                     $this->version = self::VCARD40;
                     break;
-                default :
+                default:
                     // We don't want to cache the version if it's unknown,
                     // because we might get a version property in a bit.
                     return self::UNKNOWN;
@@ -168,7 +168,6 @@ class VCard extends VObject\Document {
         }
 
         return $this->version;
-
     }
 
     /**
@@ -185,11 +184,10 @@ class VCard extends VObject\Document {
      *
      * @return VCard
      */
-    function convert($target) {
-
+    public function convert($target)
+    {
         $converter = new VObject\VCardConverter();
         return $converter->convert($this, $target);
-
     }
 
     /**
@@ -221,8 +219,8 @@ class VCard extends VObject\Document {
      *
      * @return array
      */
-    function validate($options = 0) {
-
+    public function validate($options = 0)
+    {
         $warnings = [];
 
         $versionMap = [
@@ -251,7 +249,6 @@ class VCard extends VObject\Document {
                     'node'    => $this,
                 ];
             }
-
         }
         $uid = $this->select('UID');
         if (count($uid) === 0) {
@@ -277,7 +274,6 @@ class VCard extends VObject\Document {
 
         $fn = $this->select('FN');
         if (count($fn) !== 1) {
-
             $repaired = false;
             if (($options & self::REPAIR) && count($fn) === 0) {
                 // We're going to try to see if we can use the contents of the
@@ -296,7 +292,6 @@ class VCard extends VObject\Document {
                     $this->FN = (string)$this->ORG;
                     $repaired = true;
                 }
-
             }
             $warnings[] = [
                 'level'   => $repaired ? 1 : 3,
@@ -309,7 +304,6 @@ class VCard extends VObject\Document {
             parent::validate($options),
             $warnings
         );
-
     }
 
     /**
@@ -327,8 +321,8 @@ class VCard extends VObject\Document {
      *
      * @var array
      */
-    function getValidationRules() {
-
+    public function getValidationRules()
+    {
         return [
             'ADR'          => '*',
             'ANNIVERSARY'  => '?',
@@ -370,7 +364,6 @@ class VCard extends VObject\Document {
             // 'FN'           => '+',
             'UID' => '?',
         ];
-
     }
 
     /**
@@ -387,12 +380,11 @@ class VCard extends VObject\Document {
      *
      * @return VObject\Property|null
      */
-    function preferred($propertyName) {
-
+    public function preferred($propertyName)
+    {
         $preferred = null;
         $lastPref = 101;
         foreach ($this->select($propertyName) as $field) {
-
             $pref = 101;
             if (isset($field['TYPE']) && $field['TYPE']->has('PREF')) {
                 $pref = 1;
@@ -404,10 +396,8 @@ class VCard extends VObject\Document {
                 $preferred = $field;
                 $lastPref = $pref;
             }
-
         }
         return $preferred;
-
     }
 
     /**
@@ -421,7 +411,8 @@ class VCard extends VObject\Document {
      *
      * @return VObject\Property|null
      */
-    function getByType($propertyName, $type) {
+    public function getByType($propertyName, $type)
+    {
         foreach ($this->select($propertyName) as $field) {
             if (isset($field['TYPE']) && $field['TYPE']->has($type)) {
                 return $field;
@@ -434,14 +425,13 @@ class VCard extends VObject\Document {
      *
      * @return array
      */
-    protected function getDefaults() {
-
+    protected function getDefaults()
+    {
         return [
             'VERSION' => '4.0',
             'PRODID'  => '-//Sabre//Sabre VObject ' . VObject\Version::VERSION . '//EN',
             'UID'     => 'sabre-vobject-' . VObject\UUIDUtil::getUUID(),
         ];
-
     }
 
     /**
@@ -450,7 +440,8 @@ class VCard extends VObject\Document {
      *
      * @return array
      */
-    function jsonSerialize() {
+    public function jsonSerialize()
+    {
 
         // A vcard does not have sub-components, so we're overriding this
         // method to remove that array element.
@@ -464,7 +455,6 @@ class VCard extends VObject\Document {
             strtolower($this->name),
             $properties,
         ];
-
     }
 
     /**
@@ -475,12 +465,11 @@ class VCard extends VObject\Document {
      *
      * @return void
      */
-    function xmlSerialize(Xml\Writer $writer) {
-
+    public function xmlSerialize(Xml\Writer $writer)
+    {
         $propertiesByGroup = [];
 
         foreach ($this->children() as $property) {
-
             $group = $property->group;
 
             if (!isset($propertiesByGroup[$group])) {
@@ -488,18 +477,14 @@ class VCard extends VObject\Document {
             }
 
             $propertiesByGroup[$group][] = $property;
-
         }
 
         $writer->startElement(strtolower($this->name));
 
         foreach ($propertiesByGroup as $group => $properties) {
-
             if (!empty($group)) {
-
                 $writer->startElement('group');
                 $writer->writeAttribute('name', strtolower($group));
-
             }
 
             foreach ($properties as $property) {
@@ -524,11 +509,9 @@ class VCard extends VObject\Document {
             if (!empty($group)) {
                 $writer->endElement();
             }
-
         }
 
         $writer->endElement();
-
     }
 
     /**
@@ -538,8 +521,8 @@ class VCard extends VObject\Document {
      *
      * @return string
      */
-    function getClassNameForPropertyName($propertyName) {
-
+    public function getClassNameForPropertyName($propertyName)
+    {
         $className = parent::getClassNameForPropertyName($propertyName);
 
         // In vCard 4, BINARY no longer exists, and we need URI instead.
@@ -547,7 +530,5 @@ class VCard extends VObject\Document {
             return 'Sabre\\VObject\\Property\\Uri';
         }
         return $className;
-
     }
-
 }

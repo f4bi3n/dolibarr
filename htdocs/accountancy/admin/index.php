@@ -36,9 +36,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 $langs->loadLangs(array("compta", "bills", "admin", "accountancy"));
 
 // Security access
-if (empty($user->rights->accounting->chartofaccount))
-{
-	accessforbidden();
+if (empty($user->rights->accounting->chartofaccount)) {
+    accessforbidden();
 }
 
 $action = GETPOST('action', 'aZ09');
@@ -60,22 +59,20 @@ $list = array(
 $accounting_mode = empty($conf->global->ACCOUNTING_MODE) ? 'RECETTES-DEPENSES' : $conf->global->ACCOUNTING_MODE;
 
 if ($action == 'update') {
-	$error = 0;
+    $error = 0;
 
-	if (!$error)
-	{
-	    foreach ($list as $constname)
-	    {
-	        $constvalue = GETPOST($constname, 'alpha');
+    if (!$error) {
+        foreach ($list as $constname) {
+            $constvalue = GETPOST($constname, 'alpha');
 
-	        if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
-	            $error++;
-	        }
-	    }
-	    if ($error) {
-	    	setEventMessages($langs->trans("Error"), null, 'errors');
-	    }
-	}
+            if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+                $error++;
+            }
+        }
+        if ($error) {
+            setEventMessages($langs->trans("Error"), null, 'errors');
+        }
+    }
 
     if (!$error) {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -85,8 +82,9 @@ if ($action == 'update') {
 if ($action == 'setlistsorttodo') {
     $setlistsorttodo = GETPOST('value', 'int');
     $res = dolibarr_set_const($db, "ACCOUNTING_LIST_SORT_VENTILATION_TODO", $setlistsorttodo, 'yesno', 0, '', $conf->entity);
-    if (!$res > 0)
+    if (!$res > 0) {
         $error++;
+    }
 
     if (!$error) {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -98,8 +96,9 @@ if ($action == 'setlistsorttodo') {
 if ($action == 'setlistsortdone') {
     $setlistsortdone = GETPOST('value', 'int');
     $res = dolibarr_set_const($db, "ACCOUNTING_LIST_SORT_VENTILATION_DONE", $setlistsortdone, 'yesno', 0, '', $conf->entity);
-    if (!$res > 0)
+    if (!$res > 0) {
         $error++;
+    }
     if (!$error) {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     } else {
@@ -110,8 +109,9 @@ if ($action == 'setlistsortdone') {
 if ($action == 'setmanagezero') {
     $setmanagezero = GETPOST('value', 'int');
     $res = dolibarr_set_const($db, "ACCOUNTING_MANAGE_ZERO", $setmanagezero, 'yesno', 0, '', $conf->entity);
-    if (!$res > 0)
+    if (!$res > 0) {
         $error++;
+    }
     if (!$error) {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     } else {
@@ -120,34 +120,37 @@ if ($action == 'setmanagezero') {
 }
 
 if ($action == 'setdisabledirectinput') {
-	$setdisabledirectinput = GETPOST('value', 'int');
-	$res = dolibarr_set_const($db, "BANK_DISABLE_DIRECT_INPUT", $setdisabledirectinput, 'yesno', 0, '', $conf->entity);
-	if (!$res > 0)
-		$error++;
-	if (!$error) {
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	} else {
-		setEventMessages($langs->trans("Error"), null, 'mesgs');
-	}
+    $setdisabledirectinput = GETPOST('value', 'int');
+    $res = dolibarr_set_const($db, "BANK_DISABLE_DIRECT_INPUT", $setdisabledirectinput, 'yesno', 0, '', $conf->entity);
+    if (!$res > 0) {
+        $error++;
+    }
+    if (!$error) {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    } else {
+        setEventMessages($langs->trans("Error"), null, 'mesgs');
+    }
 }
 
 if ($action == 'setenabledraftexport') {
-	$setenabledraftexport = GETPOST('value', 'int');
-	$res = dolibarr_set_const($db, "ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL", $setenabledraftexport, 'yesno', 0, '', $conf->entity);
-	if (!$res > 0)
-		$error++;
-	if (!$error) {
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	} else {
-		setEventMessages($langs->trans("Error"), null, 'mesgs');
-	}
+    $setenabledraftexport = GETPOST('value', 'int');
+    $res = dolibarr_set_const($db, "ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL", $setenabledraftexport, 'yesno', 0, '', $conf->entity);
+    if (!$res > 0) {
+        $error++;
+    }
+    if (!$error) {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    } else {
+        setEventMessages($langs->trans("Error"), null, 'mesgs');
+    }
 }
 
 if ($action == 'setenablesubsidiarylist') {
     $setenablesubsidiarylist = GETPOST('value', 'int');
     $res = dolibarr_set_const($db, "ACCOUNTANCY_COMBO_FOR_AUX", $setenablesubsidiarylist, 'yesno', 0, '', $conf->entity);
-    if (!$res > 0)
+    if (!$res > 0) {
         $error++;
+    }
     if (!$error) {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     } else {
@@ -207,11 +210,10 @@ print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans('OtherOptions').'</td>';
 print "</tr>\n";
 
-if (!empty($user->admin))
-{
+if (!empty($user->admin)) {
     // TO DO Mutualize code for yes/no constants
     print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("ACCOUNTING_LIST_SORT_VENTILATION_TODO").'</td>';
+    print '<td>'.$langs->trans("ACCOUNTING_LIST_SORT_VENTILATION_TODO").'</td>';
     if (!empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_TODO)) {
         print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setlistsorttodo&value=0">';
         print img_picto($langs->trans("Activated"), 'switch_on');
@@ -236,31 +238,31 @@ if (!empty($user->admin))
     }
     print '</tr>';
 
-	print '<tr>';
-	print '<td>'.$langs->trans("ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL").'</td>';
-	if (!empty($conf->global->ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL)) {
-		print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setenabledraftexport&value=0">';
-		print img_picto($langs->trans("Activated"), 'switch_on');
-		print '</a></td>';
-	} else {
-		print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setenabledraftexport&value=1">';
-		print img_picto($langs->trans("Disabled"), 'switch_off');
-		print '</a></td>';
-	}
-	print '</tr>';
+    print '<tr>';
+    print '<td>'.$langs->trans("ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL").'</td>';
+    if (!empty($conf->global->ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL)) {
+        print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setenabledraftexport&value=0">';
+        print img_picto($langs->trans("Activated"), 'switch_on');
+        print '</a></td>';
+    } else {
+        print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setenabledraftexport&value=1">';
+        print img_picto($langs->trans("Disabled"), 'switch_off');
+        print '</a></td>';
+    }
+    print '</tr>';
 
-	print '<tr>';
-	print '<td>'.$langs->trans("BANK_DISABLE_DIRECT_INPUT").'</td>';
-	if (!empty($conf->global->BANK_DISABLE_DIRECT_INPUT)) {
-		print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisabledirectinput&value=0">';
-		print img_picto($langs->trans("Activated"), 'switch_on');
-		print '</a></td>';
-	} else {
-		print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisabledirectinput&value=1">';
-		print img_picto($langs->trans("Disabled"), 'switch_off');
-		print '</a></td>';
-	}
-	print '</tr>';
+    print '<tr>';
+    print '<td>'.$langs->trans("BANK_DISABLE_DIRECT_INPUT").'</td>';
+    if (!empty($conf->global->BANK_DISABLE_DIRECT_INPUT)) {
+        print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisabledirectinput&value=0">';
+        print img_picto($langs->trans("Activated"), 'switch_on');
+        print '</a></td>';
+    } else {
+        print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisabledirectinput&value=1">';
+        print img_picto($langs->trans("Disabled"), 'switch_off');
+        print '</a></td>';
+    }
+    print '</tr>';
 
     print '<tr>';
     print '<td>'.$langs->trans("ACCOUNTANCY_COMBO_FOR_AUX").'</td>';
@@ -291,11 +293,12 @@ if (!empty($user->admin))
 
 
 // Param a user $user->rights->accounting->chartofaccount can access
-foreach ($list as $key)
-{
+foreach ($list as $key) {
     print '<tr class="oddeven value">';
 
-    if (!empty($conf->global->ACCOUNTING_MANAGE_ZERO) && ($key == 'ACCOUNTING_LENGTH_GACCOUNT' || $key == 'ACCOUNTING_LENGTH_AACCOUNT')) continue;
+    if (!empty($conf->global->ACCOUNTING_MANAGE_ZERO) && ($key == 'ACCOUNTING_LENGTH_GACCOUNT' || $key == 'ACCOUNTING_LENGTH_AACCOUNT')) {
+        continue;
+    }
 
     // Param
     $label = $langs->trans($key);

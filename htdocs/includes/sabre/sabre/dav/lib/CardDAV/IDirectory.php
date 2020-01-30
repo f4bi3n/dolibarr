@@ -15,6 +15,6 @@ namespace Sabre\CardDAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface IDirectory extends IAddressBook {
-
+interface IDirectory extends IAddressBook
+{
 }

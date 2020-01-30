@@ -29,8 +29,8 @@ $path = __DIR__ . '/';
 
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
-	echo "Error: You are using PHP for CGI. To execute " . $script_file . " from command line, you must use PHP for CLI mode.\n";
-	exit(- 1);
+    echo "Error: You are using PHP for CGI. To execute " . $script_file . " from command line, you must use PHP for CLI mode.\n";
+    exit(- 1);
 }
 
 @set_time_limit(0); // No timeout for this script
@@ -56,9 +56,9 @@ print "***** " . $script_file . " (" . $version . ") pid=" . dol_getmypid() . " 
 dol_syslog($script_file . " launched with arg " . join(',', $argv));
 
 if (empty($argv[1])) {
-	print "Usage:    $script_file  subdirtoscan\n";
-	print "Example:  $script_file  produit\n";
-	exit(- 1);
+    print "Usage:    $script_file  subdirtoscan\n";
+    print "Example:  $script_file  produit\n";
+    exit(- 1);
 }
 
 print '--- start' . "\n";
@@ -66,12 +66,12 @@ print '--- start' . "\n";
 $dir = DOL_DATA_ROOT;
 $subdir = $argv[1];
 if (empty($dir) || empty($subdir)) {
-	dol_print_error('', 'dir not defined');
-	exit(1);
+    dol_print_error('', 'dir not defined');
+    exit(1);
 }
 if (! dol_is_dir($dir . '/' . $subdir)) {
-	print 'Directory ' . $dir . '/' . $subdir . ' not found.' . "\n";
-	exit(2);
+    print 'Directory ' . $dir . '/' . $subdir . ' not found.' . "\n";
+    exit(2);
 }
 
 $filearray = dol_dir_list($dir . '/' . $subdir, "directories", 0, '', 'temp$');
@@ -79,23 +79,25 @@ $filearray = dol_dir_list($dir . '/' . $subdir, "directories", 0, '', 'temp$');
 global $maxwidthsmall, $maxheightsmall, $maxwidthmini, $maxheightmini;
 
 foreach ($filearray as $keyf => $valf) {
-	$ref = basename($valf['name']);
-	$filearrayimg = dol_dir_list($valf['fullname'], "files", 0, '(\.gif|\.png|\.jpg|\.jpeg|\.bmp)$', '(\.meta|_preview.*\.png)$');
-	foreach ($filearrayimg as $keyi => $vali) {
-		print 'Process image for ref ' . $ref . ' : ' . $vali['name'] . "\n";
+    $ref = basename($valf['name']);
+    $filearrayimg = dol_dir_list($valf['fullname'], "files", 0, '(\.gif|\.png|\.jpg|\.jpeg|\.bmp)$', '(\.meta|_preview.*\.png)$');
+    foreach ($filearrayimg as $keyi => $vali) {
+        print 'Process image for ref ' . $ref . ' : ' . $vali['name'] . "\n";
 
-		// Create small thumbs for image
-		// Used on logon for example
-		$imgThumbSmall = vignette($vali['fullname'], $maxwidthsmall, $maxheightsmall, '_small', 50, "thumbs");
-		if (preg_match('/Error/', $imgThumbSmall))
-			print $imgThumbSmall . "\n";
+        // Create small thumbs for image
+        // Used on logon for example
+        $imgThumbSmall = vignette($vali['fullname'], $maxwidthsmall, $maxheightsmall, '_small', 50, "thumbs");
+        if (preg_match('/Error/', $imgThumbSmall)) {
+            print $imgThumbSmall . "\n";
+        }
 
-		// Create mini thumbs for image (Ratio is near 16/9)
-		// Used on menu or for setup page for example
-		$imgThumbMini = vignette($vali['fullname'], $maxwidthmini, $maxheightmini, '_mini', 50, "thumbs");
-		if (preg_match('/Error/', $imgThumbMini))
-			print $imgThumbMini . "\n";
-	}
+        // Create mini thumbs for image (Ratio is near 16/9)
+        // Used on menu or for setup page for example
+        $imgThumbMini = vignette($vali['fullname'], $maxwidthmini, $maxheightmini, '_mini', 50, "thumbs");
+        if (preg_match('/Error/', $imgThumbMini)) {
+            print $imgThumbMini . "\n";
+        }
+    }
 }
 
 $db->close(); // Close $db database opened handler

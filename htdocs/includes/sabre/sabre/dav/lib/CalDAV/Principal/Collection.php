@@ -16,7 +16,8 @@ use Sabre\DAVACL;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Collection extends DAVACL\PrincipalCollection {
+class Collection extends DAVACL\PrincipalCollection
+{
 
     /**
      * Returns a child object based on principal information
@@ -24,10 +25,8 @@ class Collection extends DAVACL\PrincipalCollection {
      * @param array $principalInfo
      * @return User
      */
-    function getChildForPrincipal(array $principalInfo) {
-
+    public function getChildForPrincipal(array $principalInfo)
+    {
         return new User($this->principalBackend, $principalInfo);
-
     }
-
 }

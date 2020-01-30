@@ -12,15 +12,16 @@ use Sabre\HTTP;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class HttpCopyTest extends DAVServerTest {
+class HttpCopyTest extends DAVServerTest
+{
 
     /**
      * Sets up the DAV tree.
      *
      * @return void
      */
-    function setUpTree() {
-
+    public function setUpTree()
+    {
         $this->tree = new Mock\Collection('root', [
             'file1' => 'content1',
             'file2' => 'content2',
@@ -29,43 +30,39 @@ class HttpCopyTest extends DAVServerTest {
                 'file4' => 'content4',
             ]
         ]);
-
     }
     
-    function testCopyFile() {
-
+    public function testCopyFile()
+    {
         $request = new HTTP\Request('COPY', '/file1', [
             'Destination' => '/file5'
         ]);
         $response = $this->request($request);
         $this->assertEquals(201, $response->getStatus());
         $this->assertEquals('content1', $this->tree->getChild('file5')->get());
-
     }
 
-    function testCopyFileToSelf() {
-
+    public function testCopyFileToSelf()
+    {
         $request = new HTTP\Request('COPY', '/file1', [
             'Destination' => '/file1'
         ]);
         $response = $this->request($request);
         $this->assertEquals(403, $response->getStatus());
-
     }
 
-    function testCopyFileToExisting() {
-
+    public function testCopyFileToExisting()
+    {
         $request = new HTTP\Request('COPY', '/file1', [
             'Destination' => '/file2'
         ]);
         $response = $this->request($request);
         $this->assertEquals(204, $response->getStatus());
         $this->assertEquals('content1', $this->tree->getChild('file2')->get());
-
     }
 
-    function testCopyFileToExistingOverwriteT() {
-
+    public function testCopyFileToExistingOverwriteT()
+    {
         $request = new HTTP\Request('COPY', '/file1', [
             'Destination' => '/file2',
             'Overwrite'   => 'T',
@@ -73,32 +70,29 @@ class HttpCopyTest extends DAVServerTest {
         $response = $this->request($request);
         $this->assertEquals(204, $response->getStatus());
         $this->assertEquals('content1', $this->tree->getChild('file2')->get());
-
     }
    
-    function testCopyFileToExistingOverwriteBadValue() {
-
+    public function testCopyFileToExistingOverwriteBadValue()
+    {
         $request = new HTTP\Request('COPY', '/file1', [
             'Destination' => '/file2',
             'Overwrite'   => 'B',
         ]);
         $response = $this->request($request);
         $this->assertEquals(400, $response->getStatus());
-
     }
 
-    function testCopyFileNonExistantParent() {
-
+    public function testCopyFileNonExistantParent()
+    {
         $request = new HTTP\Request('COPY', '/file1', [
             'Destination' => '/notfound/file2',
         ]);
         $response = $this->request($request);
         $this->assertEquals(409, $response->getStatus());
-
     }
 
-    function testCopyFileToExistingOverwriteF() {
-
+    public function testCopyFileToExistingOverwriteF()
+    {
         $request = new HTTP\Request('COPY', '/file1', [
             'Destination' => '/file2',
             'Overwrite'   => 'F',
@@ -106,17 +100,14 @@ class HttpCopyTest extends DAVServerTest {
         $response = $this->request($request);
         $this->assertEquals(412, $response->getStatus());
         $this->assertEquals('content2', $this->tree->getChild('file2')->get());
-
     }
 
-    function testCopyFileToExistinBlockedCreateDestination() {
-
-        $this->server->on('beforeBind', function($path) {
-
+    public function testCopyFileToExistinBlockedCreateDestination()
+    {
+        $this->server->on('beforeBind', function ($path) {
             if ($path === 'file2') {
                 return false;
             }
-
         });
         $request = new HTTP\Request('COPY', '/file1', [
             'Destination' => '/file2',
@@ -126,43 +117,39 @@ class HttpCopyTest extends DAVServerTest {
 
         // This checks if the destination file is intact.
         $this->assertEquals('content2', $this->tree->getChild('file2')->get());
-
     }
 
-    function testCopyColl() {
-
+    public function testCopyColl()
+    {
         $request = new HTTP\Request('COPY', '/coll1', [
             'Destination' => '/coll2'
         ]);
         $response = $this->request($request);
         $this->assertEquals(201, $response->getStatus());
         $this->assertEquals('content3', $this->tree->getChild('coll2')->getChild('file3')->get());
-
     }
 
-    function testCopyCollToSelf() {
-
+    public function testCopyCollToSelf()
+    {
         $request = new HTTP\Request('COPY', '/coll1', [
             'Destination' => '/coll1'
         ]);
         $response = $this->request($request);
         $this->assertEquals(403, $response->getStatus());
-
     }
 
-    function testCopyCollToExisting() {
-
+    public function testCopyCollToExisting()
+    {
         $request = new HTTP\Request('COPY', '/coll1', [
             'Destination' => '/file2'
         ]);
         $response = $this->request($request);
         $this->assertEquals(204, $response->getStatus());
         $this->assertEquals('content3', $this->tree->getChild('file2')->getChild('file3')->get());
-
     }
 
-    function testCopyCollToExistingOverwriteT() {
-
+    public function testCopyCollToExistingOverwriteT()
+    {
         $request = new HTTP\Request('COPY', '/coll1', [
             'Destination' => '/file2',
             'Overwrite'   => 'T',
@@ -170,11 +157,10 @@ class HttpCopyTest extends DAVServerTest {
         $response = $this->request($request);
         $this->assertEquals(204, $response->getStatus());
         $this->assertEquals('content3', $this->tree->getChild('file2')->getChild('file3')->get());
-
     }
 
-    function testCopyCollToExistingOverwriteF() {
-
+    public function testCopyCollToExistingOverwriteF()
+    {
         $request = new HTTP\Request('COPY', '/coll1', [
             'Destination' => '/file2',
             'Overwrite'   => 'F',
@@ -182,18 +168,14 @@ class HttpCopyTest extends DAVServerTest {
         $response = $this->request($request);
         $this->assertEquals(412, $response->getStatus());
         $this->assertEquals('content2', $this->tree->getChild('file2')->get());
-
     }
 
-    function testCopyCollIntoSubtree() {
-
+    public function testCopyCollIntoSubtree()
+    {
         $request = new HTTP\Request('COPY', '/coll1', [
             'Destination' => '/coll1/subcol',
         ]);
         $response = $this->request($request);
         $this->assertEquals(409, $response->getStatus());
-
     }
-
-
 }

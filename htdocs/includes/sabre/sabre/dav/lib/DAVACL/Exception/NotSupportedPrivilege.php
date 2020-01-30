@@ -12,7 +12,8 @@ use Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class NotSupportedPrivilege extends DAV\Exception\PreconditionFailed {
+class NotSupportedPrivilege extends DAV\Exception\PreconditionFailed
+{
 
     /**
      * Adds in extra information in the xml response.
@@ -23,13 +24,11 @@ class NotSupportedPrivilege extends DAV\Exception\PreconditionFailed {
      * @param \DOMElement $errorNode
      * @return void
      */
-    function serialize(DAV\Server $server, \DOMElement $errorNode) {
-
+    public function serialize(DAV\Server $server, \DOMElement $errorNode)
+    {
         $doc = $errorNode->ownerDocument;
 
         $np = $doc->createElementNS('DAV:', 'd:not-supported-privilege');
         $errorNode->appendChild($np);
-
     }
-
 }

@@ -17,7 +17,8 @@ use Sabre\DAV\Locks\LockInfo;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class File extends AbstractBackend {
+class File extends AbstractBackend
+{
 
     /**
      * The storage file
@@ -31,10 +32,9 @@ class File extends AbstractBackend {
      *
      * @param string $locksFile path to file
      */
-    function __construct($locksFile) {
-
+    public function __construct($locksFile)
+    {
         $this->locksFile = $locksFile;
-
     }
 
     /**
@@ -50,33 +50,30 @@ class File extends AbstractBackend {
      * @param bool $returnChildLocks
      * @return array
      */
-    function getLocks($uri, $returnChildLocks) {
-
+    public function getLocks($uri, $returnChildLocks)
+    {
         $newLocks = [];
 
         $locks = $this->getData();
 
         foreach ($locks as $lock) {
-
             if ($lock->uri === $uri ||
                 //deep locks on parents
                 ($lock->depth != 0 && strpos($uri, $lock->uri . '/') === 0) ||
 
                 // locks on children
                 ($returnChildLocks && (strpos($lock->uri, $uri . '/') === 0))) {
-
                 $newLocks[] = $lock;
-
             }
-
         }
 
         // Checking if we can remove any of these locks
         foreach ($newLocks as $k => $lock) {
-            if (time() > $lock->timeout + $lock->created) unset($newLocks[$k]);
+            if (time() > $lock->timeout + $lock->created) {
+                unset($newLocks[$k]);
+            }
         }
         return $newLocks;
-
     }
 
     /**
@@ -86,7 +83,8 @@ class File extends AbstractBackend {
      * @param LockInfo $lockInfo
      * @return bool
      */
-    function lock($uri, LockInfo $lockInfo) {
+    public function lock($uri, LockInfo $lockInfo)
+    {
 
         // We're making the lock timeout 30 minutes
         $lockInfo->timeout = 1800;
@@ -106,7 +104,6 @@ class File extends AbstractBackend {
         $locks[] = $lockInfo;
         $this->putData($locks);
         return true;
-
     }
 
     /**
@@ -116,21 +113,17 @@ class File extends AbstractBackend {
      * @param LockInfo $lockInfo
      * @return bool
      */
-    function unlock($uri, LockInfo $lockInfo) {
-
+    public function unlock($uri, LockInfo $lockInfo)
+    {
         $locks = $this->getData();
         foreach ($locks as $k => $lock) {
-
             if ($lock->token == $lockInfo->token) {
-
                 unset($locks[$k]);
                 $this->putData($locks);
                 return true;
-
             }
         }
         return false;
-
     }
 
     /**
@@ -138,9 +131,11 @@ class File extends AbstractBackend {
      *
      * @return array
      */
-    protected function getData() {
-
-        if (!file_exists($this->locksFile)) return [];
+    protected function getData()
+    {
+        if (!file_exists($this->locksFile)) {
+            return [];
+        }
 
         // opening up the file, and creating a shared lock
         $handle = fopen($this->locksFile, 'r');
@@ -155,9 +150,10 @@ class File extends AbstractBackend {
 
         // Unserializing and checking if the resource file contains data for this file
         $data = unserialize($data);
-        if (!$data) return [];
+        if (!$data) {
+            return [];
+        }
         return $data;
-
     }
 
     /**
@@ -166,7 +162,8 @@ class File extends AbstractBackend {
      * @param array $newData
      * @return void
      */
-    protected function putData(array $newData) {
+    protected function putData(array $newData)
+    {
 
         // opening up the file, and creating an exclusive lock
         $handle = fopen($this->locksFile, 'a+');
@@ -179,7 +176,5 @@ class File extends AbstractBackend {
         fwrite($handle, serialize($newData));
         flock($handle, LOCK_UN);
         fclose($handle);
-
     }
-
 }

@@ -31,8 +31,14 @@ if (file_exists(__DIR__ . '/config.user.php')) {
 }
 
 foreach ($config as $key => $value) {
-    if (!defined($key)) define($key, $value);
+    if (!defined($key)) {
+        define($key, $value);
+    }
 }
 
-if (!file_exists(SABRE_TEMPDIR)) mkdir(SABRE_TEMPDIR);
-if (file_exists('.sabredav')) unlink('.sabredav');
+if (!file_exists(SABRE_TEMPDIR)) {
+    mkdir(SABRE_TEMPDIR);
+}
+if (file_exists('.sabredav')) {
+    unlink('.sabredav');
+}

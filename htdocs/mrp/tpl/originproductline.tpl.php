@@ -17,10 +17,9 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
-{
-	print "Error, template page can't be called as URL";
-	exit;
+if (empty($conf) || ! is_object($conf)) {
+    print "Error, template page can't be called as URL";
+    exit;
 }
 
 ?>
@@ -35,7 +34,9 @@ print '<td class="center">'.($this->tpl['disable_stock_change'] ? yn($this->tpl[
 //print '<td class="right">'.$this->tpl['efficiency'].'</td>';
 
 $selected=1;
-if (!empty($selectedLines) && !in_array($this->tpl['id'], $selectedLines)) $selected=0;
+if (!empty($selectedLines) && !in_array($this->tpl['id'], $selectedLines)) {
+    $selected=0;
+}
 print '<td class="center">';
 //print '<input id="cb'.$this->tpl['id'].'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$this->tpl['id'].'"'.($selected?' checked="checked"':'').'>';
 print '</td>';

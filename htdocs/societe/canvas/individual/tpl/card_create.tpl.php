@@ -17,10 +17,9 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
-{
-	print "Error, template page can't be called as URL";
-	exit;
+if (empty($conf) || ! is_object($conf)) {
+    print "Error, template page can't be called as URL";
+    exit;
 }
 
 ?>
@@ -169,7 +168,9 @@ if (! empty($conf->barcode->enabled)) { ?>
 	<td colspan="3"><?php echo $this->control->tpl['yn_assujtva']; ?></td>
 </tr>
 
-<?php if(!empty($this->control->tpl['localtax'])) echo $this->control->tpl['localtax']; ?>
+<?php if (!empty($this->control->tpl['localtax'])) {
+    echo $this->control->tpl['localtax'];
+} ?>
 
 <?php if ($user->rights->societe->client->voir) { ?>
 <tr>

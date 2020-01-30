@@ -2,7 +2,8 @@
 
 namespace Sabre\DAV;
 
-class StringUtilTest extends \PHPUnit_Framework_TestCase {
+class StringUtilTest extends \PHPUnit_Framework_TestCase
+{
 
     /**
      * @param string $haystack
@@ -14,14 +15,13 @@ class StringUtilTest extends \PHPUnit_Framework_TestCase {
      *
      * @dataProvider dataset
      */
-    function testTextMatch($haystack, $needle, $collation, $matchType, $result) {
-
+    public function testTextMatch($haystack, $needle, $collation, $matchType, $result)
+    {
         $this->assertEquals($result, StringUtil::textMatch($haystack, $needle, $collation, $matchType));
-
     }
 
-    function dataset() {
-
+    public function dataset()
+    {
         return [
             ['FOOBAR', 'FOO',    'i;octet', 'contains', true],
             ['FOOBAR', 'foo',    'i;octet', 'contains', false],
@@ -68,30 +68,27 @@ class StringUtilTest extends \PHPUnit_Framework_TestCase {
             ['FOOBAR', 'BAR',    'i;unicode-casemap', 'ends-with', true],
             ['FOOBAR', 'bar',    'i;unicode-casemap', 'ends-with', true],
         ];
-
     }
 
     /**
      * @expectedException Sabre\DAV\Exception\BadRequest
      */
-    function testBadCollation() {
-
+    public function testBadCollation()
+    {
         StringUtil::textMatch('foobar', 'foo', 'blabla', 'contains');
-
     }
 
 
     /**
      * @expectedException Sabre\DAV\Exception\BadRequest
      */
-    function testBadMatchType() {
-
+    public function testBadMatchType()
+    {
         StringUtil::textMatch('foobar', 'foo', 'i;octet', 'booh');
-
     }
 
-    function testEnsureUTF8_ascii() {
-
+    public function testEnsureUTF8_ascii()
+    {
         $inputString = "harkema";
         $outputString = "harkema";
 
@@ -99,11 +96,10 @@ class StringUtilTest extends \PHPUnit_Framework_TestCase {
             $outputString,
             StringUtil::ensureUTF8($inputString)
         );
-
     }
 
-    function testEnsureUTF8_latin1() {
-
+    public function testEnsureUTF8_latin1()
+    {
         $inputString = "m\xfcnster";
         $outputString = "münster";
 
@@ -111,11 +107,10 @@ class StringUtilTest extends \PHPUnit_Framework_TestCase {
             $outputString,
             StringUtil::ensureUTF8($inputString)
         );
-
     }
 
-    function testEnsureUTF8_utf8() {
-
+    public function testEnsureUTF8_utf8()
+    {
         $inputString = "m\xc3\xbcnster";
         $outputString = "münster";
 
@@ -123,7 +118,5 @@ class StringUtilTest extends \PHPUnit_Framework_TestCase {
             $outputString,
             StringUtil::ensureUTF8($inputString)
         );
-
     }
-
 }

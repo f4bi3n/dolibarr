@@ -27,18 +27,21 @@ require_once DOL_DOCUMENT_ROOT.'/hrm/class/establishment.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'hrm'));
 
-if (! $user->admin)
-	accessforbidden();
+if (! $user->admin) {
+    accessforbidden();
+}
 
 $error=0;
 
 // List of statut
 static $tmpstatus2label=array(
-		'0'=>'OpenEtablishment',
-		'1'=>'CloseEtablishment'
+        '0'=>'OpenEtablishment',
+        '1'=>'CloseEtablishment'
 );
 $status2label=array('');
-foreach ($tmpstatus2label as $key => $val) $status2label[$key]=$langs->trans($val);
+foreach ($tmpstatus2label as $key => $val) {
+    $status2label[$key]=$langs->trans($val);
+}
 
 /*
  * Actions
@@ -51,11 +54,15 @@ llxHeader('', $langs->trans("Establishments"));
 
 $sortorder     = GETPOST("sortorder");
 $sortfield     = GETPOST("sortfield");
-if (!$sortorder) $sortorder="DESC";
-if (!$sortfield) $sortfield="e.rowid";
+if (!$sortorder) {
+    $sortorder="DESC";
+}
+if (!$sortfield) {
+    $sortfield="e.rowid";
+}
 
 if (empty($page) || $page == -1) {
-	$page = 0 ;
+    $page = 0 ;
 }
 
 $offset = $conf->liste_limit * $page;
@@ -83,58 +90,51 @@ $sql.= $db->order($sortfield, $sortorder);
 $sql.= $db->plimit($limit+1, $offset);
 
 $result = $db->query($sql);
-if ($result)
-{
-	$num = $db->num_rows($result);
-	$i = 0;
+if ($result) {
+    $num = $db->num_rows($result);
+    $i = 0;
 
-	// Load attribute_label
-	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre">';
-	print_liste_field_titre("Name", $_SERVER["PHP_SELF"], "e.name", "", "", "", $sortfield, $sortorder);
-	print_liste_field_titre("Address", $_SERVER["PHP_SELF"], "e.address", "", "", "", $sortfield, $sortorder);
-	print_liste_field_titre("Zipcode", $_SERVER["PHP_SELF"], "e.zip", "", "", "", $sortfield, $sortorder);
-	print_liste_field_titre("Town", $_SERVER["PHP_SELF"], "e.town", "", "", "", $sortfield, $sortorder);
-	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "e.status", "", "", '', $sortfield, $sortorder, 'right ');
-	print "</tr>\n";
+    // Load attribute_label
+    print '<table class="noborder centpercent">';
+    print '<tr class="liste_titre">';
+    print_liste_field_titre("Name", $_SERVER["PHP_SELF"], "e.name", "", "", "", $sortfield, $sortorder);
+    print_liste_field_titre("Address", $_SERVER["PHP_SELF"], "e.address", "", "", "", $sortfield, $sortorder);
+    print_liste_field_titre("Zipcode", $_SERVER["PHP_SELF"], "e.zip", "", "", "", $sortfield, $sortorder);
+    print_liste_field_titre("Town", $_SERVER["PHP_SELF"], "e.town", "", "", "", $sortfield, $sortorder);
+    print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "e.status", "", "", '', $sortfield, $sortorder, 'right ');
+    print "</tr>\n";
 
-	if ($num > 0)
-    {
-	    $establishmentstatic=new Establishment($db);
+    if ($num > 0) {
+        $establishmentstatic=new Establishment($db);
 
-		while ($i < min($num, $limit))
-		{
+        while ($i < min($num, $limit)) {
             $obj = $db->fetch_object($result);
 
-			$establishmentstatic->id=$obj->rowid;
-			$establishmentstatic->name=$obj->name;
-			$establishmentstatic->status=$obj->status;
+            $establishmentstatic->id=$obj->rowid;
+            $establishmentstatic->name=$obj->name;
+            $establishmentstatic->status=$obj->status;
 
 
-			print '<tr class="oddeven">';
-			print '<td>'.$establishmentstatic->getNomUrl(1).'</td>';
+            print '<tr class="oddeven">';
+            print '<td>'.$establishmentstatic->getNomUrl(1).'</td>';
             print '<td class="left">'.$obj->address.'</td>';
-			print '<td class="left">'.$obj->zip.'</td>';
-			print '<td class="left">'.$obj->town.'</td>';
+            print '<td class="left">'.$obj->zip.'</td>';
+            print '<td class="left">'.$obj->town.'</td>';
 
             print '<td class="right">';
-			print $establishmentstatic->getLibStatut(5);
-			print '</td>';
+            print $establishmentstatic->getLibStatut(5);
+            print '</td>';
             print "</tr>\n";
 
             $i++;
         }
-    }
-    else
-    {
+    } else {
         print '<tr class="oddeven"><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
     }
 
-	print '</table>';
-}
-else
-{
-	dol_print_error($db);
+    print '</table>';
+} else {
+    dol_print_error($db);
 }
 
 dol_fiche_end();

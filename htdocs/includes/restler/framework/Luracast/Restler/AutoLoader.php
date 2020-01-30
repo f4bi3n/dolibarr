@@ -16,11 +16,15 @@ namespace Luracast\Restler {
  */
 class AutoLoader
 {
-    protected static $instance, // the singleton instance reference
-                     $perfectLoaders, // used to keep the ideal list of loaders
-                     $rogueLoaders = array(), // other auto loaders now unregistered
-                     $classMap = array(), // the class to include file mapping
-                     $aliases = array( // aliases and prefixes instead of null list aliases
+    protected static $instance;
+    // the singleton instance reference
+    protected static $perfectLoaders;
+    // used to keep the ideal list of loaders
+    protected static $rogueLoaders = array();
+    // other auto loaders now unregistered
+    protected static $classMap = array();
+    // the class to include file mapping
+                     protected static $aliases = array( // aliases and prefixes instead of null list aliases
                          'Luracast\\Restler' => null,
                          'Luracast\\Restler\\Format' => null,
                          'Luracast\\Restler\\Data' => null,
@@ -50,11 +54,13 @@ class AutoLoader
      * @return bool false if the path cannot be resolved
      *              or the resolved absolute path.
      */
-    public static function addPath($path) {
-        if (false === $path = stream_resolve_include_path($path))
+    public static function addPath($path)
+    {
+        if (false === $path = stream_resolve_include_path($path)) {
             return false;
-        else
+        } else {
             set_include_path($path.PATH_SEPARATOR.get_include_path());
+        }
         return $path;
     }
 
@@ -65,17 +71,23 @@ class AutoLoader
      *
      * @return callable the one true auto loader.
      */
-    public static function thereCanBeOnlyOne() {
-        if (static::$perfectLoaders === spl_autoload_functions())
+    public static function thereCanBeOnlyOne()
+    {
+        if (static::$perfectLoaders === spl_autoload_functions()) {
             return static::$instance;
+        }
 
-        if (false !== $loaders = spl_autoload_functions())
-            if (0 < $count = count($loaders))
+        if (false !== $loaders = spl_autoload_functions()) {
+            if (0 < $count = count($loaders)) {
                 for ($i = 0, static::$rogueLoaders += $loaders;
                      $i < $count && false != ($loader = $loaders[$i]);
-                     $i++)
-                    if ($loader !== static::$perfectLoaders[0])
+                     $i++) {
+                    if ($loader !== static::$perfectLoaders[0]) {
                         spl_autoload_unregister($loader);
+                    }
+                }
+            }
+        }
 
         return static::$instance;
     }
@@ -104,12 +116,15 @@ class AutoLoader
             return false;
         }
 
-        if (empty(static::$classMap[$key]))
+        if (empty(static::$classMap[$key])) {
             static::$classMap[$key] = $value;
+        }
 
-        if (is_string($alias = static::$classMap[$key]))
-            if (isset(static::$classMap[$alias]))
+        if (is_string($alias = static::$classMap[$key])) {
+            if (isset(static::$classMap[$alias])) {
                 return static::$classMap[$alias];
+            }
+        }
 
         return static::$classMap[$key];
     }
@@ -125,7 +140,6 @@ class AutoLoader
         static::$perfectLoaders = array($this);
 
         if (false === static::seen('__include_path')) {
-
             $paths = explode(PATH_SEPARATOR, get_include_path());
             $slash = DIRECTORY_SEPARATOR;
             $dir = dirname(__DIR__);
@@ -139,10 +153,10 @@ class AutoLoader
                     array($dir, 'vendor', 'composer'),
                     array($dir, '..', '..', '..', 'php'),
                     array($dir, 'vendor', 'php'))
-                as $includePath)
+                as $includePath) {
                 if (false !== $path = stream_resolve_include_path(
-                        implode($slash, $includePath)
-                    ))
+                    implode($slash, $includePath)
+                )) {
                     if ('composer' == end($includePath) &&
                         false !== $classmapPath = stream_resolve_include_path(
                             "$path{$slash}autoload_classmap.php"
@@ -157,13 +171,17 @@ class AutoLoader
                                 "$path{$slash}autoload_namespaces.php"
                             ))
                         );
-                    } else
+                    } else {
                         $paths[] = $path;
+                    }
+                }
+            }
 
             $paths = array_filter(array_map(
                 function ($path) {
-                    if (false == $realPath = @realpath($path))
+                    if (false == $realPath = @realpath($path)) {
                         return null;
+                    }
                     return $realPath . DIRECTORY_SEPARATOR;
                 },
                 $paths
@@ -202,10 +220,11 @@ class AutoLoader
     private function loadPrefixes($className)
     {
         $currentClass = $className;
-        if (false !== $pos = strrpos($className, '\\'))
+        if (false !== $pos = strrpos($className, '\\')) {
             $className = substr($className, $pos);
-        else
+        } else {
             $className = "\\$className";
+        }
 
         for (
             $i = 0,
@@ -234,7 +253,7 @@ class AutoLoader
     private function loadAliases($className)
     {
         $file = false;
-        if (preg_match('/(.+)(\\\\\w+$)/U', $className, $parts))
+        if (preg_match('/(.+)(\\\\\w+$)/U', $className, $parts)) {
             for (
                 $i = 0,
                 $aliases = isset(static::$aliases[$parts[1]])
@@ -246,6 +265,7 @@ class AutoLoader
                     $className
                 )
             ) ;
+        }
 
         return $file;
     }
@@ -262,22 +282,26 @@ class AutoLoader
      *
      * @return bool false unless className now exists
      */
-    private function loadLastResort($className, $loader = null) {
-    	// @CHANGE LDR Add protection to avoid conflict with other autoloader
-    	/*print 'Try to load '.$className."\n";
+    private function loadLastResort($className, $loader = null)
+    {
+        // @CHANGE LDR Add protection to avoid conflict with other autoloader
+        /*print 'Try to load '.$className."\n";
     	 if (in_array($className, array('Google_Client')))
     	 {
     	 return false;
     	 }*/
-    	$loaders = array_unique(static::$rogueLoaders);
+        $loaders = array_unique(static::$rogueLoaders);
         if (isset($loader)) {
-            if (false === array_search($loader, $loaders))
+            if (false === array_search($loader, $loaders)) {
                 static::$rogueLoaders[] = $loader;
+            }
             return $this->loadThisLoader($className, $loader);
         }
-        foreach ($loaders as $loader)
-            if (false !== $file = $this->loadThisLoader($className, $loader))
+        foreach ($loaders as $loader) {
+            if (false !== $file = $this->loadThisLoader($className, $loader)) {
                 return $file;
+            }
+        }
 
         return false;
     }
@@ -316,13 +340,19 @@ class AutoLoader
      */
     private function alias($className, $currentClass)
     {
-        if ($className == 'Luracast\Restler\string') return;
-        if ($className == 'Luracast\Restler\mixed') return;
+        if ($className == 'Luracast\Restler\string') {
+            return;
+        }
+        if ($className == 'Luracast\Restler\mixed') {
+            return;
+        }
         if ($className != $currentClass
-            && false !== strpos($className, $currentClass))
-                if (!class_exists($currentClass, false)
-                    && class_alias($className, $currentClass))
-                        static::seen($currentClass, $className);
+            && false !== strpos($className, $currentClass)) {
+            if (!class_exists($currentClass, false)
+                    && class_alias($className, $currentClass)) {
+                static::seen($currentClass, $className);
+            }
+        }
     }
 
     /**
@@ -340,11 +370,13 @@ class AutoLoader
 
         /** The short version we've done this before and found it in cache */
         if (false !== $file = static::seen($className)) {
-            if (!$this->exists($className))
-                if (is_callable($file))
+            if (!$this->exists($className)) {
+                if (is_callable($file)) {
                     $file = $this->loadLastResort($className, $file);
-                elseif($file = stream_resolve_include_path($file))
+                } elseif ($file = stream_resolve_include_path($file)) {
                     $file = static::loadFile($file);
+                }
+            }
 
             $this->alias($className, $currentClass);
             return $file;
@@ -354,15 +386,19 @@ class AutoLoader
 
         /** replace \ with / and _ in CLASS NAME with / = PSR-0 in 3 lines */
         $file = preg_replace("/\\\|_(?=\w+$)/", DIRECTORY_SEPARATOR, $className);
-        if (false === $file = stream_resolve_include_path("$file.php"))
+        if (false === $file = stream_resolve_include_path("$file.php")) {
             return false;
+        }
 
         /** have we loaded this file before could this be an alias */
         if (in_array($file, get_included_files())) {
-            if (false !== $sameFile = array_search($file, static::$classMap))
-                if (!$this->exists($className, $file))
-                    if (false !== strpos($sameFile, $className))
+            if (false !== $sameFile = array_search($file, static::$classMap)) {
+                if (!$this->exists($className, $file)) {
+                    if (false !== strpos($sameFile, $className)) {
                         $this->alias($sameFile, $className);
+                    }
+                }
+            }
 
             return $file;
         }
@@ -370,18 +406,24 @@ class AutoLoader
         $state = array_merge(get_declared_classes(), get_declared_interfaces());
 
         if (false !== $result = static::loadFile($file)) {
-
-            if ($this->exists($className, $file))
+            if ($this->exists($className, $file)) {
                 $this->alias($className, $currentClass);
-            elseif (false != $diff = array_diff(
-                array_merge(get_declared_classes(), get_declared_interfaces()), $state))
-                foreach ($diff as $autoLoaded)
-                    if ($this->exists($autoLoaded, $file))
-                        if (false !== strpos($autoLoaded, $className))
+            } elseif (false != $diff = array_diff(
+                array_merge(get_declared_classes(), get_declared_interfaces()),
+                $state
+            )) {
+                foreach ($diff as $autoLoaded) {
+                    if ($this->exists($autoLoaded, $file)) {
+                        if (false !== strpos($autoLoaded, $className)) {
                             $this->alias($autoLoaded, $className);
+                        }
+                    }
+                }
+            }
 
-            if (!$this->exists($currentClass))
+            if (!$this->exists($currentClass)) {
                 $result = false;
+            }
         }
 
         return $result;
@@ -399,11 +441,13 @@ class AutoLoader
     private function exists($className, $mapping = null)
     {
         if (class_exists($className, false)
-            || interface_exists($className, false))
-            if (isset($mapping))
+            || interface_exists($className, false)) {
+            if (isset($mapping)) {
                 return static::seen($className, $mapping);
-            else
+            } else {
                 return true;
+            }
+        }
         return false;
     }
 
@@ -416,22 +460,27 @@ class AutoLoader
      */
     public function __invoke($className)
     {
-        if (empty($className))
+        if (empty($className)) {
             return false;
+        }
 
-        if (false !== $includeReference = $this->discover($className))
+        if (false !== $includeReference = $this->discover($className)) {
             return $includeReference;
+        }
 
         static::thereCanBeOnlyOne();
 
-        if (false !== $includeReference = $this->loadAliases($className))
+        if (false !== $includeReference = $this->loadAliases($className)) {
             return $includeReference;
+        }
 
-        if (false !== $includeReference = $this->loadPrefixes($className))
+        if (false !== $includeReference = $this->loadPrefixes($className)) {
             return $includeReference;
+        }
 
-        if (false !== $includeReference = $this->loadLastResort($className))
+        if (false !== $includeReference = $this->loadLastResort($className)) {
             return $includeReference;
+        }
 
         static::seen($className, true);
         return null;
@@ -448,8 +497,8 @@ namespace {
      *
      * @return mixed|bool false if the file could not be included.
      */
-    function Luracast_Restler_autoloaderInclude($path) {
+    function Luracast_Restler_autoloaderInclude($path)
+    {
         return include $path;
     }
 }
-

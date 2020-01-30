@@ -91,9 +91,9 @@ class FormTicket
     public $param = array();
 
     /**
-	 * @var string Error code (or message)
-	 */
-	public $error;
+     * @var string Error code (or message)
+     */
+    public $error;
 
 
     /**
@@ -150,13 +150,15 @@ class FormTicket
 
         print "\n<!-- Begin form TICKET -->\n";
 
-        if ($withdolfichehead) dol_fiche_head(null, 'card', '', 0, '');
+        if ($withdolfichehead) {
+            dol_fiche_head(null, 'card', '', 0, '');
+        }
 
         print '<form method="POST" '.($withdolfichehead ? '' : 'style="margin-bottom: 30px;" ').'name="ticket" id="form_create_ticket" enctype="multipart/form-data" action="'.$this->param["returnurl"].'">';
         print '<input type="hidden" name="token" value="'.newToken().'">';
         print '<input type="hidden" name="action" value="'.$this->action.'">';
         foreach ($this->param as $key => $value) {
-        	print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
+            print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
         }
         print '<input type="hidden" name="fk_user_create" value="'.$this->fk_user_create.'">';
 
@@ -236,8 +238,7 @@ class FormTicket
 
         // If public form, display more information
         $toolbarname = 'dolibarr_notes';
-        if ($this->ispublic)
-        {
+        if ($this->ispublic) {
             $toolbarname = 'dolibarr_details';
             print '<div class="warning">'.($conf->global->TICKET_PUBLIC_TEXT_HELP_MESSAGE ? $conf->global->TICKET_PUBLIC_TEXT_HELP_MESSAGE : $langs->trans('TicketPublicPleaseBeAccuratelyDescribe')).'</div>';
         }
@@ -341,16 +342,14 @@ class FormTicket
             }
 
             // Notify thirdparty at creation
-            if (empty($this->ispublic))
-            {
+            if (empty($this->ispublic)) {
                 print '<tr><td><label for="notify_tiers_at_create">'.$langs->trans("TicketNotifyTiersAtCreation").'</label></td><td>';
                 print '<input type="checkbox" id="notify_tiers_at_create" name="notify_tiers_at_create"'.($this->withnotifytiersatcreate ? ' checked="checked"' : '').'>';
                 print '</td></tr>';
             }
         }
 
-        if (!empty($conf->projet->enabled) && !$this->ispublic)
-        {
+        if (!empty($conf->projet->enabled) && !$this->ispublic) {
             $formproject = new FormProjets($this->db);
             print '<tr><td><label for="project"><span class="">'.$langs->trans("Project").'</span></label></td><td>';
             print $formproject->select_projects(-1, GETPOST('projectid', 'int'), 'projectid', 0, 0, 1, 1);
@@ -412,22 +411,23 @@ class FormTicket
         // Other attributes
         $parameters = array();
         $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $ticketstat, $this->action); // Note that $action and $object may have been modified by hook
-        if (empty($reshook))
-        {
+        if (empty($reshook)) {
             print $ticketstat->showOptionals($extrafields, 'edit');
         }
 
         print '</table>';
 
-        if ($withdolfichehead) dol_fiche_end();
+        if ($withdolfichehead) {
+            dol_fiche_end();
+        }
 
-		print '<div class="center">';
+        print '<div class="center">';
         print '<input class="button" type="submit" name="add" value="'.$langs->trans(($this->withthreadid > 0 ? "SendResponse" : "NewTicket")).'" />';
         if ($this->withcancel) {
             print " &nbsp; &nbsp; &nbsp;";
             print "<input class=\"button\" type=\"submit\" name=\"cancel\" value=\"".$langs->trans("Cancel")."\">";
         }
-		print '</div>';
+        print '</div>';
 
         print "</form>\n";
         print "<!-- End form TICKET -->\n";
@@ -737,19 +737,21 @@ class FormTicket
      */
     public function clear_attached_files()
     {
-    	// phpcs:enable
-    	global $conf, $user;
-    	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+        // phpcs:enable
+        global $conf, $user;
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-    	// Set tmp user directory
-    	$vardir = $conf->user->dir_output."/".$user->id;
-    	$upload_dir = $vardir.'/temp/'; // TODO Add $keytoavoidconflict in upload_dir path
-    	if (is_dir($upload_dir)) dol_delete_dir_recursive($upload_dir);
+        // Set tmp user directory
+        $vardir = $conf->user->dir_output."/".$user->id;
+        $upload_dir = $vardir.'/temp/'; // TODO Add $keytoavoidconflict in upload_dir path
+        if (is_dir($upload_dir)) {
+            dol_delete_dir_recursive($upload_dir);
+        }
 
-    	$keytoavoidconflict = empty($this->trackid) ? '' : '-'.$this->trackid; // this->trackid must be defined
-    	unset($_SESSION["listofpaths".$keytoavoidconflict]);
-    	unset($_SESSION["listofnames".$keytoavoidconflict]);
-    	unset($_SESSION["listofmimes".$keytoavoidconflict]);
+        $keytoavoidconflict = empty($this->trackid) ? '' : '-'.$this->trackid; // this->trackid must be defined
+        unset($_SESSION["listofpaths".$keytoavoidconflict]);
+        unset($_SESSION["listofnames".$keytoavoidconflict]);
+        unset($_SESSION["listofmimes".$keytoavoidconflict]);
     }
 
     /**
@@ -765,39 +767,39 @@ class FormTicket
         $formmail = new FormMail($this->db);
         $addfileaction = 'addfile';
 
-        if (!is_object($form)) $form = new Form($this->db);
+        if (!is_object($form)) {
+            $form = new Form($this->db);
+        }
 
         // Load translation files required by the page
         $langs->loadLangs(array('other', 'mails'));
 
         // Clear temp files. Must be done at beginning, before call of triggers
-        if (GETPOST('mode', 'alpha') == 'init' || (GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1'))
-        {
-        	$this->clear_attached_files();
+        if (GETPOST('mode', 'alpha') == 'init' || (GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1')) {
+            $this->clear_attached_files();
         }
 
         // Define output language
         $outputlangs = $langs;
         $newlang = '';
-        if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $this->param['langsmodels'];
-        if (!empty($newlang))
-        {
-        	$outputlangs = new Translate("", $conf);
-        	$outputlangs->setDefaultLang($newlang);
-        	$outputlangs->load('other');
+        if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+            $newlang = $this->param['langsmodels'];
+        }
+        if (!empty($newlang)) {
+            $outputlangs = new Translate("", $conf);
+            $outputlangs->setDefaultLang($newlang);
+            $outputlangs->load('other');
         }
 
         // Get message template for $this->param["models"] into c_email_templates
         $arraydefaultmessage = -1;
-        if ($this->param['models'] != 'none')
-        {
-        	$model_id = 0;
-        	if (array_key_exists('models_id', $this->param))
-        	{
-        		$model_id = $this->param["models_id"];
-        	}
+        if ($this->param['models'] != 'none') {
+            $model_id = 0;
+            if (array_key_exists('models_id', $this->param)) {
+                $model_id = $this->param["models_id"];
+            }
 
-        	$arraydefaultmessage = $formmail->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, $model_id); // If $model_id is empty, preselect the first one
+            $arraydefaultmessage = $formmail->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, $model_id); // If $model_id is empty, preselect the first one
         }
 
         // Define list of attached files
@@ -806,20 +808,23 @@ class FormTicket
         $listofmimes = array();
         $keytoavoidconflict = empty($this->trackid) ? '' : '-'.$this->trackid; // this->trackid must be defined
 
-        if (GETPOST('mode', 'alpha') == 'init' || (GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1'))
-        {
-        	if (!empty($arraydefaultmessage->joinfiles) && is_array($this->param['fileinit']))
-        	{
-        		foreach ($this->param['fileinit'] as $file)
-        		{
-        			$this->add_attached_files($file, basename($file), dol_mimetype($file));
-        		}
-        	}
+        if (GETPOST('mode', 'alpha') == 'init' || (GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1')) {
+            if (!empty($arraydefaultmessage->joinfiles) && is_array($this->param['fileinit'])) {
+                foreach ($this->param['fileinit'] as $file) {
+                    $this->add_attached_files($file, basename($file), dol_mimetype($file));
+                }
+            }
         }
 
-        if (!empty($_SESSION["listofpaths".$keytoavoidconflict])) $listofpaths = explode(';', $_SESSION["listofpaths".$keytoavoidconflict]);
-        if (!empty($_SESSION["listofnames".$keytoavoidconflict])) $listofnames = explode(';', $_SESSION["listofnames".$keytoavoidconflict]);
-        if (!empty($_SESSION["listofmimes".$keytoavoidconflict])) $listofmimes = explode(';', $_SESSION["listofmimes".$keytoavoidconflict]);
+        if (!empty($_SESSION["listofpaths".$keytoavoidconflict])) {
+            $listofpaths = explode(';', $_SESSION["listofpaths".$keytoavoidconflict]);
+        }
+        if (!empty($_SESSION["listofnames".$keytoavoidconflict])) {
+            $listofnames = explode(';', $_SESSION["listofnames".$keytoavoidconflict]);
+        }
+        if (!empty($_SESSION["listofmimes".$keytoavoidconflict])) {
+            $listofmimes = explode(';', $_SESSION["listofmimes".$keytoavoidconflict]);
+        }
 
         // Define output language
         $outputlangs = $langs;
@@ -885,8 +890,7 @@ class FormTicket
         print '<table class="border"  width="'.$width.'">';
 
         // External users can't send message email
-        if ($user->rights->ticket->write && !$user->socid)
-        {
+        if ($user->rights->ticket->write && !$user->socid) {
             print '<tr><td width="30%"></td><td colspan="2">';
             $checkbox_selected = (GETPOST('send_email') == "1" ? ' checked' : '');
             print '<input type="checkbox" name="send_email" value="1" id="send_msg_email" '.$checkbox_selected.'/> ';
@@ -935,13 +939,13 @@ class FormTicket
                 if (is_array($contacts) && count($contacts) > 0) {
                     foreach ($contacts as $key => $info_sendto) {
                         if ($info_sendto['email'] != '') {
-                        	$sendto[] = dol_escape_htmltag(trim($info_sendto['firstname']." ".$info_sendto['lastname'])." <".$info_sendto['email'].">")." <small>(".dol_escape_htmltag($info_sendto['libelle']).")</small>";
+                            $sendto[] = dol_escape_htmltag(trim($info_sendto['firstname']." ".$info_sendto['lastname'])." <".$info_sendto['email'].">")." <small>(".dol_escape_htmltag($info_sendto['libelle']).")</small>";
                         }
                     }
                 }
 
                 if ($ticketstat->origin_email && !in_array($this->dao->origin_email, $sendto)) {
-                	$sendto[] = dol_escape_htmltag($ticketstat->origin_email)." <small>(".$langs->trans("TicketEmailOriginIssuer").")</small>";
+                    $sendto[] = dol_escape_htmltag($ticketstat->origin_email)." <small>(".$langs->trans("TicketEmailOriginIssuer").")</small>";
                 }
 
                 if ($ticketstat->fk_soc > 0) {

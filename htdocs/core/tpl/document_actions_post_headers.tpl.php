@@ -29,25 +29,32 @@
 // $savingdocmask = dol_sanitizeFileName($object->ref).'-__file__';
 
 // Protection to avoid direct call of template
-if (empty($langs) || !is_object($langs))
-{
-	print "Error, template page can't be called as URL";
-	exit;
+if (empty($langs) || !is_object($langs)) {
+    print "Error, template page can't be called as URL";
+    exit;
 }
 
 
 $langs->load("link");
-if (empty($relativepathwithnofile)) $relativepathwithnofile='';
+if (empty($relativepathwithnofile)) {
+    $relativepathwithnofile='';
+}
 
-if (! isset($permission)) $permission = $permissiontoadd;
-if (! isset($permtoedit)) $permtoedit = $permissiontoadd;
+if (! isset($permission)) {
+    $permission = $permissiontoadd;
+}
+if (! isset($permtoedit)) {
+    $permtoedit = $permissiontoadd;
+}
 
 // Drag and drop for up and down allowed on product, thirdparty, ...
 // The drag and drop call the page core/ajax/row.php
 // If you enable the move up/down of files here, check that page that include template set its sortorder on 'position_name' instead of 'name'
 // Also the object->fk_element must be defined.
 $disablemove=1;
-if (in_array($modulepart, array('product', 'produit', 'societe', 'user', 'ticket', 'holiday', 'expensereport'))) $disablemove=0;
+if (in_array($modulepart, array('product', 'produit', 'societe', 'user', 'ticket', 'holiday', 'expensereport'))) {
+    $disablemove=0;
+}
 
 
 
@@ -55,18 +62,17 @@ if (in_array($modulepart, array('product', 'produit', 'societe', 'user', 'ticket
  * Confirm form to delete
  */
 
-if ($action == 'delete')
-{
-	$langs->load("companies"); // Need for string DeleteFile+ConfirmDeleteFiles
+if ($action == 'delete') {
+    $langs->load("companies"); // Need for string DeleteFile+ConfirmDeleteFiles
     print $form->formconfirm(
-			$_SERVER["PHP_SELF"].'?id='.$object->id.'&urlfile='.urlencode(GETPOST("urlfile")).'&linkid='.GETPOST('linkid', 'int').(empty($param) ? '' : $param),
-			$langs->trans('DeleteFile'),
-			$langs->trans('ConfirmDeleteFile'),
-			'confirm_deletefile',
-			'',
-			0,
-			1
-	);
+        $_SERVER["PHP_SELF"].'?id='.$object->id.'&urlfile='.urlencode(GETPOST("urlfile")).'&linkid='.GETPOST('linkid', 'int').(empty($param) ? '' : $param),
+        $langs->trans('DeleteFile'),
+        $langs->trans('ConfirmDeleteFile'),
+        'confirm_deletefile',
+        '',
+        0,
+        1
+    );
 }
 
 $formfile=new FormFile($db);
@@ -75,36 +81,35 @@ $formfile=new FormFile($db);
 // Caller of this include can make
 // $savingdocmask=dol_sanitizeFileName($object->ref).'-__file__';
 if (!isset($savingdocmask) || !empty($conf->global->MAIN_DISABLE_SUGGEST_REF_AS_PREFIX)) {
-	$savingdocmask='';
-	if (empty($conf->global->MAIN_DISABLE_SUGGEST_REF_AS_PREFIX)) {
-		//var_dump($modulepart);
-		if (in_array($modulepart, array(
-			'facture_fournisseur',
-			'commande_fournisseur',
-			'facture',
-			'commande',
-			'propal',
-			'supplier_proposal',
-			'ficheinter',
-			'contract',
-			'expedition',
-			'project',
-			'project_task',
-			'expensereport',
-			'tax',
-			'produit',
-			'product_batch',
-			'bom',
-			'mrp'
-		)))
-		{
-			$savingdocmask=dol_sanitizeFileName($object->ref).'-__file__';
-		}
-		/*if (in_array($modulepart,array('member')))
-		{
-			$savingdocmask=$object->login.'___file__';
-		}*/
-	}
+    $savingdocmask='';
+    if (empty($conf->global->MAIN_DISABLE_SUGGEST_REF_AS_PREFIX)) {
+        //var_dump($modulepart);
+        if (in_array($modulepart, array(
+            'facture_fournisseur',
+            'commande_fournisseur',
+            'facture',
+            'commande',
+            'propal',
+            'supplier_proposal',
+            'ficheinter',
+            'contract',
+            'expedition',
+            'project',
+            'project_task',
+            'expensereport',
+            'tax',
+            'produit',
+            'product_batch',
+            'bom',
+            'mrp'
+        ))) {
+            $savingdocmask=dol_sanitizeFileName($object->ref).'-__file__';
+        }
+        /*if (in_array($modulepart,array('member')))
+        {
+            $savingdocmask=$object->login.'___file__';
+        }*/
+    }
 }
 
 // Show upload form (document and links)
@@ -116,9 +121,9 @@ $formfile->form_attach_new_file(
     $permission,
     $conf->browser->layout == 'phone' ? 40 : 60,
     $object,
-	'',
-	1,
-	$savingdocmask
+    '',
+    1,
+    $savingdocmask
 );
 
 // List of document

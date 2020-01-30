@@ -5,15 +5,15 @@ namespace Sabre\CalDAV\Schedule;
 use Sabre\HTTP\Request;
 use Sabre\VObject;
 
-class DeliverNewEventTest extends \Sabre\DAVServerTest {
-
+class DeliverNewEventTest extends \Sabre\DAVServerTest
+{
     public $setupCalDAV = true;
     public $setupCalDAVScheduling = true;
     public $setupACL = true;
     public $autoLogin = 'user1';
 
-    function setUp() {
-
+    public function setUp()
+    {
         parent::setUp();
         $this->caldavBackend->createCalendar(
             'principals/user1',
@@ -29,13 +29,13 @@ class DeliverNewEventTest extends \Sabre\DAVServerTest {
 
             ]
         );
-
     }
 
-    function testDelivery() {
-
+    public function testDelivery()
+    {
         $request = new Request('PUT', '/calendars/user1/default/foo.ics');
-        $request->setBody(<<<ICS
+        $request->setBody(
+            <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:-//Apple Inc.//Mac OS X 10.9.1//EN
@@ -56,10 +56,10 @@ SEQUENCE:4
 END:VEVENT
 END:VCALENDAR
 ICS
-    );
+        );
 
         $messages = [];
-        $this->server->on('schedule', function($message) use (&$messages) {
+        $this->server->on('schedule', function ($message) use (&$messages) {
             $messages[] = $message;
         });
 
@@ -86,7 +86,5 @@ ICS
         $this->assertEquals('REQUEST', $message->method);
 
         $this->assertEquals('REQUEST', $message->message->METHOD->getValue());
-
     }
-
 }

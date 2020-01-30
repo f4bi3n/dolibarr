@@ -4,10 +4,10 @@ namespace Sabre\VObject\Property;
 
 use Sabre\VObject;
 
-class BooleanTest extends \PHPUnit_Framework_TestCase {
-
-    function testMimeDir() {
-
+class BooleanTest extends \PHPUnit_Framework_TestCase
+{
+    public function testMimeDir()
+    {
         $input = "BEGIN:VCARD\r\nX-AWESOME;VALUE=BOOLEAN:TRUE\r\nX-SUCKS;VALUE=BOOLEAN:FALSE\r\nEND:VCARD\r\n";
 
         $vcard = VObject\Reader::read($input);
@@ -16,7 +16,5 @@ class BooleanTest extends \PHPUnit_Framework_TestCase {
 
         $this->assertEquals('BOOLEAN', $vcard->{'X-AWESOME'}->getValueType());
         $this->assertEquals($input, $vcard->serialize());
-
     }
-
 }

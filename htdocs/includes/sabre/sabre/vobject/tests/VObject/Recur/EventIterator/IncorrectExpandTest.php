@@ -8,12 +8,12 @@ use Sabre\VObject\Reader;
 /**
  * This is a unittest for Issue #53.
  */
-class IncorrectExpandTest extends \PHPUnit_Framework_TestCase {
-
+class IncorrectExpandTest extends \PHPUnit_Framework_TestCase
+{
     use \Sabre\VObject\PHPUnitAssertions;
 
-    function testExpand() {
-
+    public function testExpand()
+    {
         $input = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -56,7 +56,5 @@ END:VCALENDAR
 
 ICS;
         $this->assertVObjectEqualsVObject($output, $vcal);
-    
     }
-
 }

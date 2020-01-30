@@ -14,7 +14,8 @@ use Sabre\HTTP\URLUtil;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-abstract class Node implements DAV\INode {
+abstract class Node implements DAV\INode
+{
 
     /**
      * The path to the current node
@@ -28,10 +29,9 @@ abstract class Node implements DAV\INode {
      *
      * @param string $path
      */
-    function __construct($path) {
-
+    public function __construct($path)
+    {
         $this->path = $path;
-
     }
 
 
@@ -41,11 +41,10 @@ abstract class Node implements DAV\INode {
      *
      * @return string
      */
-    function getName() {
-
+    public function getName()
+    {
         list(, $name) = URLUtil::splitPath($this->path);
         return $name;
-
     }
 
     /**
@@ -54,8 +53,8 @@ abstract class Node implements DAV\INode {
      * @param string $name The new name
      * @return void
      */
-    function setName($name) {
-
+    public function setName($name)
+    {
         list($parentPath, ) = URLUtil::splitPath($this->path);
         list(, $newName) = URLUtil::splitPath($name);
 
@@ -63,7 +62,6 @@ abstract class Node implements DAV\INode {
         rename($this->path, $newPath);
 
         $this->path = $newPath;
-
     }
 
     /**
@@ -71,10 +69,8 @@ abstract class Node implements DAV\INode {
      *
      * @return int
      */
-    function getLastModified() {
-
+    public function getLastModified()
+    {
         return filemtime($this->path);
-
     }
-
 }

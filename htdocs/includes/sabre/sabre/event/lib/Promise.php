@@ -20,7 +20,8 @@ use Exception;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Promise {
+class Promise
+{
 
     /**
      * The asynchronous operation is pending.
@@ -55,15 +56,14 @@ class Promise {
      *
      * @param callable $executor
      */
-    function __construct(callable $executor = null) {
-
+    public function __construct(callable $executor = null)
+    {
         if ($executor) {
             $executor(
                 [$this, 'fulfill'],
                 [$this, 'reject']
             );
         }
-
     }
 
     /**
@@ -89,7 +89,8 @@ class Promise {
      * @param callable $onRejected
      * @return Promise
      */
-    function then(callable $onFulfilled = null, callable $onRejected = null) {
+    public function then(callable $onFulfilled = null, callable $onRejected = null)
+    {
 
         // This new subPromise will be returned from this function, and will
         // be fulfilled with the result of the onFulfilled or onRejected event
@@ -97,24 +98,23 @@ class Promise {
         $subPromise = new self();
 
         switch ($this->state) {
-            case self::PENDING :
+            case self::PENDING:
                 // The operation is pending, so we keep a reference to the
                 // event handlers so we can call them later.
                 $this->subscribers[] = [$subPromise, $onFulfilled, $onRejected];
                 break;
-            case self::FULFILLED :
+            case self::FULFILLED:
                 // The async operation is already fulfilled, so we trigger the
                 // onFulfilled callback asap.
                 $this->invokeCallback($subPromise, $onFulfilled);
                 break;
-            case self::REJECTED :
+            case self::REJECTED:
                 // The async operation failed, so we call teh onRejected
                 // callback asap.
                 $this->invokeCallback($subPromise, $onRejected);
                 break;
         }
         return $subPromise;
-
     }
 
     /**
@@ -126,10 +126,9 @@ class Promise {
      * @param callable $onRejected
      * @return Promise
      */
-    function otherwise(callable $onRejected) {
-
+    public function otherwise(callable $onRejected)
+    {
         return $this->then(null, $onRejected);
-
     }
 
     /**
@@ -138,7 +137,8 @@ class Promise {
      * @param mixed $value
      * @return void
      */
-    function fulfill($value = null) {
+    public function fulfill($value = null)
+    {
         if ($this->state !== self::PENDING) {
             throw new PromiseAlreadyResolvedException('This promise is already resolved, and you\'re not allowed to resolve a promise more than once');
         }
@@ -158,7 +158,8 @@ class Promise {
      * @param mixed $reason
      * @return void
      */
-    function reject($reason = null) {
+    public function reject($reason = null)
+    {
         if ($this->state !== self::PENDING) {
             throw new PromiseAlreadyResolvedException('This promise is already resolved, and you\'re not allowed to resolve a promise more than once');
         }
@@ -167,7 +168,6 @@ class Promise {
         foreach ($this->subscribers as $subscriber) {
             $this->invokeCallback($subscriber[0], $subscriber[2]);
         }
-
     }
 
     /**
@@ -184,11 +184,10 @@ class Promise {
      * @throws Exception
      * @return mixed
      */
-    function wait() {
-
+    public function wait()
+    {
         $hasEvents = true;
         while ($this->state === self::PENDING) {
-
             if (!$hasEvents) {
                 throw new \LogicException('There were no more events in the loop. This promise will never be fulfilled.');
             }
@@ -196,7 +195,6 @@ class Promise {
             // As long as the promise is not fulfilled, we tell the event loop
             // to handle events, and to block.
             $hasEvents = Loop\tick(true);
-
         }
 
         if ($this->state === self::FULFILLED) {
@@ -215,8 +213,6 @@ class Promise {
                 throw new Exception('Promise was rejected with reason of type: ' . $type);
             }
         }
-
-
     }
 
 
@@ -249,17 +245,17 @@ class Promise {
      * @param callable $callBack
      * @return void
      */
-    private function invokeCallback(Promise $subPromise, callable $callBack = null) {
+    private function invokeCallback(Promise $subPromise, callable $callBack = null)
+    {
 
         // We use 'nextTick' to ensure that the event handlers are always
         // triggered outside of the calling stack in which they were originally
         // passed to 'then'.
         //
         // This makes the order of execution more predictable.
-        Loop\nextTick(function() use ($callBack, $subPromise) {
+        Loop\nextTick(function () use ($callBack, $subPromise) {
             if (is_callable($callBack)) {
                 try {
-
                     $result = $callBack($this->value);
                     if ($result instanceof self) {
                         // If the callback (onRejected or onFulfilled)
@@ -296,10 +292,9 @@ class Promise {
      * @deprecated
      * @return Promise
      */
-    function error(callable $onRejected) {
-
+    public function error(callable $onRejected)
+    {
         return $this->otherwise($onRejected);
-
     }
 
     /**
@@ -311,10 +306,8 @@ class Promise {
      * @deprecated
      * @return Promise
      */
-    static function all(array $promises) {
-
+    public static function all(array $promises)
+    {
         return Promise\all($promises);
-
     }
-
 }

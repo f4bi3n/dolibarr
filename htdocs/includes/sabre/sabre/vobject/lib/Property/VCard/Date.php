@@ -11,7 +11,8 @@ namespace Sabre\VObject\Property\VCard;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Date extends DateAndOrTime {
+class Date extends DateAndOrTime
+{
 
     /**
      * Returns the type of value.
@@ -21,10 +22,9 @@ class Date extends DateAndOrTime {
      *
      * @return string
      */
-    function getValueType() {
-
+    public function getValueType()
+    {
         return 'DATE';
-
     }
 
     /**
@@ -34,10 +34,8 @@ class Date extends DateAndOrTime {
      *
      * @return void
      */
-    function setDateTime(\DateTimeInterface $dt) {
-
+    public function setDateTime(\DateTimeInterface $dt)
+    {
         $this->value = $dt->format('Ymd');
-
     }
-
 }

@@ -27,35 +27,36 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'hrm'));
 
-if (!$user->admin)
-	accessforbidden();
+if (!$user->admin) {
+    accessforbidden();
+}
 
 $action = GETPOST('action', 'alpha');
 
 // Other parameters HRM_*
 $list = array(
-		'HRM_EMAIL_EXTERNAL_SERVICE'   // To prevent your public accountant for example
+        'HRM_EMAIL_EXTERNAL_SERVICE'   // To prevent your public accountant for example
 );
 
 /*
  * Actions
  */
 if ($action == 'update') {
-	$error = 0;
+    $error = 0;
 
-	foreach ($list as $constname) {
-		$constvalue = GETPOST($constname, 'alpha');
+    foreach ($list as $constname) {
+        $constvalue = GETPOST($constname, 'alpha');
 
-		if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
-			$error++;
-		}
-	}
+        if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+            $error++;
+        }
+    }
 
-	if (!$error) {
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	} else {
-		setEventMessages($langs->trans("Error"), null, 'errors');
-	}
+    if (!$error) {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    } else {
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
 }
 
 /*
@@ -86,18 +87,18 @@ print '<td colspan="3">'.$langs->trans('Journaux').'</td>';
 print "</tr>\n";
 
 foreach ($list as $key) {
-	$var = !$var;
+    $var = !$var;
 
-	print '<tr '.$bc[$var].' class="value">';
+    print '<tr '.$bc[$var].' class="value">';
 
-	// Param
-	$label = $langs->trans($key);
-	print '<td width="50%"><label for="'.$key.'">'.$label.'</label></td>';
+    // Param
+    $label = $langs->trans($key);
+    print '<td width="50%"><label for="'.$key.'">'.$label.'</label></td>';
 
-	// Value
-	print '<td>';
-	print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
-	print '</td></tr>';
+    // Value
+    print '<td>';
+    print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
+    print '</td></tr>';
 }
 
 print "</table>\n";

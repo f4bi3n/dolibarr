@@ -34,7 +34,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 class mailing_fraise extends MailingTargets
 {
     public $name='FundationMembers';                    // Identifiant du module mailing
-	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
+    // This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
     public $desc='Foundation members with emails';
     // Set to 1 if selector is available for admin users only
     public $require_admin=0;
@@ -138,25 +138,23 @@ class mailing_fraise extends MailingTargets
         $sql.= " WHERE entity IN (".getEntity('member_type').")";
         $sql.= " ORDER BY rowid";
         $resql = $this->db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             $num = $this->db->num_rows($resql);
 
             $s.='<option value="0">&nbsp;</option>';
-            if (! $num) $s.='<option value="0" disabled="disabled">'.$langs->trans("NoCategoriesDefined").'</option>';
+            if (! $num) {
+                $s.='<option value="0" disabled="disabled">'.$langs->trans("NoCategoriesDefined").'</option>';
+            }
 
             $i = 0;
-            while ($i < $num)
-            {
+            while ($i < $num) {
                 $obj = $this->db->fetch_object($resql);
 
                 $s.='<option value="'.$obj->rowid.'">'.dol_trunc($obj->label, 38, 'middle');
                 $s.='</option>';
                 $i++;
             }
-        }
-        else
-        {
+        } else {
             dol_print_error($this->db);
         }
 
@@ -177,26 +175,24 @@ class mailing_fraise extends MailingTargets
 
         //print $sql;
         $resql = $this->db->query($sql);
-        if ($resql)
-        {
-        	$num = $this->db->num_rows($resql);
+        if ($resql) {
+            $num = $this->db->num_rows($resql);
 
-        	$s.='<option value="0">&nbsp;</option>';
-        	if (! $num) $s.='<option value="0" disabled>'.$langs->trans("NoCategoriesDefined").'</option>';
+            $s.='<option value="0">&nbsp;</option>';
+            if (! $num) {
+                $s.='<option value="0" disabled>'.$langs->trans("NoCategoriesDefined").'</option>';
+            }
 
-        	$i = 0;
-        	while ($i < $num)
-        	{
-        		$obj = $this->db->fetch_object($resql);
+            $i = 0;
+            while ($i < $num) {
+                $obj = $this->db->fetch_object($resql);
 
-        		$s.='<option value="'.$obj->rowid.'">'.dol_trunc($obj->label, 38, 'middle');
-        		$s.='</option>';
-        		$i++;
-        	}
-        }
-        else
-        {
-        	dol_print_error($this->db);
+                $s.='<option value="'.$obj->rowid.'">'.dol_trunc($obj->label, 38, 'middle');
+                $s.='</option>';
+                $i++;
+            }
+        } else {
+            dol_print_error($this->db);
         }
 
         $s.='</select>';
@@ -234,9 +230,9 @@ class mailing_fraise extends MailingTargets
     public function add_to_target($mailing_id)
     {
         // phpcs:enable
-    	global $langs,$_POST;
+        global $langs,$_POST;
 
-    	// Load translation files required by the page
+        // Load translation files required by the page
         $langs->loadLangs(array("members","companies"));
 
         $cibles = array();
@@ -250,10 +246,9 @@ class mailing_fraise extends MailingTargets
         $sql.= " a.lastname, a.firstname,";
         $sql.= " a.datefin, a.civility as civility_id, a.login, a.societe";    // Other fields
         $sql.= " FROM ".MAIN_DB_PREFIX."adherent as a";
-        if ($_POST['filter_category'])
-        {
-        	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_member as cm ON cm.fk_member = a.rowid";
-        	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON c.rowid = cm.fk_categorie";
+        if ($_POST['filter_category']) {
+            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_member as cm ON cm.fk_member = a.rowid";
+            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON c.rowid = cm.fk_categorie";
         }
         $sql.= " , ".MAIN_DB_PREFIX."adherent_type as ta";
         $sql.= " WHERE a.entity IN (".getEntity('member').") AND a.email <> ''";     // Note that null != '' is false
@@ -262,25 +257,38 @@ class mailing_fraise extends MailingTargets
         if (isset($_POST["filter"]) && $_POST["filter"] == '-1') {
             $sql.= " AND a.statut=-1";
         }
-        if (isset($_POST["filter"]) && $_POST["filter"] == '1a') $sql.= " AND a.statut=1 AND (a.datefin >= '".$this->db->idate($now)."' OR ta.subscription = 0)";
-        if (isset($_POST["filter"]) && $_POST["filter"] == '1b') $sql.= " AND a.statut=1 AND ((a.datefin IS NULL or a.datefin < '".$this->db->idate($now)."') AND ta.subscription = 1)";
-        if (isset($_POST["filter"]) && $_POST["filter"] == '0')  $sql.= " AND a.statut=0";
+        if (isset($_POST["filter"]) && $_POST["filter"] == '1a') {
+            $sql.= " AND a.statut=1 AND (a.datefin >= '".$this->db->idate($now)."' OR ta.subscription = 0)";
+        }
+        if (isset($_POST["filter"]) && $_POST["filter"] == '1b') {
+            $sql.= " AND a.statut=1 AND ((a.datefin IS NULL or a.datefin < '".$this->db->idate($now)."') AND ta.subscription = 1)";
+        }
+        if (isset($_POST["filter"]) && $_POST["filter"] == '0') {
+            $sql.= " AND a.statut=0";
+        }
         // Filter on date
-        if ($dateendsubscriptionafter > 0)  $sql.=" AND datefin > '".$this->db->idate($dateendsubscriptionafter)."'";
-        if ($dateendsubscriptionbefore > 0) $sql.=" AND datefin < '".$this->db->idate($dateendsubscriptionbefore)."'";
+        if ($dateendsubscriptionafter > 0) {
+            $sql.=" AND datefin > '".$this->db->idate($dateendsubscriptionafter)."'";
+        }
+        if ($dateendsubscriptionbefore > 0) {
+            $sql.=" AND datefin < '".$this->db->idate($dateendsubscriptionbefore)."'";
+        }
         $sql.= " AND a.fk_adherent_type = ta.rowid";
         // Filter on type
-        if ($_POST['filter_type']) $sql.= " AND ta.rowid='".$_POST['filter_type']."'";
+        if ($_POST['filter_type']) {
+            $sql.= " AND ta.rowid='".$_POST['filter_type']."'";
+        }
         // Filter on category
-        if ($_POST['filter_category']) $sql.= " AND c.rowid='".$_POST['filter_category']."'";
+        if ($_POST['filter_category']) {
+            $sql.= " AND c.rowid='".$_POST['filter_category']."'";
+        }
         $sql.= " ORDER BY a.email";
         //print $sql;
 
         // Add targets into table
         dol_syslog(get_class($this)."::add_to_target", LOG_DEBUG);
         $result=$this->db->query($sql);
-        if ($result)
-        {
+        if ($result) {
             $num = $this->db->num_rows($result);
             $i = 0;
             $j = 0;
@@ -288,11 +296,9 @@ class mailing_fraise extends MailingTargets
             dol_syslog(get_class($this)."::add_to_target mailing ".$num." targets found");
 
             $old = '';
-            while ($i < $num)
-            {
+            while ($i < $num) {
                 $obj = $this->db->fetch_object($result);
-                if ($old <> $obj->email)
-                {
+                if ($old <> $obj->email) {
                     $cibles[$j] = array(
                                 'email' => $obj->email,
                                 'fk_contact' => $obj->fk_contact,
@@ -313,9 +319,7 @@ class mailing_fraise extends MailingTargets
 
                 $i++;
             }
-        }
-        else
-        {
+        } else {
             dol_syslog($this->db->error());
             $this->error=$this->db->error();
             return -1;

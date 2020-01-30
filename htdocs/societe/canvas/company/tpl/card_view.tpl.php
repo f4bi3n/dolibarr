@@ -16,10 +16,9 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
-{
-	print "Error, template page can't be called as URL";
-	exit;
+if (empty($conf) || ! is_object($conf)) {
+    print "Error, template page can't be called as URL";
+    exit;
 }
 
 
@@ -34,9 +33,15 @@ dol_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company');
 
 ?>
 
-<?php if ($this->control->tpl['error']) echo $this->control->tpl['error']; ?>
-<?php if ($this->control->tpl['action_delete']) echo $this->control->tpl['action_delete']; ?>
-<?php if ($this->control->tpl['js_checkVatPopup']) echo $this->control->tpl['js_checkVatPopup']; ?>
+<?php if ($this->control->tpl['error']) {
+    echo $this->control->tpl['error'];
+} ?>
+<?php if ($this->control->tpl['action_delete']) {
+    echo $this->control->tpl['action_delete'];
+} ?>
+<?php if ($this->control->tpl['js_checkVatPopup']) {
+    echo $this->control->tpl['js_checkVatPopup'];
+} ?>
 
 <table class="border allwidth">
 
@@ -119,22 +124,33 @@ dol_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company');
 
 <?php
 for ($i=1; $i<=4; $i++) {
-	if ($this->control->tpl['langprofid'.$i]!='-')	{
-		if ($i==1 || $i==3) echo '<tr>';
-		echo '<td>'.$this->control->tpl['langprofid'.$i].'</td>';
-		echo '<td>'.$this->control->tpl['profid'.$i];
-		if ($this->control->tpl['profid'.$i]) {
-			if ($this->control->tpl['checkprofid'.$i] > 0) echo ' &nbsp; '.$this->control->tpl['urlprofid'.$i];
-			else echo ' <font class="error">('.$langs->trans("ErrorWrongValue").')</font>';
-		}
-		echo '</td>';
-		if ($i==2 || $i==4) echo '</tr>';
-	} else {
-		if ($i==1 || $i==3) echo '<tr>';
-		echo '<td>&nbsp;</td>';
-		echo '<td>&nbsp;</td>';
-		if ($i==2 || $i==4) echo '</tr>';
-	}
+    if ($this->control->tpl['langprofid'.$i]!='-') {
+        if ($i==1 || $i==3) {
+            echo '<tr>';
+        }
+        echo '<td>'.$this->control->tpl['langprofid'.$i].'</td>';
+        echo '<td>'.$this->control->tpl['profid'.$i];
+        if ($this->control->tpl['profid'.$i]) {
+            if ($this->control->tpl['checkprofid'.$i] > 0) {
+                echo ' &nbsp; '.$this->control->tpl['urlprofid'.$i];
+            } else {
+                echo ' <font class="error">('.$langs->trans("ErrorWrongValue").')</font>';
+            }
+        }
+        echo '</td>';
+        if ($i==2 || $i==4) {
+            echo '</tr>';
+        }
+    } else {
+        if ($i==1 || $i==3) {
+            echo '<tr>';
+        }
+        echo '<td>&nbsp;</td>';
+        echo '<td>&nbsp;</td>';
+        if ($i==2 || $i==4) {
+            echo '</tr>';
+        }
+    }
 }
 ?>
 
@@ -145,15 +161,20 @@ for ($i=1; $i<=4; $i++) {
 	<td><?php echo $this->control->tpl['tva_intra']; ?></td>
 </tr>
 
-<?php if(!empty($this->control->tpl['localtax'])) echo $this->control->tpl['localtax']; ?>
+<?php if (!empty($this->control->tpl['localtax'])) {
+    echo $this->control->tpl['localtax'];
+} ?>
 
 <tr>
 	<td><?php echo $langs->trans('Capital'); ?></td>
 	<td colspan="3">
 	<?php
-	if ($this->control->tpl['capital']) echo $this->control->tpl['capital'].' '.$langs->trans("Currency".$conf->currency);
-	else echo '&nbsp;';
-	?>
+    if ($this->control->tpl['capital']) {
+        echo $this->control->tpl['capital'].' '.$langs->trans("Currency".$conf->currency);
+    } else {
+        echo '&nbsp;';
+    }
+    ?>
 	</td>
 </tr>
 
@@ -245,7 +266,7 @@ for ($i=1; $i<=4; $i++) {
 <?php if ($user->rights->societe->supprimer) { ?>
 	<?php if ($conf->use_javascript_ajax) { ?>
 		<span id="action-delete" class="butActionDelete"><?php echo $langs->trans('Delete'); ?></span>
-	<?php }	else { ?>
+	<?php } else { ?>
 		<a class="butActionDelete" href="<?php echo $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id'].'&amp;action=delete&amp;canvas='.$canvas; ?>"><?php echo $langs->trans('Delete'); ?></a>
 	<?php } ?>
 <?php } ?>

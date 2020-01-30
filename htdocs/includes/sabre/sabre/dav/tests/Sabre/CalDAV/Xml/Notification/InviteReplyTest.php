@@ -5,15 +5,16 @@ namespace Sabre\CalDAV\Xml\Notification;
 use Sabre\DAV;
 use Sabre\Xml\Writer;
 
-class InviteReplyTest extends \PHPUnit_Framework_TestCase {
+class InviteReplyTest extends \PHPUnit_Framework_TestCase
+{
 
     /**
      * @param array $notification
      * @param string $expected
      * @dataProvider dataProvider
      */
-    function testSerializers($notification, $expected) {
-
+    public function testSerializers($notification, $expected)
+    {
         $notification = new InviteReply($notification);
 
         $this->assertEquals('foo', $notification->getId());
@@ -46,12 +47,10 @@ class InviteReplyTest extends \PHPUnit_Framework_TestCase {
         $writer->endElement();
 
         $this->assertXmlStringEqualsXmlString($expected, $writer->outputMemory());
-
-
     }
 
-    function dataProvider() {
-
+    public function dataProvider()
+    {
         $dtStamp = new \DateTime('2012-01-01 00:00:00 GMT');
         return [
             [
@@ -112,23 +111,21 @@ FOO
             ],
 
         ];
-
     }
 
     /**
      * @expectedException InvalidArgumentException
      */
-    function testMissingArg() {
-
+    public function testMissingArg()
+    {
         new InviteReply([]);
-
     }
 
     /**
      * @expectedException InvalidArgumentException
      */
-    function testUnknownArg() {
-
+    public function testUnknownArg()
+    {
         new InviteReply([
             'foo-i-will-break' => true,
 
@@ -140,7 +137,5 @@ FOO
             'type'      => 'ghi',
             'hostUrl'   => 'jkl',
         ]);
-
     }
-
 }

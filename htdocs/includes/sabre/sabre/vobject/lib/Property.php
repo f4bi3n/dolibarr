@@ -14,7 +14,8 @@ use Sabre\Xml;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-abstract class Property extends Node {
+abstract class Property extends Node
+{
 
     /**
      * Property name.
@@ -69,8 +70,8 @@ abstract class Property extends Node {
      *
      * @return void
      */
-    function __construct(Component $root, $name, $value = null, array $parameters = [], $group = null) {
-
+    public function __construct(Component $root, $name, $value = null, array $parameters = [], $group = null)
+    {
         $this->name = $name;
         $this->group = $group;
 
@@ -83,7 +84,6 @@ abstract class Property extends Node {
         if (!is_null($value)) {
             $this->setValue($value);
         }
-
     }
 
     /**
@@ -95,10 +95,9 @@ abstract class Property extends Node {
      *
      * @return void
      */
-    function setValue($value) {
-
+    public function setValue($value)
+    {
         $this->value = $value;
-
     }
 
     /**
@@ -112,8 +111,8 @@ abstract class Property extends Node {
      *
      * @return string
      */
-    function getValue() {
-
+    public function getValue()
+    {
         if (is_array($this->value)) {
             if (count($this->value) == 0) {
                 return;
@@ -125,7 +124,6 @@ abstract class Property extends Node {
         } else {
             return $this->value;
         }
-
     }
 
     /**
@@ -135,10 +133,9 @@ abstract class Property extends Node {
      *
      * @return void
      */
-    function setParts(array $parts) {
-
+    public function setParts(array $parts)
+    {
         $this->value = $parts;
-
     }
 
     /**
@@ -149,8 +146,8 @@ abstract class Property extends Node {
      *
      * @return array
      */
-    function getParts() {
-
+    public function getParts()
+    {
         if (is_null($this->value)) {
             return [];
         } elseif (is_array($this->value)) {
@@ -158,7 +155,6 @@ abstract class Property extends Node {
         } else {
             return [$this->value];
         }
-
     }
 
     /**
@@ -171,7 +167,8 @@ abstract class Property extends Node {
      * @param string $name
      * @param string|null|array $value
      */
-    function add($name, $value = null) {
+    public function add($name, $value = null)
+    {
         $noName = false;
         if ($name === null) {
             $name = Parameter::guessParameterNameByValue($value);
@@ -180,8 +177,7 @@ abstract class Property extends Node {
 
         if (isset($this->parameters[strtoupper($name)])) {
             $this->parameters[strtoupper($name)]->addValue($value);
-        }
-        else {
+        } else {
             $param = new Parameter($this->root, $name, $value);
             $param->noName = $noName;
             $this->parameters[$param->name] = $param;
@@ -193,10 +189,9 @@ abstract class Property extends Node {
      *
      * @return array
      */
-    function parameters() {
-
+    public function parameters()
+    {
         return $this->parameters;
-
     }
 
     /**
@@ -207,7 +202,7 @@ abstract class Property extends Node {
      *
      * @return string
      */
-    abstract function getValueType();
+    abstract public function getValueType();
 
     /**
      * Sets a raw value coming from a mimedir (iCalendar/vCard) file.
@@ -219,29 +214,29 @@ abstract class Property extends Node {
      *
      * @return void
      */
-    abstract function setRawMimeDirValue($val);
+    abstract public function setRawMimeDirValue($val);
 
     /**
      * Returns a raw mime-dir representation of the value.
      *
      * @return string
      */
-    abstract function getRawMimeDirValue();
+    abstract public function getRawMimeDirValue();
 
     /**
      * Turns the object back into a serialized blob.
      *
      * @return string
      */
-    function serialize() {
-
+    public function serialize()
+    {
         $str = $this->name;
-        if ($this->group) $str = $this->group . '.' . $this->name;
+        if ($this->group) {
+            $str = $this->group . '.' . $this->name;
+        }
 
         foreach ($this->parameters() as $param) {
-
             $str .= ';' . $param->serialize();
-
         }
 
         $str .= ':' . $this->getRawMimeDirValue();
@@ -259,7 +254,6 @@ abstract class Property extends Node {
         }
 
         return $out;
-
     }
 
     /**
@@ -269,10 +263,9 @@ abstract class Property extends Node {
      *
      * @return array
      */
-    function getJsonValue() {
-
+    public function getJsonValue()
+    {
         return $this->getParts();
-
     }
 
     /**
@@ -284,14 +277,13 @@ abstract class Property extends Node {
      *
      * @return void
      */
-    function setJsonValue(array $value) {
-
+    public function setJsonValue(array $value)
+    {
         if (count($value) === 1) {
             $this->setValue(reset($value));
         } else {
             $this->setValue($value);
         }
-
     }
 
     /**
@@ -300,8 +292,8 @@ abstract class Property extends Node {
      *
      * @return array
      */
-    function jsonSerialize() {
-
+    public function jsonSerialize()
+    {
         $parameters = [];
 
         foreach ($this->parameters as $parameter) {
@@ -334,10 +326,9 @@ abstract class Property extends Node {
      *
      * @return void
      */
-    function setXmlValue(array $value) {
-
+    public function setXmlValue(array $value)
+    {
         $this->setJsonValue($value);
-
     }
 
     /**
@@ -348,41 +339,34 @@ abstract class Property extends Node {
      *
      * @return void
      */
-    function xmlSerialize(Xml\Writer $writer) {
-
+    public function xmlSerialize(Xml\Writer $writer)
+    {
         $parameters = [];
 
         foreach ($this->parameters as $parameter) {
-
             if ($parameter->name === 'VALUE') {
                 continue;
             }
 
             $parameters[] = $parameter;
-
         }
 
         $writer->startElement(strtolower($this->name));
 
         if (!empty($parameters)) {
-
             $writer->startElement('parameters');
 
             foreach ($parameters as $parameter) {
-
                 $writer->startElement(strtolower($parameter->name));
                 $writer->write($parameter);
                 $writer->endElement();
-
             }
 
             $writer->endElement();
-
         }
 
         $this->xmlSerializeValue($writer);
         $writer->endElement();
-
     }
 
     /**
@@ -393,8 +377,8 @@ abstract class Property extends Node {
      *
      * @return void
      */
-    protected function xmlSerializeValue(Xml\Writer $writer) {
-
+    protected function xmlSerializeValue(Xml\Writer $writer)
+    {
         $valueType = strtolower($this->getValueType());
 
         foreach ($this->getJsonValue() as $values) {
@@ -402,7 +386,6 @@ abstract class Property extends Node {
                 $writer->writeElement($valueType, $value);
             }
         }
-
     }
 
     /**
@@ -414,10 +397,9 @@ abstract class Property extends Node {
      *
      * @return string
      */
-    function __toString() {
-
+    public function __toString()
+    {
         return (string)$this->getValue();
-
     }
 
     /* ArrayAccess interface {{{ */
@@ -429,17 +411,20 @@ abstract class Property extends Node {
      *
      * @return bool
      */
-    function offsetExists($name) {
-
-        if (is_int($name)) return parent::offsetExists($name);
+    public function offsetExists($name)
+    {
+        if (is_int($name)) {
+            return parent::offsetExists($name);
+        }
 
         $name = strtoupper($name);
 
         foreach ($this->parameters as $parameter) {
-            if ($parameter->name == $name) return true;
+            if ($parameter->name == $name) {
+                return true;
+            }
         }
         return false;
-
     }
 
     /**
@@ -451,9 +436,11 @@ abstract class Property extends Node {
      *
      * @return Node
      */
-    function offsetGet($name) {
-
-        if (is_int($name)) return parent::offsetGet($name);
+    public function offsetGet($name)
+    {
+        if (is_int($name)) {
+            return parent::offsetGet($name);
+        }
         $name = strtoupper($name);
 
         if (!isset($this->parameters[$name])) {
@@ -461,7 +448,6 @@ abstract class Property extends Node {
         }
 
         return $this->parameters[$name];
-
     }
 
     /**
@@ -472,8 +458,8 @@ abstract class Property extends Node {
      *
      * @return void
      */
-    function offsetSet($name, $value) {
-
+    public function offsetSet($name, $value)
+    {
         if (is_int($name)) {
             parent::offsetSet($name, $value);
             // @codeCoverageIgnoreStart
@@ -485,7 +471,6 @@ abstract class Property extends Node {
 
         $param = new Parameter($this->root, $name, $value);
         $this->parameters[$param->name] = $param;
-
     }
 
     /**
@@ -495,8 +480,8 @@ abstract class Property extends Node {
      *
      * @return void
      */
-    function offsetUnset($name) {
-
+    public function offsetUnset($name)
+    {
         if (is_int($name)) {
             parent::offsetUnset($name);
             // @codeCoverageIgnoreStart
@@ -507,7 +492,6 @@ abstract class Property extends Node {
         }
 
         unset($this->parameters[strtoupper($name)]);
-
     }
     /* }}} */
 
@@ -517,13 +501,12 @@ abstract class Property extends Node {
      *
      * @return void
      */
-    function __clone() {
-
+    public function __clone()
+    {
         foreach ($this->parameters as $key => $child) {
             $this->parameters[$key] = clone $child;
             $this->parameters[$key]->parent = $this;
         }
-
     }
 
     /**
@@ -544,13 +527,12 @@ abstract class Property extends Node {
      *
      * @return array
      */
-    function validate($options = 0) {
-
+    public function validate($options = 0)
+    {
         $warnings = [];
 
         // Checking if our value is UTF-8
         if (!StringUtil::isUTF8($this->getRawMimeDirValue())) {
-
             $oldValue = $this->getRawMimeDirValue();
             $level = 3;
             if ($options & self::REPAIR) {
@@ -559,7 +541,6 @@ abstract class Property extends Node {
                     $this->setRawMimeDirValue($newValue);
                     $level = 1;
                 }
-
             }
 
 
@@ -590,13 +571,10 @@ abstract class Property extends Node {
                 );
                 // Removing every other invalid character
                 $this->name = preg_replace('/([^A-Z0-9-])/u', '', $this->name);
-
             }
-
         }
 
         if ($encoding = $this->offsetGet('ENCODING')) {
-
             if ($this->root->getDocumentType() === Document::VCARD40) {
                 $warnings[] = [
                     'level'   => 3,
@@ -604,19 +582,18 @@ abstract class Property extends Node {
                     'node'    => $this
                 ];
             } else {
-
                 $encoding = (string)$encoding;
 
                 $allowedEncoding = [];
 
                 switch ($this->root->getDocumentType()) {
-                    case Document::ICALENDAR20 :
+                    case Document::ICALENDAR20:
                         $allowedEncoding = ['8BIT', 'BASE64'];
                         break;
-                    case Document::VCARD21 :
+                    case Document::VCARD21:
                         $allowedEncoding = ['QUOTED-PRINTABLE', 'BASE64', '8BIT'];
                         break;
-                    case Document::VCARD30 :
+                    case Document::VCARD30:
                         $allowedEncoding = ['B'];
                         break;
 
@@ -629,7 +606,6 @@ abstract class Property extends Node {
                     ];
                 }
             }
-
         }
 
         // Validating inner parameters
@@ -638,7 +614,6 @@ abstract class Property extends Node {
         }
 
         return $warnings;
-
     }
 
     /**
@@ -649,14 +624,12 @@ abstract class Property extends Node {
      *
      * @return void
      */
-    function destroy() {
-
+    public function destroy()
+    {
         parent::destroy();
         foreach ($this->parameters as $param) {
             $param->destroy();
         }
         $this->parameters = [];
-
     }
-
 }

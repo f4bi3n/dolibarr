@@ -29,8 +29,8 @@ $path = __DIR__ . '/';
 
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
-	echo "Error: You are using PHP for CGI. To execute " . $script_file . " from command line, you must use PHP for CLI mode.\n";
-	exit(- 1);
+    echo "Error: You are using PHP for CGI. To execute " . $script_file . " from command line, you must use PHP for CLI mode.\n";
+    exit(- 1);
 }
 
 require_once $path . "../../htdocs/master.inc.php";
@@ -52,13 +52,14 @@ print "***** " . $script_file . " (" . $version . ") pid=" . dol_getmypid() . " 
 dol_syslog($script_file . " launched with arg " . join(',', $argv));
 
 if (! isset($argv[1]) || ! $argv[1]) {
-	print "Usage: $script_file now [-y]\n";
-	exit(- 1);
+    print "Usage: $script_file now [-y]\n";
+    exit(- 1);
 }
 
 foreach ($argv as $key => $val) {
-	if (preg_match('/-y$/', $val, $reg))
-		$confirmed = 1;
+    if (preg_match('/-y$/', $val, $reg)) {
+        $confirmed = 1;
+    }
 }
 
 $now = $argv[1];
@@ -83,12 +84,12 @@ print "DN target=" . $conf->global->LDAP_CONTACT_DN . "\n";
 print "\n";
 
 if (! $confirmed) {
-	print "Press a key to confirm...\n";
-	$input = trim(fgets(STDIN));
-	print "Warning, this operation may result in data loss if it failed.\n";
-	print "Be sure to have a backup of your LDAP database (With OpenLDAP: slapcat > save.ldif).\n";
-	print "Hit Enter to continue or CTRL+C to stop...\n";
-	$input = trim(fgets(STDIN));
+    print "Press a key to confirm...\n";
+    $input = trim(fgets(STDIN));
+    print "Warning, this operation may result in data loss if it failed.\n";
+    print "Be sure to have a backup of your LDAP database (With OpenLDAP: slapcat > save.ldif).\n";
+    print "Hit Enter to continue or CTRL+C to stop...\n";
+    $input = trim(fgets(STDIN));
 }
 
 /*
@@ -104,48 +105,48 @@ $sql .= " FROM " . MAIN_DB_PREFIX . "socpeople";
 
 $resql = $db->query($sql);
 if ($resql) {
-	$num = $db->num_rows($resql);
-	$i = 0;
+    $num = $db->num_rows($resql);
+    $i = 0;
 
-	$ldap = new Ldap();
-	$ldap->connect_bind();
+    $ldap = new Ldap();
+    $ldap->connect_bind();
 
-	while ($i < $num) {
-		$ldap->error = "";
+    while ($i < $num) {
+        $ldap->error = "";
 
-		$obj = $db->fetch_object($resql);
+        $obj = $db->fetch_object($resql);
 
-		$contact = new Contact($db);
-		$contact->id = $obj->rowid;
-		$contact->fetch($contact->id);
+        $contact = new Contact($db);
+        $contact->id = $obj->rowid;
+        $contact->fetch($contact->id);
 
-		print $langs->trans("UpdateContact") . " rowid=" . $contact->id . " " . $contact->getFullName($langs);
+        print $langs->trans("UpdateContact") . " rowid=" . $contact->id . " " . $contact->getFullName($langs);
 
-		$oldobject = $contact;
+        $oldobject = $contact;
 
-		$oldinfo = $oldobject->_load_ldap_info();
-		$olddn = $oldobject->_load_ldap_dn($oldinfo);
+        $oldinfo = $oldobject->_load_ldap_info();
+        $olddn = $oldobject->_load_ldap_dn($oldinfo);
 
-		$info = $contact->_load_ldap_info();
-		$dn = $contact->_load_ldap_dn($info);
+        $info = $contact->_load_ldap_info();
+        $dn = $contact->_load_ldap_dn($info);
 
-		$result = $ldap->add($dn, $info, $user); // Wil fail if already exists
-		$result = $ldap->update($dn, $info, $user, $olddn);
-		if ($result > 0) {
-			print " - " . $langs->trans("OK");
-		} else {
-			$error ++;
-			print " - " . $langs->trans("KO") . ' - ' . $ldap->error;
-		}
-		print "\n";
+        $result = $ldap->add($dn, $info, $user); // Wil fail if already exists
+        $result = $ldap->update($dn, $info, $user, $olddn);
+        if ($result > 0) {
+            print " - " . $langs->trans("OK");
+        } else {
+            $error ++;
+            print " - " . $langs->trans("KO") . ' - ' . $ldap->error;
+        }
+        print "\n";
 
-		$i ++;
-	}
+        $i ++;
+    }
 
-	$ldap->unbind();
-	$ldap->close();
+    $ldap->unbind();
+    $ldap->close();
 } else {
-	dol_print_error($db);
+    dol_print_error($db);
 }
 
 exit($error);

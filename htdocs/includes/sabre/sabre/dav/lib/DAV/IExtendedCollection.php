@@ -12,7 +12,8 @@ namespace Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface IExtendedCollection extends ICollection {
+interface IExtendedCollection extends ICollection
+{
 
     /**
      * Creates a new collection.
@@ -38,6 +39,5 @@ interface IExtendedCollection extends ICollection {
      * @throws Exception\InvalidResourceType
      * @return void
      */
-    function createExtendedCollection($name, MkCol $mkCol);
-
+    public function createExtendedCollection($name, MkCol $mkCol);
 }

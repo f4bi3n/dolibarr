@@ -27,10 +27,9 @@
 <?php
 
 // Wrapper to show tooltips
-if (! empty($conf->use_javascript_ajax) && empty($conf->dol_no_mouse_hover))
-{
-	print "\n<!-- JS CODE TO ENABLE Tooltips on all object with class classfortooltip -->\n";
-	print '<script type="text/javascript">
+if (! empty($conf->use_javascript_ajax) && empty($conf->dol_no_mouse_hover)) {
+    print "\n<!-- JS CODE TO ENABLE Tooltips on all object with class classfortooltip -->\n";
+    print '<script type="text/javascript">
     	jQuery(document).ready(function () {
 			jQuery(".classfortooltip").tooltip({
 				show: { collision: "flipfit", effect:\'toggle\', delay:50 },

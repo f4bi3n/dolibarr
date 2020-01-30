@@ -64,16 +64,19 @@ class RestAPIUserTest extends PHPUnit\Framework\TestCase
      */
     public function __construct()
     {
-    	parent::__construct();
+        parent::__construct();
 
-    	//$this->sharedFixture
+        //$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
         $this->savlangs=$langs;
         $this->savdb=$db;
 
-        if (empty($conf->api->enabled)) { print __METHOD__." module api must be enabled.\n"; die(); }
+        if (empty($conf->api->enabled)) {
+            print __METHOD__." module api must be enabled.\n";
+            die();
+        }
 
         print __METHOD__." db->type=".$db->type." user->id=".$user->id;
         //print " - db ".$db->db;

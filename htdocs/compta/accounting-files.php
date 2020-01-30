@@ -55,12 +55,18 @@ $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
 $page = GETPOST('page', 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+    $page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortfield) $sortfield = "date,item"; // Set here default search field
-if (!$sortorder) $sortorder = "DESC";
+if (!$sortfield) {
+    $sortfield = "date,item";
+} // Set here default search field
+if (!$sortorder) {
+    $sortorder = "DESC";
+}
 
 
 $arrayfields = array(
@@ -92,202 +98,189 @@ $entity = GETPOST('entity', 'int') ?GETPOST('entity', 'int') : $conf->entity;
 $filesarray = array();
 $result = false;
 if (($action == "searchfiles" || $action == "dl")) {
-	if (empty($date_start))
-	{
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateStart")), null, 'errors');
-		$error++;
-	}
-	if (empty($date_stop))
-	{
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateEnd")), null, 'errors');
-		$error++;
-	}
+    if (empty($date_start)) {
+        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateStart")), null, 'errors');
+        $error++;
+    }
+    if (empty($date_stop)) {
+        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateEnd")), null, 'errors');
+        $error++;
+    }
 
-	if (!$error)
-	{
-		$wheretail = " '".$db->idate($date_start)."' AND '".$db->idate($date_stop)."'";
+    if (!$error) {
+        $wheretail = " '".$db->idate($date_start)."' AND '".$db->idate($date_stop)."'";
 
-		// Customer invoices
-		$sql = "SELECT t.rowid as id, t.ref, t.paye as paid, total as total_ht, total_ttc, tva as total_vat, fk_soc, t.datef as date, 'Invoice' as item, s.nom as thirdparty_name, s.code_client as thirdparty_code, c.code as country_code, s.tva_intra as vatnum";
-	    $sql .= " FROM ".MAIN_DB_PREFIX."facture as t LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = t.fk_soc LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = s.fk_pays";
-	    $sql .= " WHERE datef between ".$wheretail;
-	    $sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
-	    $sql .= " AND t.fk_statut <> ".Facture::STATUS_DRAFT;
-	    $sql .= " UNION ALL";
-	    // Vendor invoices
-	    $sql .= " SELECT t.rowid as id, t.ref, paye as paid, total_ht, total_ttc, total_tva as total_vat, fk_soc, datef as date, 'SupplierInvoice' as item, s.nom as thirdparty_name, s.code_fournisseur as thirdparty_code, c.code as country_code, s.tva_intra as vatnum";
-	    $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as t LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = t.fk_soc LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = s.fk_pays";
-	    $sql .= " WHERE datef between ".$wheretail;
-	    $sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
-	    $sql .= " AND t.fk_statut <> ".FactureFournisseur::STATUS_DRAFT;
-	    $sql .= " UNION ALL";
-	    // Expense reports
-	    $sql .= " SELECT t.rowid as id, t.ref, paid, total_ht, total_ttc, total_tva as total_vat, fk_user_author as fk_soc, date_fin as date, 'ExpenseReport' as item, CONCAT(CONCAT(u.lastname, ' '), u.firstname) as thirdparty_name, '' as thirdparty_code, c.code as country_code, '' as vatnum";
-	    $sql .= " FROM ".MAIN_DB_PREFIX."expensereport as t LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = t.fk_user_author LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = u.fk_country";
-	    $sql .= " WHERE date_fin between  ".$wheretail;
-	    $sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
-	    $sql .= " AND t.fk_statut <> ".ExpenseReport::STATUS_DRAFT;
-	    $sql .= " UNION ALL";
-	    // Donations
-	    $sql .= " SELECT t.rowid as id, t.ref, paid, amount as total_ht, amount as total_ttc, 0 as total_vat, 0 as fk_soc, datedon as date, 'Donation' as item, t.societe as thirdparty_name, '' as thirdparty_code, c.code as country_code, '' as vatnum";
-	    $sql .= " FROM ".MAIN_DB_PREFIX."don as t LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = t.fk_country";
-	    $sql .= " WHERE datedon between ".$wheretail;
-	    $sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
-	    $sql .= " AND t.fk_statut <> ".Don::STATUS_DRAFT;
-	    $sql .= " UNION ALL";
-	    // Paiements of salaries
-	    $sql .= " SELECT t.rowid as id, t.ref as ref, 1 as paid, amount as total_ht, amount as total_ttc, 0 as total_vat, t.fk_user as fk_soc, datep as date, 'SalaryPayment' as item, CONCAT(CONCAT(u.lastname, ' '), u.firstname)  as thirdparty_name, '' as thirdparty_code, c.code as country_code, '' as vatnum";
-	    $sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as t LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = t.fk_user LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = u.fk_country";
-	    $sql .= " WHERE datep between ".$wheretail;
-	    $sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
-	    //$sql.=" AND fk_statut <> ".PaymentSalary::STATUS_DRAFT;
-	    $sql .= " UNION ALL";
-	    // Social contributions
-	    $sql .= " SELECT t.rowid as id, t.libelle as ref, paye as paid, amount as total_ht, amount as total_ttc, 0 as total_tva, 0 as fk_soc, date_creation as date, 'SocialContributions' as item, '' as thirdparty_name, '' as thirdparty_code, '' as country_code, '' as vatnum";
-	    $sql .= " FROM ".MAIN_DB_PREFIX."chargesociales as t";
-	    $sql .= " WHERE date_creation between ".$wheretail;
-	    $sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
-	    //$sql.=" AND fk_statut <> ".ChargeSociales::STATUS_DRAFT;
-	    $sql .= $db->order($sortfield, $sortorder);
-		//print $sql;
+        // Customer invoices
+        $sql = "SELECT t.rowid as id, t.ref, t.paye as paid, total as total_ht, total_ttc, tva as total_vat, fk_soc, t.datef as date, 'Invoice' as item, s.nom as thirdparty_name, s.code_client as thirdparty_code, c.code as country_code, s.tva_intra as vatnum";
+        $sql .= " FROM ".MAIN_DB_PREFIX."facture as t LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = t.fk_soc LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = s.fk_pays";
+        $sql .= " WHERE datef between ".$wheretail;
+        $sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
+        $sql .= " AND t.fk_statut <> ".Facture::STATUS_DRAFT;
+        $sql .= " UNION ALL";
+        // Vendor invoices
+        $sql .= " SELECT t.rowid as id, t.ref, paye as paid, total_ht, total_ttc, total_tva as total_vat, fk_soc, datef as date, 'SupplierInvoice' as item, s.nom as thirdparty_name, s.code_fournisseur as thirdparty_code, c.code as country_code, s.tva_intra as vatnum";
+        $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as t LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = t.fk_soc LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = s.fk_pays";
+        $sql .= " WHERE datef between ".$wheretail;
+        $sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
+        $sql .= " AND t.fk_statut <> ".FactureFournisseur::STATUS_DRAFT;
+        $sql .= " UNION ALL";
+        // Expense reports
+        $sql .= " SELECT t.rowid as id, t.ref, paid, total_ht, total_ttc, total_tva as total_vat, fk_user_author as fk_soc, date_fin as date, 'ExpenseReport' as item, CONCAT(CONCAT(u.lastname, ' '), u.firstname) as thirdparty_name, '' as thirdparty_code, c.code as country_code, '' as vatnum";
+        $sql .= " FROM ".MAIN_DB_PREFIX."expensereport as t LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = t.fk_user_author LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = u.fk_country";
+        $sql .= " WHERE date_fin between  ".$wheretail;
+        $sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
+        $sql .= " AND t.fk_statut <> ".ExpenseReport::STATUS_DRAFT;
+        $sql .= " UNION ALL";
+        // Donations
+        $sql .= " SELECT t.rowid as id, t.ref, paid, amount as total_ht, amount as total_ttc, 0 as total_vat, 0 as fk_soc, datedon as date, 'Donation' as item, t.societe as thirdparty_name, '' as thirdparty_code, c.code as country_code, '' as vatnum";
+        $sql .= " FROM ".MAIN_DB_PREFIX."don as t LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = t.fk_country";
+        $sql .= " WHERE datedon between ".$wheretail;
+        $sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
+        $sql .= " AND t.fk_statut <> ".Don::STATUS_DRAFT;
+        $sql .= " UNION ALL";
+        // Paiements of salaries
+        $sql .= " SELECT t.rowid as id, t.ref as ref, 1 as paid, amount as total_ht, amount as total_ttc, 0 as total_vat, t.fk_user as fk_soc, datep as date, 'SalaryPayment' as item, CONCAT(CONCAT(u.lastname, ' '), u.firstname)  as thirdparty_name, '' as thirdparty_code, c.code as country_code, '' as vatnum";
+        $sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as t LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = t.fk_user LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = u.fk_country";
+        $sql .= " WHERE datep between ".$wheretail;
+        $sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
+        //$sql.=" AND fk_statut <> ".PaymentSalary::STATUS_DRAFT;
+        $sql .= " UNION ALL";
+        // Social contributions
+        $sql .= " SELECT t.rowid as id, t.libelle as ref, paye as paid, amount as total_ht, amount as total_ttc, 0 as total_tva, 0 as fk_soc, date_creation as date, 'SocialContributions' as item, '' as thirdparty_name, '' as thirdparty_code, '' as country_code, '' as vatnum";
+        $sql .= " FROM ".MAIN_DB_PREFIX."chargesociales as t";
+        $sql .= " WHERE date_creation between ".$wheretail;
+        $sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
+        //$sql.=" AND fk_statut <> ".ChargeSociales::STATUS_DRAFT;
+        $sql .= $db->order($sortfield, $sortorder);
+        //print $sql;
 
-	    $resd = $db->query($sql);
-	    $files = array();
-	    $link = '';
+        $resd = $db->query($sql);
+        $files = array();
+        $link = '';
 
-	    if ($resd)
-	    {
-	        $numd = $db->num_rows($resd);
+        if ($resd) {
+            $numd = $db->num_rows($resd);
 
-	        $tmpinvoice = new Facture($db);
-	        $tmpinvoicesupplier = new FactureFournisseur($db);
-	        $tmpdonation = new Don($db);
+            $tmpinvoice = new Facture($db);
+            $tmpinvoicesupplier = new FactureFournisseur($db);
+            $tmpdonation = new Don($db);
 
-	        $upload_dir = '';
-	        $i = 0;
-	        while ($i < $numd)
-	        {
-	            $objd = $db->fetch_object($resd);
+            $upload_dir = '';
+            $i = 0;
+            while ($i < $numd) {
+                $objd = $db->fetch_object($resd);
 
-	            switch ($objd->item)
-	            {
-	                case "Invoice":
-	                	$subdir = '';
-	                	$subdir .= ($subdir ? '/' : '').dol_sanitizeFileName($objd->ref);
-	                	$upload_dir = $conf->facture->dir_output.'/'.$subdir;
-	                	$link = "document.php?modulepart=facture&file=".str_replace('/', '%2F', $subdir).'%2F';
-	                	break;
-	                case "SupplierInvoice":
-	                	$tmpinvoicesupplier->fetch($objd->id);
-	                	$subdir = get_exdir($tmpinvoicesupplier->id, 2, 0, 1, $tmpinvoicesupplier, 'invoice_supplier'); // TODO Use first file
-	                	$subdir .= ($subdir ? '/' : '').dol_sanitizeFileName($objd->ref);
-	                	$upload_dir = $conf->fournisseur->facture->dir_output.'/'.$subdir;
-	                	$link = "document.php?modulepart=facture_fournisseur&file=".str_replace('/', '%2F', $subdir).'%2F';
-	                	break;
-	                case "ExpenseReport":
-	                	$subdir = '';
-	                	$subdir .= ($subdir ? '/' : '').dol_sanitizeFileName($objd->ref);
-	                	$upload_dir = $conf->expensereport->dir_output.'/'.$subdir;
-	                	$link = "document.php?modulepart=expensereport&file=".str_replace('/', '%2F', $subdir).'%2F';
-	                	break;
-	                case "SalaryPayment":
-	                	$subdir = '';
-	                	$subdir .= ($subdir ? '/' : '').dol_sanitizeFileName($objd->id);
-	                	$upload_dir = $conf->salaries->dir_output.'/'.$subdir;
-	                	$link = "document.php?modulepart=salaries&file=".str_replace('/', '%2F', $subdir).'%2F';
-	                	break;
-	                case "Donation":
-	                	$tmpdonation->fetch($objp->id);
-	                	$subdir = get_exdir(0, 0, 0, 0, $tmpdonation, 'donation');
-	                	$subdir .= ($subdir ? '/' : '').dol_sanitizeFileName($objd->id);
-	                	$upload_dir = $conf->don->dir_output.'/'.$subdir;
-	                	$link = "document.php?modulepart=don&file=".str_replace('/', '%2F', $subdir).'%2F';
-	                	break;
-	                case "SocialContributions":
-	                	$subdir = '';
-	                	$subdir .= ($subdir ? '/' : '').dol_sanitizeFileName($objd->id);
-	                	$upload_dir = $conf->tax->dir_output.'/'.$subdir;
-	                	$link = "document.php?modulepart=tax&file=".str_replace('/', '%2F', $subdir).'%2F';
-	                	break;
-	                default:
-	                    $subdir = '';
-	                    $upload_dir = '';
-	                    $link = '';
-	                    break;
-	            }
+                switch ($objd->item) {
+                    case "Invoice":
+                        $subdir = '';
+                        $subdir .= ($subdir ? '/' : '').dol_sanitizeFileName($objd->ref);
+                        $upload_dir = $conf->facture->dir_output.'/'.$subdir;
+                        $link = "document.php?modulepart=facture&file=".str_replace('/', '%2F', $subdir).'%2F';
+                        break;
+                    case "SupplierInvoice":
+                        $tmpinvoicesupplier->fetch($objd->id);
+                        $subdir = get_exdir($tmpinvoicesupplier->id, 2, 0, 1, $tmpinvoicesupplier, 'invoice_supplier'); // TODO Use first file
+                        $subdir .= ($subdir ? '/' : '').dol_sanitizeFileName($objd->ref);
+                        $upload_dir = $conf->fournisseur->facture->dir_output.'/'.$subdir;
+                        $link = "document.php?modulepart=facture_fournisseur&file=".str_replace('/', '%2F', $subdir).'%2F';
+                        break;
+                    case "ExpenseReport":
+                        $subdir = '';
+                        $subdir .= ($subdir ? '/' : '').dol_sanitizeFileName($objd->ref);
+                        $upload_dir = $conf->expensereport->dir_output.'/'.$subdir;
+                        $link = "document.php?modulepart=expensereport&file=".str_replace('/', '%2F', $subdir).'%2F';
+                        break;
+                    case "SalaryPayment":
+                        $subdir = '';
+                        $subdir .= ($subdir ? '/' : '').dol_sanitizeFileName($objd->id);
+                        $upload_dir = $conf->salaries->dir_output.'/'.$subdir;
+                        $link = "document.php?modulepart=salaries&file=".str_replace('/', '%2F', $subdir).'%2F';
+                        break;
+                    case "Donation":
+                        $tmpdonation->fetch($objp->id);
+                        $subdir = get_exdir(0, 0, 0, 0, $tmpdonation, 'donation');
+                        $subdir .= ($subdir ? '/' : '').dol_sanitizeFileName($objd->id);
+                        $upload_dir = $conf->don->dir_output.'/'.$subdir;
+                        $link = "document.php?modulepart=don&file=".str_replace('/', '%2F', $subdir).'%2F';
+                        break;
+                    case "SocialContributions":
+                        $subdir = '';
+                        $subdir .= ($subdir ? '/' : '').dol_sanitizeFileName($objd->id);
+                        $upload_dir = $conf->tax->dir_output.'/'.$subdir;
+                        $link = "document.php?modulepart=tax&file=".str_replace('/', '%2F', $subdir).'%2F';
+                        break;
+                    default:
+                        $subdir = '';
+                        $upload_dir = '';
+                        $link = '';
+                        break;
+                }
 
-	            if (!empty($upload_dir))
-	            {
-	                $result = true;
+                if (!empty($upload_dir)) {
+                    $result = true;
 
-	                $files = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview\.png)$', '', SORT_ASC, 1);
-	                //var_dump($upload_dir);
-	                //var_dump($files);
+                    $files = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview\.png)$', '', SORT_ASC, 1);
+                    //var_dump($upload_dir);
+                    //var_dump($files);
 
-	                if (count($files) < 1)
-	                {
-	                	$nofile = array();
-	                	$nofile['id'] = $objd->id;
-	                	$nofile['date'] = $db->idate($objd->date);
-	                    $nofile['paid'] = $objd->paid;
-	                    $nofile['amount_ht'] = $objd->total_ht;
-	                    $nofile['amount_ttc'] = $objd->total_ttc;
-	                    $nofile['amount_vat'] = $objd->total_vat;
-	                    $nofile['ref'] = ($objd->ref ? $objd->ref : $objd->id);
-	                    $nofile['fk'] = $objd->fk_soc;
-	                    $nofile['item'] = $objd->item;
-	                    $nofile['thirdparty_name'] = $objd->thirdparty_name;
-	                    $nofile['thirdparty_code'] = $objd->thirdparty_code;
-	                    $nofile['country_code'] = $objd->country_code;
-	                    $nofile['vatnum'] = $objd->vatnum;
+                    if (count($files) < 1) {
+                        $nofile = array();
+                        $nofile['id'] = $objd->id;
+                        $nofile['date'] = $db->idate($objd->date);
+                        $nofile['paid'] = $objd->paid;
+                        $nofile['amount_ht'] = $objd->total_ht;
+                        $nofile['amount_ttc'] = $objd->total_ttc;
+                        $nofile['amount_vat'] = $objd->total_vat;
+                        $nofile['ref'] = ($objd->ref ? $objd->ref : $objd->id);
+                        $nofile['fk'] = $objd->fk_soc;
+                        $nofile['item'] = $objd->item;
+                        $nofile['thirdparty_name'] = $objd->thirdparty_name;
+                        $nofile['thirdparty_code'] = $objd->thirdparty_code;
+                        $nofile['country_code'] = $objd->country_code;
+                        $nofile['vatnum'] = $objd->vatnum;
 
-	                    $filesarray[$nofile['item'].'_'.$nofile['id']] = $nofile;
-	                }
-	                else
-	                {
-	                    foreach ($files as $key => $file)
-	                    {
-	                    	$file['id'] = $objd->id;
-	                    	$file['date'] = $db->idate($objd->date);
-	                        $file['paid'] = $objd->paid;
-	                        $file['amount_ht'] = $objd->total_ht;
-	                        $file['amount_ttc'] = $objd->total_ttc;
-	                        $file['amount_vat'] = $objd->total_vat;
-	                        $file['ref'] = ($objd->ref ? $objd->ref : $objd->id);
-	                        $file['fk'] = $objd->fk_soc;
-	                        $file['item'] = $objd->item;
+                        $filesarray[$nofile['item'].'_'.$nofile['id']] = $nofile;
+                    } else {
+                        foreach ($files as $key => $file) {
+                            $file['id'] = $objd->id;
+                            $file['date'] = $db->idate($objd->date);
+                            $file['paid'] = $objd->paid;
+                            $file['amount_ht'] = $objd->total_ht;
+                            $file['amount_ttc'] = $objd->total_ttc;
+                            $file['amount_vat'] = $objd->total_vat;
+                            $file['ref'] = ($objd->ref ? $objd->ref : $objd->id);
+                            $file['fk'] = $objd->fk_soc;
+                            $file['item'] = $objd->item;
 
-	                        $file['thirdparty_name'] = $objd->thirdparty_name;
-	                        $file['thirdparty_code'] = $objd->thirdparty_code;
-	                        $file['country_code'] = $objd->country_code;
-	                        $file['vatnum'] = $objd->vatnum;
+                            $file['thirdparty_name'] = $objd->thirdparty_name;
+                            $file['thirdparty_code'] = $objd->thirdparty_code;
+                            $file['country_code'] = $objd->country_code;
+                            $file['vatnum'] = $objd->vatnum;
 
-	                        // Save record into array (only the first time it is found)
-	                        if (empty($filesarray[$file['item'].'_'.$file['id']])) {
-	                        	$filesarray[$file['item'].'_'.$file['id']] = $file;
-	                        }
+                            // Save record into array (only the first time it is found)
+                            if (empty($filesarray[$file['item'].'_'.$file['id']])) {
+                                $filesarray[$file['item'].'_'.$file['id']] = $file;
+                            }
 
-	                        // Add or concat file
-	                        if (empty($filesarray[$file['item'].'_'.$file['id']]['files'])) {
-	                        	$filesarray[$file['item'].'_'.$file['id']]['files'] = array();
-	                        }
-	                        $filesarray[$file['item'].'_'.$file['id']]['files'][] = array('link' => $link.$file['name'], 'name'=>$file['name'], 'ref'=>$file['ref'], 'fullname' => $file['fullname'], 'relpathnamelang' => $langs->trans($file['item']).'/'.$file['name']);
-	                        //var_dump($file['item'].'_'.$file['id']);
-	                        //var_dump($filesarray[$file['item'].'_'.$file['id']]['files']);
-	                    }
-	                }
-	            }
+                            // Add or concat file
+                            if (empty($filesarray[$file['item'].'_'.$file['id']]['files'])) {
+                                $filesarray[$file['item'].'_'.$file['id']]['files'] = array();
+                            }
+                            $filesarray[$file['item'].'_'.$file['id']]['files'][] = array('link' => $link.$file['name'], 'name'=>$file['name'], 'ref'=>$file['ref'], 'fullname' => $file['fullname'], 'relpathnamelang' => $langs->trans($file['item']).'/'.$file['name']);
+                            //var_dump($file['item'].'_'.$file['id']);
+                            //var_dump($filesarray[$file['item'].'_'.$file['id']]['files']);
+                        }
+                    }
+                }
 
-	            $i++;
-	        }
-	    }
-	    else
-	    {
-	        dol_print_error($db);
-	    }
+                $i++;
+            }
+        } else {
+            dol_print_error($db);
+        }
 
-	    $db->free($resd);
-	}
+        $db->free($resd);
+    }
 }
 
 
@@ -296,20 +289,17 @@ if (($action == "searchfiles" || $action == "dl")) {
  */
 
 $dirfortmpfile = ($conf->accounting->dir_temp ? $conf->accounting->dir_temp : $conf->comptabilite->dir_temp);
-if (empty($dirfortmpfile))
-{
-	setEventMessages($langs->trans("ErrorNoAccountingModuleEnabled"), null, 'errors');
-	$error++;
+if (empty($dirfortmpfile)) {
+    setEventMessages($langs->trans("ErrorNoAccountingModuleEnabled"), null, 'errors');
+    $error++;
 }
 
 
-if ($result && $action == "dl" && !$error)
-{
-	if (!extension_loaded('zip'))
-	{
-		setEventMessages('PHPZIPExtentionNotLoaded', null, 'errors');
-		exit;
-	}
+if ($result && $action == "dl" && !$error) {
+    if (!extension_loaded('zip')) {
+        setEventMessages('PHPZIPExtentionNotLoaded', null, 'errors');
+        exit;
+    }
 
     dol_mkdir($dirfortmpfile);
 
@@ -331,15 +321,13 @@ if ($result && $action == "dl" && !$error)
 
     $zip = new ZipArchive;
     $res = $zip->open($zipname, ZipArchive::OVERWRITE | ZipArchive::CREATE);
-    if ($res)
-    {
-        foreach ($filesarray as $key => $file)
-        {
-        	foreach($file['files'] as $filecursor) {
-        		if (file_exists($filecursor["fullname"])) {
-        			$zip->addFile($filecursor["fullname"], $filecursor["relpathnamelang"]);
-        		}
-        	}
+    if ($res) {
+        foreach ($filesarray as $key => $file) {
+            foreach ($file['files'] as $filecursor) {
+                if (file_exists($filecursor["fullname"])) {
+                    $zip->addFile($filecursor["fullname"], $filecursor["relpathnamelang"]);
+                }
+            }
 
             $log .= $file['item'];
             $log .= ','.dol_print_date($file['date'], 'dayrfc');
@@ -367,10 +355,8 @@ if ($result && $action == "dl" && !$error)
         dol_delete_file($zipname);
 
         exit();
-    }
-    else
-    {
-    	setEventMessages($langs->trans("FailedToOpenFile", $zipname), null, 'errors');
+    } else {
+        setEventMessages($langs->trans("FailedToOpenFile", $zipname), null, 'errors');
     }
 }
 
@@ -401,13 +387,12 @@ print $langs->trans("ReportPeriod").': '.$form->selectDate($date_start, 'date_st
 print ' - '.$form->selectDate($date_stop, 'date_stop', 0, 0, 0, "", 1, 1, 0)."\n</a>";
 
 // Export is for current company only !
-if (!empty($conf->multicompany->enabled) && is_object($mc))
-{
-	print '<span class="marginleftonly marginrightonly">('.$langs->trans("Entity").' : ';
-	$mc->dao->getEntities();
-	$mc->dao->fetch($conf->entity);
-	print $mc->dao->label;
-	print ")</span>\n";
+if (!empty($conf->multicompany->enabled) && is_object($mc)) {
+    print '<span class="marginleftonly marginrightonly">('.$langs->trans("Entity").' : ';
+    $mc->dao->getEntities();
+    $mc->dao->fetch($conf->entity);
+    print $mc->dao->label;
+    print ")</span>\n";
 }
 
 print '<input class="button" type="submit" name="search" value="'.$langs->trans("Search").'">';
@@ -416,8 +401,7 @@ print '</form>'."\n";
 
 dol_fiche_end();
 
-if (!empty($date_start) && !empty($date_stop))
-{
+if (!empty($date_start) && !empty($date_stop)) {
     $param = 'action=searchfiles';
     $param .= '&date_startday='.GETPOST('date_startday', 'int');
     $param .= '&date_startmonth='.GETPOST('date_startmonth', 'int');
@@ -458,21 +442,17 @@ if (!empty($date_start) && !empty($date_stop))
     print '<td align="right">'.$langs->trans("TotalHT").'</td>';
     print '<td align="right">'.$langs->trans("TotalTTC").'</td>';
     print '<td align="right">'.$langs->trans("TotalVAT").'</td>';
-	print '<td>'.$langs->trans("ThirdParty").'</td>';
-	print '<td class="center">'.$langs->trans("Code").'</td>';
-	print '<td class="center">'.$langs->trans("Country").'</td>';
+    print '<td>'.$langs->trans("ThirdParty").'</td>';
+    print '<td class="center">'.$langs->trans("Code").'</td>';
+    print '<td class="center">'.$langs->trans("Country").'</td>';
     print '<td class="center">'.$langs->trans("VATIntra").'</td>';
     print '</tr>';
-    if ($result)
-    {
+    if ($result) {
         $TData = dol_sort_array($filesarray, $sortfield, $sortorder);
 
-        if (empty($TData))
-        {
+        if (empty($TData)) {
             print '<tr class="oddeven"><td colspan="7">'.$langs->trans("NoItem").'</td></tr>';
-        }
-        else
-        {
+        } else {
             // Sort array by date ASC to calculate balance
 
             $totalET = 0;
@@ -482,8 +462,7 @@ if (!empty($date_start) && !empty($date_stop))
             $totalCredit = 0;
 
             // Display array
-            foreach ($TData as $data)
-            {
+            foreach ($TData as $data) {
                 $html_class = '';
                 //if (!empty($data['fk_facture'])) $html_class = 'facid-'.$data['fk_facture'];
                 //elseif (!empty($data['fk_paiement'])) $html_class = 'payid-'.$data['fk_paiement'];
@@ -502,11 +481,10 @@ if (!empty($date_start) && !empty($date_stop))
 
                 // File link
                 print '<td>';
-                if (! empty($data['files']))
-                {
-                	foreach($data['files'] as $filecursor) {
-                		print '<a href='.DOL_URL_ROOT.'/'.$filecursor['link'].' target="_blank">'.($filecursor['name'] ? $filecursor['name'] : $filecursor['ref']).'</a><br>';
-                	}
+                if (! empty($data['files'])) {
+                    foreach ($data['files'] as $filecursor) {
+                        print '<a href='.DOL_URL_ROOT.'/'.$filecursor['link'].' target="_blank">'.($filecursor['name'] ? $filecursor['name'] : $filecursor['ref']).'</a><br>';
+                    }
                 }
                 print "</td>\n";
 
@@ -562,7 +540,7 @@ if (!empty($date_start) && !empty($date_stop))
             /*print '<td align="right">'.price($totalDebit).'</td>';
             print '<td align="right">'.price($totalCredit).'</td>';
             print '<td align="right">'.price(price2num($totalDebit - $totalCredit, 'MT')).'</td>';
-			*/
+            */
             print "</tr>\n";
         }
     }

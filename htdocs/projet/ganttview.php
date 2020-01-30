@@ -42,7 +42,9 @@ $mine = ($mode == 'mine' ? 1 : 0);
 $object = new Project($db);
 
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once
-if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
+if (! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) {
+    $object->fetchComments();
+}
 
 // Security check
 $socid=0;
@@ -73,27 +75,27 @@ $task = new Task($db);
 
 $arrayofcss = array('/includes/jsgantt/jsgantt.css');
 
-if (!empty($conf->use_javascript_ajax))
-{
-	$arrayofjs = array(
-	'/includes/jsgantt/jsgantt.js',
-	'/projet/jsgantt_language.js.php?lang='.$langs->defaultlang
-	);
+if (!empty($conf->use_javascript_ajax)) {
+    $arrayofjs = array(
+    '/includes/jsgantt/jsgantt.js',
+    '/projet/jsgantt_language.js.php?lang='.$langs->defaultlang
+    );
 }
 
 //$title=$langs->trans("Gantt").($object->ref?' - '.$object->ref.' '.$object->name:'');
 $title = $langs->trans("Gantt");
-if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title = ($object->ref ? $object->ref.' '.$object->name.' - ' : '').$langs->trans("Gantt");
+if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+    $title = ($object->ref ? $object->ref.' '.$object->name.' - ' : '').$langs->trans("Gantt");
+}
 $help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 llxHeader("", $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss);
 
-if (($id > 0 && is_numeric($id)) || !empty($ref))
-{
-	// To verify role of users
-	//$userAccess = $object->restrictedProjectArea($user,'read');
-	$userWrite = $object->restrictedProjectArea($user, 'write');
-	//$userDelete = $object->restrictedProjectArea($user,'delete');
-	//print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
+if (($id > 0 && is_numeric($id)) || !empty($ref)) {
+    // To verify role of users
+    //$userAccess = $object->restrictedProjectArea($user,'read');
+    $userWrite = $object->restrictedProjectArea($user, 'write');
+    //$userDelete = $object->restrictedProjectArea($user,'delete');
+    //print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
 
     $tab = 'tasks';
 
@@ -112,15 +114,13 @@ if (($id > 0 && is_numeric($id)) || !empty($ref))
     // Title
     $morehtmlref .= $object->title;
     // Thirdparty
-    if ($object->thirdparty->id > 0)
-    {
+    if ($object->thirdparty->id > 0) {
         $morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'project');
     }
     $morehtmlref .= '</div>';
 
     // Define a complementary filter for search of next/prev ref.
-    if (!$user->rights->projet->all->lire)
-    {
+    if (!$user->rights->projet->all->lire) {
         $objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
         $object->next_prev_filter = " rowid in (".(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
     }
@@ -139,48 +139,52 @@ if (($id > 0 && is_numeric($id)) || !empty($ref))
     print $langs->trans("Usage");
     print '</td>';
     print '<td>';
-    if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
-    {
-    	print '<input type="checkbox" disabled name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha')!=''?' checked="checked"':'') : ($object->usage_opportunity ? ' checked="checked"' : '')).'"> ';
-    	$htmltext = $langs->trans("ProjectFollowOpportunity");
-    	print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
-    	print '<br>';
+    if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+        print '<input type="checkbox" disabled name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha')!=''?' checked="checked"':'') : ($object->usage_opportunity ? ' checked="checked"' : '')).'"> ';
+        $htmltext = $langs->trans("ProjectFollowOpportunity");
+        print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
+        print '<br>';
     }
-    if (empty($conf->global->PROJECT_HIDE_TASKS))
-    {
-    	print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha')!=''?' checked="checked"':'') : ($object->usage_task ? ' checked="checked"' : '')).'"> ';
-    	$htmltext = $langs->trans("ProjectFollowTasks");
-    	print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
-    	print '<br>';
+    if (empty($conf->global->PROJECT_HIDE_TASKS)) {
+        print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha')!=''?' checked="checked"':'') : ($object->usage_task ? ' checked="checked"' : '')).'"> ';
+        $htmltext = $langs->trans("ProjectFollowTasks");
+        print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
+        print '<br>';
     }
-    if (! empty($conf->global->PROJECT_BILL_TIME_SPENT))
-    {
-    	print '<input type="checkbox" disabled name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha')!=''?' checked="checked"':'') : ($object->usage_bill_time ? ' checked="checked"' : '')).'"> ';
-    	$htmltext = $langs->trans("ProjectBillTimeDescription");
-    	print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
-    	print '<br>';
+    if (! empty($conf->global->PROJECT_BILL_TIME_SPENT)) {
+        print '<input type="checkbox" disabled name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha')!=''?' checked="checked"':'') : ($object->usage_bill_time ? ' checked="checked"' : '')).'"> ';
+        $htmltext = $langs->trans("ProjectBillTimeDescription");
+        print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
+        print '<br>';
     }
     print '</td></tr>';
 
     // Visibility
     print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
-    if ($object->public) print $langs->trans('SharedProject');
-    else print $langs->trans('PrivateProject');
+    if ($object->public) {
+        print $langs->trans('SharedProject');
+    } else {
+        print $langs->trans('PrivateProject');
+    }
     print '</td></tr>';
 
     // Date start - end
     print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
-	$start = dol_print_date($object->date_start, 'day');
-	print ($start ? $start : '?');
-	$end = dol_print_date($object->date_end, 'day');
-	print ' - ';
-	print ($end ? $end : '?');
-	if ($object->hasDelay()) print img_warning("Late");
+    $start = dol_print_date($object->date_start, 'day');
+    print($start ? $start : '?');
+    $end = dol_print_date($object->date_end, 'day');
+    print ' - ';
+    print($end ? $end : '?');
+    if ($object->hasDelay()) {
+        print img_warning("Late");
+    }
     print '</td></tr>';
 
     // Budget
     print '<tr><td>'.$langs->trans("Budget").'</td><td>';
-    if (strcmp($object->budget_amount, '')) print price($object->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
+    if (strcmp($object->budget_amount, '')) {
+        print price($object->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
+    }
     print '</td></tr>';
 
     // Other attributes
@@ -225,11 +229,11 @@ if (($id > 0 && is_numeric($id)) || !empty($ref))
 $linktocreatetaskParam = array();
 $linktocreatetaskUserRight = false;
 if ($user->rights->projet->all->creer || $user->rights->projet->creer) {
-	if ($object->public || $userWrite > 0){
+    if ($object->public || $userWrite > 0) {
         $linktocreatetaskUserRight = true;
-	}else{
+    } else {
         $linktocreatetaskParam['attr']['title'] = $langs->trans("NotOwnerOfProject");
-	}
+    }
 }
 
 $linktocreatetask = dolGetButtonTitle($langs->trans('AddTask'), '', 'fa fa-plus-circle paddingleft', DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id.'&action=create'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id), '', $linktocreatetaskUserRight, $linktocreatetaskParam);
@@ -250,144 +254,135 @@ $tasksarray=$task->getTasksArray(0, 0, ($object->id ? $object->id : $id), $socid
 //var_dump($tasksrole);
 
 
-if (count($tasksarray)>0)
-{
-	// Show Gant diagram from $taskarray using JSGantt
+if (count($tasksarray)>0) {
+    // Show Gant diagram from $taskarray using JSGantt
 
-	$dateformat=$langs->trans("FormatDateShortJQuery");			// Used by include ganttchart.inc.php later
-	$datehourformat=$langs->trans("FormatDateShortJQuery").' '.$langs->trans("FormatHourShortJQuery");	// Used by include ganttchart.inc.php later
-	$array_contacts=array();
-	$tasks=array();
-	$task_dependencies=array();
-	$taskcursor=0;
-	foreach($tasksarray as $key => $val)	// Task array are sorted by "project, position, dateo"
-	{
-		$task->fetch($val->id, '');
+    $dateformat=$langs->trans("FormatDateShortJQuery");			// Used by include ganttchart.inc.php later
+    $datehourformat=$langs->trans("FormatDateShortJQuery").' '.$langs->trans("FormatHourShortJQuery");	// Used by include ganttchart.inc.php later
+    $array_contacts=array();
+    $tasks=array();
+    $task_dependencies=array();
+    $taskcursor=0;
+    foreach ($tasksarray as $key => $val) {	// Task array are sorted by "project, position, dateo"
+        $task->fetch($val->id, '');
 
-		$idparent = ($val->fk_parent ? $val->fk_parent : '-'.$val->fk_project);	// If start with -, id is a project id
+        $idparent = ($val->fk_parent ? $val->fk_parent : '-'.$val->fk_project);	// If start with -, id is a project id
 
-		$tasks[$taskcursor]['task_id']=$val->id;
-		$tasks[$taskcursor]['task_alternate_id']=($taskcursor+1);		// An id that has same order than position (requird by ganttchart)
-		$tasks[$taskcursor]['task_project_id']=$val->fk_project;
-		$tasks[$taskcursor]['task_parent']=$idparent;
+        $tasks[$taskcursor]['task_id']=$val->id;
+        $tasks[$taskcursor]['task_alternate_id']=($taskcursor+1);		// An id that has same order than position (requird by ganttchart)
+        $tasks[$taskcursor]['task_project_id']=$val->fk_project;
+        $tasks[$taskcursor]['task_parent']=$idparent;
 
-		$tasks[$taskcursor]['task_is_group'] = 0;
+        $tasks[$taskcursor]['task_is_group'] = 0;
         $tasks[$taskcursor]['task_css'] = 'gtaskblue';
         $tasks[$taskcursor]['task_position'] = $val->rang;
         $tasks[$taskcursor]['task_planned_workload'] = $val->planned_workload;
 
-        if ($val->fk_parent != 0 && $task->hasChildren()> 0){
+        if ($val->fk_parent != 0 && $task->hasChildren()> 0) {
             $tasks[$taskcursor]['task_is_group']=1;
-        	$tasks[$taskcursor]['task_css']='ggroupblack';
-            //$tasks[$taskcursor]['task_css'] = 'gtaskblue';
-        }
-        elseif ($task->hasChildren()> 0) {
+            $tasks[$taskcursor]['task_css']='ggroupblack';
+        //$tasks[$taskcursor]['task_css'] = 'gtaskblue';
+        } elseif ($task->hasChildren()> 0) {
             $tasks[$taskcursor]['task_is_group'] = 1;
-        	//$tasks[$taskcursor]['task_is_group'] = 0;
+            //$tasks[$taskcursor]['task_is_group'] = 0;
             $tasks[$taskcursor]['task_css'] = 'ggroupblack';
             //$tasks[$taskcursor]['task_css'] = 'gtaskblue';
         }
-		$tasks[$taskcursor]['task_milestone']='0';
-		$tasks[$taskcursor]['task_percent_complete']=$val->progress;
-		//$tasks[$taskcursor]['task_name']=$task->getNomUrl(1);
-		//print dol_print_date($val->date_start).dol_print_date($val->date_end).'<br>'."\n";
-		$tasks[$taskcursor]['task_name']=$val->ref.' - '.$val->label;
-		$tasks[$taskcursor]['task_start_date']=$val->date_start;
-		$tasks[$taskcursor]['task_end_date']=$val->date_end;
-		$tasks[$taskcursor]['task_color']='b4d1ea';
+        $tasks[$taskcursor]['task_milestone']='0';
+        $tasks[$taskcursor]['task_percent_complete']=$val->progress;
+        //$tasks[$taskcursor]['task_name']=$task->getNomUrl(1);
+        //print dol_print_date($val->date_start).dol_print_date($val->date_end).'<br>'."\n";
+        $tasks[$taskcursor]['task_name']=$val->ref.' - '.$val->label;
+        $tasks[$taskcursor]['task_start_date']=$val->date_start;
+        $tasks[$taskcursor]['task_end_date']=$val->date_end;
+        $tasks[$taskcursor]['task_color']='b4d1ea';
 
-		$idofusers=$task->getListContactId('internal');
-		$idofcontacts=$task->getListContactId('external');
-  		$s='';
-		if (count($idofusers)>0)
-		{
-			$s.=$langs->trans("Internals").': ';
-			$i=0;
-			foreach($idofusers as $valid)
-			{
-				$userstatic->fetch($valid);
-				if ($i) $s.=', ';
-				$s.=$userstatic->login;
-				$i++;
-			}
-		}
-		//if (count($idofusers)>0 && (count($idofcontacts)>0)) $s.=' - ';
-		if (count($idofcontacts)>0)
-		{
-			if ($s) $s.=' - ';
-			$s.=$langs->trans("Externals").': ';
-			$i=0;
-			$contactidfound=array();
-			foreach($idofcontacts as $valid)
-			{
-				if (empty($contactidfound[$valid]))
-				{
-					$res = $contactstatic->fetch($valid);
-					if ($res > 0)
-					{
-						if ($i) $s.=', ';
-						$s.=$contactstatic->getFullName($langs);
-						$contactidfound[$valid]=1;
-						$i++;
-					}
-				}
-			}
-		}
-		//if ($s) $tasks[$taskcursor]['task_resources']='<a href="'.DOL_URL_ROOT.'/projet/tasks/contact.php?id='.$val->id.'&withproject=1" title="'.dol_escape_htmltag($s).'">'.$langs->trans("List").'</a>';
-		/* For JSGanttImproved */
-		//if ($s) $tasks[$taskcursor]['task_resources']=implode(',',$idofusers);
+        $idofusers=$task->getListContactId('internal');
+        $idofcontacts=$task->getListContactId('external');
+        $s='';
+        if (count($idofusers)>0) {
+            $s.=$langs->trans("Internals").': ';
+            $i=0;
+            foreach ($idofusers as $valid) {
+                $userstatic->fetch($valid);
+                if ($i) {
+                    $s.=', ';
+                }
+                $s.=$userstatic->login;
+                $i++;
+            }
+        }
+        //if (count($idofusers)>0 && (count($idofcontacts)>0)) $s.=' - ';
+        if (count($idofcontacts)>0) {
+            if ($s) {
+                $s.=' - ';
+            }
+            $s.=$langs->trans("Externals").': ';
+            $i=0;
+            $contactidfound=array();
+            foreach ($idofcontacts as $valid) {
+                if (empty($contactidfound[$valid])) {
+                    $res = $contactstatic->fetch($valid);
+                    if ($res > 0) {
+                        if ($i) {
+                            $s.=', ';
+                        }
+                        $s.=$contactstatic->getFullName($langs);
+                        $contactidfound[$valid]=1;
+                        $i++;
+                    }
+                }
+            }
+        }
+        //if ($s) $tasks[$taskcursor]['task_resources']='<a href="'.DOL_URL_ROOT.'/projet/tasks/contact.php?id='.$val->id.'&withproject=1" title="'.dol_escape_htmltag($s).'">'.$langs->trans("List").'</a>';
+        /* For JSGanttImproved */
+        //if ($s) $tasks[$taskcursor]['task_resources']=implode(',',$idofusers);
         $tasks[$taskcursor]['task_resources'] = $s;
-		//print "xxx".$val->id.$tasks[$taskcursor]['task_resources'];
+        //print "xxx".$val->id.$tasks[$taskcursor]['task_resources'];
         $tasks[$taskcursor]['note'] = $task->note_public;
-		$taskcursor++;
-	}
+        $taskcursor++;
+    }
 
-	// Search parent to set task_parent_alternate_id (requird by ganttchart)
-	foreach ($tasks as $tmpkey => $tmptask)
-	{
-		foreach ($tasks as $tmptask2)
-		{
-			if ($tmptask2['task_id'] == $tmptask['task_parent'])
-			{
-				$tasks[$tmpkey]['task_parent_alternate_id'] = $tmptask2['task_alternate_id'];
-				break;
-			}
-		}
-		if (empty($tasks[$tmpkey]['task_parent_alternate_id'])) $tasks[$tmpkey]['task_parent_alternate_id'] = $tasks[$tmpkey]['task_parent'];
-	}
+    // Search parent to set task_parent_alternate_id (requird by ganttchart)
+    foreach ($tasks as $tmpkey => $tmptask) {
+        foreach ($tasks as $tmptask2) {
+            if ($tmptask2['task_id'] == $tmptask['task_parent']) {
+                $tasks[$tmpkey]['task_parent_alternate_id'] = $tmptask2['task_alternate_id'];
+                break;
+            }
+        }
+        if (empty($tasks[$tmpkey]['task_parent_alternate_id'])) {
+            $tasks[$tmpkey]['task_parent_alternate_id'] = $tasks[$tmpkey]['task_parent'];
+        }
+    }
 
-	print "\n";
+    print "\n";
 
- 	if (!empty($conf->use_javascript_ajax))
-	{
-	    //var_dump($_SESSION);
+    if (!empty($conf->use_javascript_ajax)) {
+        //var_dump($_SESSION);
 
-		// How the date for data are formated (format used bu jsgantt)
-	    $dateformatinput = 'yyyy-mm-dd';
-	    // How the date for data are formated (format used by dol_print_date)
-	    $dateformatinput2 = 'standard';
-	    //var_dump($dateformatinput);
-  		//var_dump($dateformatinput2);
+        // How the date for data are formated (format used bu jsgantt)
+        $dateformatinput = 'yyyy-mm-dd';
+        // How the date for data are formated (format used by dol_print_date)
+        $dateformatinput2 = 'standard';
+        //var_dump($dateformatinput);
+        //var_dump($dateformatinput2);
 
-	    print '<br>';
+        print '<br>';
 
-	    print '<div class="div-table-responsive">';
+        print '<div class="div-table-responsive">';
 
-	    print '<div id="tabs" class="gantt" style="width: 80vw;">'."\n";
-		include_once DOL_DOCUMENT_ROOT.'/projet/ganttchart.inc.php';
-		print '</div>'."\n";
+        print '<div id="tabs" class="gantt" style="width: 80vw;">'."\n";
+        include_once DOL_DOCUMENT_ROOT.'/projet/ganttchart.inc.php';
+        print '</div>'."\n";
 
-		print '</div>';
-	}
-	else
-	{
-		$langs->load("admin");
-		print $langs->trans("AvailableOnlyIfJavascriptAndAjaxNotDisabled");
-	}
-}
-else
-{
-	print '<div class="opacitymedium">'.$langs->trans("NoTasks").'</div>';
+        print '</div>';
+    } else {
+        $langs->load("admin");
+        print $langs->trans("AvailableOnlyIfJavascriptAndAjaxNotDisabled");
+    }
+} else {
+    print '<div class="opacitymedium">'.$langs->trans("NoTasks").'</div>';
 }
 
 // End of page

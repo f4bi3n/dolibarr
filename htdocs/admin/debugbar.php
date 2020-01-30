@@ -29,7 +29,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 global $conf;
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+    accessforbidden();
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin","other"));
@@ -43,27 +45,22 @@ $action = GETPOST('action', 'aZ09');
  */
 
 // Set modes
-if ($action == 'set')
-{
-	$db->begin();
+if ($action == 'set') {
+    $db->begin();
 
-	$result1 = dolibarr_set_const($db, "DEBUGBAR_LOGS_LINES_NUMBER", GETPOST('DEBUGBAR_LOGS_LINES_NUMBER', 'int'), 'chaine', 0, '', 0);
-	$result2 = dolibarr_set_const($db, "DEBUGBAR_USE_LOG_FILE", GETPOST('DEBUGBAR_USE_LOG_FILE', 'int'), 'chaine', 0, '', 0);
-	if ($result1 < 0 || $result2 < 0)
-    {
+    $result1 = dolibarr_set_const($db, "DEBUGBAR_LOGS_LINES_NUMBER", GETPOST('DEBUGBAR_LOGS_LINES_NUMBER', 'int'), 'chaine', 0, '', 0);
+    $result2 = dolibarr_set_const($db, "DEBUGBAR_USE_LOG_FILE", GETPOST('DEBUGBAR_USE_LOG_FILE', 'int'), 'chaine', 0, '', 0);
+    if ($result1 < 0 || $result2 < 0) {
         $error++;
     }
 
-	if (! $error)
-	{
-		$db->commit();
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
-		$db->rollback();
-		setEventMessages($error, null, 'errors');
-	}
+    if (! $error) {
+        $db->commit();
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    } else {
+        $db->rollback();
+        setEventMessages($error, null, 'errors');
+    }
 }
 
 
@@ -80,8 +77,7 @@ print load_fiche_titre($langs->trans("DebugBarSetup"), $linkback, 'title_setup')
 
 //print load_fiche_titre($langs->trans("DebugBar"));
 
-if (! function_exists('mb_check_encoding'))
-{
+if (! function_exists('mb_check_encoding')) {
     $langs->load("errors");
     print info_admin($langs->trans("ErrorPHPNeedModule", 'mbstring'), 0, 0, 'error');
 }

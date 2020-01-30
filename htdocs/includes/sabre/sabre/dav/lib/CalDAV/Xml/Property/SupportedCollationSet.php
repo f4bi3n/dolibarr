@@ -19,7 +19,8 @@ use Sabre\Xml\XmlSerializable;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class SupportedCollationSet implements XmlSerializable {
+class SupportedCollationSet implements XmlSerializable
+{
 
     /**
      * The xmlSerialize method is called during xml writing.
@@ -40,8 +41,8 @@ class SupportedCollationSet implements XmlSerializable {
      * @param Writer $writer
      * @return void
      */
-    function xmlSerialize(Writer $writer) {
-
+    public function xmlSerialize(Writer $writer)
+    {
         $collations = [
             'i;ascii-casemap',
             'i;octet',
@@ -51,7 +52,5 @@ class SupportedCollationSet implements XmlSerializable {
         foreach ($collations as $collation) {
             $writer->writeElement('{' . Plugin::NS_CALDAV . '}supported-collation', $collation);
         }
-
     }
-
 }

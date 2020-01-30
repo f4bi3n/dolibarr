@@ -16,7 +16,8 @@ use DateTimeZone;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class DateTimeParser {
+class DateTimeParser
+{
 
     /**
      * Parses an iCalendar (rfc5545) formatted datetime and returns a
@@ -31,7 +32,8 @@ class DateTimeParser {
      *
      * @return DateTimeImmutable
      */
-    static function parseDateTime($dt, DateTimeZone $tz = null) {
+    public static function parseDateTime($dt, DateTimeZone $tz = null)
+    {
 
         // Format is YYYYMMDD + "T" + hhmmss
         $result = preg_match('/^([0-9]{4})([0-1][0-9])([0-3][0-9])T([0-2][0-9])([0-5][0-9])([0-5][0-9])([Z]?)$/', $dt, $matches);
@@ -51,7 +53,6 @@ class DateTimeParser {
         }
 
         return $date;
-
     }
 
     /**
@@ -62,7 +63,8 @@ class DateTimeParser {
      *
      * @return DateTimeImmutable
      */
-    static function parseDate($date, DateTimeZone $tz = null) {
+    public static function parseDate($date, DateTimeZone $tz = null)
+    {
 
         // Format is YYYYMMDD
         $result = preg_match('/^([0-9]{4})([0-1][0-9])([0-3][0-9])$/', $date, $matches);
@@ -82,7 +84,6 @@ class DateTimeParser {
         }
 
         return $date;
-
     }
 
     /**
@@ -96,15 +97,14 @@ class DateTimeParser {
      *
      * @return DateInterval|string
      */
-    static function parseDuration($duration, $asString = false) {
-
+    public static function parseDuration($duration, $asString = false)
+    {
         $result = preg_match('/^(?<plusminus>\+|-)?P((?<week>\d+)W)?((?<day>\d+)D)?(T((?<hour>\d+)H)?((?<minute>\d+)M)?((?<second>\d+)S)?)?$/', $duration, $matches);
         if (!$result) {
             throw new InvalidDataException('The supplied iCalendar duration value is incorrect: ' . $duration);
         }
 
         if (!$asString) {
-
             $invert = false;
 
             if ($matches['plusminus'] === '-') {
@@ -137,7 +137,6 @@ class DateTimeParser {
             }
 
             if ($matches['minute'] || $matches['second'] || $matches['hour']) {
-
                 $duration .= 'T';
 
                 if ($matches['hour']) {
@@ -151,7 +150,6 @@ class DateTimeParser {
                 if ($matches['second']) {
                     $duration .= $matches['second'] . 'S';
                 }
-
             }
 
             if ($duration === 'P') {
@@ -165,7 +163,6 @@ class DateTimeParser {
             }
 
             return $iv;
-
         }
 
         $parts = [
@@ -191,7 +188,6 @@ class DateTimeParser {
         };
 
         return $newDur;
-
     }
 
     /**
@@ -202,8 +198,8 @@ class DateTimeParser {
      *
      * @return DateTimeImmutable|DateInterval
      */
-    static function parse($date, $referenceTz = null) {
-
+    public static function parse($date, $referenceTz = null)
+    {
         if ($date[0] === 'P' || ($date[0] === '-' && $date[1] === 'P')) {
             return self::parseDuration($date);
         } elseif (strlen($date) === 8) {
@@ -211,7 +207,6 @@ class DateTimeParser {
         } else {
             return self::parseDateTime($date, $referenceTz);
         }
-
     }
 
     /**
@@ -270,8 +265,8 @@ class DateTimeParser {
      *
      * @return array
      */
-    static function parseVCardDateTime($date) {
-
+    public static function parseVCardDateTime($date)
+    {
         $regex = '/^
             (?:  # date part
                 (?:
@@ -323,7 +318,6 @@ class DateTimeParser {
             if (!preg_match($regex, $date, $matches)) {
                 throw new InvalidDataException('Invalid vCard date-time string: ' . $date);
             }
-
         }
         $parts = [
             'year',
@@ -337,7 +331,6 @@ class DateTimeParser {
 
         $result = [];
         foreach ($parts as $part) {
-
             if (empty($matches[$part])) {
                 $result[$part] = null;
             } elseif ($matches[$part] === '-' || $matches[$part] === '--') {
@@ -345,11 +338,9 @@ class DateTimeParser {
             } else {
                 $result[$part] = $matches[$part];
             }
-
         }
 
         return $result;
-
     }
 
     /**
@@ -394,8 +385,8 @@ class DateTimeParser {
      *
      * @return array
      */
-    static function parseVCardTime($date) {
-
+    public static function parseVCardTime($date)
+    {
         $regex = '/^
             (?<hour> [0-9]{2} | -)
             (?<minute> [0-9]{2} | -)?
@@ -429,7 +420,6 @@ class DateTimeParser {
             if (!preg_match($regex, $date, $matches)) {
                 throw new InvalidDataException('Invalid vCard time string: ' . $date);
             }
-
         }
         $parts = [
             'hour',
@@ -440,7 +430,6 @@ class DateTimeParser {
 
         $result = [];
         foreach ($parts as $part) {
-
             if (empty($matches[$part])) {
                 $result[$part] = null;
             } elseif ($matches[$part] === '-') {
@@ -448,11 +437,9 @@ class DateTimeParser {
             } else {
                 $result[$part] = $matches[$part];
             }
-
         }
 
         return $result;
-
     }
 
     /**
@@ -506,7 +493,8 @@ class DateTimeParser {
      *
      * @return array
      */
-    static function parseVCardDateAndOrTime($date) {
+    public static function parseVCardDateAndOrTime($date)
+    {
 
         // \d{8}|\d{4}-\d\d|--\d\d(\d\d)?|---\d\d
         $valueDate = '/^(?J)(?:' .
@@ -575,6 +563,5 @@ class DateTimeParser {
         unset($parts['year0']);
 
         return $parts;
-
     }
 }

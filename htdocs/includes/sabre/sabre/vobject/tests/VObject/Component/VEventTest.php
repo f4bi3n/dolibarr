@@ -2,19 +2,19 @@
 
 namespace Sabre\VObject\Component;
 
-class VEventTest extends \PHPUnit_Framework_TestCase {
+class VEventTest extends \PHPUnit_Framework_TestCase
+{
 
     /**
      * @dataProvider timeRangeTestData
      */
-    function testInTimeRange(VEvent $vevent, $start, $end, $outcome) {
-
+    public function testInTimeRange(VEvent $vevent, $start, $end, $outcome)
+    {
         $this->assertEquals($outcome, $vevent->isInTimeRange($start, $end));
-
     }
 
-    function timeRangeTestData() {
-
+    public function timeRangeTestData()
+    {
         $tests = [];
 
         $calendar = new VCalendar();
@@ -89,7 +89,5 @@ class VEventTest extends \PHPUnit_Framework_TestCase {
         $tests[] = [$vevent9, new \DateTime('2016-10-31'), new \DateTime('2016-12-12'), true];
 
         return $tests;
-
     }
-
 }

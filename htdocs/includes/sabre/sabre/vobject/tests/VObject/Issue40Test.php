@@ -7,10 +7,10 @@ namespace Sabre\VObject;
  *
  * https://github.com/fruux/sabre-vobject/issues/40
  */
-class Issue40Test extends \PHPUnit_Framework_TestCase {
-
-    function testEncode() {
-
+class Issue40Test extends \PHPUnit_Framework_TestCase
+{
+    public function testEncode()
+    {
         $card = new Component\VCard();
         $card->add('N', ['van der Harten', ['Rene', 'J.'], "", 'Sir', 'R.D.O.N.'], ['SORT-AS' => ['Harten', 'Rene']]);
 
@@ -26,7 +26,5 @@ class Issue40Test extends \PHPUnit_Framework_TestCase {
         ]);
 
         $this->assertEquals($expected, $card->serialize());
-
     }
-
 }

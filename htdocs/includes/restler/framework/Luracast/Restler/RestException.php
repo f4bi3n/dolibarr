@@ -80,7 +80,7 @@ class RestException extends Exception
     public function __construct($httpStatusCode, $errorMessage = null, array $details = array(), Exception $previous = null)
     {
         $events = Scope::get('Restler')->getEvents();
-        if(count($events)<= 1){
+        if (count($events)<= 1) {
             $this->stage = 'setup';
         } else {
             $this->stage = $previous ? $events[count($events)-2] : end($events);
@@ -136,4 +136,3 @@ class RestException extends Exception
         . $this->getStage() . ' stage';
     }
 }
-

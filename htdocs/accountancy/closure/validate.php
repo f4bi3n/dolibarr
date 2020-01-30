@@ -32,27 +32,30 @@ $langs->loadLangs(array("compta", "bills", "other", "main", "accountancy"));
 
 // Security check
 if (empty($conf->accounting->enabled)) {
-	accessforbidden();
+    accessforbidden();
 }
-if ($user->socid > 0)
-	accessforbidden();
-	if (!$user->rights->accounting->fiscalyear->write)
-	accessforbidden();
+if ($user->socid > 0) {
+    accessforbidden();
+}
+    if (!$user->rights->accounting->fiscalyear->write) {
+        accessforbidden();
+    }
 
 
 $month_start = ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
-if (GETPOST("year", 'int')) $year_start = GETPOST("year", 'int');
-else
-{
-	$year_start = dol_print_date(dol_now(), '%Y');
-	if (dol_print_date(dol_now(), '%m') < $month_start) $year_start--; // If current month is lower that starting fiscal month, we start last year
+if (GETPOST("year", 'int')) {
+    $year_start = GETPOST("year", 'int');
+} else {
+    $year_start = dol_print_date(dol_now(), '%Y');
+    if (dol_print_date(dol_now(), '%m') < $month_start) {
+        $year_start--;
+    } // If current month is lower that starting fiscal month, we start last year
 }
 $year_end = $year_start + 1;
 $month_end = $month_start - 1;
-if ($month_end < 1)
-{
-	$month_end = 12;
-	$year_end--;
+if ($month_end < 1) {
+    $month_end = 12;
+    $year_end--;
 }
 $search_date_start = dol_mktime(0, 0, 0, $month_start, 1, $year_start);
 $search_date_end = dol_get_last_day($year_end, $month_end);
@@ -62,8 +65,7 @@ $year_current = $year_start;
  * Actions
  */
 
-if ($action == 'validate')
-{
+if ($action == 'validate') {
     $now = dol_now();
 
     // Update database
@@ -109,18 +111,22 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="oddeven">';
 for ($i = 1; $i <= 12; $i++) {
-	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
-	if ($j > 12) $j -= 12;
-	print '<td class="center">'.$langs->trans('MonthShort'.str_pad($j, 2, '0', STR_PAD_LEFT)).'</td>';
+    $j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
+    if ($j > 12) {
+        $j -= 12;
+    }
+    print '<td class="center">'.$langs->trans('MonthShort'.str_pad($j, 2, '0', STR_PAD_LEFT)).'</td>';
 }
 print '<td><b>'.$langs->trans("Total").'</b></td></tr>';
 
 print '<tr class="oddeven">';
 $sql = "SELECT COUNT(b.rowid) as detail,";
 for ($i = 1; $i <= 12; $i++) {
-	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
-	if ($j > 12) $j -= 12;
-	$sql .= "  SUM(".$db->ifsql('MONTH(b.doc_date)='.$j, '1', '0').") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
+    $j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
+    if ($j > 12) {
+        $j -= 12;
+    }
+    $sql .= "  SUM(".$db->ifsql('MONTH(b.doc_date)='.$j, '1', '0').") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
 }
 $sql .= " COUNT(b.rowid) as total";
 $sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b";
@@ -131,20 +137,20 @@ $sql .= " AND b.entity IN (".getEntity('bookkeeping', 0).")"; // We don't share 
 dol_syslog('htdocs/accountancy/closure/index.php sql='.$sql, LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql) {
-	$num = $db->num_rows($resql);
+    $num = $db->num_rows($resql);
 
-	while ($row = $db->fetch_row($resql)) {
-		for ($i = 1; $i <= 12; $i++) {
-			print '<td class="nowrap center">'.$row[$i].'<br><br>';
+    while ($row = $db->fetch_row($resql)) {
+        for ($i = 1; $i <= 12; $i++) {
+            print '<td class="nowrap center">'.$row[$i].'<br><br>';
             print '<input id="cb'.$row[$i].'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$row[$i].'"'.($selected ? ' checked="checked"' : '').'>';
             print '</td>';
-		}
-		print '<td class="valigntop"><b>'.$row[13].'</b></td>';
-	}
+        }
+        print '<td class="valigntop"><b>'.$row[13].'</b></td>';
+    }
 
-	$db->free($resql);
+    $db->free($resql);
 } else {
-	print $db->lasterror(); // Show last sql error
+    print $db->lasterror(); // Show last sql error
 }
 print '</tr>';
 print "</table>\n";

@@ -19,7 +19,8 @@ use Sabre\VObject\Component\VCalendar;
  * @author Armin Hackmann
  * @license http://sabre.io/license/ Modified BSD License
  */
-class ICalendar implements SplitterInterface {
+class ICalendar implements SplitterInterface
+{
 
     /**
      * Timezones.
@@ -43,8 +44,8 @@ class ICalendar implements SplitterInterface {
      * @param resource $input
      * @param int $options Parser options, see the OPTIONS constants.
      */
-    function __construct($input, $options = 0) {
-
+    public function __construct($input, $options = 0)
+    {
         $data = VObject\Reader::read($input, $options);
 
         if (!$data instanceof VObject\Component\VCalendar) {
@@ -75,7 +76,6 @@ class ICalendar implements SplitterInterface {
 
             $this->objects[$uid]->add(clone $component);
         }
-
     }
 
     /**
@@ -86,8 +86,8 @@ class ICalendar implements SplitterInterface {
      *
      * @return Sabre\VObject\Component|null
      */
-    function getNext() {
-
+    public function getNext()
+    {
         if ($object = array_shift($this->objects)) {
 
             // create our baseobject
@@ -101,13 +101,8 @@ class ICalendar implements SplitterInterface {
             }
 
             return $object;
-
         } else {
-
             return;
-
         }
-
     }
-
 }

@@ -13,7 +13,8 @@ use Sabre\DAV\Locks\LockInfo;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Mock extends AbstractBackend {
+class Mock extends AbstractBackend
+{
 
     /**
      * Returns a list of Sabre\DAV\Locks\LockInfo objects
@@ -28,33 +29,30 @@ class Mock extends AbstractBackend {
      * @param bool $returnChildLocks
      * @return array
      */
-    function getLocks($uri, $returnChildLocks) {
-
+    public function getLocks($uri, $returnChildLocks)
+    {
         $newLocks = [];
 
         $locks = $this->getData();
 
         foreach ($locks as $lock) {
-
             if ($lock->uri === $uri ||
                 //deep locks on parents
                 ($lock->depth != 0 && strpos($uri, $lock->uri . '/') === 0) ||
 
                 // locks on children
                 ($returnChildLocks && (strpos($lock->uri, $uri . '/') === 0))) {
-
                 $newLocks[] = $lock;
-
             }
-
         }
 
         // Checking if we can remove any of these locks
         foreach ($newLocks as $k => $lock) {
-            if (time() > $lock->timeout + $lock->created) unset($newLocks[$k]);
+            if (time() > $lock->timeout + $lock->created) {
+                unset($newLocks[$k]);
+            }
         }
         return $newLocks;
-
     }
 
     /**
@@ -64,7 +62,8 @@ class Mock extends AbstractBackend {
      * @param LockInfo $lockInfo
      * @return bool
      */
-    function lock($uri, LockInfo $lockInfo) {
+    public function lock($uri, LockInfo $lockInfo)
+    {
 
         // We're making the lock timeout 30 minutes
         $lockInfo->timeout = 1800;
@@ -84,7 +83,6 @@ class Mock extends AbstractBackend {
         $locks[] = $lockInfo;
         $this->putData($locks);
         return true;
-
     }
 
     /**
@@ -94,21 +92,17 @@ class Mock extends AbstractBackend {
      * @param LockInfo $lockInfo
      * @return bool
      */
-    function unlock($uri, LockInfo $lockInfo) {
-
+    public function unlock($uri, LockInfo $lockInfo)
+    {
         $locks = $this->getData();
         foreach ($locks as $k => $lock) {
-
             if ($lock->token == $lockInfo->token) {
-
                 unset($locks[$k]);
                 $this->putData($locks);
                 return true;
-
             }
         }
         return false;
-
     }
 
     protected $data = [];
@@ -118,10 +112,9 @@ class Mock extends AbstractBackend {
      *
      * @return array
      */
-    protected function getData() {
-
+    protected function getData()
+    {
         return $this->data;
-
     }
 
     /**
@@ -130,10 +123,8 @@ class Mock extends AbstractBackend {
      * @param array $newData
      * @return void
      */
-    protected function putData(array $newData) {
-
+    protected function putData(array $newData)
+    {
         $this->data = $newData;
-
     }
-
 }

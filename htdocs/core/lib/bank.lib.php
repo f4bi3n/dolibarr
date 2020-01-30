@@ -66,29 +66,31 @@ function bank_prepare_head(Account $object)
     $head[$h][2] = 'graph';
     $h++;
 
-    if ($object->courant != Account::TYPE_CASH)
-    {
-    	$nbReceipts = 0;
+    if ($object->courant != Account::TYPE_CASH) {
+        $nbReceipts = 0;
 
-    	// List of all standing receipts
-    	$sql = "SELECT COUNT(DISTINCT(b.num_releve)) as nb";
-    	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
-    	$sql .= " WHERE b.fk_account = ".$object->id;
+        // List of all standing receipts
+        $sql = "SELECT COUNT(DISTINCT(b.num_releve)) as nb";
+        $sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
+        $sql .= " WHERE b.fk_account = ".$object->id;
 
-    	$resql = $db->query($sql);
-    	if ($resql)
-    	{
-    		$obj = $db->fetch_object($resql);
-    		if ($obj) $nbReceipts = $obj->nb;
-    		$db->free($resql);
-    	}
+        $resql = $db->query($sql);
+        if ($resql) {
+            $obj = $db->fetch_object($resql);
+            if ($obj) {
+                $nbReceipts = $obj->nb;
+            }
+            $db->free($resql);
+        }
 
-    	$head[$h][0] = DOL_URL_ROOT."/compta/bank/releve.php?account=".$object->id;
-	    $head[$h][1] = $langs->trans("AccountStatements");
-	    if (($nbReceipts) > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbReceipts).'</span>';
-	    $head[$h][2] = 'statement';
-	    $h++;
-	}
+        $head[$h][0] = DOL_URL_ROOT."/compta/bank/releve.php?account=".$object->id;
+        $head[$h][1] = $langs->trans("AccountStatements");
+        if (($nbReceipts) > 0) {
+            $head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbReceipts).'</span>';
+        }
+        $head[$h][2] = 'statement';
+        $h++;
+    }
 
     // Attached files
     require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -98,11 +100,13 @@ function bank_prepare_head(Account $object)
     $nbLinks = Link::count($db, $object->element, $object->id);
     $head[$h][0] = DOL_URL_ROOT."/compta/bank/document.php?account=".$object->id;
     $head[$h][1] = $langs->trans("Documents");
-    if (($nbFiles + $nbLinks) > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+    if (($nbFiles + $nbLinks) > 0) {
+        $head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+    }
     $head[$h][2] = 'document';
     $h++;
 
-	// Show more tabs from modules
+    // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
@@ -113,7 +117,7 @@ function bank_prepare_head(Account $object)
     $head[$h][2] = 'info';
     $h++;*/
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'bank', 'remove');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'bank', 'remove');
 
     return $head;
 }
@@ -125,14 +129,14 @@ function bank_prepare_head(Account $object)
  */
 function bank_admin_prepare_head($object)
 {
-	global $langs, $conf, $user;
-	$h = 0;
-	$head = array();
+    global $langs, $conf, $user;
+    $h = 0;
+    $head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/admin/bank.php';
-	$head[$h][1] = $langs->trans("Miscellaneous");
-	$head[$h][2] = 'general';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/admin/bank.php';
+    $head[$h][1] = $langs->trans("Miscellaneous");
+    $head[$h][2] = 'general';
+    $h++;
 
     $head[$h][0] = DOL_URL_ROOT.'/admin/chequereceipts.php';
     $head[$h][1] = $langs->trans("CheckReceiptShort");
@@ -140,21 +144,21 @@ function bank_admin_prepare_head($object)
     $h++;
 
 
-	// Show more tabs from modules
-	// Entries must be declared in modules descriptor with line
-	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-	// $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'bank_admin');
+    // Show more tabs from modules
+    // Entries must be declared in modules descriptor with line
+    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+    // $this->tabs = array('entity:-tabname);   												to remove a tab
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'bank_admin');
 
-	$head[$h][0] = DOL_URL_ROOT.'/admin/bank_extrafields.php';
-	$head[$h][1] = $langs->trans("ExtraFields");
-	$head[$h][2] = 'attributes';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/admin/bank_extrafields.php';
+    $head[$h][1] = $langs->trans("ExtraFields");
+    $head[$h][2] = 'attributes';
+    $h++;
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'bank_admin', 'remove');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'bank_admin', 'remove');
 
 
-	return $head;
+    return $head;
 }
 
 
@@ -167,33 +171,35 @@ function bank_admin_prepare_head($object)
  */
 function account_statement_prepare_head($object, $num)
 {
-	global $langs, $conf, $user, $db;
-	$h = 0;
-	$head = array();
+    global $langs, $conf, $user, $db;
+    $h = 0;
+    $head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/compta/bank/releve.php?account='.$object->id.'&num='.$num;
-	$head[$h][1] = $langs->trans("AccountStatement");
-	$head[$h][2] = 'statement';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/compta/bank/releve.php?account='.$object->id.'&num='.$num;
+    $head[$h][1] = $langs->trans("AccountStatement");
+    $head[$h][2] = 'statement';
+    $h++;
 
-	// Attached files
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-	$upload_dir = $conf->bank->dir_output."/".$object->id.'/'.dol_sanitizeFileName($num);
-	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
-	$nbLinks = Link::count($db, $object->element, $object->id);
+    // Attached files
+    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+    require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
+    $upload_dir = $conf->bank->dir_output."/".$object->id.'/'.dol_sanitizeFileName($num);
+    $nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
+    $nbLinks = Link::count($db, $object->element, $object->id);
 
-	$head[$h][0] = DOL_URL_ROOT."/compta/bank/account_statement_document.php?account=".$object->id."&num=".$num;
-	$head[$h][1] = $langs->trans("Documents");
-	if (($nbFiles + $nbLinks) > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
-	$head[$h][2] = 'document';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT."/compta/bank/account_statement_document.php?account=".$object->id."&num=".$num;
+    $head[$h][1] = $langs->trans("Documents");
+    if (($nbFiles + $nbLinks) > 0) {
+        $head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+    }
+    $head[$h][2] = 'document';
+    $h++;
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'account_statement');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'account_statement');
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'account_statement', 'remove');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'account_statement', 'remove');
 
-	return $head;
+    return $head;
 }
 
 
@@ -205,15 +211,15 @@ function account_statement_prepare_head($object, $num)
  */
 function various_payment_prepare_head($object)
 {
-	global $db, $langs, $conf;
+    global $db, $langs, $conf;
 
-	$h = 0;
-	$head = array();
+    $h = 0;
+    $head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/compta/bank/various_payment/card.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Card");
-	$head[$h][2] = 'card';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/compta/bank/various_payment/card.php?id='.$object->id;
+    $head[$h][1] = $langs->trans("Card");
+    $head[$h][2] = 'card';
+    $h++;
 
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
@@ -221,25 +227,27 @@ function various_payment_prepare_head($object)
     // $this->tabs = array('entity:-tabname);   												to remove a tab
     complete_head_from_modules($conf, $langs, $object, $head, $h, 'various_payment');
 
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-	$upload_dir = $conf->bank->dir_output."/".dol_sanitizeFileName($object->ref);
-	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
+    $upload_dir = $conf->bank->dir_output."/".dol_sanitizeFileName($object->ref);
+    $nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
     $nbLinks = Link::count($db, $object->element, $object->id);
-	$head[$h][0] = DOL_URL_ROOT.'/compta/bank/various_payment/document.php?id='.$object->id;
-	$head[$h][1] = $langs->trans('Documents');
-	if (($nbFiles + $nbLinks) > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
-	$head[$h][2] = 'documents';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/compta/bank/various_payment/document.php?id='.$object->id;
+    $head[$h][1] = $langs->trans('Documents');
+    if (($nbFiles + $nbLinks) > 0) {
+        $head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+    }
+    $head[$h][2] = 'documents';
+    $h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/compta/bank/various_payment/info.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Info");
-	$head[$h][2] = 'info';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/compta/bank/various_payment/info.php?id='.$object->id;
+    $head[$h][1] = $langs->trans("Info");
+    $head[$h][2] = 'info';
+    $h++;
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'various_payment', 'remove');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'various_payment', 'remove');
 
-	return $head;
+    return $head;
 }
 
 /**
@@ -271,8 +279,11 @@ function checkIbanForAccount($account)
     $iban = new IBAN($account->iban);
     $check = $iban->Verify();
 
-    if ($check) return true;
-    else return false;
+    if ($check) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 /**
@@ -288,10 +299,12 @@ function checkBanForAccount($account)
     // For compatibility between
     // account of type CompanyBankAccount class (we use number, cle_rib)
     // account of type Account class (we use num_compte, cle)
-    if (empty($account->number))
+    if (empty($account->number)) {
         $account->number = $account->num_compte;
-    if (empty($account->cle))
+    }
+    if (empty($account->cle)) {
         $account->cle = $account->cle_rib;
+    }
 
     dol_syslog("bank.lib::checkBanForAccount account->code_banque=".$account->code_banque." account->code_guichet=".$account->code_guichet." account->number=".$account->number." account->cle=".$account->cle." account->iban=".$account->iban." country_code=".$country_code, LOG_DEBUG);
 
@@ -330,12 +343,15 @@ function checkBanForAccount($account)
         return false;
     }
     if ($country_code == 'AU') {  // Australian
-        if (strlen($account->code_banque) > 7)
-            return false; // Sould be 6 but can be 123-456
-        elseif (strlen($account->code_banque) < 6)
-            return false; // Sould be 6
-        else
+        if (strlen($account->code_banque) > 7) {
+            return false;
+        } // Sould be 6 but can be 123-456
+        elseif (strlen($account->code_banque) < 6) {
+            return false;
+        } // Sould be 6
+        else {
             return true;
+        }
     }
 
     // No particular rule
@@ -386,10 +402,12 @@ function checkES($IentOfi, $InumCta)
 
     $key = 11 - $sum % 11;
 
-    if ($key == 10)
+    if ($key == 10) {
         $key = 1;
-    if ($key == 11)
+    }
+    if ($key == 11) {
         $key = 0;
+    }
 
     $keycontrol = $key;
 
@@ -401,10 +419,12 @@ function checkES($IentOfi, $InumCta)
 
     $key = 11 - $sum % 11;
 
-    if ($key == 10)
+    if ($key == 10) {
         $key = 1;
-    if ($key == 11)
+    }
+    if ($key == 11) {
         $key = 0;
+    }
 
     $keycontrol .= $key;
     return $keycontrol;

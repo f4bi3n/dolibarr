@@ -7,10 +7,10 @@ use Sabre\HTTP;
 
 require_once 'Sabre/HTTP/ResponseMock.php';
 
-class ExpandPropertiesTest extends \PHPUnit_Framework_TestCase {
-
-    function getServer() {
-
+class ExpandPropertiesTest extends \PHPUnit_Framework_TestCase
+{
+    public function getServer()
+    {
         $tree = [
             new DAV\Mock\PropertiesCollection('node1', [], [
                 '{http://sabredav.org/ns}simple' => 'foo',
@@ -47,11 +47,10 @@ class ExpandPropertiesTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals($plugin, $fakeServer->getPlugin('acl'));
 
         return $fakeServer;
-
     }
 
-    function testSimple() {
-
+    public function testSimple()
+    {
         $xml = '<?xml version="1.0"?>
 <d:expand-property xmlns:d="DAV:">
   <d:property name="displayname" />
@@ -97,25 +96,24 @@ class ExpandPropertiesTest extends \PHPUnit_Framework_TestCase {
         $xml->registerXPathNamespace('d', 'DAV:');
         $xml->registerXPathNamespace('s', 'http://sabredav.org/ns');
         foreach ($check as $v1 => $v2) {
-
             $xpath = is_int($v1) ? $v2 : $v1;
 
             $result = $xml->xpath($xpath);
 
             $count = 1;
-            if (!is_int($v1)) $count = $v2;
+            if (!is_int($v1)) {
+                $count = $v2;
+            }
 
             $this->assertEquals($count, count($result), 'we expected ' . $count . ' appearances of ' . $xpath . ' . We found ' . count($result) . '. Full response: ' . $server->httpResponse->body);
-
         }
-
     }
 
     /**
      * @depends testSimple
      */
-    function testExpand() {
-
+    public function testExpand()
+    {
         $xml = '<?xml version="1.0"?>
 <d:expand-property xmlns:d="DAV:">
   <d:property name="href" namespace="http://sabredav.org/ns">
@@ -162,25 +160,24 @@ class ExpandPropertiesTest extends \PHPUnit_Framework_TestCase {
         $xml->registerXPathNamespace('d', 'DAV:');
         $xml->registerXPathNamespace('s', 'http://sabredav.org/ns');
         foreach ($check as $v1 => $v2) {
-
             $xpath = is_int($v1) ? $v2 : $v1;
 
             $result = $xml->xpath($xpath);
 
             $count = 1;
-            if (!is_int($v1)) $count = $v2;
+            if (!is_int($v1)) {
+                $count = $v2;
+            }
 
             $this->assertEquals($count, count($result), 'we expected ' . $count . ' appearances of ' . $xpath . ' . We found ' . count($result) . ' Full response body: ' . $server->httpResponse->getBodyAsString());
-
         }
-
     }
 
     /**
      * @depends testSimple
      */
-    function testExpandHrefList() {
-
+    public function testExpandHrefList()
+    {
         $xml = '<?xml version="1.0"?>
 <d:expand-property xmlns:d="DAV:">
   <d:property name="hreflist" namespace="http://sabredav.org/ns">
@@ -227,25 +224,24 @@ class ExpandPropertiesTest extends \PHPUnit_Framework_TestCase {
         $xml->registerXPathNamespace('d', 'DAV:');
         $xml->registerXPathNamespace('s', 'http://sabredav.org/ns');
         foreach ($check as $v1 => $v2) {
-
             $xpath = is_int($v1) ? $v2 : $v1;
 
             $result = $xml->xpath($xpath);
 
             $count = 1;
-            if (!is_int($v1)) $count = $v2;
+            if (!is_int($v1)) {
+                $count = $v2;
+            }
 
             $this->assertEquals($count, count($result), 'we expected ' . $count . ' appearances of ' . $xpath . ' . We found ' . count($result));
-
         }
-
     }
 
     /**
      * @depends testExpand
      */
-    function testExpandDeep() {
-
+    public function testExpandDeep()
+    {
         $xml = '<?xml version="1.0"?>
 <d:expand-property xmlns:d="DAV:">
   <d:property name="hreflist" namespace="http://sabredav.org/ns">
@@ -301,17 +297,16 @@ class ExpandPropertiesTest extends \PHPUnit_Framework_TestCase {
         $xml->registerXPathNamespace('d', 'DAV:');
         $xml->registerXPathNamespace('s', 'http://sabredav.org/ns');
         foreach ($check as $v1 => $v2) {
-
             $xpath = is_int($v1) ? $v2 : $v1;
 
             $result = $xml->xpath($xpath);
 
             $count = 1;
-            if (!is_int($v1)) $count = $v2;
+            if (!is_int($v1)) {
+                $count = $v2;
+            }
 
             $this->assertEquals($count, count($result), 'we expected ' . $count . ' appearances of ' . $xpath . ' . We found ' . count($result));
-
         }
-
     }
 }

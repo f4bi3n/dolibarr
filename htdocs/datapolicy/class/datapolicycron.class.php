@@ -27,24 +27,24 @@
  */
 class DataPolicyCron
 {
-	/**
-	 *	Constructor
-	 *
-	 *  @param		DoliDB		$db      Database handler
-	 */
-	public function __construct($db)
-	{
-		$this->db = $db;
-	}
+    /**
+     *	Constructor
+     *
+     *  @param		DoliDB		$db      Database handler
+     */
+    public function __construct($db)
+    {
+        $this->db = $db;
+    }
 
 
     /**
      * Function exec
-	 * CAN BE A CRON TASK
+     * CAN BE A CRON TASK
      *
-	 * @return	int									0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
+     * @return	int									0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
      */
-	public function cleanDataForDataPolicy()
+    public function cleanDataForDataPolicy()
     {
         global $conf, $langs, $user;
 
@@ -464,64 +464,54 @@ class DataPolicyCron
 
         $this->db->begin();
 
-        foreach ($arrayofparameters as $key => $params)
-        {
-            if ($conf->global->$key != '' && is_numeric($conf->global->$key) && (int) $conf->global->$key > 0)
-            {
+        foreach ($arrayofparameters as $key => $params) {
+            if ($conf->global->$key != '' && is_numeric($conf->global->$key) && (int) $conf->global->$key > 0) {
                 $sql = sprintf($params['sql'], (int) $conf->entity, (int) $conf->global->$key, (int) $conf->global->$key);
 
                 $resql = $db->query($sql);
 
-                if ($resql && $db->num_rows($resql) > 0)
-                {
+                if ($resql && $db->num_rows($resql) > 0) {
                     $num = $db->num_rows($resql);
                     $i = 0;
 
                     require_once $params['file'];
                     $object = new $params['class']($db);
 
-                    while ($i < $num && ! $error)
-                    {
+                    while ($i < $num && ! $error) {
                         $obj = $db->fetch_object($resql);
 
                         $object->fetch($obj->rowid);
                         $object->id = $obj->rowid;
 
-                        if ($object->isObjectUsed($obj->rowid) > 0)			// If object to clean is used
-                        {
+                        if ($object->isObjectUsed($obj->rowid) > 0) {			// If object to clean is used
                             foreach ($params['fields_anonym'] as $fields => $val) {
                                 $object->$fields = $val;
                             }
                             $result = $object->update($obj->rowid, $user);
-                            if ($result > 0)
-                            {
-	                            if ($params['class'] == 'Societe') {
-	                                // We delete contacts of thirdparty
-	                                $sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = " . $obj->rowid;
-	                                $result = $this->db->query($sql);
-	                                if ($result < 0)
-	                                {
-	                                	$errormsg = $this->db->lasterror();
-	                                	$error++;
-	                                }
-	                            }
-                            }
-                            else
-                            {
-                            	$errormsg = $object->error;
-                            	$error++;
+                            if ($result > 0) {
+                                if ($params['class'] == 'Societe') {
+                                    // We delete contacts of thirdparty
+                                    $sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = " . $obj->rowid;
+                                    $result = $this->db->query($sql);
+                                    if ($result < 0) {
+                                        $errormsg = $this->db->lasterror();
+                                        $error++;
+                                    }
+                                }
+                            } else {
+                                $errormsg = $object->error;
+                                $error++;
                             }
                             $nbupdated++;
                         } else {											// If object to clean is not used
                             if ($object->element == 'adherent') {
-                            	$result = $object->delete($obj->rowid, $user);
+                                $result = $object->delete($obj->rowid, $user);
                             } else {
-                            	$result = $object->delete($user);
+                                $result = $object->delete($user);
                             }
-                            if ($result < 0)
-                            {
-                            	$errormsg = $object->error;
-                            	$error++;
+                            if ($result < 0) {
+                                $errormsg = $object->error;
+                                $error++;
                             }
 
                             $nbdeleted++;
@@ -535,13 +525,10 @@ class DataPolicyCron
 
         $this->db->commit();
 
-        if (! $error)
-        {
-        	$this->output = $nbupdated.' record updated, '.$nbdeleted.' record deleted';
-        }
-        else
-        {
-        	$this->error = $errormsg;
+        if (! $error) {
+            $this->output = $nbupdated.' record updated, '.$nbdeleted.' record deleted';
+        } else {
+            $this->error = $errormsg;
         }
 
         return 0;

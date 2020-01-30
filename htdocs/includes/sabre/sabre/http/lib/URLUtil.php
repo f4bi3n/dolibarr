@@ -15,7 +15,8 @@ use Sabre\URI;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class URLUtil {
+class URLUtil
+{
 
     /**
      * Encodes the path of a url.
@@ -26,10 +27,9 @@ class URLUtil {
      * @param string $path
      * @return string
      */
-    static function encodePath($path) {
-
+    public static function encodePath($path)
+    {
         return encodePath($path);
-
     }
 
     /**
@@ -41,10 +41,9 @@ class URLUtil {
      * @param string $pathSegment
      * @return string
      */
-    static function encodePathSegment($pathSegment) {
-
+    public static function encodePathSegment($pathSegment)
+    {
         return encodePathSegment($pathSegment);
-
     }
 
     /**
@@ -54,10 +53,9 @@ class URLUtil {
      * @param string $path
      * @return string
      */
-    static function decodePath($path) {
-
+    public static function decodePath($path)
+    {
         return decodePath($path);
-
     }
 
     /**
@@ -67,10 +65,9 @@ class URLUtil {
      * @param string $path
      * @return string
      */
-    static function decodePathSegment($path) {
-
+    public static function decodePathSegment($path)
+    {
         return decodePathSegment($path);
-
     }
 
     /**
@@ -80,10 +77,9 @@ class URLUtil {
      * @param string $path
      * @return array
      */
-    static function splitPath($path) {
-
+    public static function splitPath($path)
+    {
         return Uri\split($path);
-
     }
 
     /**
@@ -94,10 +90,8 @@ class URLUtil {
      * @param string $newPath
      * @return string
      */
-    static function resolve($basePath, $newPath) {
-
+    public static function resolve($basePath, $newPath)
+    {
         return Uri\resolve($basePath, $newPath);
-
     }
-
 }

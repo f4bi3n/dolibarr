@@ -18,10 +18,9 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($langs) || ! is_object($langs))
-{
-	print "Error, template page can't be called as URL";
-	exit;
+if (empty($langs) || ! is_object($langs)) {
+    print "Error, template page can't be called as URL";
+    exit;
 }
 
 
@@ -82,16 +81,14 @@ $object->fetch($facid);
     $tab = $_SESSION['poscart'];
 
     $tab_size=count($tab);
-    for($i=0;$i < $tab_size;$i++)
-    {
-        $remise = $tab[$i]['remise'];
-        ?>
+    for ($i=0;$i < $tab_size;$i++) {
+        $remise = $tab[$i]['remise']; ?>
     <tr>
-        <td><?php echo $tab[$i]['ref'];?></td>
-        <td><?php echo $tab[$i]['label'];?></td>
-        <td><?php echo $tab[$i]['qte'];?></td>
-        <td><?php echo $tab[$i]['remise_percent'];?></td>
-        <td class="total"><?php echo price(price2num($tab[$i]['total_ht'], 'MT'), 0, $langs, 0, 0, -1, $conf->currency);?></td>
+        <td><?php echo $tab[$i]['ref']; ?></td>
+        <td><?php echo $tab[$i]['label']; ?></td>
+        <td><?php echo $tab[$i]['qte']; ?></td>
+        <td><?php echo $tab[$i]['remise_percent']; ?></td>
+        <td class="total"><?php echo price(price2num($tab[$i]['total_ht'], 'MT'), 0, $langs, 0, 0, -1, $conf->currency); ?></td>
     </tr>
         <?php
     }

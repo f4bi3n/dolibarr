@@ -4,13 +4,14 @@ namespace Sabre\CardDAV\Xml\Request;
 
 use Sabre\DAV\Xml\XmlTest;
 
-class AddressBookMultiGetTest extends XmlTest {
-
+class AddressBookMultiGetTest extends XmlTest
+{
     protected $elementMap = [
         '{urn:ietf:params:xml:ns:carddav}addressbook-multiget' => 'Sabre\\CardDAV\\Xml\\Request\AddressBookMultiGetReport',
     ];
 
-    function testDeserialize() {
+    public function testDeserialize()
+    {
 
         /* lines look a bit odd but this triggers an XML parsing bug */
         $xml = <<<XML
@@ -40,8 +41,5 @@ XML;
             $addressBookMultiGetReport,
             $result['value']
         );
-
     }
-
-
 }

@@ -19,18 +19,18 @@ class MemcacheCache implements iCache
      *
      * @var string
      */
-    static public $namespace;
+    public static $namespace;
     
     /**
-     * @var string the memcache server hostname / IP address. For the memcache 
+     * @var string the memcache server hostname / IP address. For the memcache
      * cache method.
      */
-    static public $memcacheServer = '127.0.0.1';
+    public static $memcacheServer = '127.0.0.1';
     
     /**
-     * @var int the memcache server port. For the memcache cache method. 
+     * @var int the memcache server port. For the memcache cache method.
      */
-    static public $memcachePort = 11211;
+    public static $memcachePort = 11211;
 
     
     private $memcache;
@@ -38,7 +38,7 @@ class MemcacheCache implements iCache
     /**
      * @param string $namespace
      */
-    function __construct($namespace = 'restler')
+    public function __construct($namespace = 'restler')
     {
         self::$namespace = $namespace;
         if (function_exists('memcache_connect')) {
@@ -64,8 +64,7 @@ class MemcacheCache implements iCache
 
         try {
             return $this->memcache->set(self::$namespace . "-" . $name, $data);
-        } catch
-        (\Exception $exception) {
+        } catch (\Exception $exception) {
             return false;
         }
     }
@@ -136,5 +135,4 @@ class MemcacheCache implements iCache
         $data = $this->memcache->get(self::$namespace . "-" . $name);
         return !empty($data);
     }
-
 }

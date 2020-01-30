@@ -36,85 +36,93 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';   // Requ
  */
 abstract class ModeleNumRefChequeReceipts
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
+    /**
+     * @var string Error code (or message)
+     */
+    public $error='';
 
-	/**
-	 *	Return if a module can be used or not
-	 *
-	 *	@return		boolean     true if module can be used
-	 */
-	public function isEnabled()
-	{
-		return true;
-	}
+    /**
+     *	Return if a module can be used or not
+     *
+     *	@return		boolean     true if module can be used
+     */
+    public function isEnabled()
+    {
+        return true;
+    }
 
-	/**
-	 *	Return the default description of numbering module
-	 *
-	 *	@return     string      Texte descripif
-	 */
-	public function info()
-	{
-		global $langs;
-		$langs->load("bills");
-		return $langs->trans("NoDescription");
-	}
+    /**
+     *	Return the default description of numbering module
+     *
+     *	@return     string      Texte descripif
+     */
+    public function info()
+    {
+        global $langs;
+        $langs->load("bills");
+        return $langs->trans("NoDescription");
+    }
 
-	/**
-	 *	Return numbering example
-	 *
-	 *	@return     string      Example
-	 */
-	public function getExample()
-	{
-		global $langs;
-		$langs->load("bills");
-		return $langs->trans("NoExample");
-	}
+    /**
+     *	Return numbering example
+     *
+     *	@return     string      Example
+     */
+    public function getExample()
+    {
+        global $langs;
+        $langs->load("bills");
+        return $langs->trans("NoExample");
+    }
 
-	/**
+    /**
      *  Checks if the numbers already in force in the data base do not
      *  cause conflicts that would prevent this numbering from working.
      *
      *	@return     boolean     false if conflict, true if ok
      */
-	public function canBeActivated()
-	{
-		return true;
-	}
+    public function canBeActivated()
+    {
+        return true;
+    }
 
-	/**
-	 *	Returns the next value
-	 *
-	 *	@param	Societe		$objsoc     Object thirdparty
-	 *	@param	Object		$object		Object we need next value for
-	 *	@return	string      Valeur
-	 */
-	public function getNextValue($objsoc, $object)
-	{
-		global $langs;
-		return $langs->trans("NotAvailable");
-	}
+    /**
+     *	Returns the next value
+     *
+     *	@param	Societe		$objsoc     Object thirdparty
+     *	@param	Object		$object		Object we need next value for
+     *	@return	string      Valeur
+     */
+    public function getNextValue($objsoc, $object)
+    {
+        global $langs;
+        return $langs->trans("NotAvailable");
+    }
 
-	/**
-	 *	Returns the module numbering version
-	 *
-	 *	@return     string      Value
-	 */
-	public function getVersion()
-	{
-		global $langs;
-		$langs->load("admin");
+    /**
+     *	Returns the module numbering version
+     *
+     *	@return     string      Value
+     */
+    public function getVersion()
+    {
+        global $langs;
+        $langs->load("admin");
 
-		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
-		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-		if ($this->version == 'dolibarr') return DOL_VERSION;
-		if ($this->version) return $this->version;
-		return $langs->trans("NotAvailable");
-	}
+        if ($this->version == 'development') {
+            return $langs->trans("VersionDevelopment");
+        }
+        if ($this->version == 'experimental') {
+            return $langs->trans("VersionExperimental");
+        }
+        if ($this->version == 'dolibarr') {
+            return DOL_VERSION;
+        }
+        if ($this->version) {
+            return $this->version;
+        }
+        return $langs->trans("NotAvailable");
+    }
 }
 
 /**
@@ -123,34 +131,34 @@ abstract class ModeleNumRefChequeReceipts
  */
 abstract class ModeleChequeReceipts extends CommonDocGenerator
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
+    /**
+     * @var string Error code (or message)
+     */
+    public $error='';
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *  Return list of active generation modules
-	 *
+    /**
+     *  Return list of active generation modules
+     *
      *  @param	DoliDB	$db     			Database handler
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
-	 */
-	public static function liste_modeles($db, $maxfilenamelength = 0)
-	{
+     */
+    public static function liste_modeles($db, $maxfilenamelength = 0)
+    {
         // phpcs:enable
-		global $conf;
+        global $conf;
 
-		$type='chequereceipt';
-		$liste=array();
+        $type='chequereceipt';
+        $liste=array();
 
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db, $type, $maxfilenamelength);
-		// TODO Remove this to use getListOfModels only
-		$liste = array('blochet'=>'blochet');
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+        $liste=getListOfModels($db, $type, $maxfilenamelength);
+        // TODO Remove this to use getListOfModels only
+        $liste = array('blochet'=>'blochet');
 
-		return $liste;
-	}
+        return $liste;
+    }
 }
 
 
@@ -167,53 +175,43 @@ abstract class ModeleChequeReceipts extends CommonDocGenerator
  */
 function chequereceipt_pdf_create($db, $id, $message, $modele, $outputlangs)
 {
-	global $conf,$langs;
-	$langs->load("bills");
+    global $conf,$langs;
+    $langs->load("bills");
 
-	$dir = DOL_DOCUMENT_ROOT . "/core/modules/cheque/doc/";
+    $dir = DOL_DOCUMENT_ROOT . "/core/modules/cheque/doc/";
 
-	// Positionne modele sur le nom du modele a utiliser
-	if (! dol_strlen($modele))
-	{
-		if (! empty($conf->global->CHEQUERECEIPT_ADDON_PDF))
-		{
-			$modele = $conf->global->CHEQUERECEIPT_ADDON_PDF;
-		}
-		else
-		{
-			//print $langs->trans("Error")." ".$langs->trans("Error_FACTURE_ADDON_PDF_NotDefined");
-			//return 0;
-			$modele = 'blochet';
-		}
-	}
+    // Positionne modele sur le nom du modele a utiliser
+    if (! dol_strlen($modele)) {
+        if (! empty($conf->global->CHEQUERECEIPT_ADDON_PDF)) {
+            $modele = $conf->global->CHEQUERECEIPT_ADDON_PDF;
+        } else {
+            //print $langs->trans("Error")." ".$langs->trans("Error_FACTURE_ADDON_PDF_NotDefined");
+            //return 0;
+            $modele = 'blochet';
+        }
+    }
 
-	// Charge le modele
-	$file = "pdf_".$modele.".modules.php";
-	if (file_exists($dir.$file))
-	{
-		$classname = "pdf_".$modele;
-		require_once $dir.$file;
+    // Charge le modele
+    $file = "pdf_".$modele.".modules.php";
+    if (file_exists($dir.$file)) {
+        $classname = "pdf_".$modele;
+        require_once $dir.$file;
 
-		$obj = new $classname($db);
+        $obj = new $classname($db);
 
-		// We save charset_output to restore it because write_file can change it if needed for
-		// output format that does not support UTF8.
-		$sav_charset_output=$outputlangs->charset_output;
-		if ($obj->write_file($id, $outputlangs) > 0)
-		{
-			$outputlangs->charset_output=$sav_charset_output;
-			return 1;
-		}
-		else
-		{
-			$outputlangs->charset_output=$sav_charset_output;
-			dol_print_error($db, "chequereceipt_pdf_create Error: ".$obj->error);
-			return -1;
-		}
-	}
-	else
-	{
-		dol_print_error('', $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $dir.$file));
-		return -1;
-	}
+        // We save charset_output to restore it because write_file can change it if needed for
+        // output format that does not support UTF8.
+        $sav_charset_output=$outputlangs->charset_output;
+        if ($obj->write_file($id, $outputlangs) > 0) {
+            $outputlangs->charset_output=$sav_charset_output;
+            return 1;
+        } else {
+            $outputlangs->charset_output=$sav_charset_output;
+            dol_print_error($db, "chequereceipt_pdf_create Error: ".$obj->error);
+            return -1;
+        }
+    } else {
+        dol_print_error('', $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $dir.$file));
+        return -1;
+    }
 }

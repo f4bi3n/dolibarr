@@ -36,12 +36,12 @@ class Categories extends DolibarrApi
     /**
      * @var array   $FIELDS     Mandatory fields, checked when create and update object
      */
-    static $FIELDS = array(
+    public static $FIELDS = array(
         'label',
         'type'
     );
 
-    static $TYPES = array(
+    public static $TYPES = array(
         0 => 'product',
         1 => 'supplier',
         2 => 'customer',
@@ -138,15 +138,12 @@ class Categories extends DolibarrApi
         $sql = "SELECT t.rowid";
         $sql .= " FROM ".MAIN_DB_PREFIX."categorie as t";
         $sql .= ' WHERE t.entity IN ('.getEntity('category').')';
-        if (!empty($type))
-        {
+        if (!empty($type)) {
             $sql .= ' AND t.type='.array_search($type, Categories::$TYPES);
         }
         // Add sql filters
-        if ($sqlfilters)
-        {
-            if (!DolibarrApi::_checkFilters($sqlfilters))
-            {
+        if ($sqlfilters) {
+            if (!DolibarrApi::_checkFilters($sqlfilters)) {
                 throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
             }
             $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
@@ -155,8 +152,7 @@ class Categories extends DolibarrApi
 
         $sql .= $db->order($sortfield, $sortorder);
         if ($limit) {
-            if ($page < 0)
-            {
+            if ($page < 0) {
                 $page = 0;
             }
             $offset = $limit * $page;
@@ -165,13 +161,11 @@ class Categories extends DolibarrApi
         }
 
         $result = $db->query($sql);
-        if ($result)
-        {
+        if ($result) {
             $i = 0;
             $num = $db->num_rows($result);
             $min = min($num, ($limit <= 0 ? $num : $limit));
-            while ($i < $min)
-            {
+            while ($i < $min) {
                 $obj = $db->fetch_object($result);
                 $category_static = new Categorie($db);
                 if ($category_static->fetch($obj->rowid)) {
@@ -179,8 +173,7 @@ class Categories extends DolibarrApi
                 }
                 $i++;
             }
-        }
-        else {
+        } else {
             throw new RestException(503, 'Error when retrieve category list : '.$db->lasterror());
         }
         if (!count($obj_ret)) {
@@ -236,16 +229,15 @@ class Categories extends DolibarrApi
         }
 
         foreach ($request_data as $field => $value) {
-            if ($field == 'id') continue;
+            if ($field == 'id') {
+                continue;
+            }
             $this->category->$field = $value;
         }
 
-        if ($this->category->update(DolibarrApiAccess::$user) > 0)
-        {
+        if ($this->category->update(DolibarrApiAccess::$user) > 0) {
             return $this->get($id);
-        }
-        else
-        {
+        } else {
             throw new RestException(500, $this->category->error);
         }
     }
@@ -719,8 +711,9 @@ class Categories extends DolibarrApi
     {
         $category = array();
         foreach (Categories::$FIELDS as $field) {
-            if (!isset($data[$field]))
+            if (!isset($data[$field])) {
                 throw new RestException(400, "$field field missing");
+            }
             $category[$field] = $data[$field];
         }
         return $category;
@@ -739,15 +732,14 @@ class Categories extends DolibarrApi
      */
     public function getObjects($id, $type, $onlyids = 0)
     {
-		dol_syslog("getObjects($id, $type, $onlyids)", LOG_DEBUG);
+        dol_syslog("getObjects($id, $type, $onlyids)", LOG_DEBUG);
 
-		if (!DolibarrApiAccess::$user->rights->categorie->lire) {
-			throw new RestException(401);
-		}
+        if (!DolibarrApiAccess::$user->rights->categorie->lire) {
+            throw new RestException(401);
+        }
 
-        if (empty($type))
-        {
-			throw new RestException(500, 'The "type" parameter is required.');
+        if (empty($type)) {
+            throw new RestException(500, 'The "type" parameter is required.');
         }
 
         $result = $this->category->fetch($id);
@@ -755,34 +747,33 @@ class Categories extends DolibarrApi
             throw new RestException(404, 'category not found');
         }
 
-		if (!DolibarrApi::_checkAccessToResource('category', $this->category->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
+        if (!DolibarrApi::_checkAccessToResource('category', $this->category->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
 
-		$result = $this->category->getObjectsInCateg($type, $onlyids);
+        $result = $this->category->getObjectsInCateg($type, $onlyids);
 
-		if ($result < 0) {
-			throw new RestException(503, 'Error when retrieving objects list : '.$this->category->error);
-		}
+        if ($result < 0) {
+            throw new RestException(503, 'Error when retrieving objects list : '.$this->category->error);
+        }
 
-		$objects = $result;
+        $objects = $result;
         $cleaned_objects = array();
         if ($type == 'member') {
-			$objects_api = new Members();
-		} elseif ($type == 'customer' || $type == 'supplier') {
-			$objects_api = new Thirdparties();
-		} elseif ($type == 'product') {
-			$objects_api = new Products();
-		} elseif ($type == 'contact') {
-			$objects_api = new Contacts();
-		}
-		if (is_object($objects_api))
-		{
-    		foreach ($objects as $obj) {
-    			$cleaned_objects[] = $objects_api->_cleanObjectDatas($obj);
-    		}
-		}
+            $objects_api = new Members();
+        } elseif ($type == 'customer' || $type == 'supplier') {
+            $objects_api = new Thirdparties();
+        } elseif ($type == 'product') {
+            $objects_api = new Products();
+        } elseif ($type == 'contact') {
+            $objects_api = new Contacts();
+        }
+        if (is_object($objects_api)) {
+            foreach ($objects as $obj) {
+                $cleaned_objects[] = $objects_api->_cleanObjectDatas($obj);
+            }
+        }
 
-		return $cleaned_objects;
+        return $cleaned_objects;
     }
 }

@@ -37,7 +37,7 @@ class box_birthdays extends ModeleBoxes
     public $boxlabel="BoxTitleUserBirthdaysOfMonth";
     public $depends = array("user");
 
-	/**
+    /**
      * @var DoliDB Database handler.
      */
     public $db;
@@ -48,61 +48,58 @@ class box_birthdays extends ModeleBoxes
     public $info_box_contents = array();
 
 
-	/**
-	 *  Constructor
-	 *
-	 *  @param  DoliDB	$db      	Database handler
+    /**
+     *  Constructor
+     *
+     *  @param  DoliDB	$db      	Database handler
      *  @param	string	$param		More parameters
-	 */
-	public function __construct($db, $param = '')
-	{
-		global $user;
+     */
+    public function __construct($db, $param = '')
+    {
+        global $user;
 
-		$this->db = $db;
+        $this->db = $db;
 
-		$this->hidden = ! ($user->rights->user->user->lire && empty($user->socid));
-	}
+        $this->hidden = ! ($user->rights->user->user->lire && empty($user->socid));
+    }
 
-	/**
+    /**
      *  Load data for box to show them later
      *
      *  @param	int		$max        Maximum number of records to load
      *  @return	void
-	 */
-	public function loadBox($max = 20)
-	{
-		global $user, $langs;
-		$langs->load("boxes");
+     */
+    public function loadBox($max = 20)
+    {
+        global $user, $langs;
+        $langs->load("boxes");
 
-		$this->max=$max;
+        $this->max=$max;
 
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-		include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+        include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
         $userstatic=new User($this->db);
 
         $this->info_box_head = array('text' => $langs->trans("BoxTitleUserBirthdaysOfMonth"));
 
-		if ($user->rights->user->user->lire)
-		{
-			$tmparray=dol_getdate(dol_now(), true);
+        if ($user->rights->user->user->lire) {
+            $tmparray=dol_getdate(dol_now(), true);
 
-			$sql = "SELECT u.rowid, u.firstname, u.lastname, u.birth";
-			$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-			$sql.= " WHERE u.entity IN (".getEntity('user').")";
-			$sql.= dolSqlDateFilter('u.birth', 0, $tmparray['mon'], $tmparray['year']);
-			$sql.= " ORDER BY u.birth ASC";
-			$sql.= $this->db->plimit($max, 0);
+            $sql = "SELECT u.rowid, u.firstname, u.lastname, u.birth";
+            $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
+            $sql.= " WHERE u.entity IN (".getEntity('user').")";
+            $sql.= dolSqlDateFilter('u.birth', 0, $tmparray['mon'], $tmparray['year']);
+            $sql.= " ORDER BY u.birth ASC";
+            $sql.= $this->db->plimit($max, 0);
 
-			dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
-			$result = $this->db->query($sql);
-			if ($result)
-			{
-				$num = $this->db->num_rows($result);
+            dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
+            $result = $this->db->query($sql);
+            if ($result) {
+                $num = $this->db->num_rows($result);
 
-				$line = 0;
-				while ($line < $num)
-				{
-					$objp = $this->db->fetch_object($result);
+                $line = 0;
+                while ($line < $num) {
+                    $objp = $this->db->fetch_object($result);
                     $userstatic->id = $objp->rowid;
                     $userstatic->firstname = $objp->firstname;
                     $userstatic->lastname = $objp->lastname;
@@ -126,39 +123,39 @@ class box_birthdays extends ModeleBoxes
                         'text' => $userstatic->LibStatut($objp->status, 3)
                     );*/
 
-					$line++;
-				}
+                    $line++;
+                }
 
-				if ($num==0) $this->info_box_contents[$line][0] = array('td' => 'class="center opacitymedium"','text'=>$langs->trans("None"));
+                if ($num==0) {
+                    $this->info_box_contents[$line][0] = array('td' => 'class="center opacitymedium"','text'=>$langs->trans("None"));
+                }
 
-				$this->db->free($result);
-			}
-			else {
-				$this->info_box_contents[0][0] = array(
+                $this->db->free($result);
+            } else {
+                $this->info_box_contents[0][0] = array(
                     'td' => '',
                     'maxlength'=>500,
                     'text' => ($this->db->error().' sql='.$sql)
                 );
-			}
-		}
-		else {
-			$this->info_box_contents[0][0] = array(
-			    'td' => 'class="nohover opacitymedium left"',
+            }
+        } else {
+            $this->info_box_contents[0][0] = array(
+                'td' => 'class="nohover opacitymedium left"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")
-			);
-		}
-	}
+            );
+        }
+    }
 
-	/**
-	 *	Method to show box
-	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
-	 *	@return	string
-	 */
+    /**
+     *	Method to show box
+     *
+     *	@param	array	$head       Array with properties of box title
+     *	@param  array	$contents   Array with properties of box lines
+     *  @param	int		$nooutput	No print, only return string
+     *	@return	string
+     */
     public function showBox($head = null, $contents = null, $nooutput = 0)
     {
-		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
-	}
+        return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+    }
 }

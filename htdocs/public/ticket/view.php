@@ -67,14 +67,12 @@ $object = new ActionsTicket($db);
  * Actions
  */
 
-if ($cancel)
-{
-	if (!empty($backtopage))
-	{
-		header("Location: ".$backtopage);
-		exit;
-	}
-	$action = 'view_ticket';
+if ($cancel) {
+    if (!empty($backtopage)) {
+        header("Location: ".$backtopage);
+        exit;
+    }
+    $action = 'view_ticket';
 }
 
 if ($action == "view_ticket" || $action == "presend" || $action == "close" || $action == "confirm_public_close" || $action == "add_message") {
@@ -100,53 +98,50 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
     if (!$error) {
         $ret = $object->fetch('', '', $track_id);
         if ($ret && $object->dao->id > 0) {
-        	// Check if emails provided is the one of author
-        	$emailofticket = CMailFile::getValidAddress($object->dao->origin_email, 2);
-        	if ($emailofticket == $email)
-        	{
-        		$display_ticket = true;
-        		$_SESSION['email_customer'] = $email;
-        	}
-        	// Check if emails provided is inside list of contacts
-        	else {
-	        	$contacts = $object->dao->liste_contact(-1, 'external');
-	            foreach ($contacts as $contact) {
-	                if ($contact['email'] == $email) {
-	                    $display_ticket = true;
-	                    $_SESSION['email_customer'] = $email;
-	                    break;
-	                } else {
-	                    $display_ticket = false;
-	                }
-	            }
-        	}
-        	// Check email of thirdparty of ticket
-        	if ($object->dao->fk_soc > 0 || $object->dao->socid > 0) {
+            // Check if emails provided is the one of author
+            $emailofticket = CMailFile::getValidAddress($object->dao->origin_email, 2);
+            if ($emailofticket == $email) {
+                $display_ticket = true;
+                $_SESSION['email_customer'] = $email;
+            }
+            // Check if emails provided is inside list of contacts
+            else {
+                $contacts = $object->dao->liste_contact(-1, 'external');
+                foreach ($contacts as $contact) {
+                    if ($contact['email'] == $email) {
+                        $display_ticket = true;
+                        $_SESSION['email_customer'] = $email;
+                        break;
+                    } else {
+                        $display_ticket = false;
+                    }
+                }
+            }
+            // Check email of thirdparty of ticket
+            if ($object->dao->fk_soc > 0 || $object->dao->socid > 0) {
                 $object->dao->fetch_thirdparty();
-	            if ($email == $object->dao->thirdparty->email) {
-	                $display_ticket = true;
-	                $_SESSION['email_customer'] = $email;
-	            }
+                if ($email == $object->dao->thirdparty->email) {
+                    $display_ticket = true;
+                    $_SESSION['email_customer'] = $email;
+                }
             }
             // Check if email is email of creator
-            if ($object->dao->fk_user_create > 0)
-            {
-            	$tmpuser = new User($db);
-            	$tmpuser->fetch($object->dao->fk_user_create);
-            	if ($email == $tmpuser->email) {
-            		$display_ticket = true;
-            		$_SESSION['email_customer'] = $email;
-            	}
+            if ($object->dao->fk_user_create > 0) {
+                $tmpuser = new User($db);
+                $tmpuser->fetch($object->dao->fk_user_create);
+                if ($email == $tmpuser->email) {
+                    $display_ticket = true;
+                    $_SESSION['email_customer'] = $email;
+                }
             }
             // Check if email is email of creator
-            if ($object->dao->fk_user_assign > 0 && $object->dao->fk_user_assign != $object->dao->fk_user_create)
-            {
-            	$tmpuser = new User($db);
-            	$tmpuser->fetch($object->dao->fk_user_assign);
-            	if ($email == $tmpuser->email) {
-            		$display_ticket = true;
-            		$_SESSION['email_customer'] = $email;
-            	}
+            if ($object->dao->fk_user_assign > 0 && $object->dao->fk_user_assign != $object->dao->fk_user_create) {
+                $tmpuser = new User($db);
+                $tmpuser->fetch($object->dao->fk_user_assign);
+                if ($email == $tmpuser->email) {
+                    $display_ticket = true;
+                    $_SESSION['email_customer'] = $email;
+                }
             }
         } else {
             $error++;
@@ -155,42 +150,36 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
         }
     }
 
-    if (!$error && $action == 'confirm_public_close' && $display_ticket)
-    {
-    	if ($object->dao->close($user)) {
-    		setEventMessages($langs->trans('TicketMarkedAsClosed'), null, 'mesgs');
+    if (!$error && $action == 'confirm_public_close' && $display_ticket) {
+        if ($object->dao->close($user)) {
+            setEventMessages($langs->trans('TicketMarkedAsClosed'), null, 'mesgs');
 
-    		$url = 'view.php?action=view_ticket&track_id='.GETPOST('track_id', 'alpha');
-    		header("Location: ".$url);
-    	} else {
-    		$action = '';
-    		setEventMessages($object->error, $object->errors, 'errors');
-    	}
+            $url = 'view.php?action=view_ticket&track_id='.GETPOST('track_id', 'alpha');
+            header("Location: ".$url);
+        } else {
+            $action = '';
+            setEventMessages($object->error, $object->errors, 'errors');
+        }
     }
 
-    if (!$error && $action == "add_message" && $display_ticket && GETPOSTISSET('btn_add_message'))
-    {
-    	// TODO Add message...
-    	$ret = $object->dao->newMessage($user, $action, 0);
+    if (!$error && $action == "add_message" && $display_ticket && GETPOSTISSET('btn_add_message')) {
+        // TODO Add message...
+        $ret = $object->dao->newMessage($user, $action, 0);
 
 
 
 
-    	if (!$error)
-    	{
-    		$action = 'view_ticket';
-    	}
+        if (!$error) {
+            $action = 'view_ticket';
+        }
     }
 
     if ($error || $errors) {
         setEventMessages($object->error, $object->errors, 'errors');
-        if ($action == "add_message")
-        {
-        	$action = 'presend';
-        }
-        else
-        {
-        	$action = '';
+        if ($action == "add_message") {
+            $action = 'presend';
+        } else {
+            $action = '';
         }
     }
 }
@@ -214,9 +203,9 @@ $form = new Form($db);
 $formticket = new FormTicket($db);
 
 if (!$conf->global->TICKET_ENABLE_PUBLIC_INTERFACE) {
-	print '<div class="error">'.$langs->trans('TicketPublicInterfaceForbidden').'</div>';
-	$db->close();
-	exit();
+    print '<div class="error">'.$langs->trans('TicketPublicInterfaceForbidden').'</div>';
+    $db->close();
+    exit();
 }
 
 $arrayofjs = array();
@@ -227,8 +216,7 @@ llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 print '<div style="margin: 0 auto;" class="ticketpublicarea">';
 
 if ($action == "view_ticket" || $action == "presend" || $action == "close" || $action == "confirm_public_close") {
-    if ($display_ticket)
-    {
+    if ($display_ticket) {
         // Confirmation close
         if ($action == 'close') {
             print $form->formconfirm($_SERVER["PHP_SELF"]."?track_id=".$track_id, $langs->trans("CloseATicket"), $langs->trans("ConfirmCloseAticket"), "confirm_public_close", '', '', 1);
@@ -316,7 +304,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 
         // Progression
         print '<tr><td>'.$langs->trans("Progression").'</td><td>';
-        print ($object->dao->progress > 0 ? $object->dao->progress : '0').'%';
+        print($object->dao->progress > 0 ? $object->dao->progress : '0').'%';
         print '</td></tr>';
 
         print '</table>';
@@ -372,9 +360,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
         // Message list
         print load_fiche_titre($langs->trans('TicketMessagesList'), '', 'messages@ticket');
         $object->viewTicketMessages(false, true, $object->dao);
-    }
-    else
-    {
+    } else {
         print '<div class="error">Not Allowed<br><a href="'.$_SERVER['PHP_SELF'].'?track_id='.$object->dao->track_id.'">'.$langs->trans('Back').'</a></div>';
     }
 } else {

@@ -4,12 +4,12 @@ namespace Sabre\CalDAV;
 
 use Sabre\DAV;
 
-class CalendarHomeSharedCalendarsTest extends \PHPUnit_Framework_TestCase {
-
+class CalendarHomeSharedCalendarsTest extends \PHPUnit_Framework_TestCase
+{
     protected $backend;
 
-    function getInstance() {
-
+    public function getInstance()
+    {
         $calendars = [
             [
                 'id'           => 1,
@@ -33,18 +33,16 @@ class CalendarHomeSharedCalendarsTest extends \PHPUnit_Framework_TestCase {
         return new CalendarHome($this->backend, [
             'uri' => 'principals/user1'
         ]);
-
     }
 
-    function testSimple() {
-
+    public function testSimple()
+    {
         $instance = $this->getInstance();
         $this->assertEquals('user1', $instance->getName());
-
     }
 
-    function testGetChildren() {
-
+    public function testGetChildren()
+    {
         $instance = $this->getInstance();
         $children = $instance->getChildren();
         $this->assertEquals(3, count($children));
@@ -55,26 +53,21 @@ class CalendarHomeSharedCalendarsTest extends \PHPUnit_Framework_TestCase {
         $hasNotifications = false;
         
         foreach ($children as $child) {
-
             if ($child instanceof ISharedCalendar) {
                 $sharedCalendars++;
             }
             if ($child instanceof Notifications\ICollection) {
                 $hasNotifications = true;
             }
-
         }
         $this->assertEquals(2, $sharedCalendars);
         $this->assertTrue($hasNotifications);
-
     }
     
-    function testShareReply() {
-
+    public function testShareReply()
+    {
         $instance = $this->getInstance();
         $result = $instance->shareReply('uri', DAV\Sharing\Plugin::INVITE_DECLINED, 'curi', '1');
         $this->assertNull($result);
-
     }
-
 }

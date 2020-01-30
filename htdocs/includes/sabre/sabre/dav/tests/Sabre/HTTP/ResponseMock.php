@@ -11,12 +11,12 @@ namespace Sabre\HTTP;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class ResponseMock extends Response {
+class ResponseMock extends Response
+{
 
     /**
      * Making these public.
      */
     public $body;
     public $status;
-
 }

@@ -13,7 +13,8 @@ use Sabre\DAV;
  * @author Jean-Tiare LE BIGOT (http://www.jtlebi.fr/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface IPatchSupport extends DAV\IFile {
+interface IPatchSupport extends DAV\IFile
+{
 
     /**
      * Updates the file based on a range specification.
@@ -42,6 +43,5 @@ interface IPatchSupport extends DAV\IFile {
      * @param int $offset
      * @return string|null
      */
-    function patch($data, $rangeType, $offset = null);
-
+    public function patch($data, $rangeType, $offset = null);
 }

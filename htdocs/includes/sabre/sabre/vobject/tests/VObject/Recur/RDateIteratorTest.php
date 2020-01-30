@@ -5,10 +5,10 @@ namespace Sabre\VObject\Recur;
 use DateTimeImmutable;
 use DateTimeZone;
 
-class RDateIteratorTest extends \PHPUnit_Framework_TestCase {
-
-    function testSimple() {
-
+class RDateIteratorTest extends \PHPUnit_Framework_TestCase
+{
+    public function testSimple()
+    {
         $utc = new DateTimeZone('UTC');
         $it = new RDateIterator('20140901T000000Z,20141001T000000Z', new DateTimeImmutable('2014-08-01 00:00:00', $utc));
 
@@ -24,11 +24,10 @@ class RDateIteratorTest extends \PHPUnit_Framework_TestCase {
         );
 
         $this->assertFalse($it->isInfinite());
-
     }
 
-    function testTimezone() {
-
+    public function testTimezone()
+    {
         $tz = new DateTimeZone('Europe/Berlin');
         $it = new RDateIterator('20140901T000000,20141001T000000', new DateTimeImmutable('2014-08-01 00:00:00', $tz));
 
@@ -45,12 +44,11 @@ class RDateIteratorTest extends \PHPUnit_Framework_TestCase {
 
 
         $this->assertFalse($it->isInfinite());
-
     }
 
 
-    function testFastForward() {
-
+    public function testFastForward()
+    {
         $utc = new DateTimeZone('UTC');
         $it = new RDateIterator('20140901T000000Z,20141001T000000Z', new DateTimeImmutable('2014-08-01 00:00:00', $utc));
 
@@ -73,6 +71,5 @@ class RDateIteratorTest extends \PHPUnit_Framework_TestCase {
         );
 
         $this->assertFalse($it->isInfinite());
-
     }
 }

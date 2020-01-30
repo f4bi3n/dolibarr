@@ -5,10 +5,10 @@ namespace Sabre\XML\Deserializer;
 use
     Sabre\Xml\Reader;
 
-class ValueObjectTest extends \PHPUnit_Framework_TestCase {
-
-    function testDeserializeValueObject() {
-
+class ValueObjectTest extends \PHPUnit_Framework_TestCase
+{
+    public function testDeserializeValueObject()
+    {
         $input = <<<XML
 <?xml version="1.0"?>
 <foo xmlns="urn:foo">
@@ -20,7 +20,7 @@ XML;
         $reader = new Reader();
         $reader->xml($input);
         $reader->elementMap = [
-            '{urn:foo}foo' => function(Reader $reader) {
+            '{urn:foo}foo' => function (Reader $reader) {
                 return valueObject($reader, 'Sabre\\Xml\\Deserializer\\TestVo', 'urn:foo');
             }
         ];
@@ -41,11 +41,10 @@ XML;
             $expected,
             $output
         );
-
     }
 
-    function testDeserializeValueObjectIgnoredElement() {
-
+    public function testDeserializeValueObjectIgnoredElement()
+    {
         $input = <<<XML
 <?xml version="1.0"?>
 <foo xmlns="urn:foo">
@@ -58,7 +57,7 @@ XML;
         $reader = new Reader();
         $reader->xml($input);
         $reader->elementMap = [
-            '{urn:foo}foo' => function(Reader $reader) {
+            '{urn:foo}foo' => function (Reader $reader) {
                 return valueObject($reader, 'Sabre\\Xml\\Deserializer\\TestVo', 'urn:foo');
             }
         ];
@@ -79,11 +78,10 @@ XML;
             $expected,
             $output
         );
-
     }
 
-    function testDeserializeValueObjectAutoArray() {
-
+    public function testDeserializeValueObjectAutoArray()
+    {
         $input = <<<XML
 <?xml version="1.0"?>
 <foo xmlns="urn:foo">
@@ -97,7 +95,7 @@ XML;
         $reader = new Reader();
         $reader->xml($input);
         $reader->elementMap = [
-            '{urn:foo}foo' => function(Reader $reader) {
+            '{urn:foo}foo' => function (Reader $reader) {
                 return valueObject($reader, 'Sabre\\Xml\\Deserializer\\TestVo', 'urn:foo');
             }
         ];
@@ -123,10 +121,9 @@ XML;
             $expected,
             $output
         );
-
     }
-    function testDeserializeValueObjectEmpty() {
-
+    public function testDeserializeValueObjectEmpty()
+    {
         $input = <<<XML
 <?xml version="1.0"?>
 <foo xmlns="urn:foo" />
@@ -135,7 +132,7 @@ XML;
         $reader = new Reader();
         $reader->xml($input);
         $reader->elementMap = [
-            '{urn:foo}foo' => function(Reader $reader) {
+            '{urn:foo}foo' => function (Reader $reader) {
                 return valueObject($reader, 'Sabre\\Xml\\Deserializer\\TestVo', 'urn:foo');
             }
         ];
@@ -154,16 +151,13 @@ XML;
             $expected,
             $output
         );
-
     }
-
 }
 
-class TestVo {
-
+class TestVo
+{
     public $firstName;
     public $lastName;
 
     public $link = [];
-
 }

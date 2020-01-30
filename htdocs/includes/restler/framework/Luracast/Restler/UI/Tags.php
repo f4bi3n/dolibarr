@@ -55,8 +55,9 @@ class Tags implements ArrayAccess, Countable
         }
         $this->markAsChildren($c);
         $this->children = $c;
-        if (static::$initializer)
+        if (static::$initializer) {
             call_user_func_array(static::$initializer, array(& $this));
+        }
     }
 
     /**
@@ -98,8 +99,9 @@ class Tags implements ArrayAccess, Countable
             $lineBreak = false;
             foreach ($this->children as $key => $child) {
                 $prefix = $this->prefix;
-                if (!is_null($this->tag))
+                if (!is_null($this->tag)) {
                     $prefix .= $this->indent;
+                }
                 if ($child instanceof $this) {
                     $child->prefix = $prefix;
                     $child->indent = $this->indent;
@@ -109,23 +111,27 @@ class Tags implements ArrayAccess, Countable
                     $children .= $child;
                 }
             }
-            if ($lineBreak)
+            if ($lineBreak) {
                 $children .= PHP_EOL . $this->prefix;
+            }
         } else {
             $children = implode('', $this->children);
         }
-        if (is_null($this->tag))
+        if (is_null($this->tag)) {
             return $children;
+        }
         $attributes = '';
-        foreach ($this->attributes as $attribute => &$value)
+        foreach ($this->attributes as $attribute => &$value) {
             $attributes .= " $attribute=\"$value\"";
+        }
 
-        if (count($this->children))
+        if (count($this->children)) {
             return static::$humanReadable
                 ? "$this->prefix<{$this->tag}{$attributes}>"
                 . "$children"
                 . "</{$this->tag}>"
                 : "<{$this->tag}{$attributes}>$children</{$this->tag}>";
+        }
 
         return "$this->prefix<{$this->tag}{$attributes}/>";
     }
@@ -163,10 +169,12 @@ class Tags implements ArrayAccess, Countable
 
     public function __get($name)
     {
-        if ('parent' == $name)
+        if ('parent' == $name) {
             return $this->_parent;
-        if (isset($this->attributes[$name]))
+        }
+        if (isset($this->attributes[$name])) {
             return $this->attributes[$name];
+        }
         return;
     }
 
@@ -265,8 +273,9 @@ class Tags implements ArrayAccess, Countable
     private function markAsChildren(& $children)
     {
         foreach ($children as $i => $child) {
-            if (is_string($child))
+            if (is_string($child)) {
                 continue;
+            }
             if (!is_object($child)) {
                 unset($children[$i]);
                 continue;

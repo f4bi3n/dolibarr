@@ -15,8 +15,8 @@ use Sabre\VObject;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class ExpandEventsDoubleEventsTest extends \Sabre\DAVServerTest {
-
+class ExpandEventsDoubleEventsTest extends \Sabre\DAVServerTest
+{
     protected $setupCalDAV = true;
 
     protected $caldavCalendars = [
@@ -54,8 +54,8 @@ END:VCALENDAR
         ],
     ];
 
-    function testExpand() {
-
+    public function testExpand()
+    {
         $request = HTTP\Sapi::createFromServerArray([
             'REQUEST_METHOD'    => 'REPORT',
             'HTTP_CONTENT_TYPE' => 'application/xml',
@@ -97,7 +97,5 @@ END:VCALENDAR
 
         // TZID should be gone
         $this->assertFalse(isset($vObject->VEVENT->DTSTART['TZID']));
-
     }
-
 }

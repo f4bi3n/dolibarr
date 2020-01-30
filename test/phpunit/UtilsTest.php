@@ -133,14 +133,14 @@ class UtilsTest extends PHPUnit\Framework\TestCase
 
         $localobject=new Utils($this->savdb);
         $result = $localobject->executeCLI('ls', $conf->admin->dir_temp.'/out.tmp', 1);
-		print var_export($result, true);
+        print var_export($result, true);
         $this->assertEquals($result['result'], 0);
         $this->assertEquals($result['error'], '');
         //$this->assertEquals(preg_match('/phpunit/', $result['output']), 1);
 
         $localobject=new Utils($this->savdb);
         $result = $localobject->executeCLI('ls', $conf->admin->dir_temp.'/out.tmp', 2);
-		print var_export($result, true);
+        print var_export($result, true);
         $this->assertEquals($result['result'], 0);
         $this->assertEquals($result['error'], '');
         //$this->assertEquals(preg_match('/phpunit/', $result['output']), 1);

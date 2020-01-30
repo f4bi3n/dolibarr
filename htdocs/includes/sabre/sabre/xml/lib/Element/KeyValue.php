@@ -33,7 +33,8 @@ use Sabre\Xml\Deserializer;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class KeyValue implements Xml\Element {
+class KeyValue implements Xml\Element
+{
 
     /**
      * Value to serialize
@@ -47,10 +48,9 @@ class KeyValue implements Xml\Element {
      *
      * @param array $value
      */
-    function __construct(array $value = []) {
-
+    public function __construct(array $value = [])
+    {
         $this->value = $value;
-
     }
 
     /**
@@ -72,10 +72,9 @@ class KeyValue implements Xml\Element {
      * @param Writer $writer
      * @return void
      */
-    function xmlSerialize(Xml\Writer $writer) {
-
+    public function xmlSerialize(Xml\Writer $writer)
+    {
         $writer->write($this->value);
-
     }
 
     /**
@@ -99,10 +98,8 @@ class KeyValue implements Xml\Element {
      * @param Xml\Reader $reader
      * @return mixed
      */
-    static function xmlDeserialize(Xml\Reader $reader) {
-
+    public static function xmlDeserialize(Xml\Reader $reader)
+    {
         return Deserializer\keyValue($reader);
-
     }
-
 }

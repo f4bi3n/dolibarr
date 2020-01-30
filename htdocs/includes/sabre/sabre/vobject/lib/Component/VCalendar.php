@@ -20,7 +20,8 @@ use Sabre\VObject\Recur\NoInstancesException;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class VCalendar extends VObject\Document {
+class VCalendar extends VObject\Document
+{
 
     /**
      * The default name for this component.
@@ -29,14 +30,14 @@ class VCalendar extends VObject\Document {
      *
      * @var string
      */
-    static $defaultName = 'VCALENDAR';
+    public static $defaultName = 'VCALENDAR';
 
     /**
      * This is a list of components, and which classes they should map to.
      *
      * @var array
      */
-    static $componentMap = [
+    public static $componentMap = [
         'VCALENDAR'     => 'Sabre\\VObject\\Component\\VCalendar',
         'VALARM'        => 'Sabre\\VObject\\Component\\VAlarm',
         'VEVENT'        => 'Sabre\\VObject\\Component\\VEvent',
@@ -53,7 +54,7 @@ class VCalendar extends VObject\Document {
      *
      * @var array
      */
-    static $valueMap = [
+    public static $valueMap = [
         'BINARY'      => 'Sabre\\VObject\\Property\\Binary',
         'BOOLEAN'     => 'Sabre\\VObject\\Property\\Boolean',
         'CAL-ADDRESS' => 'Sabre\\VObject\\Property\\ICalendar\\CalAddress',
@@ -76,7 +77,7 @@ class VCalendar extends VObject\Document {
      *
      * @var array
      */
-    static $propertyMap = [
+    public static $propertyMap = [
         // Calendar properties
         'CALSCALE' => 'Sabre\\VObject\\Property\\FlatText',
         'METHOD'   => 'Sabre\\VObject\\Property\\FlatText',
@@ -158,10 +159,9 @@ class VCalendar extends VObject\Document {
      *
      * @return int
      */
-    function getDocumentType() {
-
+    public function getDocumentType()
+    {
         return self::ICALENDAR20;
-
     }
 
     /**
@@ -175,10 +175,9 @@ class VCalendar extends VObject\Document {
      *
      * @return VObject\Component[]
      */
-    function getBaseComponents($componentName = null) {
-
-        $isBaseComponent = function($component) {
-
+    public function getBaseComponents($componentName = null)
+    {
+        $isBaseComponent = function ($component) {
             if (!$component instanceof VObject\Component) {
                 return false;
             }
@@ -189,7 +188,6 @@ class VCalendar extends VObject\Document {
                 return false;
             }
             return true;
-
         };
 
         if ($componentName) {
@@ -202,9 +200,7 @@ class VCalendar extends VObject\Document {
 
         $components = [];
         foreach ($this->children as $childGroup) {
-
             foreach ($childGroup as $child) {
-
                 if (!$child instanceof Component) {
                     // If one child is not a component, they all are so we skip
                     // the entire group.
@@ -213,12 +209,9 @@ class VCalendar extends VObject\Document {
                 if ($isBaseComponent($child)) {
                     $components[] = $child;
                 }
-
             }
-
         }
         return $components;
-
     }
 
     /**
@@ -231,10 +224,9 @@ class VCalendar extends VObject\Document {
      *
      * @return VObject\Component|null
      */
-    function getBaseComponent($componentName = null) {
-
-        $isBaseComponent = function($component) {
-
+    public function getBaseComponent($componentName = null)
+    {
+        $isBaseComponent = function ($component) {
             if (!$component instanceof VObject\Component) {
                 return false;
             }
@@ -245,7 +237,6 @@ class VCalendar extends VObject\Document {
                 return false;
             }
             return true;
-
         };
 
         if ($componentName) {
@@ -264,10 +255,8 @@ class VCalendar extends VObject\Document {
                     return $child;
                 }
             }
-
         }
         return null;
-
     }
 
     /**
@@ -290,8 +279,8 @@ class VCalendar extends VObject\Document {
      *                     times.
      * @return VCalendar
      */
-    function expand(DateTimeInterface $start, DateTimeInterface $end, DateTimeZone $timeZone = null) {
-
+    public function expand(DateTimeInterface $start, DateTimeInterface $end, DateTimeZone $timeZone = null)
+    {
         $newChildren = [];
         $recurringEvents = [];
 
@@ -299,11 +288,9 @@ class VCalendar extends VObject\Document {
             $timeZone = new DateTimeZone('UTC');
         }
 
-        $stripTimezones = function(Component $component) use ($timeZone, &$stripTimezones) {
-
+        $stripTimezones = function (Component $component) use ($timeZone, &$stripTimezones) {
             foreach ($component->children() as $componentChild) {
                 if ($componentChild instanceof Property\ICalendar\DateTime && $componentChild->hasTime()) {
-
                     $dt = $componentChild->getDateTimes($timeZone);
                     // We only need to update the first timezone, because
                     // setDateTimes will match all other timezones to the
@@ -313,14 +300,11 @@ class VCalendar extends VObject\Document {
                 } elseif ($componentChild instanceof Component) {
                     $stripTimezones($componentChild);
                 }
-
             }
             return $component;
-
         };
 
         foreach ($this->children() as $child) {
-
             if ($child instanceof Property && $child->name !== 'PRODID') {
                 // We explictly want to ignore PRODID, because we want to
                 // overwrite it with our own.
@@ -343,16 +327,12 @@ class VCalendar extends VObject\Document {
                 } elseif ($child->name === 'VEVENT' && $child->isInTimeRange($start, $end)) {
                     $newChildren[] = $stripTimezones(clone $child);
                 }
-
             }
-
         }
 
         foreach ($recurringEvents as $events) {
-
             try {
                 $it = new EventIterator($events, $timeZone);
-
             } catch (NoInstancesException $e) {
                 // This event is recurring, but it doesn't have a single
                 // instance. We are skipping this event from the output
@@ -362,20 +342,14 @@ class VCalendar extends VObject\Document {
             $it->fastForward($start);
 
             while ($it->valid() && $it->getDTStart() < $end) {
-
                 if ($it->getDTEnd() > $start) {
-
                     $newChildren[] = $stripTimezones($it->getEventObject());
-
                 }
                 $it->next();
-
             }
-
         }
 
         return new self($newChildren);
-
     }
 
     /**
@@ -383,14 +357,13 @@ class VCalendar extends VObject\Document {
      *
      * @return array
      */
-    protected function getDefaults() {
-
+    protected function getDefaults()
+    {
         return [
             'VERSION'  => '2.0',
             'PRODID'   => '-//Sabre//Sabre VObject ' . VObject\Version::VERSION . '//EN',
             'CALSCALE' => 'GREGORIAN',
         ];
-
     }
 
     /**
@@ -408,8 +381,8 @@ class VCalendar extends VObject\Document {
      *
      * @var array
      */
-    function getValidationRules() {
-
+    public function getValidationRules()
+    {
         return [
             'PRODID'  => 1,
             'VERSION' => 1,
@@ -417,7 +390,6 @@ class VCalendar extends VObject\Document {
             'CALSCALE' => '?',
             'METHOD'   => '?',
         ];
-
     }
 
     /**
@@ -444,8 +416,8 @@ class VCalendar extends VObject\Document {
      *
      * @return array
      */
-    function validate($options = 0) {
-
+    public function validate($options = 0)
+    {
         $warnings = parent::validate($options);
 
         if ($ver = $this->VERSION) {
@@ -456,7 +428,6 @@ class VCalendar extends VObject\Document {
                     'node'    => $this,
                 ];
             }
-
         }
 
         $uidList = [];
@@ -490,7 +461,6 @@ class VCalendar extends VObject\Document {
                         'hasMaster' => $isMaster,
                     ];
                 }
-
             }
         }
 
@@ -535,7 +505,6 @@ class VCalendar extends VObject\Document {
         }
 
         return $warnings;
-
     }
 
     /**
@@ -543,19 +512,14 @@ class VCalendar extends VObject\Document {
      *
      * @return array
      */
-    function getByUID($uid) {
-
-        return array_filter($this->getComponents(), function($item) use ($uid) {
-
+    public function getByUID($uid)
+    {
+        return array_filter($this->getComponents(), function ($item) use ($uid) {
             if (!$itemUid = $item->select('UID')) {
                 return false;
             }
             $itemUid = current($itemUid)->getValue();
             return $uid === $itemUid;
-
         });
-
     }
-
-
 }

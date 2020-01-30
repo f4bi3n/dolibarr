@@ -5,19 +5,19 @@ namespace Sabre\VObject\Component;
 use Sabre\VObject\Component;
 use Sabre\VObject\Reader;
 
-class VTodoTest extends \PHPUnit_Framework_TestCase {
+class VTodoTest extends \PHPUnit_Framework_TestCase
+{
 
     /**
      * @dataProvider timeRangeTestData
      */
-    function testInTimeRange(VTodo $vtodo, $start, $end, $outcome) {
-
+    public function testInTimeRange(VTodo $vtodo, $start, $end, $outcome)
+    {
         $this->assertEquals($outcome, $vtodo->isInTimeRange($start, $end));
-
     }
 
-    function timeRangeTestData() {
-
+    public function timeRangeTestData()
+    {
         $tests = [];
 
         $calendar = new VCalendar();
@@ -63,11 +63,10 @@ class VTodoTest extends \PHPUnit_Framework_TestCase {
         $tests[] = [$vtodo7, new \DateTime('2011-01-01'), new \DateTime('2011-11-01'), true];
 
         return $tests;
-
     }
 
-    function testValidate() {
-
+    public function testValidate()
+    {
         $input = <<<HI
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -88,11 +87,10 @@ HI;
         }
 
         $this->assertEquals([], $messages);
-
     }
 
-    function testValidateInvalid() {
-
+    public function testValidateInvalid()
+    {
         $input = <<<HI
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -114,11 +112,10 @@ HI;
             "UID MUST appear exactly once in a VTODO component",
             "DTSTAMP MUST appear exactly once in a VTODO component",
         ], $messages);
-
     }
 
-    function testValidateDUEDTSTARTMisMatch() {
-
+    public function testValidateDUEDTSTARTMisMatch()
+    {
         $input = <<<HI
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -143,11 +140,10 @@ HI;
         $this->assertEquals([
             "The value type (DATE or DATE-TIME) must be identical for DUE and DTSTART",
         ], $messages);
-
     }
 
-    function testValidateDUEbeforeDTSTART() {
-
+    public function testValidateDUEbeforeDTSTART()
+    {
         $input = <<<HI
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -172,7 +168,5 @@ HI;
         $this->assertEquals([
             "DUE must occur after DTSTART",
         ], $messages);
-
     }
-
 }

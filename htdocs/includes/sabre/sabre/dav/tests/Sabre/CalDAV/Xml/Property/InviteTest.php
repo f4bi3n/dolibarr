@@ -7,29 +7,26 @@ use Sabre\DAV;
 use Sabre\DAV\Sharing\Plugin as SP;
 use Sabre\DAV\Xml\Element\Sharee;
 
-class InviteTest extends DAV\Xml\XmlTest {
-
-    function setUp() {
-
+class InviteTest extends DAV\Xml\XmlTest
+{
+    public function setUp()
+    {
         $this->namespaceMap[CalDAV\Plugin::NS_CALDAV] = 'cal';
         $this->namespaceMap[CalDAV\Plugin::NS_CALENDARSERVER] = 'cs';
-
-
     }
 
-    function testSimple() {
-
+    public function testSimple()
+    {
         $invite = new Invite([]);
         $this->assertInstanceOf('Sabre\CalDAV\Xml\Property\Invite', $invite);
         $this->assertEquals([], $invite->getValue());
-
     }
 
     /**
      * @depends testSimple
      */
-    function testSerialize() {
-
+    public function testSerialize()
+    {
         $property = new Invite([
             new Sharee([
                 'href'         => 'mailto:thedoctor@example.org',
@@ -66,7 +63,7 @@ class InviteTest extends DAV\Xml\XmlTest {
         $xml = $this->write(['{DAV:}root' => $property]);
 
         $this->assertXmlStringEqualsXmlString(
-'<?xml version="1.0"?>
+            '<?xml version="1.0"?>
 <d:root xmlns:d="DAV:" xmlns:cal="' . CalDAV\Plugin::NS_CALDAV . '" xmlns:cs="' . CalDAV\Plugin::NS_CALENDARSERVER . '">
   <cs:organizer>
     <d:href>mailto:thedoctor@example.org</d:href>
@@ -105,8 +102,8 @@ class InviteTest extends DAV\Xml\XmlTest {
     <cs:common-name>Hoe Boe</cs:common-name>
   </cs:user>
 </d:root>
-', $xml);
-
+',
+            $xml
+        );
     }
-
 }

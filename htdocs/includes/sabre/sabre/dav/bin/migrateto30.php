@@ -4,7 +4,6 @@
 echo "SabreDAV migrate script for version 3.0\n";
 
 if ($argc < 2) {
-
     echo <<<HELLO
 
 This script help you migrate from a pre-3.0 database to 3.0 and later
@@ -36,7 +35,6 @@ php {$argv[0]} sqlite:data/sabredav.db
 HELLO;
 
     exit();
-
 }
 
 // There's a bunch of places where the autoloader could be, so we'll try all of
@@ -67,13 +65,13 @@ $driver = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
 
 switch ($driver) {
 
-    case 'mysql' :
+    case 'mysql':
         echo "Detected MySQL.\n";
         break;
-    case 'sqlite' :
+    case 'sqlite':
         echo "Detected SQLite.\n";
         break;
-    default :
+    default:
         echo "Error: unsupported driver: " . $driver . "\n";
         die(-1);
 }
@@ -91,7 +89,7 @@ try {
 
         switch ($driver) {
 
-            case 'mysql' :
+            case 'mysql':
                 $pdo->exec('RENAME TABLE propertystorage TO propertystorage_old' . $random);
                 $pdo->exec('
     CREATE TABLE propertystorage (
@@ -104,7 +102,7 @@ try {
                 ');
                 $pdo->exec('CREATE UNIQUE INDEX path_property_' . $random . '  ON propertystorage (path(600), name(100));');
                 break;
-            case 'sqlite' :
+            case 'sqlite':
                 $pdo->exec('ALTER TABLE propertystorage RENAME TO propertystorage_old' . $random);
                 $pdo->exec('
 CREATE TABLE propertystorage (
@@ -126,7 +124,6 @@ CREATE TABLE propertystorage (
         echo "2.1 schema detected. Going to perform upgrade.\n";
         $addValueType = true;
     }
-
 } catch (Exception $e) {
     echo "Could not find a propertystorage table. Skipping this part of the\n";
     echo "upgrade.\n";
@@ -134,19 +131,17 @@ CREATE TABLE propertystorage (
 }
 
 if ($addValueType) {
-
     switch ($driver) {
-        case 'mysql' :
+        case 'mysql':
             $pdo->exec('ALTER TABLE propertystorage ADD valuetype INT UNSIGNED');
             break;
-        case 'sqlite' :
+        case 'sqlite':
             $pdo->exec('ALTER TABLE propertystorage ADD valuetype INT');
 
             break;
     }
 
     $pdo->exec('UPDATE propertystorage SET valuetype = 1 WHERE valuetype IS NULL ');
-
 }
 
 echo "Migrating vcardurl\n";
@@ -164,7 +159,6 @@ while ($row = $result->fetch(\PDO::FETCH_ASSOC)) {
     ]);
 
     echo serialize(new Sabre\DAV\Xml\Property\Href($row['vcardurl']));
-
 }
 
 echo "Done.\n";

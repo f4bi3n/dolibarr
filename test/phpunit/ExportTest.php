@@ -30,16 +30,36 @@ require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/exports/class/export.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/files.lib.php';
 
-if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER', '1');
-if (! defined('NOREQUIREDB'))    define('NOREQUIREDB', '1');
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
-if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN', '1');
-if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1'); // If there is no menu to show
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-if (! defined("NOLOGIN"))        define("NOLOGIN", '1');       // If this page is public (can be called outside logged session)
+if (! defined('NOREQUIREUSER')) {
+    define('NOREQUIREUSER', '1');
+}
+if (! defined('NOREQUIREDB')) {
+    define('NOREQUIREDB', '1');
+}
+if (! defined('NOREQUIRESOC')) {
+    define('NOREQUIRESOC', '1');
+}
+if (! defined('NOREQUIRETRAN')) {
+    define('NOREQUIRETRAN', '1');
+}
+if (! defined('NOCSRFCHECK')) {
+    define('NOCSRFCHECK', '1');
+}
+if (! defined('NOTOKENRENEWAL')) {
+    define('NOTOKENRENEWAL', '1');
+}
+if (! defined('NOREQUIREMENU')) {
+    define('NOREQUIREMENU', '1');
+} // If there is no menu to show
+if (! defined('NOREQUIREHTML')) {
+    define('NOREQUIREHTML', '1');
+} // If we don't need to load the html.form.class.php
+if (! defined('NOREQUIREAJAX')) {
+    define('NOREQUIREAJAX', '1');
+}
+if (! defined("NOLOGIN")) {
+    define("NOLOGIN", '1');
+}       // If this page is public (can be called outside logged session)
 
 
 /**
@@ -51,74 +71,74 @@ if (! defined("NOLOGIN"))        define("NOLOGIN", '1');       // If this page i
  */
 class ExportTest extends PHPUnit\Framework\TestCase
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
+    protected $savconf;
+    protected $savuser;
+    protected $savlangs;
+    protected $savdb;
 
-	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @return ExportTest
-	 */
-	public function __construct()
-	{
-		parent::__construct();
+    /**
+     * Constructor
+     * We save global variables into local variables
+     *
+     * @return ExportTest
+     */
+    public function __construct()
+    {
+        parent::__construct();
 
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
+        //$this->sharedFixture
+        global $conf,$user,$langs,$db;
+        $this->savconf=$conf;
+        $this->savuser=$user;
+        $this->savlangs=$langs;
+        $this->savdb=$db;
 
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
+        print __METHOD__." db->type=".$db->type." user->id=".$user->id;
+        //print " - db ".$db->db;
+        print "\n";
+    }
 
-	// Static methods
+    // Static methods
     public static function setUpBeforeClass()
     {
-    	global $conf,$user,$langs,$db;
-		//$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+        global $conf,$user,$langs,$db;
+        //$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
-    	print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
     // tear down after class
     public static function tearDownAfterClass()
     {
-    	global $conf,$user,$langs,$db;
-		//$db->rollback();
+        global $conf,$user,$langs,$db;
+        //$db->rollback();
 
-		print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
-	/**
-	 * Init phpunit tests
-	 *
-	 * @return	void
-	 */
+    /**
+     * Init phpunit tests
+     *
+     * @return	void
+     */
     protected function setUp()
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		print __METHOD__."\n";
+        print __METHOD__."\n";
     }
-	/**
-	 * End phpunit tests
-	 *
-	 * @return	void
-	 */
+    /**
+     * End phpunit tests
+     *
+     * @return	void
+     */
     protected function tearDown()
     {
-    	print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
 
@@ -211,7 +231,7 @@ class ExportTest extends PHPUnit\Framework\TestCase
      * Test export function for a personalized dataset
      *
      * @depends	testExportOther
-	 * @return void
+     * @return void
      */
     public function testExportPersonalizedExport()
     {
@@ -237,7 +257,7 @@ class ExportTest extends PHPUnit\Framework\TestCase
         // Build export file
         print "Process build_file for model = ".$model."\n";
         $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
-		$expectedresult=1;
+        $expectedresult=1;
         $this->assertEquals($expectedresult, $result, 'Error in CSV export');
 
         $model='tsv';
@@ -245,7 +265,7 @@ class ExportTest extends PHPUnit\Framework\TestCase
         // Build export file
         print "Process build_file for model = ".$model."\n";
         $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
-		$expectedresult=1;
+        $expectedresult=1;
         $this->assertEquals($expectedresult, $result, 'Error in TSV export');
 
         $model='excel2007new';
@@ -254,7 +274,7 @@ class ExportTest extends PHPUnit\Framework\TestCase
         /* ko on php 7.4 on travis (zip not available) */
         print "Process build_file for model = ".$model."\n";
         $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
-		$expectedresult=1;
+        $expectedresult=1;
         $this->assertEquals($expectedresult, $result, 'Error in Excel2007new export');
 
 
@@ -269,7 +289,7 @@ class ExportTest extends PHPUnit\Framework\TestCase
      */
     public function testExportPersonalizedWithFilter()
     {
-    	global $conf,$user,$langs,$db;
+        global $conf,$user,$langs,$db;
         /*
     	$sql = "SELECT f.ref as f_ref, f.total as f_total, f.tva as f_tva FROM ".MAIN_DB_PREFIX."facture f";
 
@@ -309,15 +329,15 @@ class ExportTest extends PHPUnit\Framework\TestCase
     	$expectedresult=1;
     	$this->assertEquals($expectedresult,$result);
         */
-    	$this->assertEquals(true, true);
-    	return true;
+        $this->assertEquals(true, true);
+        return true;
     }
 
     /**
      * Test export function for all dataset predefined into modules
      *
      * @depends	testExportPersonalizedWithFilter
-	 * @return void
+     * @return void
      */
     public function testExportModulesDatasets()
     {
@@ -334,28 +354,26 @@ class ExportTest extends PHPUnit\Framework\TestCase
         $result=$objexport->load_arrays($user, $filterdatatoexport);	// This load ->array_export_xxx properties for datatoexport
 
         // Loop on each dataset
-        foreach($objexport->array_export_code as $key => $datatoexport)
-        {
-        	$exportfile=$conf->export->dir_temp.'/'.$user->id.'/export_'.$datatoexport.'.csv';
-	        print "Process export for dataset ".$datatoexport." into ".$exportfile."\n";
-	        dol_delete_file($exportfile);
+        foreach ($objexport->array_export_code as $key => $datatoexport) {
+            $exportfile=$conf->export->dir_temp.'/'.$user->id.'/export_'.$datatoexport.'.csv';
+            print "Process export for dataset ".$datatoexport." into ".$exportfile."\n";
+            dol_delete_file($exportfile);
 
-	        // Generate $array_selected
-	        $i=0;
-	        $array_selected=array();
-			foreach($objexport->array_export_fields[$key] as $key => $val)
-			{
-				$array_selected[$key]=$i++;
-			}
-			//var_dump($array_selected);
+            // Generate $array_selected
+            $i=0;
+            $array_selected=array();
+            foreach ($objexport->array_export_fields[$key] as $key => $val) {
+                $array_selected[$key]=$i++;
+            }
+            //var_dump($array_selected);
 
-	        // Build export file
-        	$sql = "";
-			$result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
-			$expectedresult=1;
-	        $this->assertEquals($expectedresult, $result, "Call build_file() to export ".$exportfile.' failed');
-	        $result=dol_is_file($exportfile);
-	        $this->assertTrue($result, 'File '.$exportfile.' not found');
+            // Build export file
+            $sql = "";
+            $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
+            $expectedresult=1;
+            $this->assertEquals($expectedresult, $result, "Call build_file() to export ".$exportfile.' failed');
+            $result=dol_is_file($exportfile);
+            $this->assertTrue($result, 'File '.$exportfile.' not found');
         }
 
         return true;

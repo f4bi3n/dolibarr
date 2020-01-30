@@ -39,28 +39,28 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
      */
     public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
 
-	/**
+    /**
      * @var string Error code (or message)
      */
     public $error = '';
 
-	/**
-	 * @var string Nom du modele
-	 * @deprecated
-	 * @see name
-	 */
-	public $nom='Cactus';
+    /**
+     * @var string Nom du modele
+     * @deprecated
+     * @see name
+     */
+    public $nom='Cactus';
 
-	/**
-	 * @var string model name
-	 */
-	public $name='Cactus';
+    /**
+     * @var string model name
+     */
+    public $name='Cactus';
 
-	public $prefixinvoice='SI';
+    public $prefixinvoice='SI';
 
-	public $prefixcreditnote='SA';
+    public $prefixcreditnote='SA';
 
-	public $prefixdeposit='SD';
+    public $prefixdeposit='SD';
 
 
     /**
@@ -87,79 +87,83 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
     }
 
 
-	/**
-	 * 	Tests if the numbers already in force in the database do not cause conflicts that would prevent this numbering.
-	 *
-	 *  @return     boolean     false if conflict, true if ok
-	 */
-	public function canBeActivated()
-	{
-		global $conf,$langs,$db;
+    /**
+     * 	Tests if the numbers already in force in the database do not cause conflicts that would prevent this numbering.
+     *
+     *  @return     boolean     false if conflict, true if ok
+     */
+    public function canBeActivated()
+    {
+        global $conf,$langs,$db;
 
-		$langs->load("bills");
+        $langs->load("bills");
 
-		// Check invoice num
-		$siyymm=''; $max='';
+        // Check invoice num
+        $siyymm='';
+        $max='';
 
-		$posindice=8;
-		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
-		$sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn";
-		$sql.= " WHERE ref LIKE '".$db->escape($this->prefixinvoice)."____-%'";
-		$sql.= " AND entity = ".$conf->entity;
-		$resql=$db->query($sql);
-		if ($resql)
-		{
-			$row = $db->fetch_row($resql);
-			if ($row) { $siyymm = substr($row[0], 0, 6); $max=$row[0]; }
-		}
-		if ($siyymm && ! preg_match('/'.$this->prefixinvoice.'[0-9][0-9][0-9][0-9]/i', $siyymm))
-		{
-			$langs->load("errors");
-			$this->error=$langs->trans('ErrorNumRefModel', $max);
-			return false;
-		}
+        $posindice=8;
+        $sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
+        $sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn";
+        $sql.= " WHERE ref LIKE '".$db->escape($this->prefixinvoice)."____-%'";
+        $sql.= " AND entity = ".$conf->entity;
+        $resql=$db->query($sql);
+        if ($resql) {
+            $row = $db->fetch_row($resql);
+            if ($row) {
+                $siyymm = substr($row[0], 0, 6);
+                $max=$row[0];
+            }
+        }
+        if ($siyymm && ! preg_match('/'.$this->prefixinvoice.'[0-9][0-9][0-9][0-9]/i', $siyymm)) {
+            $langs->load("errors");
+            $this->error=$langs->trans('ErrorNumRefModel', $max);
+            return false;
+        }
 
-		// Check credit note num
-		$siyymm='';
+        // Check credit note num
+        $siyymm='';
 
-		$posindice=8;
-		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";	// This is standard SQL
-		$sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn";
-		$sql.= " WHERE ref LIKE '".$db->escape($this->prefixcreditnote)."____-%'";
-		$sql.= " AND entity = ".$conf->entity;
+        $posindice=8;
+        $sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";	// This is standard SQL
+        $sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn";
+        $sql.= " WHERE ref LIKE '".$db->escape($this->prefixcreditnote)."____-%'";
+        $sql.= " AND entity = ".$conf->entity;
 
-		$resql=$db->query($sql);
-		if ($resql)
-		{
-			$row = $db->fetch_row($resql);
-			if ($row) { $siyymm = substr($row[0], 0, 6); $max=$row[0]; }
-		}
-		if ($siyymm && ! preg_match('/'.$this->prefixcreditnote.'[0-9][0-9][0-9][0-9]/i', $siyymm))
-		{
-			$this->error=$langs->trans('ErrorNumRefModel', $max);
-			return false;
-		}
+        $resql=$db->query($sql);
+        if ($resql) {
+            $row = $db->fetch_row($resql);
+            if ($row) {
+                $siyymm = substr($row[0], 0, 6);
+                $max=$row[0];
+            }
+        }
+        if ($siyymm && ! preg_match('/'.$this->prefixcreditnote.'[0-9][0-9][0-9][0-9]/i', $siyymm)) {
+            $this->error=$langs->trans('ErrorNumRefModel', $max);
+            return false;
+        }
 
-		// Check deposit num
-		$siyymm='';
+        // Check deposit num
+        $siyymm='';
 
-		$posindice=8;
-		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";	// This is standard SQL
-		$sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn";
-		$sql.= " WHERE ref LIKE '".$db->escape($this->prefixdeposit)."____-%'";
-		$sql.= " AND entity = ".$conf->entity;
+        $posindice=8;
+        $sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";	// This is standard SQL
+        $sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn";
+        $sql.= " WHERE ref LIKE '".$db->escape($this->prefixdeposit)."____-%'";
+        $sql.= " AND entity = ".$conf->entity;
 
-		$resql=$db->query($sql);
-		if ($resql)
-		{
-			$row = $db->fetch_row($resql);
-			if ($row) { $siyymm = substr($row[0], 0, 6); $max=$row[0]; }
-		}
-		if ($siyymm && ! preg_match('/'.$this->prefixdeposit.'[0-9][0-9][0-9][0-9]/i', $siyymm))
-		{
-			$this->error=$langs->trans('ErrorNumRefModel', $max);
-			return false;
-		}
+        $resql=$db->query($sql);
+        if ($resql) {
+            $row = $db->fetch_row($resql);
+            if ($row) {
+                $siyymm = substr($row[0], 0, 6);
+                $max=$row[0];
+            }
+        }
+        if ($siyymm && ! preg_match('/'.$this->prefixdeposit.'[0-9][0-9][0-9][0-9]/i', $siyymm)) {
+            $this->error=$langs->trans('ErrorNumRefModel', $max);
+            return false;
+        }
     }
 
     /**
@@ -174,9 +178,13 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
     {
         global $db,$conf;
 
-        if ($object->type == 2) $prefix=$this->prefixcreditnote;
-        elseif ($facture->type == 3) $prefix=$this->prefixdeposit;
-        else $prefix=$this->prefixinvoice;
+        if ($object->type == 2) {
+            $prefix=$this->prefixcreditnote;
+        } elseif ($facture->type == 3) {
+            $prefix=$this->prefixdeposit;
+        } else {
+            $prefix=$this->prefixinvoice;
+        }
 
         // D'abord on recupere la valeur max
         $posindice=8;
@@ -187,51 +195,59 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 
         $resql=$db->query($sql);
         dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);
-        if ($resql)
-        {
-        	$obj = $db->fetch_object($resql);
-        	if ($obj) $max = intval($obj->max);
-        	else $max=0;
+        if ($resql) {
+            $obj = $db->fetch_object($resql);
+            if ($obj) {
+                $max = intval($obj->max);
+            } else {
+                $max=0;
+            }
+        } else {
+            return -1;
         }
-        else
-        {
-        	return -1;
+
+        if ($mode == 'last') {
+            if ($max >= (pow(10, 4) - 1)) {
+                $num=$max;
+            }	// If counter > 9999, we do not format on 4 chars, we take number as it is
+            else {
+                $num = sprintf("%04s", $max);
+            }
+
+            $ref='';
+            $sql = "SELECT ref as ref";
+            $sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn";
+            $sql.= " WHERE ref LIKE '".$prefix."____-".$num."'";
+            $sql.= " AND entity = ".$conf->entity;
+
+            dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);
+            $resql=$db->query($sql);
+            if ($resql) {
+                $obj = $db->fetch_object($resql);
+                if ($obj) {
+                    $ref = $obj->ref;
+                }
+            } else {
+                dol_print_error($db);
+            }
+
+            return $ref;
+        } elseif ($mode == 'next') {
+            $date=$object->date;	// This is invoice date (not creation date)
+            $yymm = strftime("%y%m", $date);
+
+            if ($max >= (pow(10, 4) - 1)) {
+                $num=$max+1;
+            }	// If counter > 9999, we do not format on 4 chars, we take number as it is
+            else {
+                $num = sprintf("%04s", $max+1);
+            }
+
+            dol_syslog(get_class($this)."::getNextValue return ".$prefix.$yymm."-".$num);
+            return $prefix.$yymm."-".$num;
+        } else {
+            dol_print_error('', 'Bad parameter for getNextValue');
         }
-
-        if ($mode == 'last')
-        {
-    		if ($max >= (pow(10, 4) - 1)) $num=$max;	// If counter > 9999, we do not format on 4 chars, we take number as it is
-    		else $num = sprintf("%04s", $max);
-
-        	$ref='';
-        	$sql = "SELECT ref as ref";
-        	$sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn";
-        	$sql.= " WHERE ref LIKE '".$prefix."____-".$num."'";
-        	$sql.= " AND entity = ".$conf->entity;
-
-        	dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);
-        	$resql=$db->query($sql);
-        	if ($resql)
-        	{
-        		$obj = $db->fetch_object($resql);
-        		if ($obj) $ref = $obj->ref;
-        	}
-        	else dol_print_error($db);
-
-        	return $ref;
-        }
-        elseif ($mode == 'next')
-        {
-        	$date=$object->date;	// This is invoice date (not creation date)
-        	$yymm = strftime("%y%m", $date);
-
-        	if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
-        	else $num = sprintf("%04s", $max+1);
-
-        	dol_syslog(get_class($this)."::getNextValue return ".$prefix.$yymm."-".$num);
-        	return $prefix.$yymm."-".$num;
-        }
-        else dol_print_error('', 'Bad parameter for getNextValue');
     }
 
 
@@ -243,8 +259,8 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
      * @param   string		$mode       	'next' for next value or 'last' for last value
      * @return  string      				Next free value
      */
-	public function getNumRef($objsoc, $objforref, $mode = 'next')
-	{
-		return $this->getNextValue($objsoc, $objforref, $mode);
-	}
+    public function getNumRef($objsoc, $objforref, $mode = 'next')
+    {
+        return $this->getNextValue($objsoc, $objforref, $mode);
+    }
 }

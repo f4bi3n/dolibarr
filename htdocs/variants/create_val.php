@@ -32,8 +32,8 @@ $object = new ProductAttribute($db);
 $objectval = new ProductAttributeValue($db);
 
 if ($object->fetch($id) < 1) {
-	dol_print_error($db, $langs->trans('ErrorRecordNotFound'));
-	exit();
+    dol_print_error($db, $langs->trans('ErrorRecordNotFound'));
+    exit();
 }
 
 
@@ -41,8 +41,7 @@ if ($object->fetch($id) < 1) {
  * Actions
  */
 
-if ($cancel)
-{
+if ($cancel) {
     $action='';
     header('Location: '.DOL_URL_ROOT.'/variants/card.php?id='.$object->id);
     exit();
@@ -56,23 +55,22 @@ if ($cancel)
  * View
  */
 
-if ($action == 'add')
-{
-	if (empty($ref) || empty($value)) {
-		setEventMessages($langs->trans('ErrorFieldsRequired'), null, 'errors');
-	} else {
-		$objectval->fk_product_attribute = $object->id;
-		$objectval->ref = $ref;
-		$objectval->value = $value;
+if ($action == 'add') {
+    if (empty($ref) || empty($value)) {
+        setEventMessages($langs->trans('ErrorFieldsRequired'), null, 'errors');
+    } else {
+        $objectval->fk_product_attribute = $object->id;
+        $objectval->ref = $ref;
+        $objectval->value = $value;
 
-		if ($objectval->create($user) > 0) {
-			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
-			header('Location: '.DOL_URL_ROOT.'/variants/card.php?id='.$object->id);
-			exit();
-		} else {
-			setEventMessages($langs->trans('ErrorCreatingProductAttributeValue'), $objectval->errors, 'errors');
-		}
-	}
+        if ($objectval->create($user) > 0) {
+            setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+            header('Location: '.DOL_URL_ROOT.'/variants/card.php?id='.$object->id);
+            exit();
+        } else {
+            setEventMessages($langs->trans('ErrorCreatingProductAttributeValue'), $objectval->errors, 'errors');
+        }
+    }
 }
 
 $langs->load('products');

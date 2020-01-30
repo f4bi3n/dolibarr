@@ -12,8 +12,8 @@ use Sabre\VObject;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Issue205Test extends \Sabre\DAVServerTest {
-
+class Issue205Test extends \Sabre\DAVServerTest
+{
     protected $setupCalDAV = true;
 
     protected $caldavCalendars = [
@@ -49,8 +49,8 @@ END:VCALENDAR
         ],
     ];
 
-    function testIssue205() {
-
+    public function testIssue205()
+    {
         $request = HTTP\Sapi::createFromServerArray([
             'REQUEST_METHOD'    => 'REPORT',
             'HTTP_CONTENT_TYPE' => 'application/xml',
@@ -93,6 +93,5 @@ END:VCALENDAR
         $vObject = VObject\Reader::read($body);
 
         $this->assertEquals(1, count($vObject->VEVENT));
-
     }
 }

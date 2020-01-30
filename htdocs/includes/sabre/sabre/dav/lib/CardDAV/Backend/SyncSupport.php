@@ -18,7 +18,8 @@ namespace Sabre\CardDAV\Backend;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface SyncSupport extends BackendInterface {
+interface SyncSupport extends BackendInterface
+{
 
     /**
      * The getChanges method returns all the changes that have happened, since
@@ -76,6 +77,5 @@ interface SyncSupport extends BackendInterface {
      * @param int $limit
      * @return array
      */
-    function getChangesForAddressBook($addressBookId, $syncToken, $syncLevel, $limit = null);
-
+    public function getChangesForAddressBook($addressBookId, $syncToken, $syncLevel, $limit = null);
 }

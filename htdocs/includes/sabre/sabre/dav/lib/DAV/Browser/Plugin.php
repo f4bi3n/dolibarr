@@ -21,7 +21,8 @@ use Sabre\HTTP\URLUtil;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Plugin extends DAV\ServerPlugin {
+class Plugin extends DAV\ServerPlugin
+{
 
     /**
      * reference to server class
@@ -60,10 +61,9 @@ class Plugin extends DAV\ServerPlugin {
      *
      * @param bool $enablePost
      */
-    function __construct($enablePost = true) {
-
+    public function __construct($enablePost = true)
+    {
         $this->enablePost = $enablePost;
-
     }
 
     /**
@@ -72,13 +72,15 @@ class Plugin extends DAV\ServerPlugin {
      * @param DAV\Server $server
      * @return void
      */
-    function initialize(DAV\Server $server) {
-
+    public function initialize(DAV\Server $server)
+    {
         $this->server = $server;
         $this->server->on('method:GET', [$this, 'httpGetEarly'], 90);
         $this->server->on('method:GET', [$this, 'httpGet'], 200);
         $this->server->on('onHTMLActionsPanel', [$this, 'htmlActionsPanel'], 200);
-        if ($this->enablePost) $this->server->on('method:POST', [$this, 'httpPOST']);
+        if ($this->enablePost) {
+            $this->server->on('method:POST', [$this, 'httpPOST']);
+        }
     }
 
     /**
@@ -89,13 +91,12 @@ class Plugin extends DAV\ServerPlugin {
      * @param ResponseInterface $response
      * @return bool
      */
-    function httpGetEarly(RequestInterface $request, ResponseInterface $response) {
-
+    public function httpGetEarly(RequestInterface $request, ResponseInterface $response)
+    {
         $params = $request->getQueryParameters();
         if (isset($params['sabreAction']) && $params['sabreAction'] === 'info') {
             return $this->httpGet($request, $response);
         }
-
     }
 
     /**
@@ -105,7 +106,8 @@ class Plugin extends DAV\ServerPlugin {
      * @param ResponseInterface $response
      * @return bool
      */
-    function httpGet(RequestInterface $request, ResponseInterface $response) {
+    public function httpGet(RequestInterface $request, ResponseInterface $response)
+    {
 
         // We're not using straight-up $_GET, because we want everything to be
         // unit testable.
@@ -118,12 +120,12 @@ class Plugin extends DAV\ServerPlugin {
 
         switch ($sabreAction) {
 
-            case 'asset' :
+            case 'asset':
                 // Asset handling, such as images
                 $this->serveAsset(isset($getVars['assetName']) ? $getVars['assetName'] : null);
                 return false;
-            default :
-            case 'info' :
+            default:
+            case 'info':
                 try {
                     $this->server->tree->getNodeForPath($request->getPath());
                 } catch (DAV\Exception\NotFound $e) {
@@ -141,7 +143,7 @@ class Plugin extends DAV\ServerPlugin {
 
                 return false;
 
-            case 'plugins' :
+            case 'plugins':
                 $response->setStatus(200);
                 $response->setHeader('Content-Type', 'text/html; charset=utf-8');
 
@@ -152,7 +154,6 @@ class Plugin extends DAV\ServerPlugin {
                 return false;
 
         }
-
     }
 
     /**
@@ -162,26 +163,26 @@ class Plugin extends DAV\ServerPlugin {
      * @param ResponseInterface $response
      * @return bool
      */
-    function httpPOST(RequestInterface $request, ResponseInterface $response) {
-
+    public function httpPOST(RequestInterface $request, ResponseInterface $response)
+    {
         $contentType = $request->getHeader('Content-Type');
         list($contentType) = explode(';', $contentType);
         if ($contentType !== 'application/x-www-form-urlencoded' &&
             $contentType !== 'multipart/form-data') {
-                return;
+            return;
         }
         $postVars = $request->getPostData();
 
-        if (!isset($postVars['sabreAction']))
+        if (!isset($postVars['sabreAction'])) {
             return;
+        }
 
         $uri = $request->getPath();
 
         if ($this->server->emit('onBrowserPostAction', [$uri, $postVars['sabreAction'], $postVars])) {
-
             switch ($postVars['sabreAction']) {
 
-                case 'mkcol' :
+                case 'mkcol':
                     if (isset($postVars['name']) && trim($postVars['name'])) {
                         // Using basename() because we won't allow slashes
                         list(, $folderName) = URLUtil::splitPath(trim($postVars['name']));
@@ -217,14 +218,18 @@ class Plugin extends DAV\ServerPlugin {
                     break;
 
                 // @codeCoverageIgnoreStart
-                case 'put' :
+                case 'put':
 
-                    if ($_FILES) $file = current($_FILES);
-                    else break;
+                    if ($_FILES) {
+                        $file = current($_FILES);
+                    } else {
+                        break;
+                    }
 
                     list(, $newName) = URLUtil::splitPath(trim($file['name']));
-                    if (isset($postVars['name']) && trim($postVars['name']))
+                    if (isset($postVars['name']) && trim($postVars['name'])) {
                         $newName = trim($postVars['name']);
+                    }
 
                     // Making sure we only have a 'basename' component
                     list(, $newName) = URLUtil::splitPath($newName);
@@ -236,12 +241,10 @@ class Plugin extends DAV\ServerPlugin {
                 // @codeCoverageIgnoreEnd
 
             }
-
         }
         $response->setHeader('Location', $request->getUrl());
         $response->setStatus(302);
         return false;
-
     }
 
     /**
@@ -250,10 +253,9 @@ class Plugin extends DAV\ServerPlugin {
      * @param string $value
      * @return string
      */
-    function escapeHTML($value) {
-
+    public function escapeHTML($value)
+    {
         return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
-
     }
 
     /**
@@ -262,13 +264,12 @@ class Plugin extends DAV\ServerPlugin {
      * @param string $path
      * @return string
      */
-    function generateDirectoryIndex($path) {
-
+    public function generateDirectoryIndex($path)
+    {
         $html = $this->generateHeader($path ? $path : '/', $path);
 
         $node = $this->server->tree->getNodeForPath($path);
         if ($node instanceof DAV\ICollection) {
-
             $html .= "<section><h1>Nodes</h1>\n";
             $html .= "<table class=\"nodeTable\">";
 
@@ -281,7 +282,6 @@ class Plugin extends DAV\ServerPlugin {
             ]);
 
             foreach ($subNodes as $subPath => $subProps) {
-
                 $subNode = $this->server->tree->getNodeForPath($subPath);
                 $fullPath = $this->server->getBaseUri() . URLUtil::encodePath($subPath);
                 list(, $displayPath) = URLUtil::splitPath($subPath);
@@ -326,7 +326,6 @@ class Plugin extends DAV\ServerPlugin {
             }
 
             $html .= '</table>';
-
         }
 
         $html .= "</section>";
@@ -343,7 +342,6 @@ class Plugin extends DAV\ServerPlugin {
             if (!in_array($propName, $this->uninterestingProperties)) {
                 $html .= $this->drawPropertyRow($propName, $propValue);
             }
-
         }
 
 
@@ -358,7 +356,6 @@ class Plugin extends DAV\ServerPlugin {
         }
 
         if ($output) {
-
             $html .= "<section><h1>Actions</h1>";
             $html .= "<div class=\"actions\">\n";
             $html .= $output;
@@ -371,7 +368,6 @@ class Plugin extends DAV\ServerPlugin {
         $this->server->httpResponse->setHeader('Content-Security-Policy', "default-src 'none'; img-src 'self'; style-src 'self'; font-src 'self';");
 
         return $html;
-
     }
 
     /**
@@ -379,8 +375,8 @@ class Plugin extends DAV\ServerPlugin {
      *
      * @return string
      */
-    function generatePluginListing() {
-
+    public function generatePluginListing()
+    {
         $html = $this->generateHeader('Plugins');
 
         $html .= "<section><h1>Plugins</h1>";
@@ -403,7 +399,6 @@ class Plugin extends DAV\ServerPlugin {
         $html .= $this->generateFooter();
 
         return $html;
-
     }
 
     /**
@@ -416,8 +411,8 @@ class Plugin extends DAV\ServerPlugin {
      * @param string $path
      * @return string
      */
-    function generateHeader($title, $path = null) {
-
+    public function generateHeader($title, $path = null)
+    {
         $version = '';
         if (DAV\Server::$exposeVersion) {
             $version = DAV\Version::VERSION;
@@ -453,7 +448,7 @@ class Plugin extends DAV\ServerPlugin {
 HTML;
 
         // If the path is empty, there's no parent.
-        if ($path)  {
+        if ($path) {
             list($parentUri) = URLUtil::splitPath($path);
             $fullPath = $this->server->getBaseUri() . URLUtil::encodePath($parentUri);
             $html .= '<a href="' . $fullPath . '" class="btn">⇤ Go to parent</a>';
@@ -466,7 +461,6 @@ HTML;
         $html .= "</nav>";
 
         return $html;
-
     }
 
     /**
@@ -476,8 +470,8 @@ HTML;
      *
      * @return string
      */
-    function generateFooter() {
-
+    public function generateFooter()
+    {
         $version = '';
         if (DAV\Server::$exposeVersion) {
             $version = DAV\Version::VERSION;
@@ -487,7 +481,6 @@ HTML;
 </body>
 </html>
 HTML;
-
     }
 
     /**
@@ -502,15 +495,17 @@ HTML;
      * @param string $path
      * @return void
      */
-    function htmlActionsPanel(DAV\INode $node, &$output, $path) {
-
-        if (!$node instanceof DAV\ICollection)
+    public function htmlActionsPanel(DAV\INode $node, &$output, $path)
+    {
+        if (!$node instanceof DAV\ICollection) {
             return;
+        }
 
         // We also know fairly certain that if an object is a non-extended
         // SimpleCollection, we won't need to show the panel either.
-        if (get_class($node) === 'Sabre\\DAV\\SimpleCollection')
+        if (get_class($node) === 'Sabre\\DAV\\SimpleCollection') {
             return;
+        }
 
         $output .= <<<HTML
 <form method="post" action="">
@@ -527,7 +522,6 @@ HTML;
 <input type="submit" value="upload" />
 </form>
 HTML;
-
     }
 
     /**
@@ -537,10 +531,9 @@ HTML;
      * @param string $assetName
      * @return string
      */
-    protected function getAssetUrl($assetName) {
-
+    protected function getAssetUrl($assetName)
+    {
         return $this->server->getBaseUri() . '?sabreAction=asset&assetName=' . urlencode($assetName);
-
     }
 
     /**
@@ -550,8 +543,8 @@ HTML;
      * @throws DAV\Exception\NotFound
      * @return string
      */
-    protected function getLocalAssetPath($assetName) {
-
+    protected function getLocalAssetPath($assetName)
+    {
         $assetDir = __DIR__ . '/assets/';
         $path = $assetDir . $assetName;
 
@@ -572,8 +565,8 @@ HTML;
      * @param string $assetName
      * @return void
      */
-    protected function serveAsset($assetName) {
-
+    protected function serveAsset($assetName)
+    {
         $assetPath = $this->getLocalAssetPath($assetName);
 
         // Rudimentary mime type detection
@@ -594,7 +587,6 @@ HTML;
         $this->server->httpResponse->setHeader('Cache-Control', 'public, max-age=1209600');
         $this->server->httpResponse->setStatus(200);
         $this->server->httpResponse->setBody(fopen($assetPath, 'r'));
-
     }
 
     /**
@@ -605,8 +597,8 @@ HTML;
      * @param array $b
      * @return int
      */
-    protected function compareNodes($a, $b) {
-
+    protected function compareNodes($a, $b)
+    {
         $typeA = (isset($a['{DAV:}resourcetype']))
             ? (in_array('{DAV:}collection', $a['{DAV:}resourcetype']->getValue()))
             : false;
@@ -620,7 +612,6 @@ HTML;
             return strnatcasecmp($a['displayPath'], $b['displayPath']);
         }
         return (($typeA < $typeB) ? 1 : -1);
-
     }
 
     /**
@@ -630,8 +621,8 @@ HTML;
      * @param DAV\INode $node
      * @return array
      */
-    private function mapResourceType(array $resourceTypes, $node) {
-
+    private function mapResourceType(array $resourceTypes, $node)
+    {
         if (!$resourceTypes) {
             if ($node instanceof DAV\IFile) {
                 return [
@@ -713,7 +704,6 @@ HTML;
         $info['string'] = implode(', ', $info['string']);
 
         return $info;
-
     }
 
     /**
@@ -723,15 +713,14 @@ HTML;
      * @param mixed $value
      * @return string
      */
-    private function drawPropertyRow($name, $value) {
-
+    private function drawPropertyRow($name, $value)
+    {
         $html = new HtmlOutputHelper(
             $this->server->getBaseUri(),
             $this->server->xml->namespaceMap
         );
 
         return "<tr><th>" . $html->xmlName($name) . "</th><td>" . $this->drawPropertyValue($html, $value) . "</td></tr>";
-
     }
 
     /**
@@ -741,8 +730,8 @@ HTML;
      * @param mixed $value
      * @return string
      */
-    private function drawPropertyValue($html, $value) {
-
+    private function drawPropertyValue($html, $value)
+    {
         if (is_scalar($value)) {
             return $html->h($value);
         } elseif ($value instanceof HtmlOutput) {
@@ -757,11 +746,9 @@ HTML;
             $xml = explode("\n", $xml);
             $xml = array_slice($xml, 2, -2);
             return "<pre>" . $html->h(implode("\n", $xml)) . "</pre>";
-
         } else {
             return "<em>unknown</em>";
         }
-
     }
 
     /**
@@ -772,10 +759,9 @@ HTML;
      *
      * @return string
      */
-    function getPluginName() {
-
+    public function getPluginName()
+    {
         return 'browser';
-
     }
 
     /**
@@ -789,14 +775,12 @@ HTML;
      *
      * @return array
      */
-    function getPluginInfo() {
-
+    public function getPluginInfo()
+    {
         return [
             'name'        => $this->getPluginName(),
             'description' => 'Generates HTML indexes and debug information for your sabre/dav server',
             'link'        => 'http://sabre.io/dav/browser-plugin/',
         ];
-
     }
-
 }

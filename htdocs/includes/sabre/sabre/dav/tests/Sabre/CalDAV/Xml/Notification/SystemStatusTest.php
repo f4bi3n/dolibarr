@@ -5,7 +5,8 @@ namespace Sabre\CalDAV\Xml\Notification;
 use Sabre\DAV;
 use Sabre\Xml\Writer;
 
-class SystemStatusTest extends \PHPUnit_Framework_TestCase {
+class SystemStatusTest extends \PHPUnit_Framework_TestCase
+{
 
     /**
      * @param array $notification
@@ -13,8 +14,8 @@ class SystemStatusTest extends \PHPUnit_Framework_TestCase {
      * @param string $expected2
      * @dataProvider dataProvider
      */
-    function testSerializers($notification, $expected1, $expected2) {
-
+    public function testSerializers($notification, $expected1, $expected2)
+    {
         $this->assertEquals('foo', $notification->getId());
         $this->assertEquals('"1"', $notification->getETag());
 
@@ -40,11 +41,10 @@ class SystemStatusTest extends \PHPUnit_Framework_TestCase {
         $notification->xmlSerializeFull($writer);
         $writer->endElement();
         $this->assertXmlStringEqualsXmlString($expected2, $writer->outputMemory());
-
     }
 
-    function dataProvider() {
-
+    public function dataProvider()
+    {
         return [
 
             [
@@ -63,7 +63,5 @@ class SystemStatusTest extends \PHPUnit_Framework_TestCase {
                 '<?xml version="1.0" encoding="UTF-8"?>' . "\n" . '<cs:root xmlns:cs="http://calendarserver.org/ns/" xmlns:d="DAV:"><cs:systemstatus type="low"><d:href>http://example.org/</d:href></cs:systemstatus></cs:root>' . "\n",
             ]
         ];
-
     }
-
 }

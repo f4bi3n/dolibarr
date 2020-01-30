@@ -5,10 +5,10 @@ namespace Sabre\VObject\Parser;
 use
     Sabre\VObject\Reader;
 
-class QuotedPrintableTest extends \PHPUnit_Framework_TestCase {
-
-    function testReadQuotedPrintableSimple() {
-
+class QuotedPrintableTest extends \PHPUnit_Framework_TestCase
+{
+    public function testReadQuotedPrintableSimple()
+    {
         $data = "BEGIN:VCARD\r\nLABEL;ENCODING=QUOTED-PRINTABLE:Aach=65n\r\nEND:VCARD";
 
         $result = Reader::read($data);
@@ -17,11 +17,10 @@ class QuotedPrintableTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals('VCARD', $result->name);
         $this->assertEquals(1, count($result->children()));
         $this->assertEquals("Aachen", $this->getPropertyValue($result->LABEL));
-
     }
 
-    function testReadQuotedPrintableNewlineSoft() {
-
+    public function testReadQuotedPrintableNewlineSoft()
+    {
         $data = "BEGIN:VCARD\r\nLABEL;ENCODING=QUOTED-PRINTABLE:Aa=\r\n ch=\r\n en\r\nEND:VCARD";
         $result = Reader::read($data);
 
@@ -29,11 +28,10 @@ class QuotedPrintableTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals('VCARD', $result->name);
         $this->assertEquals(1, count($result->children()));
         $this->assertEquals("Aachen", $this->getPropertyValue($result->LABEL));
-
     }
 
-    function testReadQuotedPrintableNewlineHard() {
-
+    public function testReadQuotedPrintableNewlineHard()
+    {
         $data = "BEGIN:VCARD\r\nLABEL;ENCODING=QUOTED-PRINTABLE:Aachen=0D=0A=\r\n Germany\r\nEND:VCARD";
         $result = Reader::read($data);
 
@@ -41,12 +39,10 @@ class QuotedPrintableTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals('VCARD', $result->name);
         $this->assertEquals(1, count($result->children()));
         $this->assertEquals("Aachen\r\nGermany", $this->getPropertyValue($result->LABEL));
-
-
     }
 
-    function testReadQuotedPrintableCompatibilityMS() {
-
+    public function testReadQuotedPrintableCompatibilityMS()
+    {
         $data = "BEGIN:VCARD\r\nLABEL;ENCODING=QUOTED-PRINTABLE:Aachen=0D=0A=\r\nDeutschland:okay\r\nEND:VCARD";
         $result = Reader::read($data, Reader::OPTION_FORGIVING);
 
@@ -54,11 +50,10 @@ class QuotedPrintableTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals('VCARD', $result->name);
         $this->assertEquals(1, count($result->children()));
         $this->assertEquals("Aachen\r\nDeutschland:okay", $this->getPropertyValue($result->LABEL));
-
     }
 
-    function testReadQuotesPrintableCompoundValues() {
-
+    public function testReadQuotesPrintableCompoundValues()
+    {
         $data = <<<VCF
 BEGIN:VCARD
 VERSION:2.1
@@ -73,12 +68,10 @@ VCF;
         $this->assertEquals([
             '', '', 'Münster Str. 1', 'Münster', '', '48143', 'Deutschland'
         ], $result->ADR->getParts());
-
-
     }
 
-    private function getPropertyValue(\Sabre\VObject\Property $property) {
-
+    private function getPropertyValue(\Sabre\VObject\Property $property)
+    {
         return (string)$property;
 
         /*

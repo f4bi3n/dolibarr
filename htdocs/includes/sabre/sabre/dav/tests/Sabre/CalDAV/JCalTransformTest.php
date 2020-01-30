@@ -5,8 +5,8 @@ namespace Sabre\CalDAV;
 use Sabre\HTTP\Request;
 use Sabre\VObject;
 
-class JCalTransformTest extends \Sabre\DAVServerTest {
-
+class JCalTransformTest extends \Sabre\DAVServerTest
+{
     use VObject\PHPUnitAssertions;
 
     protected $setupCalDAV = true;
@@ -28,8 +28,8 @@ class JCalTransformTest extends \Sabre\DAVServerTest {
         ],
     ];
 
-    function testGet() {
-
+    public function testGet()
+    {
         $headers = [
             'Accept' => 'application/calendar+json',
         ];
@@ -58,11 +58,10 @@ class JCalTransformTest extends \Sabre\DAVServerTest {
             ],
             $response
         );
-
     }
 
-    function testMultiGet() {
-
+    public function testMultiGet()
+    {
         $xml = <<<XML
 <?xml version="1.0"?>
 <c:calendar-multiget xmlns:c="urn:ietf:params:xml:ns:caldav" xmlns:d="DAV:">
@@ -107,11 +106,10 @@ XML;
             ],
             $jresponse
         );
-
     }
 
-    function testCalendarQueryDepth1() {
-
+    public function testCalendarQueryDepth1()
+    {
         $xml = <<<XML
 <?xml version="1.0"?>
 <c:calendar-query xmlns:c="urn:ietf:params:xml:ns:caldav" xmlns:d="DAV:">
@@ -160,11 +158,10 @@ XML;
             ],
             $response
         );
-
     }
 
-    function testCalendarQueryDepth0() {
-
+    public function testCalendarQueryDepth0()
+    {
         $xml = <<<XML
 <?xml version="1.0"?>
 <c:calendar-query xmlns:c="urn:ietf:params:xml:ns:caldav" xmlns:d="DAV:">
@@ -213,11 +210,10 @@ XML;
             ],
             $response
         );
-
     }
 
-    function testValidateICalendar() {
-
+    public function testValidateICalendar()
+    {
         $input = [
             'vcalendar',
             [],
@@ -256,7 +252,5 @@ ICS;
             $expected,
             $input
         );
-
     }
-
 }

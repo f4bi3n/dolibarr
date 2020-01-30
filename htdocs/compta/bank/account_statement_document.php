@@ -44,33 +44,40 @@ $num = (GETPOST('num', 'alpha') ? GETPOST('num', 'alpha') : GETPOST('sectionid',
 
 $mesg = '';
 if (isset($_SESSION['DolMessage'])) {
-	$mesg = $_SESSION['DolMessage'];
-	unset($_SESSION['DolMessage']);
+    $mesg = $_SESSION['DolMessage'];
+    unset($_SESSION['DolMessage']);
 }
 
 // Security check
 if ($user->socid) {
-	$action = '';
-	$socid = $user->socid;
+    $action = '';
+    $socid = $user->socid;
 }
-if ($user->socid)
-	$socid = $user->socid;
+if ($user->socid) {
+    $socid = $user->socid;
+}
 
 // Get parameters
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }
+if (empty($page) || $page == -1) {
+    $page = 0;
+}
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortorder)
-	$sortorder = "ASC";
-if (!$sortfield)
-	$sortfield = "name";
+if (!$sortorder) {
+    $sortorder = "ASC";
+}
+if (!$sortfield) {
+    $sortfield = "name";
+}
 
 $object = new Account($db);
-if ($id > 0 || !empty($ref)) $object->fetch($id, $ref);
+if ($id > 0 || !empty($ref)) {
+    $object->fetch($id, $ref);
+}
 
 $result = restrictedArea($user, 'banque', $object->id, 'bank_account', '', '');
 
@@ -79,10 +86,9 @@ $result = restrictedArea($user, 'banque', $object->id, 'bank_account', '', '');
  * Actions
  */
 
-if (!empty($num))
-{
-	$object->fetch_thirdparty();
-	$upload_dir = $conf->bank->dir_output."/".$id."/statement/".dol_sanitizeFileName($num);
+if (!empty($num)) {
+    $object->fetch_thirdparty();
+    $upload_dir = $conf->bank->dir_output."/".$id."/statement/".dol_sanitizeFileName($num);
 }
 $backtopage = $_SERVER['PHP_SELF']."?account=".$id."&num=".$num;
 include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
@@ -99,56 +105,54 @@ llxHeader('', $title, $helpurl);
 $form = new Form($db);
 
 if ($id > 0 || !empty($ref)) {
-	if ($object->fetch($id, $ref)) {
-		$upload_dir = $conf->bank->dir_output."/".$id."/statement/".dol_sanitizeFileName($num);
+    if ($object->fetch($id, $ref)) {
+        $upload_dir = $conf->bank->dir_output."/".$id."/statement/".dol_sanitizeFileName($num);
 
-		// Onglets
-		$head = account_statement_prepare_head($object, $num);
-		dol_fiche_head($head, 'document', $langs->trans("AccountStatement"), -1, 'account');
-
-
-		// Build file list
-		$filearray = dol_dir_list($upload_dir, "files", 0, '', '\.meta$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
-		$totalsize = 0;
-		foreach ($filearray as $key => $file) {
-			$totalsize += $file['size'];
-		}
-
-		$morehtmlref = '';
+        // Onglets
+        $head = account_statement_prepare_head($object, $num);
+        dol_fiche_head($head, 'document', $langs->trans("AccountStatement"), -1, 'account');
 
 
-		$title = $langs->trans("AccountStatement").' '.$num.' - '.$langs->trans("BankAccount").' '.$object->getNomUrl(1, 'receipts');
-		print load_fiche_titre($title, '', '');
+        // Build file list
+        $filearray = dol_dir_list($upload_dir, "files", 0, '', '\.meta$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
+        $totalsize = 0;
+        foreach ($filearray as $key => $file) {
+            $totalsize += $file['size'];
+        }
+
+        $morehtmlref = '';
 
 
-		print '<div class="fichecenter">';
-		print '<div class="underbanner clearboth"></div>';
-
-		print '<table class="border tableforfield centpercent">';
-		print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
-		print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
-		print "</table>\n";
-
-		print '</div>';
-
-		dol_fiche_end();
+        $title = $langs->trans("AccountStatement").' '.$num.' - '.$langs->trans("BankAccount").' '.$object->getNomUrl(1, 'receipts');
+        print load_fiche_titre($title, '', '');
 
 
-		$modulepart = 'bank';
-		$permission = $user->rights->banque->modifier;
-		$permtoedit = $user->rights->banque->modifier;
-		$param = '&id='.$object->id.'&num='.$num;
-		$uri = '&num='.$num;
-		$relativepathwithnofile = $id."/statement/".$num."/";
-		include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
-	}
-	else {
-		dol_print_error($db);
-	}
-}
-else {
-	Header('Location: index.php');
-	exit;
+        print '<div class="fichecenter">';
+        print '<div class="underbanner clearboth"></div>';
+
+        print '<table class="border tableforfield centpercent">';
+        print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
+        print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
+        print "</table>\n";
+
+        print '</div>';
+
+        dol_fiche_end();
+
+
+        $modulepart = 'bank';
+        $permission = $user->rights->banque->modifier;
+        $permtoedit = $user->rights->banque->modifier;
+        $param = '&id='.$object->id.'&num='.$num;
+        $uri = '&num='.$num;
+        $relativepathwithnofile = $id."/statement/".$num."/";
+        include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+    } else {
+        dol_print_error($db);
+    }
+} else {
+    Header('Location: index.php');
+    exit;
 }
 
 // End of page

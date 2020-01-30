@@ -15,17 +15,17 @@ namespace Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Exception extends \Exception {
+class Exception extends \Exception
+{
 
     /**
      * Returns the HTTP statuscode for this exception
      *
      * @return int
      */
-    function getHTTPCode() {
-
+    public function getHTTPCode()
+    {
         return 500;
-
     }
 
     /**
@@ -35,9 +35,8 @@ class Exception extends \Exception {
      * @param \DOMElement $errorNode
      * @return void
      */
-    function serialize(Server $server, \DOMElement $errorNode) {
-
-
+    public function serialize(Server $server, \DOMElement $errorNode)
+    {
     }
 
     /**
@@ -48,10 +47,8 @@ class Exception extends \Exception {
      * @param Server $server
      * @return array
      */
-    function getHTTPHeaders(Server $server) {
-
+    public function getHTTPHeaders(Server $server)
+    {
         return [];
-
     }
-
 }

@@ -30,10 +30,12 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/fiscalyear.class.php';
 $langs->loadLangs(array("admin","compta"));
 
 // Security check
-if ($user->socid > 0)
-	accessforbidden();
-if (! $user->rights->accounting->fiscalyear->write)
-	accessforbidden();
+if ($user->socid > 0) {
+    accessforbidden();
+}
+if (! $user->rights->accounting->fiscalyear->write) {
+    accessforbidden();
+}
 
 $id = GETPOST('id', 'int');
 
@@ -43,19 +45,19 @@ $helpurl = "";
 llxHeader("", $title, $helpurl);
 
 if ($id) {
-	$object = new Fiscalyear($db);
-	$object->fetch($id);
-	$object->info($id);
+    $object = new Fiscalyear($db);
+    $object->fetch($id);
+    $object->info($id);
 
-	$head = fiscalyear_prepare_head($object);
+    $head = fiscalyear_prepare_head($object);
 
-	dol_fiche_head($head, 'info', $langs->trans("Fiscalyear"), 0, 'cron');
+    dol_fiche_head($head, 'info', $langs->trans("Fiscalyear"), 0, 'cron');
 
-	print '<table width="100%"><tr><td>';
-	dol_print_object_info($object);
-	print '</td></tr></table>';
+    print '<table width="100%"><tr><td>';
+    dol_print_object_info($object);
+    print '</td></tr></table>';
 
-	print '</div>';
+    print '</div>';
 }
 
 // End of page

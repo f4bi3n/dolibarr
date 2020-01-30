@@ -4,10 +4,10 @@ namespace Sabre\CalDAV;
 
 use Sabre\VObject;
 
-class Issue166Test extends \PHPUnit_Framework_TestCase {
-
-    function testFlaw() {
-
+class Issue166Test extends \PHPUnit_Framework_TestCase
+{
+    public function testFlaw()
+    {
         $input = <<<HI
 BEGIN:VCALENDAR
 PRODID:-//Mozilla.org/NONSGML Mozilla Calendar V1.1//EN
@@ -57,7 +57,5 @@ HI;
         ];
         $input = VObject\Reader::read($input);
         $this->assertTrue($validator->validate($input, $filters));
-
     }
-
 }

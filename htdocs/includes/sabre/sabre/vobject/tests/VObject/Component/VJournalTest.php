@@ -5,19 +5,19 @@ namespace Sabre\VObject\Component;
 use Sabre\VObject\Component;
 use Sabre\VObject\Reader;
 
-class VJournalTest extends \PHPUnit_Framework_TestCase {
+class VJournalTest extends \PHPUnit_Framework_TestCase
+{
 
     /**
      * @dataProvider timeRangeTestData
      */
-    function testInTimeRange(VJournal $vtodo, $start, $end, $outcome) {
-
+    public function testInTimeRange(VJournal $vtodo, $start, $end, $outcome)
+    {
         $this->assertEquals($outcome, $vtodo->isInTimeRange($start, $end));
-
     }
 
-    function testValidate() {
-
+    public function testValidate()
+    {
         $input = <<<HI
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -38,11 +38,10 @@ HI;
         }
 
         $this->assertEquals([], $messages);
-
     }
 
-    function testValidateBroken() {
-
+    public function testValidateBroken()
+    {
         $input = <<<HI
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -68,11 +67,10 @@ HI;
             ["URL MUST NOT appear more than once in a VJOURNAL component"],
             $messages
         );
-
     }
 
-    function timeRangeTestData() {
-
+    public function timeRangeTestData()
+    {
         $calendar = new VCalendar();
 
         $tests = [];
@@ -94,7 +92,4 @@ HI;
 
         return $tests;
     }
-
-
-
 }

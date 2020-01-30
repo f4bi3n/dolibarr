@@ -19,7 +19,8 @@ use Sabre\VObject\ITip;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class IMipPlugin extends DAV\ServerPlugin {
+class IMipPlugin extends DAV\ServerPlugin
+{
 
     /**
      * Email address used in From: header.
@@ -43,10 +44,9 @@ class IMipPlugin extends DAV\ServerPlugin {
      *                             generally be some kind of no-reply email
      *                             address you own.
      */
-    function __construct($senderEmail) {
-
+    public function __construct($senderEmail)
+    {
         $this->senderEmail = $senderEmail;
-
     }
 
     /*
@@ -60,10 +60,9 @@ class IMipPlugin extends DAV\ServerPlugin {
      * @param DAV\Server $server
      * @return void
      */
-    function initialize(DAV\Server $server) {
-
+    public function initialize(DAV\Server $server)
+    {
         $server->on('schedule', [$this, 'schedule'], 120);
-
     }
 
     /**
@@ -74,10 +73,9 @@ class IMipPlugin extends DAV\ServerPlugin {
      *
      * @return string
      */
-    function getPluginName() {
-
+    public function getPluginName()
+    {
         return 'imip';
-
     }
 
     /**
@@ -86,7 +84,8 @@ class IMipPlugin extends DAV\ServerPlugin {
      * @param ITip\Message $iTipMessage
      * @return void
      */
-    function schedule(ITip\Message $iTipMessage) {
+    public function schedule(ITip\Message $iTipMessage)
+    {
 
         // Not sending any emails if the system considers the update
         // insignificant.
@@ -99,11 +98,13 @@ class IMipPlugin extends DAV\ServerPlugin {
 
         $summary = $iTipMessage->message->VEVENT->SUMMARY;
 
-        if (parse_url($iTipMessage->sender, PHP_URL_SCHEME) !== 'mailto')
+        if (parse_url($iTipMessage->sender, PHP_URL_SCHEME) !== 'mailto') {
             return;
+        }
 
-        if (parse_url($iTipMessage->recipient, PHP_URL_SCHEME) !== 'mailto')
+        if (parse_url($iTipMessage->recipient, PHP_URL_SCHEME) !== 'mailto') {
             return;
+        }
 
         $sender = substr($iTipMessage->sender, 7);
         $recipient = substr($iTipMessage->recipient, 7);
@@ -117,13 +118,13 @@ class IMipPlugin extends DAV\ServerPlugin {
 
         $subject = 'SabreDAV iTIP message';
         switch (strtoupper($iTipMessage->method)) {
-            case 'REPLY' :
+            case 'REPLY':
                 $subject = 'Re: ' . $summary;
                 break;
-            case 'REQUEST' :
+            case 'REQUEST':
                 $subject = $summary;
                 break;
-            case 'CANCEL' :
+            case 'CANCEL':
                 $subject = 'Cancelled: ' . $summary;
                 break;
         }
@@ -143,7 +144,6 @@ class IMipPlugin extends DAV\ServerPlugin {
             $headers
         );
         $iTipMessage->scheduleStatus = '1.1; Scheduling message is sent via iMip';
-
     }
 
     // @codeCoverageIgnoreStart
@@ -158,10 +158,9 @@ class IMipPlugin extends DAV\ServerPlugin {
      * @param array $headers List of headers
      * @return void
      */
-    protected function mail($to, $subject, $body, array $headers) {
-
+    protected function mail($to, $subject, $body, array $headers)
+    {
         mail($to, $subject, $body, implode("\r\n", $headers));
-
     }
 
     // @codeCoverageIgnoreEnd
@@ -177,14 +176,12 @@ class IMipPlugin extends DAV\ServerPlugin {
      *
      * @return array
      */
-    function getPluginInfo() {
-
+    public function getPluginInfo()
+    {
         return [
             'name'        => $this->getPluginName(),
             'description' => 'Email delivery (rfc6047) for CalDAV scheduling',
             'link'        => 'http://sabre.io/dav/scheduling/',
         ];
-
     }
-
 }

@@ -2,8 +2,7 @@
 
 namespace Sabre\CardDAV\Backend;
 
-class PDOSqliteTest extends AbstractPDOTest {
-
+class PDOSqliteTest extends AbstractPDOTest
+{
     public $driver = 'sqlite';
-
 }

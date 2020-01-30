@@ -4,10 +4,10 @@ namespace Sabre\CardDAV;
 
 use Sabre\DAV;
 
-class IDirectoryTest extends \PHPUnit_Framework_TestCase {
-
-    function testResourceType() {
-
+class IDirectoryTest extends \PHPUnit_Framework_TestCase
+{
+    public function testResourceType()
+    {
         $tree = [
             new DirectoryMock('directory')
         ];
@@ -18,13 +18,9 @@ class IDirectoryTest extends \PHPUnit_Framework_TestCase {
 
         $props = $server->getProperties('directory', ['{DAV:}resourcetype']);
         $this->assertTrue($props['{DAV:}resourcetype']->is('{' . Plugin::NS_CARDDAV . '}directory'));
-
     }
-
 }
 
-class DirectoryMock extends DAV\SimpleCollection implements IDirectory {
-
-
-
+class DirectoryMock extends DAV\SimpleCollection implements IDirectory
+{
 }

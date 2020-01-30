@@ -17,7 +17,8 @@ use Sabre\Xml;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Text extends Property {
+class Text extends Property
+{
 
     /**
      * In case this is a multi-value property. This string will be used as a
@@ -72,7 +73,8 @@ class Text extends Property {
      *
      * @return void
      */
-    function __construct(Component $root, $name, $value = null, array $parameters = [], $group = null) {
+    public function __construct(Component $root, $name, $value = null, array $parameters = [], $group = null)
+    {
 
         // There's two types of multi-valued text properties:
         // 1. multivalue properties.
@@ -84,7 +86,6 @@ class Text extends Property {
         }
 
         parent::__construct($root, $name, $value, $parameters, $group);
-
     }
 
     /**
@@ -97,10 +98,9 @@ class Text extends Property {
      *
      * @return void
      */
-    function setRawMimeDirValue($val) {
-
+    public function setRawMimeDirValue($val)
+    {
         $this->setValue(MimeDir::unescapeValue($val, $this->delimiter));
-
     }
 
     /**
@@ -110,8 +110,8 @@ class Text extends Property {
      *
      * @return void
      */
-    function setQuotedPrintableValue($val) {
-
+    public function setQuotedPrintableValue($val)
+    {
         $val = quoted_printable_decode($val);
 
         // Quoted printable only appears in vCard 2.1, and the only character
@@ -123,7 +123,6 @@ class Text extends Property {
         $regex = '# (?<!\\\\) ; #x';
         $matches = preg_split($regex, $val);
         $this->setValue($matches);
-
     }
 
     /**
@@ -131,8 +130,8 @@ class Text extends Property {
      *
      * @return string
      */
-    function getRawMimeDirValue() {
-
+    public function getRawMimeDirValue()
+    {
         $val = $this->getParts();
 
         if (isset($this->minimumPropertyValues[$this->name])) {
@@ -140,7 +139,6 @@ class Text extends Property {
         }
 
         foreach ($val as &$item) {
-
             if (!is_array($item)) {
                 $item = [$item];
             }
@@ -158,11 +156,9 @@ class Text extends Property {
                 );
             }
             $item = implode(',', $item);
-
         }
 
         return implode($this->delimiter, $val);
-
     }
 
     /**
@@ -172,7 +168,8 @@ class Text extends Property {
      *
      * @return array
      */
-    function getJsonValue() {
+    public function getJsonValue()
+    {
 
         // Structured text values should always be returned as a single
         // array-item. Multi-value text should be returned as multiple items in
@@ -181,7 +178,6 @@ class Text extends Property {
             return [$this->getParts()];
         }
         return $this->getParts();
-
     }
 
     /**
@@ -192,10 +188,9 @@ class Text extends Property {
      *
      * @return string
      */
-    function getValueType() {
-
+    public function getValueType()
+    {
         return 'TEXT';
-
     }
 
     /**
@@ -203,7 +198,8 @@ class Text extends Property {
      *
      * @return string
      */
-    function serialize() {
+    public function serialize()
+    {
 
         // We need to kick in a special type of encoding, if it's a 2.1 vcard.
         if ($this->root->getDocumentType() !== Document::VCARD21) {
@@ -228,14 +224,14 @@ class Text extends Property {
         }
 
         $str = $this->name;
-        if ($this->group) $str = $this->group . '.' . $this->name;
+        if ($this->group) {
+            $str = $this->group . '.' . $this->name;
+        }
         foreach ($this->parameters as $param) {
-
             if ($param->getValue() === 'QUOTED-PRINTABLE') {
                 continue;
             }
             $str .= ';' . $param->serialize();
-
         }
 
 
@@ -243,7 +239,6 @@ class Text extends Property {
         // If the resulting value contains a \n, we must encode it as
         // quoted-printable.
         if (strpos($val, "\n") !== false) {
-
             $str .= ';ENCODING=QUOTED-PRINTABLE:';
             $lastLine = $str;
             $out = null;
@@ -265,11 +260,11 @@ class Text extends Property {
                     $out .= $lastLine . "=\r\n ";
                     $lastLine = null;
                 }
-
             }
-            if (!is_null($lastLine)) $out .= $lastLine . "\r\n";
+            if (!is_null($lastLine)) {
+                $out .= $lastLine . "\r\n";
+            }
             return $out;
-
         } else {
             $str .= ':' . $val;
             $out = '';
@@ -285,9 +280,7 @@ class Text extends Property {
             }
 
             return $out;
-
         }
-
     }
 
     /**
@@ -298,11 +291,11 @@ class Text extends Property {
      *
      * @return void
      */
-    protected function xmlSerializeValue(Xml\Writer $writer) {
-
+    protected function xmlSerializeValue(Xml\Writer $writer)
+    {
         $values = $this->getParts();
 
-        $map = function($items) use ($values, $writer) {
+        $map = function ($items) use ($values, $writer) {
             foreach ($items as $i => $item) {
                 $writer->writeElement(
                     $item,
@@ -365,7 +358,6 @@ class Text extends Property {
             default:
                 parent::xmlSerializeValue($writer);
         }
-
     }
 
     /**
@@ -386,12 +378,11 @@ class Text extends Property {
      *
      * @return array
      */
-    function validate($options = 0) {
-
+    public function validate($options = 0)
+    {
         $warnings = parent::validate($options);
 
         if (isset($this->minimumPropertyValues[$this->name])) {
-
             $minimum = $this->minimumPropertyValues[$this->name];
             $parts = $this->getParts();
             if (count($parts) < $minimum) {
@@ -405,9 +396,7 @@ class Text extends Property {
                     $this->setParts($parts);
                 }
             }
-
         }
         return $warnings;
-
     }
 }

@@ -4,44 +4,41 @@ namespace Sabre\DAV;
 
 use Sabre\HTTP;
 
-class ServerSimpleTest extends AbstractServer{
-
-    function testConstructArray() {
-
+class ServerSimpleTest extends AbstractServer
+{
+    public function testConstructArray()
+    {
         $nodes = [
             new SimpleCollection('hello')
         ];
 
         $server = new Server($nodes);
         $this->assertEquals($nodes[0], $server->tree->getNodeForPath('hello'));
-
     }
 
     /**
      * @expectedException Sabre\DAV\Exception
      */
-    function testConstructIncorrectObj() {
-
+    public function testConstructIncorrectObj()
+    {
         $nodes = [
             new SimpleCollection('hello'),
             new \STDClass(),
         ];
 
         $server = new Server($nodes);
-
     }
 
     /**
      * @expectedException Sabre\DAV\Exception
      */
-    function testConstructInvalidArg() {
-
+    public function testConstructInvalidArg()
+    {
         $server = new Server(1);
-
     }
 
-    function testOptions() {
-
+    public function testOptions()
+    {
         $request = new HTTP\Request('OPTIONS', '/');
         $this->server->httpRequest = $request;
         $this->server->exec();
@@ -57,11 +54,10 @@ class ServerSimpleTest extends AbstractServer{
 
         $this->assertEquals(200, $this->response->status);
         $this->assertEquals('', $this->response->body);
-
     }
 
-    function testOptionsUnmapped() {
-
+    public function testOptionsUnmapped()
+    {
         $request = new HTTP\Request('OPTIONS', '/unmapped');
         $this->server->httpRequest = $request;
 
@@ -78,11 +74,10 @@ class ServerSimpleTest extends AbstractServer{
 
         $this->assertEquals(200, $this->response->status);
         $this->assertEquals('', $this->response->body);
-
     }
 
-    function testNonExistantMethod() {
-
+    public function testNonExistantMethod()
+    {
         $serverVars = [
             'REQUEST_URI'    => '/',
             'REQUEST_METHOD' => 'BLABLA',
@@ -98,12 +93,10 @@ class ServerSimpleTest extends AbstractServer{
         ], $this->response->getHeaders());
 
         $this->assertEquals(501, $this->response->status);
-
-
     }
 
-    function testBaseUri() {
-
+    public function testBaseUri()
+    {
         $serverVars = [
             'REQUEST_URI'    => '/blabla/test.txt',
             'REQUEST_METHOD' => 'GET',
@@ -116,7 +109,8 @@ class ServerSimpleTest extends AbstractServer{
         $this->server->httpRequest = ($request);
         $this->server->exec();
 
-        $this->assertEquals([
+        $this->assertEquals(
+            [
             'X-Sabre-Version' => [Version::VERSION],
             'Content-Type'    => ['application/octet-stream'],
             'Content-Length'  => [13],
@@ -124,15 +118,14 @@ class ServerSimpleTest extends AbstractServer{
             'ETag'            => ['"' . sha1(fileinode($filename) . filesize($filename) . filemtime($filename)) . '"'],
             ],
             $this->response->getHeaders()
-         );
+        );
 
         $this->assertEquals(200, $this->response->status);
         $this->assertEquals('Test contents', stream_get_contents($this->response->body));
-
     }
 
-    function testBaseUriAddSlash() {
-
+    public function testBaseUriAddSlash()
+    {
         $tests = [
             '/'         => '/',
             '/foo'      => '/foo/',
@@ -145,13 +138,11 @@ class ServerSimpleTest extends AbstractServer{
             $this->server->setBaseUri($test);
 
             $this->assertEquals($result, $this->server->getBaseUri());
-
         }
-
     }
 
-    function testCalculateUri() {
-
+    public function testCalculateUri()
+    {
         $uris = [
             'http://www.example.org/root/somepath',
             '/root/somepath',
@@ -161,25 +152,20 @@ class ServerSimpleTest extends AbstractServer{
         $this->server->setBaseUri('/root/');
 
         foreach ($uris as $uri) {
-
             $this->assertEquals('somepath', $this->server->calculateUri($uri));
-
         }
 
         $this->server->setBaseUri('/root');
 
         foreach ($uris as $uri) {
-
             $this->assertEquals('somepath', $this->server->calculateUri($uri));
-
         }
 
         $this->assertEquals('', $this->server->calculateUri('/root'));
-
     }
 
-    function testCalculateUriSpecialChars() {
-
+    public function testCalculateUriSpecialChars()
+    {
         $uris = [
             'http://www.example.org/root/%C3%A0fo%C3%B3',
             '/root/%C3%A0fo%C3%B3',
@@ -189,45 +175,37 @@ class ServerSimpleTest extends AbstractServer{
         $this->server->setBaseUri('/root/');
 
         foreach ($uris as $uri) {
-
             $this->assertEquals("\xc3\xa0fo\xc3\xb3", $this->server->calculateUri($uri));
-
         }
 
         $this->server->setBaseUri('/root');
 
         foreach ($uris as $uri) {
-
             $this->assertEquals("\xc3\xa0fo\xc3\xb3", $this->server->calculateUri($uri));
-
         }
 
         $this->server->setBaseUri('/');
 
         foreach ($uris as $uri) {
-
             $this->assertEquals("root/\xc3\xa0fo\xc3\xb3", $this->server->calculateUri($uri));
-
         }
-
     }
 
     /**
      * @expectedException \Sabre\DAV\Exception\Forbidden
      */
-    function testCalculateUriBreakout() {
-
+    public function testCalculateUriBreakout()
+    {
         $uri = '/path1/';
 
         $this->server->setBaseUri('/path2/');
         $this->server->calculateUri($uri);
-
     }
 
     /**
      */
-    function testGuessBaseUri() {
-
+    public function testGuessBaseUri()
+    {
         $serverVars = [
             'REQUEST_URI' => '/index.php/root',
             'PATH_INFO'   => '/root',
@@ -238,14 +216,13 @@ class ServerSimpleTest extends AbstractServer{
         $server->httpRequest = $httpRequest;
 
         $this->assertEquals('/index.php/', $server->guessBaseUri());
-
     }
 
     /**
      * @depends testGuessBaseUri
      */
-    function testGuessBaseUriPercentEncoding() {
-
+    public function testGuessBaseUriPercentEncoding()
+    {
         $serverVars = [
             'REQUEST_URI' => '/index.php/dir/path2/path%20with%20spaces',
             'PATH_INFO'   => '/dir/path2/path with spaces',
@@ -256,7 +233,6 @@ class ServerSimpleTest extends AbstractServer{
         $server->httpRequest = $httpRequest;
 
         $this->assertEquals('/index.php/', $server->guessBaseUri());
-
     }
 
     /**
@@ -279,8 +255,8 @@ class ServerSimpleTest extends AbstractServer{
 
     }*/
 
-    function testGuessBaseUri2() {
-
+    public function testGuessBaseUri2()
+    {
         $serverVars = [
             'REQUEST_URI' => '/index.php/root/',
             'PATH_INFO'   => '/root/',
@@ -291,11 +267,10 @@ class ServerSimpleTest extends AbstractServer{
         $server->httpRequest = $httpRequest;
 
         $this->assertEquals('/index.php/', $server->guessBaseUri());
-
     }
 
-    function testGuessBaseUriNoPathInfo() {
-
+    public function testGuessBaseUriNoPathInfo()
+    {
         $serverVars = [
             'REQUEST_URI' => '/index.php/root',
         ];
@@ -305,11 +280,10 @@ class ServerSimpleTest extends AbstractServer{
         $server->httpRequest = $httpRequest;
 
         $this->assertEquals('/', $server->guessBaseUri());
-
     }
 
-    function testGuessBaseUriNoPathInfo2() {
-
+    public function testGuessBaseUriNoPathInfo2()
+    {
         $serverVars = [
             'REQUEST_URI' => '/a/b/c/test.php',
         ];
@@ -319,15 +293,14 @@ class ServerSimpleTest extends AbstractServer{
         $server->httpRequest = $httpRequest;
 
         $this->assertEquals('/', $server->guessBaseUri());
-
     }
 
 
     /**
      * @depends testGuessBaseUri
      */
-    function testGuessBaseUriQueryString() {
-
+    public function testGuessBaseUriQueryString()
+    {
         $serverVars = [
             'REQUEST_URI' => '/index.php/root?query_string=blabla',
             'PATH_INFO'   => '/root',
@@ -338,15 +311,14 @@ class ServerSimpleTest extends AbstractServer{
         $server->httpRequest = $httpRequest;
 
         $this->assertEquals('/index.php/', $server->guessBaseUri());
-
     }
 
     /**
      * @depends testGuessBaseUri
      * @expectedException \Sabre\DAV\Exception
      */
-    function testGuessBaseUriBadConfig() {
-
+    public function testGuessBaseUriBadConfig()
+    {
         $serverVars = [
             'REQUEST_URI' => '/index.php/root/heyyy',
             'PATH_INFO'   => '/root',
@@ -357,11 +329,10 @@ class ServerSimpleTest extends AbstractServer{
         $server->httpRequest = $httpRequest;
 
         $server->guessBaseUri();
-
     }
 
-    function testTriggerException() {
-
+    public function testTriggerException()
+    {
         $serverVars = [
             'REQUEST_URI'    => '/',
             'REQUEST_METHOD' => 'FOO',
@@ -377,17 +348,15 @@ class ServerSimpleTest extends AbstractServer{
         ], $this->response->getHeaders());
 
         $this->assertEquals(500, $this->response->status);
-
     }
 
-    function exceptionTrigger($request, $response) {
-
+    public function exceptionTrigger($request, $response)
+    {
         throw new Exception('Hola');
-
     }
 
-    function testReportNotFound() {
-
+    public function testReportNotFound()
+    {
         $serverVars = [
             'REQUEST_URI'    => '/',
             'REQUEST_METHOD' => 'REPORT',
@@ -398,19 +367,19 @@ class ServerSimpleTest extends AbstractServer{
         $this->server->httpRequest->setBody('<?xml version="1.0"?><bla:myreport xmlns:bla="http://www.rooftopsolutions.nl/NS"></bla:myreport>');
         $this->server->exec();
 
-        $this->assertEquals([
+        $this->assertEquals(
+            [
             'X-Sabre-Version' => [Version::VERSION],
             'Content-Type'    => ['application/xml; charset=utf-8'],
             ],
             $this->response->getHeaders()
-         );
+        );
 
         $this->assertEquals(415, $this->response->status, 'We got an incorrect status back. Full response body follows: ' . $this->response->body);
-
     }
 
-    function testReportIntercepted() {
-
+    public function testReportIntercepted()
+    {
         $serverVars = [
             'REQUEST_URI'    => '/',
             'REQUEST_METHOD' => 'REPORT',
@@ -422,7 +391,8 @@ class ServerSimpleTest extends AbstractServer{
         $this->server->on('report', [$this, 'reportHandler']);
         $this->server->exec();
 
-        $this->assertEquals([
+        $this->assertEquals(
+            [
             'X-Sabre-Version' => [Version::VERSION],
             'testheader'      => ['testvalue'],
             ],
@@ -430,22 +400,21 @@ class ServerSimpleTest extends AbstractServer{
         );
 
         $this->assertEquals(418, $this->response->status, 'We got an incorrect status back. Full response body follows: ' . $this->response->body);
-
     }
 
-    function reportHandler($reportName, $result, $path) {
-
+    public function reportHandler($reportName, $result, $path)
+    {
         if ($reportName == '{http://www.rooftopsolutions.nl/NS}myreport') {
             $this->server->httpResponse->setStatus(418);
             $this->server->httpResponse->setHeader('testheader', 'testvalue');
             return false;
+        } else {
+            return;
         }
-        else return;
-
     }
 
-    function testGetPropertiesForChildren() {
-
+    public function testGetPropertiesForChildren()
+    {
         $result = $this->server->getPropertiesForChildren('', [
             '{DAV:}getcontentlength',
         ]);
@@ -456,20 +425,19 @@ class ServerSimpleTest extends AbstractServer{
         ];
 
         $this->assertEquals($expected, $result);
-
     }
 
     /**
      * There are certain cases where no HTTP status may be set. We need to
      * intercept these and set it to a default error message.
      */
-    function testNoHTTPStatusSet() {
-
-        $this->server->on('method:GET', function() { return false; }, 1);
+    public function testNoHTTPStatusSet()
+    {
+        $this->server->on('method:GET', function () {
+            return false;
+        }, 1);
         $this->server->httpRequest = new HTTP\Request('GET', '/');
         $this->server->exec();
         $this->assertEquals(500, $this->response->getStatus());
-
     }
-
 }

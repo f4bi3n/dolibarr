@@ -4,10 +4,10 @@ namespace Sabre\DAV\Auth\Backend;
 
 use Sabre\HTTP;
 
-class AbstractBasicTest extends \PHPUnit_Framework_TestCase {
-
-    function testCheckNoHeaders() {
-
+class AbstractBasicTest extends \PHPUnit_Framework_TestCase
+{
+    public function testCheckNoHeaders()
+    {
         $request = new HTTP\Request();
         $response = new HTTP\Response();
 
@@ -16,11 +16,10 @@ class AbstractBasicTest extends \PHPUnit_Framework_TestCase {
         $this->assertFalse(
             $backend->check($request, $response)[0]
         );
-
     }
 
-    function testCheckUnknownUser() {
-
+    public function testCheckUnknownUser()
+    {
         $request = HTTP\Sapi::createFromServerArray([
             'PHP_AUTH_USER' => 'username',
             'PHP_AUTH_PW'   => 'wrongpassword',
@@ -32,11 +31,10 @@ class AbstractBasicTest extends \PHPUnit_Framework_TestCase {
         $this->assertFalse(
             $backend->check($request, $response)[0]
         );
-
     }
 
-    function testCheckSuccess() {
-
+    public function testCheckSuccess()
+    {
         $request = HTTP\Sapi::createFromServerArray([
             'PHP_AUTH_USER' => 'username',
             'PHP_AUTH_PW'   => 'password',
@@ -48,11 +46,10 @@ class AbstractBasicTest extends \PHPUnit_Framework_TestCase {
             [true, 'principals/username'],
             $backend->check($request, $response)
         );
-
     }
 
-    function testRequireAuth() {
-
+    public function testRequireAuth()
+    {
         $request = new HTTP\Request();
         $response = new HTTP\Response();
 
@@ -64,13 +61,12 @@ class AbstractBasicTest extends \PHPUnit_Framework_TestCase {
             'Basic realm="writing unittests on a saturday night"',
             $response->getHeader('WWW-Authenticate')
         );
-
     }
-
 }
 
 
-class AbstractBasicMock extends AbstractBasic {
+class AbstractBasicMock extends AbstractBasic
+{
 
     /**
      * Validates a username and password
@@ -82,10 +78,8 @@ class AbstractBasicMock extends AbstractBasic {
      * @param string $password
      * @return bool
      */
-    function validateUserPass($username, $password) {
-
+    public function validateUserPass($username, $password)
+    {
         return ($username == 'username' && $password == 'password');
-
     }
-
 }

@@ -4,10 +4,10 @@ namespace Sabre\DAV\Xml\Request;
 
 use Sabre\DAV\Xml\XmlTest;
 
-class SyncCollectionTest extends XmlTest {
-
-    function testDeserializeProp() {
-
+class SyncCollectionTest extends XmlTest
+{
+    public function testDeserializeProp()
+    {
         $xml = '<?xml version="1.0"?>
 <d:sync-collection xmlns:d="DAV:">
     <d:sync-token />
@@ -25,12 +25,11 @@ class SyncCollectionTest extends XmlTest {
         $elem->properties = ['{DAV:}foo'];
 
         $this->assertEquals($elem, $result['value']);
-
     }
 
 
-    function testDeserializeLimit() {
-
+    public function testDeserializeLimit()
+    {
         $xml = '<?xml version="1.0"?>
 <d:sync-collection xmlns:d="DAV:">
     <d:sync-token />
@@ -50,12 +49,11 @@ class SyncCollectionTest extends XmlTest {
         $elem->limit = 5;
 
         $this->assertEquals($elem, $result['value']);
-
     }
 
 
-    function testDeserializeInfinity() {
-
+    public function testDeserializeInfinity()
+    {
         $xml = '<?xml version="1.0"?>
 <d:sync-collection xmlns:d="DAV:">
     <d:sync-token />
@@ -73,14 +71,13 @@ class SyncCollectionTest extends XmlTest {
         $elem->properties = ['{DAV:}foo'];
 
         $this->assertEquals($elem, $result['value']);
-
     }
 
     /**
      * @expectedException \Sabre\DAV\Exception\BadRequest
      */
-    function testDeserializeMissingElem() {
-
+    public function testDeserializeMissingElem()
+    {
         $xml = '<?xml version="1.0"?>
 <d:sync-collection xmlns:d="DAV:">
     <d:sync-token />
@@ -88,7 +85,5 @@ class SyncCollectionTest extends XmlTest {
 ';
 
         $result = $this->parse($xml, ['{DAV:}sync-collection' => 'Sabre\\DAV\\Xml\\Request\\SyncCollectionReport']);
-
     }
-
 }

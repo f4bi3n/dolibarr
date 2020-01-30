@@ -35,7 +35,9 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "members", "mailmanspip"));
 
-if (! $user->admin) accessforbidden();
+if (! $user->admin) {
+    accessforbidden();
+}
 
 
 $type=array('yesno','texte','chaine');
@@ -48,53 +50,45 @@ $action = GETPOST('action', 'aZ09');
  */
 
 // Action mise a jour ou ajout d'une constante
-if ($action == 'update' || $action == 'add')
-{
-	$constname=GETPOST("constname");
-	$constvalue=GETPOST("constvalue");
+if ($action == 'update' || $action == 'add') {
+    $constname=GETPOST("constname");
+    $constvalue=GETPOST("constvalue");
 
     // Action mise a jour ou ajout d'une constante
-    if ($action == 'update' || $action == 'add')
-    {
-    	foreach($_POST['constname'] as $key => $val)
-    	{
-    		$constname=$_POST["constname"][$key];
-    		$constvalue=$_POST["constvalue"][$key];
-    		$consttype=$_POST["consttype"][$key];
-    		$constnote=$_POST["constnote"][$key];
+    if ($action == 'update' || $action == 'add') {
+        foreach ($_POST['constname'] as $key => $val) {
+            $constname=$_POST["constname"][$key];
+            $constvalue=$_POST["constvalue"][$key];
+            $consttype=$_POST["consttype"][$key];
+            $constnote=$_POST["constnote"][$key];
 
-        	$res=dolibarr_set_const($db, $constname, $constvalue, $type[$consttype], 0, $constnote, $conf->entity);
+            $res=dolibarr_set_const($db, $constname, $constvalue, $type[$consttype], 0, $constnote, $conf->entity);
 
-    		if (! $res > 0) $error++;
-    	}
-
-     	if (! $error)
-        {
-            setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+            if (! $res > 0) {
+                $error++;
+            }
         }
-        else
-        {
+
+        if (! $error) {
+            setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+        } else {
             setEventMessages($langs->trans("Error"), null, 'errors');
         }
     }
 }
 
 // Action activation d'un sous module du module adherent
-if ($action == 'set')
-{
+if ($action == 'set') {
     $result=dolibarr_set_const($db, $_GET["name"], $_GET["value"], '', 0, '', $conf->entity);
-    if ($result < 0)
-    {
+    if ($result < 0) {
         dol_print_error($db);
     }
 }
 
 // Action desactivation d'un sous module du module adherent
-if ($action == 'unset')
-{
+if ($action == 'unset') {
     $result=dolibarr_del_const($db, $_GET["name"], $conf->entity);
-    if ($result < 0)
-    {
+    if ($result < 0) {
         dol_print_error($db);
     }
 }
@@ -120,13 +114,12 @@ $head = mailmanspip_admin_prepare_head();
 /*
  * Spip
  */
-if (! empty($conf->global->ADHERENT_USE_SPIP))
-{
-	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="action" value="update">';
+if (! empty($conf->global->ADHERENT_USE_SPIP)) {
+    print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
+    print '<input type="hidden" name="action" value="update">';
 
-	dol_fiche_head($head, 'spip', $langs->trans("Setup"), -1, 'user');
+    dol_fiche_head($head, 'spip', $langs->trans("Setup"), -1, 'user');
 
     //$link=img_picto($langs->trans("Active"),'tick').' ';
     $link='<a href="'.$_SERVER["PHP_SELF"].'?action=unset&value=0&name=ADHERENT_USE_SPIP">';
@@ -135,25 +128,23 @@ if (! empty($conf->global->ADHERENT_USE_SPIP))
     $link.='</a>';
     // Edition des varibales globales
     $constantes=array(
-    	'ADHERENT_SPIP_SERVEUR',
-    	'ADHERENT_SPIP_DB',
-    	'ADHERENT_SPIP_USER',
-    	'ADHERENT_SPIP_PASS'
-	);
+        'ADHERENT_SPIP_SERVEUR',
+        'ADHERENT_SPIP_DB',
+        'ADHERENT_SPIP_USER',
+        'ADHERENT_SPIP_PASS'
+    );
 
     print load_fiche_titre($langs->trans('SPIPTitle'), $link, '');
-	print '<br>';
+    print '<br>';
 
-	form_constantes($constantes, 2);
+    form_constantes($constantes, 2);
 
     dol_fiche_end();
 
     print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Update").'" name="update"></div>';
 
     print '</form>';
-}
-else
-{
+} else {
     dol_fiche_head($head, 'spip', $langs->trans("Setup"), 0, 'user');
 
     $link='<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&value=1&name=ADHERENT_USE_SPIP">';

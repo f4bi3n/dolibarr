@@ -68,7 +68,6 @@ class DeviantArt extends AbstractService
      */
     protected function parseAccessTokenResponse($responseBody)
     {
-
         $data = json_decode($responseBody, true);
 
         if (null === $data || !is_array($data)) {

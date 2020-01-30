@@ -37,7 +37,9 @@ $ref = GETPOST('ref', 'alpha');
 $action=GETPOST('action', 'alpha');
 
 // Security check
-if ($user->socid) $socid=$user->socid;
+if ($user->socid) {
+    $socid=$user->socid;
+}
 $result = restrictedArea($user, 'resource', $id, 'resource');
 
 $object = new DolResource($db);
@@ -61,43 +63,42 @@ llxHeader();
 
 $form = new Form($db);
 
-if ($id > 0 || ! empty($ref))
-{
-	$head = resource_prepare_head($object);
-	dol_fiche_head($head, 'note', $langs->trans('ResourceSingular'), -1, 'resource');
+if ($id > 0 || ! empty($ref)) {
+    $head = resource_prepare_head($object);
+    dol_fiche_head($head, 'note', $langs->trans('ResourceSingular'), -1, 'resource');
 
-	$linkback = '<a href="' . DOL_URL_ROOT . '/resource/list.php' . (! empty($socid) ? '?id=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
-
-
-	$morehtmlref='<div class="refidno">';
-	$morehtmlref.='</div>';
+    $linkback = '<a href="' . DOL_URL_ROOT . '/resource/list.php' . (! empty($socid) ? '?id=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 
-	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+    $morehtmlref='<div class="refidno">';
+    $morehtmlref.='</div>';
 
 
-	print '<div class="fichecenter">';
-	print '<div class="underbanner clearboth"></div>';
+    dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
-	print '<table class="border tableforfield centpercent">';
 
-	// Resource type
-	print '<tr>';
-	print '<td class="titlefield">' . $langs->trans("ResourceType") . '</td>';
-	print '<td>';
-	print $object->type_label;
-	print '</td>';
-	print '</tr>';
+    print '<div class="fichecenter">';
+    print '<div class="underbanner clearboth"></div>';
 
-	print "</table>";
+    print '<table class="border tableforfield centpercent">';
 
-	print '</div>';
+    // Resource type
+    print '<tr>';
+    print '<td class="titlefield">' . $langs->trans("ResourceType") . '</td>';
+    print '<td>';
+    print $object->type_label;
+    print '</td>';
+    print '</tr>';
 
-	$permission=$user->rights->resource->write;
-	$cssclass='titlefield';
-	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
+    print "</table>";
 
-	dol_fiche_end();
+    print '</div>';
+
+    $permission=$user->rights->resource->write;
+    $cssclass='titlefield';
+    include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
+
+    dol_fiche_end();
 }
 
 // End of page

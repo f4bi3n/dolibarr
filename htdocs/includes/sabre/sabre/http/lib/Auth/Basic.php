@@ -15,7 +15,8 @@ namespace Sabre\HTTP\Auth;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Basic extends AbstractAuth {
+class Basic extends AbstractAuth
+{
 
     /**
      * This method returns a numeric array with a username and password as the
@@ -25,8 +26,8 @@ class Basic extends AbstractAuth {
      *
      * @return null|array
      */
-    function getCredentials() {
-
+    public function getCredentials()
+    {
         $auth = $this->request->getHeader('Authorization');
 
         if (!$auth) {
@@ -44,7 +45,6 @@ class Basic extends AbstractAuth {
         }
 
         return $credentials;
-
     }
 
     /**
@@ -53,11 +53,9 @@ class Basic extends AbstractAuth {
      *
      * @return void
      */
-    function requireLogin() {
-
+    public function requireLogin()
+    {
         $this->response->addHeader('WWW-Authenticate', 'Basic realm="' . $this->realm . '"');
         $this->response->setStatus(401);
-
     }
-
 }

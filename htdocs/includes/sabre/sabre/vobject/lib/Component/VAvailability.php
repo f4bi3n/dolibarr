@@ -15,7 +15,8 @@ use Sabre\VObject;
  * @author Ivan Enderlin
  * @license http://sabre.io/license/ Modified BSD License
  */
-class VAvailability extends VObject\Component {
+class VAvailability extends VObject\Component
+{
 
     /**
      * Returns true or false depending on if the event falls in the specified
@@ -31,14 +32,13 @@ class VAvailability extends VObject\Component {
      *
      * @return bool
      */
-    function isInTimeRange(DateTimeInterface $start, DateTimeInterface $end) {
-
+    public function isInTimeRange(DateTimeInterface $start, DateTimeInterface $end)
+    {
         list($effectiveStart, $effectiveEnd) = $this->getEffectiveStartEnd();
         return (
             (is_null($effectiveStart) || $start < $effectiveEnd) &&
             (is_null($effectiveEnd) || $end > $effectiveStart)
         );
-
     }
 
     /**
@@ -53,8 +53,8 @@ class VAvailability extends VObject\Component {
      *
      * @return array
      */
-    function getEffectiveStartEnd() {
-
+    public function getEffectiveStartEnd()
+    {
         $effectiveStart = null;
         $effectiveEnd = null;
 
@@ -68,7 +68,6 @@ class VAvailability extends VObject\Component {
         }
 
         return [$effectiveStart, $effectiveEnd];
-
     }
 
 
@@ -87,8 +86,8 @@ class VAvailability extends VObject\Component {
      *
      * @var array
      */
-    function getValidationRules() {
-
+    public function getValidationRules()
+    {
         return [
             'UID'     => 1,
             'DTSTAMP' => 1,
@@ -111,7 +110,6 @@ class VAvailability extends VObject\Component {
             'COMMENT'    => '*',
             'CONTACT'    => '*',
         ];
-
     }
 
     /**
@@ -138,8 +136,8 @@ class VAvailability extends VObject\Component {
      *
      * @return array
      */
-    function validate($options = 0) {
-
+    public function validate($options = 0)
+    {
         $result = parent::validate($options);
 
         if (isset($this->DTEND) && isset($this->DURATION)) {
@@ -151,6 +149,5 @@ class VAvailability extends VObject\Component {
         }
 
         return $result;
-
     }
 }

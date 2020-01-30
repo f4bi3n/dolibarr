@@ -93,10 +93,10 @@ class modTicket extends DolibarrModules
 
         // Dependencies
         $this->hidden = false;			// A condition to hide module
-		$this->depends = array('modAgenda');		// List of module class names as string that must be enabled if this module is enabled
-		$this->requiredby = array();	// List of module ids to disable if this one is disabled
-		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
-		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
+        $this->depends = array('modAgenda');		// List of module class names as string that must be enabled if this module is enabled
+        $this->requiredby = array();	// List of module ids to disable if this one is disabled
+        $this->conflictwith = array();	// List of module class names as string this module is in conflict with
+        $this->phpmin = array(5,4);		// Minimum version of PHP required by module
         $this->langfiles = array("ticket");
 
         // Constants
@@ -280,7 +280,6 @@ class modTicket extends DolibarrModules
      */
     public function init($options = '')
     {
-
         $sql = array(
             array("sql" => "insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (110120, 'ticket',  'internal', 'SUPPORTTEC', 'Utilisateur assigné au ticket', 1);", "ignoreerror" => 1),
             array("sql" => "insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (110121, 'ticket',  'internal', 'CONTRIBUTOR', 'Intervenant', 1);", "ignoreerror" => 1),

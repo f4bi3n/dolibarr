@@ -5,10 +5,10 @@ namespace Sabre\VObject\Parser;
 use
     Sabre\VObject;
 
-class JsonTest extends \PHPUnit_Framework_TestCase {
-
-    function testRoundTripJCard() {
-
+class JsonTest extends \PHPUnit_Framework_TestCase
+{
+    public function testRoundTripJCard()
+    {
         $input = [
             "vcard",
             [
@@ -194,11 +194,10 @@ VCF;
             $input,
             $vobj->jsonSerialize()
         );
-
     }
 
-    function testRoundTripJCal() {
-
+    public function testRoundTripJCal()
+    {
         $input = [
             "vcalendar",
             [
@@ -351,11 +350,10 @@ VCF;
             $input,
             $vobj->jsonSerialize()
         );
-
     }
 
-    function testParseStreamArg() {
-
+    public function testParseStreamArg()
+    {
         $input = [
             "vcard",
             [
@@ -371,14 +369,13 @@ VCF;
 
         $result = VObject\Reader::readJson($stream, 0);
         $this->assertEquals('foo', $result->FN->getValue());
-
     }
 
     /**
      * @expectedException \Sabre\VObject\ParseException
      */
-    function testParseInvalidData() {
-
+    public function testParseInvalidData()
+    {
         $json = new Json();
         $input = [
             "vlist",
@@ -390,6 +387,5 @@ VCF;
         ];
 
         $json->parse(json_encode($input), 0);
-
     }
 }

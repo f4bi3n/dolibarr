@@ -295,16 +295,16 @@ class Hook extends CommonObject
         }
 
         // Unset fields that are disabled
-        foreach($this->fields as $key => $val) {
+        foreach ($this->fields as $key => $val) {
             if (isset($val['enabled']) && empty($val['enabled'])) {
                 unset($this->fields[$key]);
             }
         }
 
         // Translate some data of arrayofkeyval
-        foreach($this->fields as $key => $val) {
+        foreach ($this->fields as $key => $val) {
             if (is_array($this->fields['status']['arrayofkeyval'])) {
-                foreach($this->fields['status']['arrayofkeyval'] as $key2 => $val2) {
+                foreach ($this->fields['status']['arrayofkeyval'] as $key2 => $val2) {
                     $this->fields['status']['arrayofkeyval'][$key2]=$langs->trans($val2);
                 }
             }
@@ -355,7 +355,7 @@ class Hook extends CommonObject
         // Clear extrafields that are unique
         if (is_array($object->array_options) && count($object->array_options) > 0) {
             $extrafields->fetch_name_optionals_label($this->element);
-            foreach($object->array_options as $key => $option) {
+            foreach ($object->array_options as $key => $option) {
                 $shortkey = preg_replace('/options_/', '', $key);
                 if (! empty($extrafields->attributes[$this->element]['unique'][$shortkey])) {
                     // var_dump($key);
@@ -565,12 +565,12 @@ class Hook extends CommonObject
             $linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
             $linkclose.=' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
 
-            /*
-             $hookmanager->initHooks(array('hookdao'));
-             $parameters=array('id'=>$this->id);
-             $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-             if ($reshook > 0) $linkclose = $hookmanager->resPrint;
-             */
+        /*
+         $hookmanager->initHooks(array('hookdao'));
+         $parameters=array('id'=>$this->id);
+         $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+         if ($reshook > 0) $linkclose = $hookmanager->resPrint;
+         */
         } else {
             $linkclose = ($morecss?' class="'.$morecss.'"':'');
         }
@@ -633,22 +633,23 @@ class Hook extends CommonObject
     public function LibStatut($status, $mode = 0)
     {
         // phpcs:enable
-    	global $langs;
+        global $langs;
 
-    	if (empty($this->labelStatus) || empty($this->labelStatusShort))
-    	{
-    		global $langs;
-    		//$langs->load("mymodule");
-    		$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Disabled');
-    		$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Enabled');
-    		$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Disabled');
-    		$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Enabled');
-    	}
+        if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
+            global $langs;
+            //$langs->load("mymodule");
+            $this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Disabled');
+            $this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Enabled');
+            $this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Disabled');
+            $this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Enabled');
+        }
 
-    	$statusType = 'status5';
-    	if ($status == self::STATUS_VALIDATED) $statusType = 'status4';
+        $statusType = 'status5';
+        if ($status == self::STATUS_VALIDATED) {
+            $statusType = 'status4';
+        }
 
-    	return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
+        return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
     }
 
     /**

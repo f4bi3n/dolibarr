@@ -20,8 +20,8 @@ use Sabre\DAVACL;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Collection extends DAV\Collection implements ICollection, DAVACL\IACL {
-
+class Collection extends DAV\Collection implements ICollection, DAVACL\IACL
+{
     use DAVACL\ACLTrait;
 
     /**
@@ -44,11 +44,10 @@ class Collection extends DAV\Collection implements ICollection, DAVACL\IACL {
      * @param CalDAV\Backend\NotificationSupport $caldavBackend
      * @param string $principalUri
      */
-    function __construct(CalDAV\Backend\NotificationSupport $caldavBackend, $principalUri) {
-
+    public function __construct(CalDAV\Backend\NotificationSupport $caldavBackend, $principalUri)
+    {
         $this->caldavBackend = $caldavBackend;
         $this->principalUri = $principalUri;
-
     }
 
     /**
@@ -56,13 +55,12 @@ class Collection extends DAV\Collection implements ICollection, DAVACL\IACL {
      *
      * @return array
      */
-    function getChildren() {
-
+    public function getChildren()
+    {
         $children = [];
         $notifications = $this->caldavBackend->getNotificationsForPrincipal($this->principalUri);
 
         foreach ($notifications as $notification) {
-
             $children[] = new Node(
                 $this->caldavBackend,
                 $this->principalUri,
@@ -71,7 +69,6 @@ class Collection extends DAV\Collection implements ICollection, DAVACL\IACL {
         }
 
         return $children;
-
     }
 
     /**
@@ -79,10 +76,9 @@ class Collection extends DAV\Collection implements ICollection, DAVACL\IACL {
      *
      * @return string
      */
-    function getName() {
-
+    public function getName()
+    {
         return 'notifications';
-
     }
 
     /**
@@ -92,10 +88,8 @@ class Collection extends DAV\Collection implements ICollection, DAVACL\IACL {
      *
      * @return string|null
      */
-    function getOwner() {
-
+    public function getOwner()
+    {
         return $this->principalUri;
-
     }
-
 }

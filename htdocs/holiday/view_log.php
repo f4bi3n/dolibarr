@@ -40,8 +40,7 @@ $optioncss  = GETPOST('optioncss', 'aZ');												// Option for the css outpu
 
 $search_id  = GETPOST('search_id', 'alpha');
 $year=GETPOST('year');
-if (empty($year))
-{
+if (empty($year)) {
     $tmpdate=dol_getdate(dol_now());
     $year=$tmpdate['year'];
 }
@@ -51,7 +50,9 @@ $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
 $page = GETPOST('page', 'int');
-if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
+if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) {
+    $page = 0;
+}     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -60,10 +61,14 @@ $pagenext = $page + 1;
 
 
 // Protection if external user
-if ($user->socid > 0) accessforbidden();
+if ($user->socid > 0) {
+    accessforbidden();
+}
 
 // Si l'utilisateur n'a pas le droit de lire cette page
-if(!$user->rights->holiday->read_all) accessforbidden();
+if (!$user->rights->holiday->read_all) {
+    accessforbidden();
+}
 
 // Load translation files required by the page
 $langs->load('users');
@@ -82,28 +87,32 @@ $arrayofmassactions=array();
  * Actions
  */
 
-if (GETPOST('cancel', 'alpha')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+if (GETPOST('cancel', 'alpha')) {
+    $action='list';
+    $massaction='';
+}
+if (! GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
+    $massaction='';
+}
 
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+    setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
-if (empty($reshook))
-{
+if (empty($reshook)) {
     // Selection of new fields
     include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
     // Purge search criteria
-    if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') ||GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
-    {
+    if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') ||GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
         $search_id='';
         $toselect='';
         $search_array_options=array();
     }
     if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
-        || GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha'))
-    {
+        || GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha')) {
         $massaction='';     // Protection to avoid mass action if we force a new search during a mass action confirmation
     }
 
@@ -133,7 +142,9 @@ llxHeader('', $langs->trans('CPTitreMenu').' ('.$langs->trans("Year").' '.$year.
 
 $sqlwhere = '';
 $sqlwhere.= " AND date_action BETWEEN '".$db->idate(dol_get_first_day($year, 1, 1))."' AND '".$db->idate(dol_get_last_day($year, 12, 1))."'";
-if ($search_id != '') $sqlwhere.= natural_search('rowid', $search_id, 1);
+if ($search_id != '') {
+    $sqlwhere.= natural_search('rowid', $search_id, 1);
+}
 
 $sqlorder = 'ORDER BY cpl.rowid DESC';
 
@@ -141,12 +152,20 @@ $sqlorder = 'ORDER BY cpl.rowid DESC';
 $log_holiday = $object->fetchLog($sqlorder, $sqlwhere);	// Load $object->logs
 
 $param='';
-if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
-if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
-if ($search_id) $param='&search_id='.urlencode($search_id);
+if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+    $param.='&contextpage='.urlencode($contextpage);
+}
+if ($limit > 0 && $limit != $conf->liste_limit) {
+    $param.='&limit='.urlencode($limit);
+}
+if ($search_id) {
+    $param='&search_id='.urlencode($search_id);
+}
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
-if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+if ($optioncss != '') {
+    print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+}
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="action" value="list">';
@@ -160,14 +179,14 @@ print load_fiche_titre($langs->trans('LogCP'), $pagination, 'title_hrm.png');
 
 print '<div class="info">'.$langs->trans('LastUpdateCP').': '."\n";
 $lastUpdate = $object->getConfCP('lastUpdate');
-if ($lastUpdate)
-{
+if ($lastUpdate) {
     $monthLastUpdate = $lastUpdate[4].$lastUpdate[5];
     $yearLastUpdate = $lastUpdate[0].$lastUpdate[1].$lastUpdate[2].$lastUpdate[3];
     print '<strong>'.dol_print_date($db->jdate($object->getConfCP('lastUpdate')), 'dayhour', 'tzuser').'</strong>';
     print '<br>'.$langs->trans("MonthOfLastMonthlyUpdate").': <strong>'.$yearLastUpdate.'-'.$monthLastUpdate.'</strong>'."\n";
+} else {
+    print $langs->trans('None');
 }
-else print $langs->trans('None');
 print "</div><br>\n";
 
 $moreforfilter='';
@@ -213,36 +232,34 @@ print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', 
 print '</tr>';
 
 
-foreach($object->logs as $logs_CP)
-{
-   	$user_action = new User($db);
-   	$user_action->fetch($logs_CP['fk_user_action']);
+foreach ($object->logs as $logs_CP) {
+    $user_action = new User($db);
+    $user_action->fetch($logs_CP['fk_user_action']);
 
-   	$user_update = new User($db);
-   	$user_update->fetch($logs_CP['fk_user_update']);
+    $user_update = new User($db);
+    $user_update->fetch($logs_CP['fk_user_update']);
 
-   	$delta = price2num($logs_CP['new_solde'] - $logs_CP['prev_solde'], 5);
-   	$detasign = ($delta > 0 ? '+' : '-');
+    $delta = price2num($logs_CP['new_solde'] - $logs_CP['prev_solde'], 5);
+    $detasign = ($delta > 0 ? '+' : '-');
 
-   	print '<tr class="oddeven">';
-   	print '<td>'.$logs_CP['rowid'].'</td>';
-   	print '<td style="text-align: center;">'.$logs_CP['date_action'].'</td>';
-   	print '<td>'.$user_action->getNomUrl(-1).'</td>';
-   	print '<td>'.$user_update->getNomUrl(-1).'</td>';
-   	print '<td>'.$logs_CP['type_action'].'</td>';
-   	print '<td>';
-   	$label = (($alltypeleaves[$logs_CP['fk_type']]['code'] && $langs->trans($alltypeleaves[$logs_CP['fk_type']]['code'])!=$alltypeleaves[$logs_CP['fk_type']]['code']) ? $langs->trans($alltypeleaves[$logs_CP['fk_type']]['code']) : $alltypeleaves[$logs_CP['fk_type']]['label']);
-	print $label?$label:$logs_CP['fk_type'];
-   	print '</td>';
-   	print '<td style="text-align: right;">'.price2num($logs_CP['prev_solde'], 5).' '.$langs->trans('days').'</td>';
-   	print '<td style="text-align: right;">'.$detasign.$delta.'</td>';
-   	print '<td style="text-align: right;">'.price2num($logs_CP['new_solde'], 5).' '.$langs->trans('days').'</td>';
-   	print '<td></td>';
-   	print '</tr>'."\n";
+    print '<tr class="oddeven">';
+    print '<td>'.$logs_CP['rowid'].'</td>';
+    print '<td style="text-align: center;">'.$logs_CP['date_action'].'</td>';
+    print '<td>'.$user_action->getNomUrl(-1).'</td>';
+    print '<td>'.$user_update->getNomUrl(-1).'</td>';
+    print '<td>'.$logs_CP['type_action'].'</td>';
+    print '<td>';
+    $label = (($alltypeleaves[$logs_CP['fk_type']]['code'] && $langs->trans($alltypeleaves[$logs_CP['fk_type']]['code'])!=$alltypeleaves[$logs_CP['fk_type']]['code']) ? $langs->trans($alltypeleaves[$logs_CP['fk_type']]['code']) : $alltypeleaves[$logs_CP['fk_type']]['label']);
+    print $label?$label:$logs_CP['fk_type'];
+    print '</td>';
+    print '<td style="text-align: right;">'.price2num($logs_CP['prev_solde'], 5).' '.$langs->trans('days').'</td>';
+    print '<td style="text-align: right;">'.$detasign.$delta.'</td>';
+    print '<td style="text-align: right;">'.price2num($logs_CP['new_solde'], 5).' '.$langs->trans('days').'</td>';
+    print '<td></td>';
+    print '</tr>'."\n";
 }
 
-if ($log_holiday == '2')
-{
+if ($log_holiday == '2') {
     print '<tr class="opacitymedium">';
     print '<td colspan="10" class="opacitymedium">'.$langs->trans('NoRecordFound').'</td>';
     print '</tr>';

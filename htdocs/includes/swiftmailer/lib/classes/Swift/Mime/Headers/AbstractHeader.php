@@ -349,17 +349,21 @@ abstract class Swift_Mime_Headers_AbstractHeader implements Swift_Mime_Header
         }
         $encodingWrapperLength = strlen(
             '=?'.$charsetDecl.'?'.$this->encoder->getName().'??='
-            );
+        );
 
         if ($firstLineOffset >= 75) {
             //Does this logic need to be here?
             $firstLineOffset = 0;
         }
 
-        $encodedTextLines = explode("\r\n",
+        $encodedTextLines = explode(
+            "\r\n",
             $this->encoder->encodeString(
-                $token, $firstLineOffset, 75 - $encodingWrapperLength, $this->charset
-                )
+                $token,
+                $firstLineOffset,
+                75 - $encodingWrapperLength,
+                $this->charset
+            )
         );
 
         if (strtolower($this->charset) !== 'iso-2022-jp') {

@@ -20,7 +20,8 @@ use Sabre\Xml\XmlSerializable;
  * @author Evert Pot (http://www.rooftopsolutions.nl/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class SupportedCalendarData implements XmlSerializable {
+class SupportedCalendarData implements XmlSerializable
+{
 
     /**
      * The xmlSerialize method is called during xml writing.
@@ -41,8 +42,8 @@ class SupportedCalendarData implements XmlSerializable {
      * @param Writer $writer
      * @return void
      */
-    function xmlSerialize(Writer $writer) {
-
+    public function xmlSerialize(Writer $writer)
+    {
         $writer->startElement('{' . Plugin::NS_CALDAV . '}calendar-data');
         $writer->writeAttributes([
             'content-type' => 'text/calendar',
@@ -54,7 +55,5 @@ class SupportedCalendarData implements XmlSerializable {
             'content-type' => 'application/calendar+json',
         ]);
         $writer->endElement(); // calendar-data
-
     }
-
 }

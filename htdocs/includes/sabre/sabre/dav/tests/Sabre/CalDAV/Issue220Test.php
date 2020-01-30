@@ -11,8 +11,8 @@ use Sabre\HTTP;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Issue220Test extends \Sabre\DAVServerTest {
-
+class Issue220Test extends \Sabre\DAVServerTest
+{
     protected $setupCalDAV = true;
 
     protected $caldavCalendars = [
@@ -63,8 +63,8 @@ END:VCALENDAR
         ],
     ];
 
-    function testIssue220() {
-
+    public function testIssue220()
+    {
         $request = HTTP\Sapi::createFromServerArray([
             'REQUEST_METHOD'    => 'REPORT',
             'HTTP_CONTENT_TYPE' => 'application/xml',

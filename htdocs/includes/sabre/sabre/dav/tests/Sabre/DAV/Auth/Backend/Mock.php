@@ -5,18 +5,17 @@ namespace Sabre\DAV\Auth\Backend;
 use Sabre\HTTP\RequestInterface;
 use Sabre\HTTP\ResponseInterface;
 
-class Mock implements BackendInterface {
-
+class Mock implements BackendInterface
+{
     public $fail = false;
 
     public $invalidCheckResponse = false;
 
     public $principal = 'principals/admin';
 
-    function setPrincipal($principal) {
-
+    public function setPrincipal($principal)
+    {
         $this->principal = $principal;
-
     }
 
     /**
@@ -47,8 +46,8 @@ class Mock implements BackendInterface {
      * @param ResponseInterface $response
      * @return array
      */
-    function check(RequestInterface $request, ResponseInterface $response) {
-
+    public function check(RequestInterface $request, ResponseInterface $response)
+    {
         if ($this->invalidCheckResponse) {
             return 'incorrect!';
         }
@@ -56,7 +55,6 @@ class Mock implements BackendInterface {
             return [false, "fail!"];
         }
         return [true, $this->principal];
-
     }
 
     /**
@@ -80,8 +78,7 @@ class Mock implements BackendInterface {
      * @param ResponseInterface $response
      * @return void
      */
-    function challenge(RequestInterface $request, ResponseInterface $response) {
-
+    public function challenge(RequestInterface $request, ResponseInterface $response)
+    {
     }
-
 }

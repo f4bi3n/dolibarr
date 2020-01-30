@@ -1,5 +1,6 @@
 <?php
 namespace Luracast\Restler;
+
 /**
  * Describe the purpose of this class/interface/trait
  *
@@ -77,24 +78,29 @@ class Util
         return $from;
     }
 
-    public static function getResourcePath($className,
-                                           $resourcePath = null,
-                                           $prefix = '')
-    {
+    public static function getResourcePath(
+        $className,
+        $resourcePath = null,
+        $prefix = ''
+    ) {
         if (is_null($resourcePath)) {
             if (Defaults::$autoRoutingEnabled) {
                 $resourcePath = strtolower($className);
-                if (false !== ($index = strrpos($className, '\\')))
+                if (false !== ($index = strrpos($className, '\\'))) {
                     $resourcePath = substr($resourcePath, $index + 1);
-                if (false !== ($index = strrpos($resourcePath, '_')))
+                }
+                if (false !== ($index = strrpos($resourcePath, '_'))) {
                     $resourcePath = substr($resourcePath, $index + 1);
+                }
             } else {
                 $resourcePath = '';
             }
-        } else
+        } else {
             $resourcePath = trim($resourcePath, '/');
-        if (strlen($resourcePath) > 0)
+        }
+        if (strlen($resourcePath) > 0) {
             $resourcePath .= '/';
+        }
         return $prefix . $resourcePath;
     }
 
@@ -114,8 +120,9 @@ class Util
      */
     public static function removeCommonPath($fromPath, $usingPath, $char = '/')
     {
-        if (empty($fromPath))
+        if (empty($fromPath)) {
             return '';
+        }
         $fromPath = explode($char, $fromPath);
         $usingPath = explode($char, $usingPath);
         while (count($usingPath)) {
@@ -145,8 +152,9 @@ class Util
      */
     public static function splitCommonPath($fromPath, $usingPath, $char = '/')
     {
-        if (empty($fromPath))
+        if (empty($fromPath)) {
             return array('', '');
+        }
         $fromPath = explode($char, $fromPath);
         $usingPath = explode($char, $usingPath);
         $commonPath = array();
@@ -226,12 +234,13 @@ class Util
 
     public static function getShortName($className)
     {
-    	// @CHANGE LDR
-    	if (! is_string($className)) return '';
-    	//var_dump($className);
-    	
-    	$className = explode('\\', $className);
+        // @CHANGE LDR
+        if (! is_string($className)) {
+            return '';
+        }
+        //var_dump($className);
+        
+        $className = explode('\\', $className);
         return end($className);
     }
 }
-

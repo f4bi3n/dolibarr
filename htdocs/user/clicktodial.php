@@ -33,7 +33,9 @@ $id=GETPOST('id', 'int');
 
 // Security check
 $socid=0;
-if ($user->socid > 0) $socid = $user->socid;
+if ($user->socid > 0) {
+    $socid = $user->socid;
+}
 $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
 
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
@@ -47,7 +49,9 @@ $hookmanager->initHooks(array('usercard','globalcard'));
 
 $parameters=array('id'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+    setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
 if (empty($reshook)) {
     if ($action == 'update' && !GETPOST('cancel', 'alpha')) {
@@ -60,8 +64,7 @@ if (empty($reshook)) {
         $edituser->clicktodial_poste = GETPOST("poste");
 
         $result = $edituser->update_clicktodial();
-        if ($result < 0)
-        {
+        if ($result < 0) {
             setEventMessages($edituser->error, $edituser->errors, 'errors');
         }
     }
@@ -77,30 +80,29 @@ $form = new Form($db);
 llxHeader("", "ClickToDial");
 
 
-if ($id > 0)
-{
+if ($id > 0) {
     $object = new User($db);
     $object->fetch($id, '', '', 1);
     $object->getrights();
     $object->fetch_clicktodial();
 
 
-	$head = user_prepare_head($object);
+    $head = user_prepare_head($object);
 
-	$title = $langs->trans("User");
+    $title = $langs->trans("User");
 
 
-	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="action" value="update">';
+    print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
+    print '<input type="hidden" name="action" value="update">';
 
-	dol_fiche_head($head, 'clicktodial', $title, -1, 'user');
+    dol_fiche_head($head, 'clicktodial', $title, -1, 'user');
 
-	$linkback = '';
+    $linkback = '';
 
-	if ($user->rights->user->user->lire || $user->admin) {
-		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
-	}
+    if ($user->rights->user->user->lire || $user->admin) {
+        $linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+    }
 
     dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
 
@@ -108,22 +110,17 @@ if ($id > 0)
     print '<div class="underbanner clearboth"></div>';
 
     // Edit mode
-    if ($action == 'edit')
-    {
+    if ($action == 'edit') {
         print '<table class="border centpercent">';
 
-        if ($user->admin)
-        {
+        if ($user->admin) {
             print '<tr><td width="25%" valign="top">ClickToDial URL</td>';
             print '<td class="valeur">';
             print '<input name="url" value="'.(!empty($object->clicktodial_url) ? $object->clicktodial_url : '').'" size="92">';
-            if (empty($conf->global->CLICKTODIAL_URL) && empty($object->clicktodial_url))
-            {
+            if (empty($conf->global->CLICKTODIAL_URL) && empty($object->clicktodial_url)) {
                 $langs->load("errors");
                 print '<font class="error">'.$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("ClickToDial")).'</font>';
-            }
-            else
-            {
+            } else {
                 print ' &nbsp; &nbsp; '.$form->textwithpicto($langs->trans("KeepEmptyToUseDefault").': '.$conf->global->CLICKTODIAL_URL, $langs->trans("ClickToDialUrlDesc"));
             }
             print '</td>';
@@ -146,28 +143,24 @@ if ($id > 0)
         print "</tr>\n";
 
         print '</table>';
-    }
-    else	// View mode
-    {
+    } else {	// View mode
         print '<table class="border centpercent tableforfield">';
 
-        if (!empty($user->admin))
-        {
-        	print '<tr><td class="titlefield fieldrequired">ClickToDial URL</td>';
-        	print '<td class="valeur">';
-        	$url = $conf->global->CLICKTODIAL_URL;
-        	if (!empty($object->clicktodial_url)) $url = $object->clicktodial_url;
-        	if (empty($url))
-        	{
-        	    $langs->load("errors");
-        	    print '<font class="error">'.$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("ClickToDial")).'</font>';
-        	}
-        	else
-        	{
-        		print $form->textwithpicto((empty($object->clicktodial_url) ? $langs->trans("DefaultLink").': ' : '').$url, $langs->trans("ClickToDialUrlDesc"));
-        	}
-        	print '</td>';
-        	print '</tr>';
+        if (!empty($user->admin)) {
+            print '<tr><td class="titlefield fieldrequired">ClickToDial URL</td>';
+            print '<td class="valeur">';
+            $url = $conf->global->CLICKTODIAL_URL;
+            if (!empty($object->clicktodial_url)) {
+                $url = $object->clicktodial_url;
+            }
+            if (empty($url)) {
+                $langs->load("errors");
+                print '<font class="error">'.$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("ClickToDial")).'</font>';
+            } else {
+                print $form->textwithpicto((empty($object->clicktodial_url) ? $langs->trans("DefaultLink").': ' : '').$url, $langs->trans("ClickToDialUrlDesc"));
+            }
+            print '</td>';
+            print '</tr>';
         }
 
         print '<tr><td class="titlefield fieldrequired">ClickToDial '.$langs->trans("IdPhoneCaller").'</td>';
@@ -187,8 +180,7 @@ if ($id > 0)
 
     dol_fiche_end();
 
-    if ($action == 'edit')
-    {
+    if ($action == 'edit') {
         print '<div class="center"><input class="button" type="submit" value="'.$langs->trans("Save").'">';
         print '&nbsp;&nbsp;&nbsp;&nbsp&nbsp;';
         print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
@@ -203,8 +195,7 @@ if ($id > 0)
      */
     print '<div class="tabsAction">';
 
-    if (!empty($user->admin) && $action <> 'edit')
-    {
+    if (!empty($user->admin) && $action <> 'edit') {
         print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
     }
 

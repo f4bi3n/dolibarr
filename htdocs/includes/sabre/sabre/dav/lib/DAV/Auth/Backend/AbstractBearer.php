@@ -20,7 +20,8 @@ use Sabre\HTTP\ResponseInterface;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-abstract class AbstractBearer implements BackendInterface {
+abstract class AbstractBearer implements BackendInterface
+{
 
     /**
      * Authentication Realm.
@@ -49,10 +50,9 @@ abstract class AbstractBearer implements BackendInterface {
      * @param string $realm
      * @return void
      */
-    function setRealm($realm) {
-
+    public function setRealm($realm)
+    {
         $this->realm = $realm;
-
     }
 
     /**
@@ -83,8 +83,8 @@ abstract class AbstractBearer implements BackendInterface {
      * @param ResponseInterface $response
      * @return array
      */
-    function check(RequestInterface $request, ResponseInterface $response) {
-
+    public function check(RequestInterface $request, ResponseInterface $response)
+    {
         $auth = new HTTP\Auth\Bearer(
             $this->realm,
             $request,
@@ -100,7 +100,6 @@ abstract class AbstractBearer implements BackendInterface {
             return [false, "Bearer token was incorrect"];
         }
         return [true, $principalUrl];
-
     }
 
     /**
@@ -124,15 +123,13 @@ abstract class AbstractBearer implements BackendInterface {
      * @param ResponseInterface $response
      * @return void
      */
-    function challenge(RequestInterface $request, ResponseInterface $response) {
-
+    public function challenge(RequestInterface $request, ResponseInterface $response)
+    {
         $auth = new HTTP\Auth\Bearer(
             $this->realm,
             $request,
             $response
         );
         $auth->requireLogin();
-
     }
-
 }

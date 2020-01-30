@@ -136,7 +136,7 @@ class EscposPrintBuffer implements PrintBuffer
             if ($c == "\r") {
                 /* Skip past Windows line endings (raw usage). */
                 continue;
-            } else if (self::asciiCheck($c, true)) {
+            } elseif (self::asciiCheck($c, true)) {
                 $outp[$j] = $c;
             }
             $j++;

@@ -2,10 +2,10 @@
 
 namespace Sabre\VObject;
 
-class ElementListTest extends \PHPUnit_Framework_TestCase {
-
-    function testIterate() {
-
+class ElementListTest extends \PHPUnit_Framework_TestCase
+{
+    public function testIterate()
+    {
         $cal = new Component\VCalendar();
         $sub = $cal->createComponent('VEVENT');
 
@@ -19,15 +19,10 @@ class ElementListTest extends \PHPUnit_Framework_TestCase {
 
         $count = 0;
         foreach ($elemList as $key => $subcomponent) {
-
-           $count++;
-           $this->assertInstanceOf('Sabre\\VObject\\Component', $subcomponent);
-
+            $count++;
+            $this->assertInstanceOf('Sabre\\VObject\\Component', $subcomponent);
         }
         $this->assertEquals(3, $count);
         $this->assertEquals(2, $key);
-
     }
-
-
 }

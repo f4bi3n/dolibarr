@@ -10,8 +10,8 @@ Change url to send request to into file to send request to virtual server B.<br>
 
 <br>
 <?php
-	$urltosendrequest = "http://localhostgit/dolibarr_dev/htdocs/user/group/card.php";
-	print 'urltosendrequest = '.$urltosendrequest.'<br><br>';
+    $urltosendrequest = "http://localhostgit/dolibarr_dev/htdocs/user/group/card.php";
+    print 'urltosendrequest = '.$urltosendrequest.'<br><br>';
 ?>
 
 <form method="POST" action="<?php echo $urltosendrequest; ?>" target="_blank">

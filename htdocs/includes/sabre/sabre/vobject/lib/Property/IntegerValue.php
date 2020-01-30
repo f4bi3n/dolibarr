@@ -15,7 +15,8 @@ use
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class IntegerValue extends Property {
+class IntegerValue extends Property
+{
 
     /**
      * Sets a raw value coming from a mimedir (iCalendar/vCard) file.
@@ -27,10 +28,9 @@ class IntegerValue extends Property {
      *
      * @return void
      */
-    function setRawMimeDirValue($val) {
-
+    public function setRawMimeDirValue($val)
+    {
         $this->setValue((int)$val);
-
     }
 
     /**
@@ -38,10 +38,9 @@ class IntegerValue extends Property {
      *
      * @return string
      */
-    function getRawMimeDirValue() {
-
+    public function getRawMimeDirValue()
+    {
         return $this->value;
-
     }
 
     /**
@@ -52,10 +51,9 @@ class IntegerValue extends Property {
      *
      * @return string
      */
-    function getValueType() {
-
+    public function getValueType()
+    {
         return 'INTEGER';
-
     }
 
     /**
@@ -65,10 +63,9 @@ class IntegerValue extends Property {
      *
      * @return array
      */
-    function getJsonValue() {
-
+    public function getJsonValue()
+    {
         return [(int)$this->getValue()];
-
     }
 
     /**
@@ -79,10 +76,9 @@ class IntegerValue extends Property {
      *
      * @return void
      */
-    function setXmlValue(array $value) {
-
+    public function setXmlValue(array $value)
+    {
         $value = array_map('intval', $value);
         parent::setXmlValue($value);
-
     }
 }

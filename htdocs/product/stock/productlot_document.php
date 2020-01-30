@@ -48,7 +48,9 @@ $confirm= GETPOST('confirm', 'alpha');
 // Security check
 $fieldvalue = (! empty($id) ? $id : '');
 $fieldtype =  'rowid';
-if ($user->socid) $socid=$user->socid;
+if ($user->socid) {
+    $socid=$user->socid;
+}
 $result=restrictedArea($user, 'produit|service');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -58,19 +60,23 @@ $hookmanager->initHooks(array('productlotdocuments'));
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+    $page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortorder) $sortorder="ASC";
-if (! $sortfield) $sortfield="position_name";
+if (! $sortorder) {
+    $sortorder="ASC";
+}
+if (! $sortfield) {
+    $sortfield="position_name";
+}
 
 $modulepart='product_batch';
 $object = new Productlot($db);
-if ($id || $ref)
-{
-    if ($ref)
-    {
+if ($id || $ref) {
+    if ($ref) {
         $tmp=explode('_', $ref);
         $productid=$tmp[0];
         $batch=$tmp[1];
@@ -78,7 +84,9 @@ if ($id || $ref)
     $object->fetch($id, $productid, $batch);
     $object->ref = $object->batch; // For document management ( it use $object->ref)
 
-    if (! empty($conf->productbatch->enabled)) $upload_dir = $conf->productbatch->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 0, $object, $modulepart).dol_sanitizeFileName($object->ref);
+    if (! empty($conf->productbatch->enabled)) {
+        $upload_dir = $conf->productbatch->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 0, $object, $modulepart).dol_sanitizeFileName($object->ref);
+    }
 }
 
 
@@ -88,12 +96,13 @@ if ($id || $ref)
 
 $parameters=array('id'=>$id);
 $reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+    setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
-if (empty($reshook))
-{
-	// Action submit/delete file/link
-	include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+if (empty($reshook)) {
+    // Action submit/delete file/link
+    include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 }
 
 $permtoedit = $user->rights->produit->creer;
@@ -108,33 +117,35 @@ $form = new Form($db);
 llxHeader('', $langs->trans('ProductLot'), '');
 
 
-if ($object->id)
-{
-	$head = productlot_prepare_head($object);
-	dol_fiche_head($head, 'documents', $langs->trans("Batch"), -1, 'barcode');
+if ($object->id) {
+    $head = productlot_prepare_head($object);
+    dol_fiche_head($head, 'documents', $langs->trans("Batch"), -1, 'barcode');
 
 
-	$parameters=array();
-	$reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+    $parameters=array();
+    $reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
-	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+    if ($reshook < 0) {
+        setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+    }
 
-	// Build file list
-	$filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
+    // Build file list
+    $filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
 
-	$totalsize=0;
-	foreach($filearray as $key => $file)
-	{
-		$totalsize+=$file['size'];
-	}
+    $totalsize=0;
+    foreach ($filearray as $key => $file) {
+        $totalsize+=$file['size'];
+    }
 
 
     $linkback = '<a href="' . DOL_URL_ROOT . '/product/stock/productlot_list.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
 
     $shownav = 1;
-    if ($user->socid && ! in_array('batch', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+    if ($user->socid && ! in_array('batch', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
+        $shownav=0;
+    }
 
-	dol_banner_tab($object, 'id', $linkback, $shownav, 'rowid', 'batch');
+    dol_banner_tab($object, 'id', $linkback, $shownav, 'rowid', 'batch');
 
     print '<div class="fichecenter">';
 
@@ -150,13 +161,11 @@ if ($object->id)
 
     dol_fiche_end();
 
-    $permission = ( $user->rights->produit->creer );
+    $permission = ($user->rights->produit->creer);
     $param = '&id=' . $object->id;
     include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
-}
-else
-{
-	print $langs->trans("ErrorUnknown");
+} else {
+    print $langs->trans("ErrorUnknown");
 }
 
 

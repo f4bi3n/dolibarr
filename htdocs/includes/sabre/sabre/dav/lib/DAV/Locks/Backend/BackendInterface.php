@@ -12,7 +12,8 @@ use Sabre\DAV\Locks;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface BackendInterface {
+interface BackendInterface
+{
 
     /**
      * Returns a list of Sabre\DAV\Locks\LockInfo objects
@@ -27,7 +28,7 @@ interface BackendInterface {
      * @param bool $returnChildLocks
      * @return array
      */
-    function getLocks($uri, $returnChildLocks);
+    public function getLocks($uri, $returnChildLocks);
 
     /**
      * Locks a uri
@@ -36,7 +37,7 @@ interface BackendInterface {
      * @param Locks\LockInfo $lockInfo
      * @return bool
      */
-    function lock($uri, Locks\LockInfo $lockInfo);
+    public function lock($uri, Locks\LockInfo $lockInfo);
 
     /**
      * Removes a lock from a uri
@@ -45,6 +46,5 @@ interface BackendInterface {
      * @param Locks\LockInfo $lockInfo
      * @return bool
      */
-    function unlock($uri, Locks\LockInfo $lockInfo);
-
+    public function unlock($uri, Locks\LockInfo $lockInfo);
 }

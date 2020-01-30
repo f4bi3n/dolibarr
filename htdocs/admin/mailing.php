@@ -30,7 +30,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "mails"));
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+    accessforbidden();
+}
 
 $action = GETPOST('action', 'alpha');
 
@@ -40,36 +42,40 @@ $action = GETPOST('action', 'alpha');
  * Actions
  */
 
-if ($action == 'setvalue')
-{
-	$db->begin();
+if ($action == 'setvalue') {
+    $db->begin();
 
-	$mailfrom = GETPOST('MAILING_EMAIL_FROM', 'alpha');
-	$mailerror = GETPOST('MAILING_EMAIL_ERRORSTO', 'alpha');
-	$checkread = GETPOST('value', 'alpha');
-	$checkread_key = GETPOST('MAILING_EMAIL_UNSUBSCRIBE_KEY', 'alpha');
+    $mailfrom = GETPOST('MAILING_EMAIL_FROM', 'alpha');
+    $mailerror = GETPOST('MAILING_EMAIL_ERRORSTO', 'alpha');
+    $checkread = GETPOST('value', 'alpha');
+    $checkread_key = GETPOST('MAILING_EMAIL_UNSUBSCRIBE_KEY', 'alpha');
     $mailingdelay = GETPOST('MAILING_DELAY', 'int');
 
-	$res=dolibarr_set_const($db, "MAILING_EMAIL_FROM", $mailfrom, 'chaine', 0, '', $conf->entity);
-	if (! $res > 0) $error++;
-	$res=dolibarr_set_const($db, "MAILING_EMAIL_ERRORSTO", $mailerror, 'chaine', 0, '', $conf->entity);
-	if (! $res > 0) $error++;
-	$res=dolibarr_set_const($db, "MAILING_DELAY", $mailingdelay, 'chaine', 0, '', $conf->entity);
-	if (! $res > 0) $error++;
-
-	// Create temporary encryption key if nedded
-	$res=dolibarr_set_const($db, "MAILING_EMAIL_UNSUBSCRIBE_KEY", $checkread_key, 'chaine', 0, '', $conf->entity);
-	if (! $res > 0) $error++;
-
-    if (! $error)
-    {
-    	$db->commit();
-    	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    $res=dolibarr_set_const($db, "MAILING_EMAIL_FROM", $mailfrom, 'chaine', 0, '', $conf->entity);
+    if (! $res > 0) {
+        $error++;
     }
-    else
-    {
-    	$db->rollback();
-    	setEventMessages($langs->trans("Error"), null, 'errors');
+    $res=dolibarr_set_const($db, "MAILING_EMAIL_ERRORSTO", $mailerror, 'chaine', 0, '', $conf->entity);
+    if (! $res > 0) {
+        $error++;
+    }
+    $res=dolibarr_set_const($db, "MAILING_DELAY", $mailingdelay, 'chaine', 0, '', $conf->entity);
+    if (! $res > 0) {
+        $error++;
+    }
+
+    // Create temporary encryption key if nedded
+    $res=dolibarr_set_const($db, "MAILING_EMAIL_UNSUBSCRIBE_KEY", $checkread_key, 'chaine', 0, '', $conf->entity);
+    if (! $res > 0) {
+        $error++;
+    }
+
+    if (! $error) {
+        $db->commit();
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    } else {
+        $db->rollback();
+        setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
@@ -83,10 +89,9 @@ llxHeader('', $langs->trans("MailingSetup"));
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("MailingSetup"), $linkback, 'title_setup');
 
-if (! empty($conf->use_javascript_ajax))
-{
-	print "\n".'<script type="text/javascript">';
-	print '$(document).ready(function () {
+if (! empty($conf->use_javascript_ajax)) {
+    print "\n".'<script type="text/javascript">';
+    print '$(document).ready(function () {
             $("#generate_token").click(function() {
             	$.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
             		action: \'getrandompassword\',
@@ -97,7 +102,7 @@ if (! empty($conf->use_javascript_ajax))
 				});
             });
     });';
-	print '</script>';
+    print '</script>';
 }
 
 print '<br>';
@@ -114,13 +119,17 @@ print "</tr>\n";
 print '<tr class="oddeven"><td>';
 print $langs->trans("MailingEMailFrom").'</td><td>';
 print '<input size="32" type="text" name="MAILING_EMAIL_FROM" value="'.$conf->global->MAILING_EMAIL_FROM.'">';
-if (!empty($conf->global->MAILING_EMAIL_FROM) && ! isValidEmail($conf->global->MAILING_EMAIL_FROM)) print ' '.img_warning($langs->trans("BadEMail"));
+if (!empty($conf->global->MAILING_EMAIL_FROM) && ! isValidEmail($conf->global->MAILING_EMAIL_FROM)) {
+    print ' '.img_warning($langs->trans("BadEMail"));
+}
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("MailingEMailError").'</td><td>';
 print '<input size="32" type="text" name="MAILING_EMAIL_ERRORSTO" value="'.$conf->global->MAILING_EMAIL_ERRORSTO.'">';
-if (!empty($conf->global->MAILING_EMAIL_ERRORSTO) && ! isValidEmail($conf->global->MAILING_EMAIL_ERRORSTO)) print ' '.img_warning($langs->trans("BadEMail"));
+if (!empty($conf->global->MAILING_EMAIL_ERRORSTO) && ! isValidEmail($conf->global->MAILING_EMAIL_ERRORSTO)) {
+    print ' '.img_warning($langs->trans("BadEMail"));
+}
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
@@ -135,14 +144,16 @@ print '</td></tr>';
 print '<tr class="oddeven"><td>';
 print $langs->trans("ActivateCheckReadKey").'</td><td>';
 print '<input size="32" type="text" name="MAILING_EMAIL_UNSUBSCRIBE_KEY" id="MAILING_EMAIL_UNSUBSCRIBE_KEY" value="'.$conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY.'">';
-if (! empty($conf->use_javascript_ajax)) print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
+if (! empty($conf->use_javascript_ajax)) {
+    print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
+}
 print '</td></tr>';
 
 if (!empty($conf->use_javascript_ajax) && $conf->global->MAIN_FEATURES_LEVEL >=1) {
-	print '<tr class="oddeven"><td>';
-	print $langs->trans("MailAdvTargetRecipients").'</td><td>';
-	print ajax_constantonoff('EMAILING_USE_ADVANCED_SELECTOR');
-	print '</td></tr>';
+    print '<tr class="oddeven"><td>';
+    print $langs->trans("MailAdvTargetRecipients").'</td><td>';
+    print ajax_constantonoff('EMAILING_USE_ADVANCED_SELECTOR');
+    print '</td></tr>';
 }
 
 print '</table>';

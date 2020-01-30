@@ -27,17 +27,16 @@
 $supportedoauth2array=array(
     'OAUTH_GOOGLE_NAME'=>'google',
 );
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
-{
-	$supportedoauth2array['OAUTH_STRIPE_TEST_NAME']='stripetest';
-	$supportedoauth2array['OAUTH_STRIPE_LIVE_NAME']='stripelive';
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
+    $supportedoauth2array['OAUTH_STRIPE_TEST_NAME']='stripetest';
+    $supportedoauth2array['OAUTH_STRIPE_LIVE_NAME']='stripelive';
 }
 $supportedoauth2array['OAUTH_GITHUB_NAME']='github';
 
 
 
 // API access parameters OAUTH
-$list = array (
+$list = array(
     array(
         'OAUTH_AMAZON_NAME',
         'OAUTH_AMAZON_ID',
@@ -220,17 +219,17 @@ $list = array (
         'OAUTH_STRAVA_ID',
         'OAUTH_STRAVA_SECRET',
     ),
-	array(
-		'OAUTH_STRIPE_TEST_NAME',
-		'OAUTH_STRIPE_TEST_ID',
-		'STRIPE_TEST_SECRET_KEY',
-	),
-	array(
-		'OAUTH_STRIPE_LIVE_NAME',
-		'OAUTH_STRIPE_LIVE_ID',
-		'STRIPE_LIVE_SECRET_KEY',
-	),
-	array(
+    array(
+        'OAUTH_STRIPE_TEST_NAME',
+        'OAUTH_STRIPE_TEST_ID',
+        'STRIPE_TEST_SECRET_KEY',
+    ),
+    array(
+        'OAUTH_STRIPE_LIVE_NAME',
+        'OAUTH_STRIPE_LIVE_ID',
+        'STRIPE_LIVE_SECRET_KEY',
+    ),
+    array(
         'OAUTH_TUMBLR_NAME',
         'OAUTH_TUMBLR_ID',
         'OAUTH_TUMBLR_SECRET',

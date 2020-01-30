@@ -36,7 +36,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin","members"));
 
-if (! $user->admin) accessforbidden();
+if (! $user->admin) {
+    accessforbidden();
+}
 
 
 $type=array('yesno','texte','chaine');
@@ -49,8 +51,7 @@ $action = GETPOST('action', 'alpha');
  */
 
 //
-if ($action == 'updateall')
-{
+if ($action == 'updateall') {
     $db->begin();
     $res1=$res2=$res3=$res4=$res5=$res6=0;
     $res1=dolibarr_set_const($db, 'ADHERENT_LOGIN_NOT_REQUIRED', GETPOST('ADHERENT_LOGIN_NOT_REQUIRED', 'alpha')?0:1, 'chaine', 0, '', $conf->entity);
@@ -58,72 +59,65 @@ if ($action == 'updateall')
     $res3=dolibarr_set_const($db, 'ADHERENT_DEFAULT_SENDINFOBYMAIL', GETPOST('ADHERENT_DEFAULT_SENDINFOBYMAIL', 'alpha'), 'chaine', 0, '', $conf->entity);
     $res4=dolibarr_set_const($db, 'ADHERENT_BANK_USE', GETPOST('ADHERENT_BANK_USE', 'alpha'), 'chaine', 0, '', $conf->entity);
     // Use vat for invoice creation
-    if ($conf->facture->enabled)
-    {
+    if ($conf->facture->enabled) {
         $res4=dolibarr_set_const($db, 'ADHERENT_VAT_FOR_SUBSCRIPTIONS', GETPOST('ADHERENT_VAT_FOR_SUBSCRIPTIONS', 'alpha'), 'chaine', 0, '', $conf->entity);
         $res5=dolibarr_set_const($db, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', GETPOST('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', 'alpha'), 'chaine', 0, '', $conf->entity);
-        if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
-        {
+        if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) {
             $res6=dolibarr_set_const($db, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', GETPOST('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', 'alpha'), 'chaine', 0, '', $conf->entity);
         }
     }
-    if ($res1 < 0 || $res2 < 0 || $res3 < 0 || $res4 < 0 || $res5 < 0 || $res6 < 0)
-    {
+    if ($res1 < 0 || $res2 < 0 || $res3 < 0 || $res4 < 0 || $res5 < 0 || $res6 < 0) {
         setEventMessages('ErrorFailedToSaveDate', null, 'errors');
         $db->rollback();
-    }
-    else
-    {
+    } else {
         setEventMessages('RecordModifiedSuccessfully', null, 'mesgs');
         $db->commit();
     }
 }
 
 // Action to update or add a constant
-if ($action == 'update' || $action == 'add')
-{
-	$constname=GETPOST('constname', 'alpha');
-	$constvalue=(GETPOST('constvalue_'.$constname) ? GETPOST('constvalue_'.$constname) : GETPOST('constvalue'));
+if ($action == 'update' || $action == 'add') {
+    $constname=GETPOST('constname', 'alpha');
+    $constvalue=(GETPOST('constvalue_'.$constname) ? GETPOST('constvalue_'.$constname) : GETPOST('constvalue'));
 
-	if (($constname=='ADHERENT_CARD_TYPE' || $constname=='ADHERENT_ETIQUETTE_TYPE' || $constname=='ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS') && $constvalue == -1) $constvalue='';
-	if ($constname=='ADHERENT_LOGIN_NOT_REQUIRED') // Invert choice
-	{
-		if ($constvalue) $constvalue=0;
-		else $constvalue=1;
-	}
+    if (($constname=='ADHERENT_CARD_TYPE' || $constname=='ADHERENT_ETIQUETTE_TYPE' || $constname=='ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS') && $constvalue == -1) {
+        $constvalue='';
+    }
+    if ($constname=='ADHERENT_LOGIN_NOT_REQUIRED') { // Invert choice
+        if ($constvalue) {
+            $constvalue=0;
+        } else {
+            $constvalue=1;
+        }
+    }
 
-	$consttype=GETPOST('consttype', 'alpha');
-	$constnote=GETPOST('constnote');
-	$res=dolibarr_set_const($db, $constname, $constvalue, $type[$consttype], 0, $constnote, $conf->entity);
+    $consttype=GETPOST('consttype', 'alpha');
+    $constnote=GETPOST('constnote');
+    $res=dolibarr_set_const($db, $constname, $constvalue, $type[$consttype], 0, $constnote, $conf->entity);
 
-	if (! $res > 0) $error++;
+    if (! $res > 0) {
+        $error++;
+    }
 
-	if (! $error)
-	{
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
-		setEventMessages($langs->trans("Error"), null, 'errors');
-	}
+    if (! $error) {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    } else {
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
 }
 
 // Action to enable of a submodule of the adherent module
-if ($action == 'set')
-{
+if ($action == 'set') {
     $result=dolibarr_set_const($db, GETPOST('name', 'alpha'), GETPOST('value'), '', 0, '', $conf->entity);
-    if ($result < 0)
-    {
+    if ($result < 0) {
         print $db->error();
     }
 }
 
 // Action to disable a submodule of the adherent module
-if ($action == 'unset')
-{
+if ($action == 'unset') {
     $result=dolibarr_del_const($db, GETPOST('name', 'alpha'), $conf->entity);
-    if ($result < 0)
-    {
+    if ($result < 0) {
         print $db->error();
     }
 }
@@ -178,44 +172,44 @@ print "</td></tr>\n";
 // Insert subscription into bank account
 print '<tr class="oddeven"><td>'.$langs->trans("MoreActionsOnSubscription").'</td>';
 $arraychoices=array('0'=>$langs->trans("None"));
-if (! empty($conf->banque->enabled)) $arraychoices['bankdirect']=$langs->trans("MoreActionBankDirect");
-if (! empty($conf->banque->enabled) && ! empty($conf->societe->enabled) && ! empty($conf->facture->enabled)) $arraychoices['invoiceonly']=$langs->trans("MoreActionInvoiceOnly");
-if (! empty($conf->banque->enabled) && ! empty($conf->societe->enabled) && ! empty($conf->facture->enabled)) $arraychoices['bankviainvoice']=$langs->trans("MoreActionBankViaInvoice");
+if (! empty($conf->banque->enabled)) {
+    $arraychoices['bankdirect']=$langs->trans("MoreActionBankDirect");
+}
+if (! empty($conf->banque->enabled) && ! empty($conf->societe->enabled) && ! empty($conf->facture->enabled)) {
+    $arraychoices['invoiceonly']=$langs->trans("MoreActionInvoiceOnly");
+}
+if (! empty($conf->banque->enabled) && ! empty($conf->societe->enabled) && ! empty($conf->facture->enabled)) {
+    $arraychoices['bankviainvoice']=$langs->trans("MoreActionBankViaInvoice");
+}
 print '<td>';
 print $form->selectarray('ADHERENT_BANK_USE', $arraychoices, $conf->global->ADHERENT_BANK_USE, 0);
-if ($conf->global->ADHERENT_BANK_USE == 'bankdirect' || $conf->global->ADHERENT_BANK_USE == 'bankviainvoice')
-{
+if ($conf->global->ADHERENT_BANK_USE == 'bankdirect' || $conf->global->ADHERENT_BANK_USE == 'bankviainvoice') {
     print '<br><div style="padding-top: 5px;"><span class="opacitymedium">'.$langs->trans("ABankAccountMustBeDefinedOnPaymentModeSetup").'</span></div>';
 }
 print '</td>';
 print "</tr>\n";
 
 // Use vat for invoice creation
-if ($conf->facture->enabled)
-{
-	print '<tr class="oddeven"><td>'.$langs->trans("VATToUseForSubscriptions").'</td>';
-	if (! empty($conf->banque->enabled))
-	{
-		print '<td>';
-		print $form->selectarray('ADHERENT_VAT_FOR_SUBSCRIPTIONS', array('0'=>$langs->trans("NoVatOnSubscription"),'defaultforfoundationcountry'=>$langs->trans("Default")), (empty($conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS)?'0':$conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS), 0);
-		print '</td>';
-	}
-	else
-	{
-		print '<td class="right">';
-		print $langs->trans("WarningModuleNotActive", $langs->transnoentities("Module85Name"));
-		print '</td>';
-	}
-	print "</tr>\n";
+if ($conf->facture->enabled) {
+    print '<tr class="oddeven"><td>'.$langs->trans("VATToUseForSubscriptions").'</td>';
+    if (! empty($conf->banque->enabled)) {
+        print '<td>';
+        print $form->selectarray('ADHERENT_VAT_FOR_SUBSCRIPTIONS', array('0'=>$langs->trans("NoVatOnSubscription"),'defaultforfoundationcountry'=>$langs->trans("Default")), (empty($conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS)?'0':$conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS), 0);
+        print '</td>';
+    } else {
+        print '<td class="right">';
+        print $langs->trans("WarningModuleNotActive", $langs->transnoentities("Module85Name"));
+        print '</td>';
+    }
+    print "</tr>\n";
 
-	if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
-	{
-		print '<tr class="oddeven"><td>'.$langs->trans("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS").'</td>';
-		print '<td>';
-		$form->select_produits($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', '', 0);
-		print '</td>';
-	}
-	print "</tr>\n";
+    if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) {
+        print '<tr class="oddeven"><td>'.$langs->trans("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS").'</td>';
+        print '<td>';
+        $form->select_produits($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', '', 0);
+        print '</td>';
+    }
+    print "</tr>\n";
 }
 
 print '</table>';
@@ -233,13 +227,13 @@ print '<br>';
  * Edit info of model document
  */
 $constantes=array(
-		'ADHERENT_CARD_TYPE',
+        'ADHERENT_CARD_TYPE',
 //		'ADHERENT_CARD_BACKGROUND',
-		'ADHERENT_CARD_HEADER_TEXT',
-		'ADHERENT_CARD_TEXT',
-		'ADHERENT_CARD_TEXT_RIGHT',
-		'ADHERENT_CARD_FOOTER_TEXT'
-		);
+        'ADHERENT_CARD_HEADER_TEXT',
+        'ADHERENT_CARD_TEXT',
+        'ADHERENT_CARD_TEXT_RIGHT',
+        'ADHERENT_CARD_FOOTER_TEXT'
+        );
 
 print load_fiche_titre($langs->trans("MembersCards"), '', '');
 

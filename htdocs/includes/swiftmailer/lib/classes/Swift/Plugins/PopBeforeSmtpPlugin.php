@@ -134,7 +134,12 @@ class Swift_Plugins_PopBeforeSmtpPlugin implements Swift_Events_TransportChangeL
         } else {
             if (!isset($this->socket)) {
                 if (!$socket = fsockopen(
-                    $this->getHostString(), $this->port, $errno, $errstr, $this->timeout)) {
+                    $this->getHostString(),
+                    $this->port,
+                    $errno,
+                    $errstr,
+                    $this->timeout
+                )) {
                     throw new Swift_Plugins_Pop_Pop3Exception(
                         sprintf('Failed to connect to POP3 host [%s]: %s', $this->host, $errstr)
                     );

@@ -903,7 +903,7 @@ class Printer
     public function setPrintWidth($width = 512)
     {
         self::validateInteger($width, 1, 65535, __FUNCTION__);
-         $this -> connector -> write(Printer::GS . 'W' . self::intLowHigh($width, 2));
+        $this -> connector -> write(Printer::GS . 'W' . self::intLowHigh($width, 2));
     }
 
     /**

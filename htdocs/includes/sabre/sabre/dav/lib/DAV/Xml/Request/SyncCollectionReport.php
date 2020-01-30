@@ -18,7 +18,8 @@ use Sabre\Xml\XmlDeserializable;
  * @author Evert Pot (http://www.rooftopsolutions.nl/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class SyncCollectionReport implements XmlDeserializable {
+class SyncCollectionReport implements XmlDeserializable
+{
 
     /**
      * The sync-token the client supplied for the report.
@@ -69,8 +70,8 @@ class SyncCollectionReport implements XmlDeserializable {
      * @param Reader $reader
      * @return mixed
      */
-    static function xmlDeserialize(Reader $reader) {
-
+    public static function xmlDeserialize(Reader $reader)
+    {
         $self = new self();
 
         $reader->pushContext();
@@ -106,17 +107,13 @@ class SyncCollectionReport implements XmlDeserializable {
         }
 
         if (isset($elems['{DAV:}sync-level'])) {
-
             $value = $elems['{DAV:}sync-level'];
             if ($value === 'infinity') {
                 $value = \Sabre\DAV\Server::DEPTH_INFINITY;
             }
             $self->syncLevel = $value;
-
         }
 
         return $self;
-
     }
-
 }

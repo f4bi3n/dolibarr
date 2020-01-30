@@ -15,8 +15,8 @@ use Sabre\Xml\Writer;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class SystemStatus implements NotificationInterface {
-
+class SystemStatus implements NotificationInterface
+{
     const TYPE_LOW = 1;
     const TYPE_MEDIUM = 2;
     const TYPE_HIGH = 3;
@@ -68,14 +68,13 @@ class SystemStatus implements NotificationInterface {
      * @param string $description
      * @param string $href
      */
-    function __construct($id, $etag, $type = self::TYPE_HIGH, $description = null, $href = null) {
-
+    public function __construct($id, $etag, $type = self::TYPE_HIGH, $description = null, $href = null)
+    {
         $this->id = $id;
         $this->type = $type;
         $this->description = $description;
         $this->href = $href;
         $this->etag = $etag;
-
     }
 
     /**
@@ -93,17 +92,17 @@ class SystemStatus implements NotificationInterface {
      * @param Writer $writer
      * @return void
      */
-    function xmlSerialize(Writer $writer) {
-
+    public function xmlSerialize(Writer $writer)
+    {
         switch ($this->type) {
-            case self::TYPE_LOW :
+            case self::TYPE_LOW:
                 $type = 'low';
                 break;
-            case self::TYPE_MEDIUM :
+            case self::TYPE_MEDIUM:
                 $type = 'medium';
                 break;
-            default :
-            case self::TYPE_HIGH :
+            default:
+            case self::TYPE_HIGH:
                 $type = 'high';
                 break;
         }
@@ -111,7 +110,6 @@ class SystemStatus implements NotificationInterface {
         $writer->startElement('{' . Plugin::NS_CALENDARSERVER . '}systemstatus');
         $writer->writeAttribute('type', $type);
         $writer->endElement();
-
     }
 
     /**
@@ -121,18 +119,18 @@ class SystemStatus implements NotificationInterface {
      * @param Writer $writer
      * @return void
      */
-    function xmlSerializeFull(Writer $writer) {
-
+    public function xmlSerializeFull(Writer $writer)
+    {
         $cs = '{' . Plugin::NS_CALENDARSERVER . '}';
         switch ($this->type) {
-            case self::TYPE_LOW :
+            case self::TYPE_LOW:
                 $type = 'low';
                 break;
-            case self::TYPE_MEDIUM :
+            case self::TYPE_MEDIUM:
                 $type = 'medium';
                 break;
-            default :
-            case self::TYPE_HIGH :
+            default:
+            case self::TYPE_HIGH:
                 $type = 'high';
                 break;
         }
@@ -149,7 +147,6 @@ class SystemStatus implements NotificationInterface {
         }
 
         $writer->endElement(); // systemstatus
-
     }
 
     /**
@@ -160,10 +157,9 @@ class SystemStatus implements NotificationInterface {
      *
      * @return string
      */
-    function getId() {
-
+    public function getId()
+    {
         return $this->id;
-
     }
 
     /*
@@ -173,10 +169,8 @@ class SystemStatus implements NotificationInterface {
      *
      * @return string
      */
-    function getETag() {
-
+    public function getETag()
+    {
         return $this->etag;
-
     }
-
 }

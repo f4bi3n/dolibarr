@@ -18,8 +18,8 @@ use Sabre\Xml as SabreXml;
  * @author Ivan Enderlin
  * @license http://sabre.io/license/ Modified BSD License
  */
-class XML extends Parser {
-
+class XML extends Parser
+{
     const XCAL_NAMESPACE = 'urn:ietf:params:xml:ns:icalendar-2.0';
     const XCARD_NAMESPACE = 'urn:ietf:params:xml:ns:vcard-4.0';
 
@@ -54,14 +54,13 @@ class XML extends Parser {
      *
      * @return void
      */
-    function __construct($input = null, $options = 0) {
-
+    public function __construct($input = null, $options = 0)
+    {
         if (0 === $options) {
             $options = parent::OPTION_FORGIVING;
         }
 
         parent::__construct($input, $options);
-
     }
 
     /**
@@ -74,8 +73,8 @@ class XML extends Parser {
      *
      * @return Sabre\VObject\Document
      */
-    function parse($input = null, $options = 0) {
-
+    public function parse($input = null, $options = 0)
+    {
         if (!is_null($input)) {
             $this->setInput($input);
         }
@@ -98,14 +97,12 @@ class XML extends Parser {
 
             case '{' . self::XCARD_NAMESPACE . '}vcards':
                 foreach ($this->input['value'] as &$vCard) {
-
                     $this->root = new VCard(['version' => '4.0'], false);
                     $this->pointer = &$vCard;
                     $this->parseVCardComponents($this->root);
 
                     // We just parse the first <vcard /> element.
                     break;
-
                 }
                 break;
 
@@ -124,10 +121,9 @@ class XML extends Parser {
      *
      * @return void
      */
-    protected function parseVCalendarComponents(Component $parentComponent) {
-
+    protected function parseVCalendarComponents(Component $parentComponent)
+    {
         foreach ($this->pointer['value'] ?: [] as $children) {
-
             switch (static::getTagName($children['name'])) {
 
                 case 'properties':
@@ -141,7 +137,6 @@ class XML extends Parser {
                     break;
             }
         }
-
     }
 
     /**
@@ -151,11 +146,10 @@ class XML extends Parser {
      *
      * @return void
      */
-    protected function parseVCardComponents(Component $parentComponent) {
-
+    protected function parseVCardComponents(Component $parentComponent)
+    {
         $this->pointer = &$this->pointer['value'];
         $this->parseProperties($parentComponent);
-
     }
 
     /**
@@ -166,10 +160,9 @@ class XML extends Parser {
      *
      * @return void
      */
-    protected function parseProperties(Component $parentComponent, $propertyNamePrefix = '') {
-
+    protected function parseProperties(Component $parentComponent, $propertyNamePrefix = '')
+    {
         foreach ($this->pointer ?: [] as $xmlProperty) {
-
             list($namespace, $tagName) = SabreXml\Service::parseClarkNotation($xmlProperty['name']);
 
             $propertyName = $tagName;
@@ -180,7 +173,6 @@ class XML extends Parser {
             // A property which is not part of the standard.
             if ($namespace !== self::XCAL_NAMESPACE
                 && $namespace !== self::XCARD_NAMESPACE) {
-
                 $propertyName = 'xml';
                 $value = '<' . $tagName . ' xmlns="' . $namespace . '"';
 
@@ -205,7 +197,6 @@ class XML extends Parser {
 
             // xCard group.
             if ($propertyName === 'group') {
-
                 if (!isset($xmlProperty['attributes']['name'])) {
                     continue;
                 }
@@ -217,20 +208,18 @@ class XML extends Parser {
                 );
 
                 continue;
-
             }
 
             // Collect parameters.
             foreach ($xmlProperty['value'] as $i => $xmlPropertyChild) {
-
                 if (!is_array($xmlPropertyChild)
-                    || 'parameters' !== static::getTagName($xmlPropertyChild['name']))
+                    || 'parameters' !== static::getTagName($xmlPropertyChild['name'])) {
                     continue;
+                }
 
                 $xmlParameters = $xmlPropertyChild['value'];
 
                 foreach ($xmlParameters as $xmlParameter) {
-
                     $propertyParameterValues = [];
 
                     foreach ($xmlParameter['value'] as $xmlParameterValues) {
@@ -239,11 +228,9 @@ class XML extends Parser {
 
                     $propertyParameters[static::getTagName($xmlParameter['name'])]
                         = implode(',', $propertyParameterValues);
-
                 }
 
                 array_splice($xmlProperty['value'], $i, 1);
-
             }
 
             $propertyNameExtended = ($this->root instanceof VCalendar
@@ -277,6 +264,7 @@ class XML extends Parser {
                     // We don't break because we only want to set
                     // another property type.
 
+                    // no break
                 case 'xcal:categories':
                 case 'xcal:resources':
                 case 'xcal:exdate':
@@ -290,16 +278,12 @@ class XML extends Parser {
                     $propertyType = 'date-time';
 
                     foreach ($xmlProperty['value'] as $specialChild) {
-
                         $tagName = static::getTagName($specialChild['name']);
 
                         if ('period' === $tagName) {
-
                             $propertyParameters['value'] = 'PERIOD';
                             $propertyValue[] = implode('/', $specialChild['value']);
-
-                        }
-                        else {
+                        } else {
                             $propertyValue[] = $specialChild['value'];
                         }
                     }
@@ -325,9 +309,7 @@ class XML extends Parser {
                 $propertyType,
                 $propertyValue
             );
-
         }
-
     }
 
     /**
@@ -337,12 +319,11 @@ class XML extends Parser {
      *
      * @return void
      */
-    protected function parseComponent(Component $parentComponent) {
-
+    protected function parseComponent(Component $parentComponent)
+    {
         $components = $this->pointer['value'] ?: [];
 
         foreach ($components as $component) {
-
             $componentName = static::getTagName($component['name']);
             $currentComponent = $this->root->createComponent(
                 $componentName,
@@ -354,9 +335,7 @@ class XML extends Parser {
             $this->parseVCalendarComponents($currentComponent);
 
             $parentComponent->add($currentComponent);
-
         }
-
     }
 
     /**
@@ -370,8 +349,8 @@ class XML extends Parser {
      *
      * @return void
      */
-    protected function createProperty(Component $parentComponent, $name, $parameters, $type, $value) {
-
+    protected function createProperty(Component $parentComponent, $name, $parameters, $type, $value)
+    {
         $property = $this->root->createProperty(
             $name,
             null,
@@ -380,7 +359,6 @@ class XML extends Parser {
         );
         $parentComponent->add($property);
         $property->setXmlValue($value);
-
     }
 
     /**
@@ -390,14 +368,13 @@ class XML extends Parser {
      *
      * @return void
      */
-    function setInput($input) {
-
+    public function setInput($input)
+    {
         if (is_resource($input)) {
             $input = stream_get_contents($input);
         }
 
         if (is_string($input)) {
-
             $reader = new SabreXml\Reader();
             $reader->elementMap['{' . self::XCAL_NAMESPACE . '}period']
                 = 'Sabre\VObject\Parser\XML\Element\KeyValue';
@@ -405,11 +382,9 @@ class XML extends Parser {
                 = 'Sabre\VObject\Parser\XML\Element\KeyValue';
             $reader->xml($input);
             $input = $reader->parse();
-
         }
 
         $this->input = $input;
-
     }
 
     /**
@@ -419,10 +394,9 @@ class XML extends Parser {
      *
      * @return string
      */
-    protected static function getTagName($clarkedTagName) {
-
+    protected static function getTagName($clarkedTagName)
+    {
         list(, $tagName) = SabreXml\Service::parseClarkNotation($clarkedTagName);
         return $tagName;
-
     }
 }

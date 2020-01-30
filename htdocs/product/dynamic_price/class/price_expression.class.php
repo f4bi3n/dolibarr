@@ -80,8 +80,12 @@ class PriceExpression
         $error=0;
 
         // Clean parameters
-        if (isset($this->title)) $this->title=trim($this->title);
-        if (isset($this->expression)) $this->expression=trim($this->expression);
+        if (isset($this->title)) {
+            $this->title=trim($this->title);
+        }
+        if (isset($this->expression)) {
+            $this->expression=trim($this->expression);
+        }
 
         // Insert request
         $sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element." (";
@@ -95,10 +99,12 @@ class PriceExpression
 
         dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
-        if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+        if (! $resql) {
+            $error++;
+            $this->errors[]="Error ".$this->db->lasterror();
+        }
 
-        if (! $error)
-        {
+        if (! $error) {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
 
             //if (! $notrigger)
@@ -114,18 +120,14 @@ class PriceExpression
         }
 
         // Commit or rollback
-        if ($error)
-        {
-            foreach($this->errors as $errmsg)
-            {
+        if ($error) {
+            foreach ($this->errors as $errmsg) {
                 dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
                 $this->error.=($this->error?', '.$errmsg:$errmsg);
             }
             $this->db->rollback();
             return -1*$error;
-        }
-        else
-        {
+        } else {
             $this->db->commit();
             return $this->id;
         }
@@ -141,8 +143,7 @@ class PriceExpression
     public function fetch($id)
     {
         // Check parameters
-        if (empty($id))
-        {
+        if (empty($id)) {
             $this->error='ErrorWrongParameters';
             return -1;
         }
@@ -153,24 +154,18 @@ class PriceExpression
 
         dol_syslog(__METHOD__);
         $resql=$this->db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             $obj = $this->db->fetch_object($resql);
-            if ($obj)
-            {
+            if ($obj) {
                 $this->id			= $id;
                 $this->title		= $obj->title;
                 $this->expression	= $obj->expression;
                 return 1;
-            }
-            else
-            {
+            } else {
                 return 0;
             }
-        }
-        else
-        {
-              $this->error="Error ".$this->db->lasterror();
+        } else {
+            $this->error="Error ".$this->db->lasterror();
             return -1;
         }
     }
@@ -190,12 +185,10 @@ class PriceExpression
 
         dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             $retarray = array();
 
-            while ($record = $this->db->fetch_array($resql))
-            {
+            while ($record = $this->db->fetch_array($resql)) {
                 $price_expression_obj = new PriceExpression($this->db);
                 $price_expression_obj->id			= $record["rowid"];
                 $price_expression_obj->title		= $record["title"];
@@ -205,9 +198,7 @@ class PriceExpression
 
             $this->db->free($resql);
             return $retarray;
-        }
-        else
-        {
+        } else {
             $this->error=$this->db->error();
             return -1;
         }
@@ -230,21 +221,15 @@ class PriceExpression
 
         dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             $obj = $this->db->fetch_object($resql);
-            if ($obj)
-            {
+            if ($obj) {
                 return (int) $obj->rowid;
-            }
-            else
-            {
+            } else {
                 return 0;
             }
-        }
-        else
-        {
-              $this->error="Error ".$this->db->lasterror();
+        } else {
+            $this->error="Error ".$this->db->lasterror();
             return -1;
         }
     }
@@ -262,8 +247,12 @@ class PriceExpression
         $error=0;
 
         // Clean parameters
-        if (isset($this->title)) $this->title=trim($this->title);
-        if (isset($this->expression)) $this->expression=trim($this->expression);
+        if (isset($this->title)) {
+            $this->title=trim($this->title);
+        }
+        if (isset($this->expression)) {
+            $this->expression=trim($this->expression);
+        }
 
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
@@ -275,7 +264,10 @@ class PriceExpression
 
         dol_syslog(__METHOD__);
         $resql = $this->db->query($sql);
-        if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+        if (! $resql) {
+            $error++;
+            $this->errors[]="Error ".$this->db->lasterror();
+        }
 
         // if (! $error)
         // {
@@ -292,31 +284,27 @@ class PriceExpression
         // }
 
         // Commit or rollback
-        if ($error)
-        {
-            foreach($this->errors as $errmsg)
-            {
+        if ($error) {
+            foreach ($this->errors as $errmsg) {
                 dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
                 $this->error.=($this->error?', '.$errmsg:$errmsg);
             }
             $this->db->rollback();
             return -1*$error;
-        }
-        else
-        {
+        } else {
             $this->db->commit();
             return 1;
         }
     }
 
 
-     /**
-     *  Delete object in database
-     *
-     *	@param  User	$user        User that deletes
-     *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-     *  @return	int					 <0 if KO, >0 if OK
-     */
+    /**
+    *  Delete object in database
+    *
+    *	@param  User	$user        User that deletes
+    *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
+    *  @return	int					 <0 if KO, >0 if OK
+    */
     public function delete(User $user, $notrigger = 0)
     {
         $error=0;
@@ -329,39 +317,37 @@ class PriceExpression
         //{
         //    if (! $notrigger)
         //    {
-                // Uncomment this and change MYOBJECT to your own tag if you
-                // want this action calls a trigger.
+        // Uncomment this and change MYOBJECT to your own tag if you
+        // want this action calls a trigger.
 
-                //// Call triggers
-                //$result=$this->call_trigger('MYOBJECT_DELETE',$user);
-                //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-                //// End call triggers
+        //// Call triggers
+        //$result=$this->call_trigger('MYOBJECT_DELETE',$user);
+        //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+        //// End call triggers
         //    }
         //}
 
-        if (! $error)
-        {
+        if (! $error) {
             $sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
             $sql.= " WHERE rowid = ".$rowid;
 
             dol_syslog(__METHOD__);
             $resql = $this->db->query($sql);
-            if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+            if (! $resql) {
+                $error++;
+                $this->errors[]="Error ".$this->db->lasterror();
+            }
         }
 
         // Commit or rollback
-        if ($error)
-        {
-            foreach($this->errors as $errmsg)
-            {
+        if ($error) {
+            foreach ($this->errors as $errmsg) {
                 dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
                 $this->error.=($this->error?', '.$errmsg:$errmsg);
             }
             $this->db->rollback();
             return -1*$error;
-        }
-        else
-        {
+        } else {
             $this->db->commit();
             return 1;
         }

@@ -12,6 +12,6 @@ namespace Sabre\Uri;
  * @author Evert Pot (https://evertpot.com/)
  * @license http://sabre.io/license/
  */
-class InvalidUriException extends \Exception {
-
+class InvalidUriException extends \Exception
+{
 }

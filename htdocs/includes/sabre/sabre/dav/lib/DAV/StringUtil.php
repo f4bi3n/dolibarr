@@ -13,7 +13,8 @@ namespace Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class StringUtil {
+class StringUtil
+{
 
     /**
      * Checks if a needle occurs in a haystack ;)
@@ -24,46 +25,45 @@ class StringUtil {
      * @param string $matchType
      * @return bool
      */
-    static function textMatch($haystack, $needle, $collation, $matchType = 'contains') {
-
+    public static function textMatch($haystack, $needle, $collation, $matchType = 'contains')
+    {
         switch ($collation) {
 
-            case 'i;ascii-casemap' :
+            case 'i;ascii-casemap':
                 // default strtolower takes locale into consideration
                 // we don't want this.
                 $haystack = str_replace(range('a', 'z'), range('A', 'Z'), $haystack);
                 $needle = str_replace(range('a', 'z'), range('A', 'Z'), $needle);
                 break;
 
-            case 'i;octet' :
+            case 'i;octet':
                 // Do nothing
                 break;
 
-            case 'i;unicode-casemap' :
+            case 'i;unicode-casemap':
                 $haystack = mb_strtoupper($haystack, 'UTF-8');
                 $needle = mb_strtoupper($needle, 'UTF-8');
                 break;
 
-            default :
+            default:
                 throw new Exception\BadRequest('Collation type: ' . $collation . ' is not supported');
 
         }
 
         switch ($matchType) {
 
-            case 'contains' :
+            case 'contains':
                 return strpos($haystack, $needle) !== false;
-            case 'equals' :
+            case 'equals':
                 return $haystack === $needle;
-            case 'starts-with' :
+            case 'starts-with':
                 return strpos($haystack, $needle) === 0;
-            case 'ends-with' :
+            case 'ends-with':
                 return strrpos($haystack, $needle) === strlen($haystack) - strlen($needle);
-            default :
+            default:
                 throw new Exception\BadRequest('Match-type: ' . $matchType . ' is not supported');
 
         }
-
     }
 
     /**
@@ -76,8 +76,8 @@ class StringUtil {
      * @param string $input
      * @return string
      */
-    static function ensureUTF8($input) {
-
+    public static function ensureUTF8($input)
+    {
         $encoding = mb_detect_encoding($input, ['UTF-8', 'ISO-8859-1'], true);
 
         if ($encoding === 'ISO-8859-1') {
@@ -85,7 +85,5 @@ class StringUtil {
         } else {
             return $input;
         }
-
     }
-
 }

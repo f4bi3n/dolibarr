@@ -33,7 +33,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin","receiptprinter"));
 
-if (! $user->admin) accessforbidden();
+if (! $user->admin) {
+    accessforbidden();
+}
 
 $action = GETPOST('action', 'alpha');
 $mode = GETPOST('mode', 'alpha');
@@ -48,7 +50,9 @@ $templateid = GETPOST('templateid', 'int');
 
 $printer = new dolReceiptPrinter($db);
 
-if (!$mode) $mode='config';
+if (!$mode) {
+    $mode='config';
+}
 
 // used in library escpos maybe useful if php doesn't support gzdecode
 if (!function_exists('gzdecode')) {
@@ -82,15 +86,14 @@ if ($action == 'addprinter' && $user->admin) {
 
     if (! $error) {
         $result= $printer->addPrinter($printername, GETPOST('printertypeid', 'int'), GETPOST('printerprofileid', 'int'), $parameter);
-        if ($result > 0) $error++;
+        if ($result > 0) {
+            $error++;
+        }
 
-        if (! $error)
-        {
+        if (! $error) {
             $db->commit();
             setEventMessages($langs->trans("PrinterAdded", $printername), null);
-        }
-        else
-        {
+        } else {
             $db->rollback();
             dol_print_error($db);
         }
@@ -108,15 +111,14 @@ if ($action == 'deleteprinter' && $user->admin) {
 
     if (! $error) {
         $result= $printer->deletePrinter($printerid);
-        if ($result > 0) $error++;
+        if ($result > 0) {
+            $error++;
+        }
 
-        if (! $error)
-        {
+        if (! $error) {
             $db->commit();
             setEventMessages($langs->trans("PrinterDeleted", $printername), null);
-        }
-        else
-        {
+        } else {
             $db->rollback();
             dol_print_error($db);
         }
@@ -134,7 +136,9 @@ if ($action == 'updateprinter' && $user->admin) {
 
     if (! $error) {
         $result= $printer->updatePrinter($printername, GETPOST('printertypeid', 'int'), GETPOST('printerprofileid', 'int'), $parameter, $printerid);
-        if ($result > 0) $error++;
+        if ($result > 0) {
+            $error++;
+        }
 
         if (! $error) {
             $db->commit();
@@ -174,12 +178,12 @@ if ($action == 'testtemplate' && $user->admin) {
     // }
 
     // if (! $error) {
-	// test
-	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-	$object = new Facture($db);
-	//$object->initAsSpecimen();
-	$object->fetch(18);
-	//var_dump($object->lines);
+    // test
+    require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+    $object = new Facture($db);
+    //$object->initAsSpecimen();
+    $object->fetch(18);
+    //var_dump($object->lines);
     $ret = $printer->sendToPrinter($object, $templateid, 1);
     if ($ret == 0) {
         setEventMessages($langs->trans("TestTemplateToPrinter", $printername), null);
@@ -200,7 +204,9 @@ if ($action == 'updatetemplate' && $user->admin) {
 
     if (! $error) {
         $result= $printer->updateTemplate($templatename, $template, $templateid);
-        if ($result > 0) $error++;
+        if ($result > 0) {
+            $error++;
+        }
 
         if (! $error) {
             $db->commit();
@@ -223,7 +229,9 @@ if ($action == 'addtemplate' && $user->admin) {
 
     if (! $error) {
         $result= $printer->addTemplate($templatename, $template);
-        if ($result > 0) $error++;
+        if ($result > 0) {
+            $error++;
+        }
 
         if (! $error) {
             $db->commit();
@@ -429,11 +437,11 @@ if ($mode == 'template' && $user->admin) {
 
     print '</table>';
     if ($action!='edittemplate') {
-		print '<input type="hidden" name="templateid" value="'.$printer->listprinterstemplates[$line]['rowid'].'">';
-		print '<td><input size="50" type="text" name="templatename" value="'.$printer->listprinterstemplates[$line]['name'].'"></td>';
-		print '<td><textarea name="template" wrap="soft" cols="120" rows="12">'.$printer->listprinterstemplates[$line]['template'].'</textarea>';
-		print '</td>';
-		print '<td></td>';
+        print '<input type="hidden" name="templateid" value="'.$printer->listprinterstemplates[$line]['rowid'].'">';
+        print '<td><input size="50" type="text" name="templatename" value="'.$printer->listprinterstemplates[$line]['name'].'"></td>';
+        print '<td><textarea name="template" wrap="soft" cols="120" rows="12">'.$printer->listprinterstemplates[$line]['template'].'</textarea>';
+        print '</td>';
+        print '<td></td>';
 
         print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Add")).'"></div>';
     } else {

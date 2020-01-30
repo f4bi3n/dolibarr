@@ -29,53 +29,60 @@
  */
 function expensereport_prepare_head($object)
 {
-	global $db, $langs, $conf;
+    global $db, $langs, $conf;
 
-	$h = 0;
-	$head = array();
+    $h = 0;
+    $head = array();
 
-	$head[$h][0] = DOL_URL_ROOT . '/expensereport/card.php?id=' . $object->id;
-	$head[$h][1] = $langs->trans("Card");
-	$head[$h][2] = 'card';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT . '/expensereport/card.php?id=' . $object->id;
+    $head[$h][1] = $langs->trans("Card");
+    $head[$h][2] = 'card';
+    $h++;
 
-	// Show more tabs from modules
-	// Entries must be declared in modules descriptor with line
+    // Show more tabs from modules
+    // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'expensereport');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'expensereport');
 
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-	$upload_dir = $conf->expensereport->dir_output . "/" . dol_sanitizeFileName($object->ref);
-	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
+    $upload_dir = $conf->expensereport->dir_output . "/" . dol_sanitizeFileName($object->ref);
+    $nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
     $nbLinks=Link::count($db, $object->element, $object->id);
-	$head[$h][0] = DOL_URL_ROOT.'/expensereport/document.php?id='.$object->id;
-	$head[$h][1] = $langs->trans('Documents');
-	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.($nbFiles+$nbLinks).'</span>';
-	$head[$h][2] = 'documents';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/expensereport/document.php?id='.$object->id;
+    $head[$h][1] = $langs->trans('Documents');
+    if (($nbFiles+$nbLinks) > 0) {
+        $head[$h][1].= '<span class="badge marginleftonlyshort">'.($nbFiles+$nbLinks).'</span>';
+    }
+    $head[$h][2] = 'documents';
+    $h++;
 
-	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
-	{
-	    $nbNote = 0;
-	    if(!empty($object->note_private)) $nbNote++;
-	    if(!empty($object->note_public)) $nbNote++;
-	    $head[$h][0] = DOL_URL_ROOT.'/expensereport/note.php?id='.$object->id;
-	    $head[$h][1] = $langs->trans('Notes');
-	    if ($nbNote > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
-	    $head[$h][2] = 'note';
-	    $h++;
-	}
+    if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
+        $nbNote = 0;
+        if (!empty($object->note_private)) {
+            $nbNote++;
+        }
+        if (!empty($object->note_public)) {
+            $nbNote++;
+        }
+        $head[$h][0] = DOL_URL_ROOT.'/expensereport/note.php?id='.$object->id;
+        $head[$h][1] = $langs->trans('Notes');
+        if ($nbNote > 0) {
+            $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+        }
+        $head[$h][2] = 'note';
+        $h++;
+    }
 
-	$head[$h][0] = DOL_URL_ROOT . '/expensereport/info.php?id=' . $object->id;
-	$head[$h][1] = $langs->trans("Info");
-	$head[$h][2] = 'info';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT . '/expensereport/info.php?id=' . $object->id;
+    $head[$h][1] = $langs->trans("Info");
+    $head[$h][2] = 'info';
+    $h++;
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'expensereport', 'remove');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'expensereport', 'remove');
 
-	return $head;
+    return $head;
 }
 
 /**
@@ -87,16 +94,15 @@ function expensereport_prepare_head($object)
  */
 function payment_expensereport_prepare_head(PaymentExpenseReport $object)
 {
+    global $langs, $conf;
 
-	global $langs, $conf;
+    $h = 0;
+    $head = array();
 
-	$h = 0;
-	$head = array();
-
-	$head[$h][0] = DOL_URL_ROOT.'/expensereport/payment/card.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Card");
-	$head[$h][2] = 'payment';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/expensereport/payment/card.php?id='.$object->id;
+    $head[$h][1] = $langs->trans("Card");
+    $head[$h][2] = 'payment';
+    $h++;
 
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
@@ -104,14 +110,14 @@ function payment_expensereport_prepare_head(PaymentExpenseReport $object)
     // $this->tabs = array('entity:-tabname);   												to remove a tab
     complete_head_from_modules($conf, $langs, $object, $head, $h, 'payment_expensereport');
 
-	$head[$h][0] = DOL_URL_ROOT.'/expensereport/payment/info.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Info");
-	$head[$h][2] = 'info';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/expensereport/payment/info.php?id='.$object->id;
+    $head[$h][1] = $langs->trans("Info");
+    $head[$h][2] = 'info';
+    $h++;
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'payment_expensereport', 'remove');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'payment_expensereport', 'remove');
 
-	return $head;
+    return $head;
 }
 
 /**
@@ -121,53 +127,51 @@ function payment_expensereport_prepare_head(PaymentExpenseReport $object)
  */
 function expensereport_admin_prepare_head()
 {
-	global $langs, $conf, $user;
+    global $langs, $conf, $user;
 
-	$h = 0;
-	$head = array();
+    $h = 0;
+    $head = array();
 
-	$h = 0;
+    $h = 0;
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/expensereport.php";
-	$head[$h][1] = $langs->trans("ExpenseReports");
-	$head[$h][2] = 'expensereport';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT."/admin/expensereport.php";
+    $head[$h][1] = $langs->trans("ExpenseReports");
+    $head[$h][2] = 'expensereport';
+    $h++;
 
-	if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
-	{
-		$head[$h][0] = DOL_URL_ROOT."/admin/expensereport_ik.php";
-		$head[$h][1] = $langs->trans("ExpenseReportsIk");
-		$head[$h][2] = 'expenseik';
-		$h++;
-	}
+    if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
+        $head[$h][0] = DOL_URL_ROOT."/admin/expensereport_ik.php";
+        $head[$h][1] = $langs->trans("ExpenseReportsIk");
+        $head[$h][2] = 'expenseik';
+        $h++;
+    }
 
-	if (!empty($conf->global->MAIN_USE_EXPENSE_RULE))
-	{
-		$head[$h][0] = DOL_URL_ROOT."/admin/expensereport_rules.php";
-		$head[$h][1] = $langs->trans("ExpenseReportsRules");
-		$head[$h][2] = 'expenserules';
-		$h++;
-	}
+    if (!empty($conf->global->MAIN_USE_EXPENSE_RULE)) {
+        $head[$h][0] = DOL_URL_ROOT."/admin/expensereport_rules.php";
+        $head[$h][1] = $langs->trans("ExpenseReportsRules");
+        $head[$h][2] = 'expenserules';
+        $h++;
+    }
 
-	// Show more tabs from modules
-	// Entries must be declared in modules descriptor with line
-	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
-	complete_head_from_modules($conf, $langs, null, $head, $h, 'expensereport_admin');
+    // Show more tabs from modules
+    // Entries must be declared in modules descriptor with line
+    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+    // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
+    complete_head_from_modules($conf, $langs, null, $head, $h, 'expensereport_admin');
 
-	$head[$h][0] = DOL_URL_ROOT.'/admin/expensereport_extrafields.php';
-	$head[$h][1] = $langs->trans("ExtraFields");
+    $head[$h][0] = DOL_URL_ROOT.'/admin/expensereport_extrafields.php';
+    $head[$h][1] = $langs->trans("ExtraFields");
     $head[$h][2] = 'attributes';
     $h++;
 
     /*
-	$head[$h][0] = DOL_URL_ROOT.'/fichinter/admin/fichinterdet_extrafields.php';
-	$head[$h][1] = $langs->trans("ExtraFieldsLines");
+    $head[$h][0] = DOL_URL_ROOT.'/fichinter/admin/fichinterdet_extrafields.php';
+    $head[$h][1] = $langs->trans("ExtraFieldsLines");
     $head[$h][2] = 'attributesdet';
     $h++;
-	*/
+    */
 
-	complete_head_from_modules($conf, $langs, null, $head, $h, 'expensereport_admin', 'remove');
+    complete_head_from_modules($conf, $langs, null, $head, $h, 'expensereport_admin', 'remove');
 
     return $head;
 }

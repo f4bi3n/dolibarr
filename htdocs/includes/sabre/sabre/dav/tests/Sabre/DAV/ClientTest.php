@@ -7,36 +7,33 @@ use Sabre\HTTP\Response;
 
 require_once 'Sabre/DAV/ClientMock.php';
 
-class ClientTest extends \PHPUnit_Framework_TestCase {
-
-    function setUp() {
-
+class ClientTest extends \PHPUnit_Framework_TestCase
+{
+    public function setUp()
+    {
         if (!function_exists('curl_init')) {
             $this->markTestSkipped('CURL must be installed to test the client');
         }
-
     }
 
-    function testConstruct() {
-
+    public function testConstruct()
+    {
         $client = new ClientMock([
             'baseUri' => '/',
         ]);
         $this->assertInstanceOf('Sabre\DAV\ClientMock', $client);
-
     }
 
     /**
      * @expectedException InvalidArgumentException
      */
-    function testConstructNoBaseUri() {
-
+    public function testConstructNoBaseUri()
+    {
         $client = new ClientMock([]);
-
     }
 
-    function testAuth() {
-
+    public function testAuth()
+    {
         $client = new ClientMock([
             'baseUri'  => '/',
             'userName' => 'foo',
@@ -45,11 +42,10 @@ class ClientTest extends \PHPUnit_Framework_TestCase {
 
         $this->assertEquals("foo:bar", $client->curlSettings[CURLOPT_USERPWD]);
         $this->assertEquals(CURLAUTH_BASIC | CURLAUTH_DIGEST, $client->curlSettings[CURLOPT_HTTPAUTH]);
-
     }
 
-    function testBasicAuth() {
-
+    public function testBasicAuth()
+    {
         $client = new ClientMock([
             'baseUri'  => '/',
             'userName' => 'foo',
@@ -59,11 +55,10 @@ class ClientTest extends \PHPUnit_Framework_TestCase {
 
         $this->assertEquals("foo:bar", $client->curlSettings[CURLOPT_USERPWD]);
         $this->assertEquals(CURLAUTH_BASIC, $client->curlSettings[CURLOPT_HTTPAUTH]);
-
     }
 
-    function testDigestAuth() {
-
+    public function testDigestAuth()
+    {
         $client = new ClientMock([
             'baseUri'  => '/',
             'userName' => 'foo',
@@ -73,11 +68,10 @@ class ClientTest extends \PHPUnit_Framework_TestCase {
 
         $this->assertEquals("foo:bar", $client->curlSettings[CURLOPT_USERPWD]);
         $this->assertEquals(CURLAUTH_DIGEST, $client->curlSettings[CURLOPT_HTTPAUTH]);
-
     }
 
-    function testNTLMAuth() {
-
+    public function testNTLMAuth()
+    {
         $client = new ClientMock([
             'baseUri'  => '/',
             'userName' => 'foo',
@@ -87,33 +81,30 @@ class ClientTest extends \PHPUnit_Framework_TestCase {
 
         $this->assertEquals("foo:bar", $client->curlSettings[CURLOPT_USERPWD]);
         $this->assertEquals(CURLAUTH_NTLM, $client->curlSettings[CURLOPT_HTTPAUTH]);
-
     }
 
-    function testProxy() {
-
+    public function testProxy()
+    {
         $client = new ClientMock([
             'baseUri' => '/',
             'proxy'   => 'localhost:8888',
         ]);
 
         $this->assertEquals("localhost:8888", $client->curlSettings[CURLOPT_PROXY]);
-
     }
 
-    function testEncoding() {
-
+    public function testEncoding()
+    {
         $client = new ClientMock([
             'baseUri'  => '/',
             'encoding' => Client::ENCODING_IDENTITY | Client::ENCODING_GZIP | Client::ENCODING_DEFLATE,
         ]);
 
         $this->assertEquals("identity,deflate,gzip", $client->curlSettings[CURLOPT_ENCODING]);
-
     }
 
-    function testPropFind() {
-
+    public function testPropFind()
+    {
         $client = new ClientMock([
             'baseUri' => '/',
         ]);
@@ -145,25 +136,23 @@ XML;
             'Depth'        => ['0'],
             'Content-Type' => ['application/xml'],
         ], $request->getHeaders());
-
     }
 
     /**
      * @expectedException \Sabre\HTTP\ClientHttpException
      */
-    function testPropFindError() {
-
+    public function testPropFindError()
+    {
         $client = new ClientMock([
             'baseUri' => '/',
         ]);
 
         $client->response = new Response(405, []);
         $client->propFind('foo', ['{DAV:}displayname', '{urn:zim}gir']);
-
     }
 
-    function testPropFindDepth1() {
-
+    public function testPropFindDepth1()
+    {
         $client = new ClientMock([
             'baseUri' => '/',
         ]);
@@ -199,11 +188,10 @@ XML;
             'Depth'        => ['1'],
             'Content-Type' => ['application/xml'],
         ], $request->getHeaders());
-
     }
 
-    function testPropPatch() {
-
+    public function testPropPatch()
+    {
         $client = new ClientMock([
             'baseUri' => '/',
         ]);
@@ -232,30 +220,28 @@ XML;
         $this->assertEquals([
             'Content-Type' => ['application/xml'],
         ], $request->getHeaders());
-
     }
 
     /**
      * @depends testPropPatch
      * @expectedException \Sabre\HTTP\ClientHttpException
      */
-    function testPropPatchHTTPError() {
-
+    public function testPropPatchHTTPError()
+    {
         $client = new ClientMock([
             'baseUri' => '/',
         ]);
 
         $client->response = new Response(403, [], '');
         $client->propPatch('foo', ['{DAV:}displayname' => 'hi', '{urn:zim}gir' => null]);
-
     }
 
     /**
      * @depends testPropPatch
      * @expectedException Sabre\HTTP\ClientException
      */
-    function testPropPatchMultiStatusError() {
-
+    public function testPropPatchMultiStatusError()
+    {
         $client = new ClientMock([
             'baseUri' => '/',
         ]);
@@ -277,11 +263,10 @@ XML;
 
         $client->response = new Response(207, [], $responseBody);
         $client->propPatch('foo', ['{DAV:}displayname' => 'hi', '{urn:zim}gir' => null]);
-
     }
 
-    function testOPTIONS() {
-
+    public function testOPTIONS()
+    {
         $client = new ClientMock([
             'baseUri' => '/',
         ]);
@@ -301,6 +286,5 @@ XML;
         $this->assertEquals('/', $request->getUrl());
         $this->assertEquals([
         ], $request->getHeaders());
-
     }
 }

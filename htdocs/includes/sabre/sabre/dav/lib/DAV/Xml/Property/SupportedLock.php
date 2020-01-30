@@ -18,7 +18,8 @@ use Sabre\Xml\XmlSerializable;
  * @author Evert Pot (http://www.rooftopsolutions.nl/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class SupportedLock implements XmlSerializable {
+class SupportedLock implements XmlSerializable
+{
 
     /**
      * The xmlSerialize method is called during xml writing.
@@ -39,8 +40,8 @@ class SupportedLock implements XmlSerializable {
      * @param Writer $writer
      * @return void
      */
-    function xmlSerialize(Writer $writer) {
-
+    public function xmlSerialize(Writer $writer)
+    {
         $writer->writeElement('{DAV:}lockentry', [
             '{DAV:}lockscope' => ['{DAV:}exclusive' => null],
             '{DAV:}locktype'  => ['{DAV:}write' => null],
@@ -49,6 +50,5 @@ class SupportedLock implements XmlSerializable {
             '{DAV:}lockscope' => ['{DAV:}shared' => null],
             '{DAV:}locktype'  => ['{DAV:}write' => null],
         ]);
-
     }
 }

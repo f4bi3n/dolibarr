@@ -6,12 +6,12 @@ use DateTime;
 use DateTimeZone;
 use Sabre\VObject\Reader;
 
-class ExpandFloatingTimesTest extends \PHPUnit_Framework_TestCase {
-
+class ExpandFloatingTimesTest extends \PHPUnit_Framework_TestCase
+{
     use \Sabre\VObject\PHPUnitAssertions;
 
-    function testExpand() {
-
+    public function testExpand()
+    {
         $input = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -59,11 +59,10 @@ END:VCALENDAR
 
 ICS;
         $this->assertVObjectEqualsVObject($output, $vcal);
-
     }
 
-    function testExpandWithReferenceTimezone() {
-
+    public function testExpandWithReferenceTimezone()
+    {
         $input = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -116,7 +115,5 @@ END:VCALENDAR
 
 ICS;
         $this->assertVObjectEqualsVObject($output, $vcal);
-
     }
-
 }

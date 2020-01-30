@@ -124,10 +124,14 @@ class Scope
                     $m = Util::nestedValue($r->restler, 'apiMethodInfo', 'metadata');
                     if ($m) {
                         $properties = Util::nestedValue(
-                            $m, 'class', $fullName,
+                            $m,
+                            'class',
+                            $fullName,
                             CommentParser::$embeddedDataName
                         ) ?: (Util::nestedValue(
-                            $m, 'class', $shortName,
+                            $m,
+                            'class',
+                            $shortName,
                             CommentParser::$embeddedDataName
                         ) ?: array());
                     } else {
@@ -142,8 +146,7 @@ class Scope
             !isset(static::$instances[$name]->authVerified)
         ) {
             static::$instances[$name]->authVerified = true;
-            $r->__setAuthenticationStatus
-            (static::get('Restler')->_authenticated);
+            $r->__setAuthenticationStatus(static::get('Restler')->_authenticated);
         }
         if (isset(static::$instances[$name]->initPending)) {
             $m = Util::nestedValue(static::get('Restler'), 'apiMethodInfo', 'metadata');
@@ -158,10 +161,14 @@ class Scope
             }
             if ($m) {
                 $properties = Util::nestedValue(
-                    $m, 'class', $fullName,
+                    $m,
+                    'class',
+                    $fullName,
                     CommentParser::$embeddedDataName
                 ) ?: (Util::nestedValue(
-                    $m, 'class', $shortName,
+                    $m,
+                    'class',
+                    $shortName,
                     CommentParser::$embeddedDataName
                 ) ?: array());
                 unset(static::$instances[$name]->initPending);
@@ -194,8 +201,9 @@ class Scope
      */
     public static function resolve($className, array $scope)
     {
-        if (empty($className) || !is_string($className))
+        if (empty($className) || !is_string($className)) {
             return false;
+        }
 
         if (self::isPrimitiveDataType($className)) {
             return false;
@@ -210,12 +218,14 @@ class Scope
         } else {
             $qualified = $scope['*'] . $className;
         }
-        if (class_exists($qualified))
+        if (class_exists($qualified)) {
             return $qualified;
+        }
         if (isset(static::$classAliases[$className])) {
             $qualified = static::$classAliases[$className];
-            if (class_exists($qualified))
+            if (class_exists($qualified)) {
                 return $qualified;
+            }
         }
         return false;
     }

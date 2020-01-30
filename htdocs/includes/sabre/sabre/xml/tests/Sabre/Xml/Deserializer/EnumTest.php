@@ -4,10 +4,10 @@ namespace Sabre\Xml\Deserializer;
 
 use Sabre\Xml\Service;
 
-class EnumTest extends \PHPUnit_Framework_TestCase {
-
-    function testDeserialize() {
-
+class EnumTest extends \PHPUnit_Framework_TestCase
+{
+    public function testDeserialize()
+    {
         $service = new Service();
         $service->elementMap['{urn:test}root'] = 'Sabre\Xml\Deserializer\enum';
 
@@ -28,14 +28,12 @@ XML;
 
 
         $this->assertEquals($expected, $result);
-
-
     }
 
-    function testDeserializeDefaultNamespace() {
-
+    public function testDeserializeDefaultNamespace()
+    {
         $service = new Service();
-        $service->elementMap['{urn:test}root'] = function($reader) {
+        $service->elementMap['{urn:test}root'] = function ($reader) {
             return enum($reader, 'urn:test');
         };
 
@@ -56,7 +54,5 @@ XML;
 
 
         $this->assertEquals($expected, $result);
-
     }
-
 }

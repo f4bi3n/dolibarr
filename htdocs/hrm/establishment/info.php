@@ -29,22 +29,23 @@ require_once DOL_DOCUMENT_ROOT.'/hrm/class/establishment.class.php';
 $langs->loadLangs(array('admin', 'hrm'));
 
 // Security check
-if (! $user->admin) accessforbidden();
+if (! $user->admin) {
+    accessforbidden();
+}
 
 $id = GETPOST('id', 'int');
 
 // View
 llxHeader();
 
-if ($id)
-{
-	$object = new Establishment($db);
-	$object->fetch($id);
-	$object->info($id);
+if ($id) {
+    $object = new Establishment($db);
+    $object->fetch($id);
+    $object->info($id);
 
-	$head = establishment_prepare_head($object);
+    $head = establishment_prepare_head($object);
 
-	dol_fiche_head($head, 'info', $langs->trans("Establishment"), -1, 'building');
+    dol_fiche_head($head, 'info', $langs->trans("Establishment"), -1, 'building');
 
     print '<table width="100%"><tr><td>';
     dol_print_object_info($object);

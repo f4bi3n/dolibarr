@@ -5,10 +5,10 @@ namespace Sabre\VObject;
 use DateTimeImmutable;
 use DateTimeZone;
 
-class Issue48Test extends \PHPUnit_Framework_TestCase {
-
-    function testExpand() {
-
+class Issue48Test extends \PHPUnit_Framework_TestCase
+{
+    public function testExpand()
+    {
         $input = <<<ICS
 BEGIN:VCALENDAR
 BEGIN:VEVENT
@@ -42,7 +42,5 @@ ICS;
         ];
 
         $this->assertEquals($expected, $result);
-
     }
-
 }

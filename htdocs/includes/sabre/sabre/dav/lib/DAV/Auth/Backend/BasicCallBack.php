@@ -14,7 +14,8 @@ namespace Sabre\DAV\Auth\Backend;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class BasicCallBack extends AbstractBasic {
+class BasicCallBack extends AbstractBasic
+{
 
     /**
      * Callback
@@ -32,10 +33,9 @@ class BasicCallBack extends AbstractBasic {
      * @param callable $callBack
      * @return void
      */
-    function __construct(callable $callBack) {
-
+    public function __construct(callable $callBack)
+    {
         $this->callBack = $callBack;
-
     }
 
     /**
@@ -48,11 +48,9 @@ class BasicCallBack extends AbstractBasic {
      * @param string $password
      * @return bool
      */
-    protected function validateUserPass($username, $password) {
-
+    protected function validateUserPass($username, $password)
+    {
         $cb = $this->callBack;
         return $cb($username, $password);
-
     }
-
 }

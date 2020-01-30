@@ -17,7 +17,8 @@ use Sabre\Xml\XmlSerializable;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class EmailAddressSet implements XmlSerializable {
+class EmailAddressSet implements XmlSerializable
+{
 
     /**
      * emails
@@ -31,10 +32,9 @@ class EmailAddressSet implements XmlSerializable {
      *
      * @param array $emails
      */
-    function __construct(array $emails) {
-
+    public function __construct(array $emails)
+    {
         $this->emails = $emails;
-
     }
 
     /**
@@ -42,10 +42,9 @@ class EmailAddressSet implements XmlSerializable {
      *
      * @return array
      */
-    function getValue() {
-
+    public function getValue()
+    {
         return $this->emails;
-
     }
 
     /**
@@ -67,14 +66,10 @@ class EmailAddressSet implements XmlSerializable {
      * @param Writer $writer
      * @return void
      */
-    function xmlSerialize(Writer $writer) {
-
+    public function xmlSerialize(Writer $writer)
+    {
         foreach ($this->emails as $email) {
-
             $writer->writeElement('{http://calendarserver.org/ns/}email-address', $email);
-
         }
-
     }
-
 }

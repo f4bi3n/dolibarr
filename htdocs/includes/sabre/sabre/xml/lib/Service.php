@@ -13,7 +13,8 @@ namespace Sabre\Xml;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Service {
+class Service
+{
 
     /**
      * This is the element map. It contains a list of XML elements (in clark
@@ -63,12 +64,11 @@ class Service {
      *
      * @return Reader
      */
-    function getReader() {
-
+    public function getReader()
+    {
         $r = new Reader();
         $r->elementMap = $this->elementMap;
         return $r;
-
     }
 
     /**
@@ -76,13 +76,12 @@ class Service {
      *
      * @return Writer
      */
-    function getWriter() {
-
+    public function getWriter()
+    {
         $w = new Writer();
         $w->namespaceMap = $this->namespaceMap;
         $w->classMap = $this->classMap;
         return $w;
-
     }
 
     /**
@@ -104,8 +103,8 @@ class Service {
      * @throws ParseException
      * @return array|object|string
      */
-    function parse($input, $contextUri = null, &$rootElementName = null) {
-
+    public function parse($input, $contextUri = null, &$rootElementName = null)
+    {
         if (is_resource($input)) {
             // Unfortunately the XMLReader doesn't support streams. When it
             // does, we can optimize this.
@@ -118,7 +117,6 @@ class Service {
         $result = $r->parse();
         $rootElementName = $result['name'];
         return $result['value'];
-
     }
 
     /**
@@ -140,8 +138,8 @@ class Service {
      * @param string|null $contextUri
      * @return void
      */
-    function expect($rootElementName, $input, $contextUri = null) {
-
+    public function expect($rootElementName, $input, $contextUri = null)
+    {
         if (is_resource($input)) {
             // Unfortunately the XMLReader doesn't support streams. When it
             // does, we can optimize this.
@@ -154,7 +152,9 @@ class Service {
         $rootElementName = (array)$rootElementName;
 
         foreach ($rootElementName as &$rEl) {
-            if ($rEl[0] !== '{') $rEl = '{}' . $rEl;
+            if ($rEl[0] !== '{') {
+                $rEl = '{}' . $rEl;
+            }
         }
 
         $result = $r->parse();
@@ -162,7 +162,6 @@ class Service {
             throw new ParseException('Expected ' . implode(' or ', (array)$rootElementName) . ' but received ' . $result['name'] . ' as the root element');
         }
         return $result['value'];
-
     }
 
     /**
@@ -183,8 +182,8 @@ class Service {
      * @param string|array|XmlSerializable $value
      * @param string|null $contextUri
      */
-    function write($rootElementName, $value, $contextUri = null) {
-
+    public function write($rootElementName, $value, $contextUri = null)
+    {
         $w = $this->getWriter();
         $w->openMemory();
         $w->contextUri = $contextUri;
@@ -192,7 +191,6 @@ class Service {
         $w->startDocument();
         $w->writeElement($rootElementName, $value);
         return $w->outputMemory();
-
     }
 
     /**
@@ -223,13 +221,14 @@ class Service {
      * @param object $className
      * @return void
      */
-    function mapValueObject($elementName, $className) {
+    public function mapValueObject($elementName, $className)
+    {
         list($namespace) = self::parseClarkNotation($elementName);
 
-        $this->elementMap[$elementName] = function(Reader $reader) use ($className, $namespace) {
+        $this->elementMap[$elementName] = function (Reader $reader) use ($className, $namespace) {
             return \Sabre\Xml\Deserializer\valueObject($reader, $className, $namespace);
         };
-        $this->classMap[$className] = function(Writer $writer, $valueObject) use ($namespace) {
+        $this->classMap[$className] = function (Writer $writer, $valueObject) use ($namespace) {
             return \Sabre\Xml\Serializer\valueObject($writer, $valueObject, $namespace);
         };
         $this->valueObjectMap[$className] = $elementName;
@@ -248,8 +247,8 @@ class Service {
      * @param string $contextUri
      * @return void
      */
-    function writeValueObject($object, $contextUri = null) {
-
+    public function writeValueObject($object, $contextUri = null)
+    {
         if (!isset($this->valueObjectMap[get_class($object)])) {
             throw new \InvalidArgumentException('"' . get_class($object) . '" is not a registered value object class. Register your class with mapValueObject.');
         }
@@ -258,7 +257,6 @@ class Service {
             $object,
             $contextUri
         );
-
     }
 
     /**
@@ -271,11 +269,11 @@ class Service {
      * @throws InvalidArgumentException
      * @return array
      */
-    static function parseClarkNotation($str) {
+    public static function parseClarkNotation($str)
+    {
         static $cache = [];
 
         if (!isset($cache[$str])) {
-
             if (!preg_match('/^{([^}]*)}(.*)$/', $str, $matches)) {
                 throw new \InvalidArgumentException('\'' . $str . '\' is not a valid clark-notation formatted string');
             }
@@ -293,5 +291,4 @@ class Service {
      * A list of classes and which XML elements they map to.
      */
     protected $valueObjectMap = [];
-
 }

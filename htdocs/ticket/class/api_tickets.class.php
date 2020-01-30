@@ -17,7 +17,7 @@
 
  use Luracast\Restler\RestException;
 
-require 'ticket.class.php';
+ require 'ticket.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/ticket.lib.php';
 
 
@@ -114,10 +114,8 @@ class Tickets extends DolibarrApi
     {
         try {
             return $this->getCommon(0, '', $ref);
-        }
-        catch(Exception $e)
-        {
-               throw $e;
+        } catch (Exception $e) {
+            throw $e;
         }
     }
 
@@ -311,7 +309,7 @@ class Tickets extends DolibarrApi
         if (! count($obj_ret)) {
             throw new RestException(404, 'No ticket found');
         }
-            return $obj_ret;
+        return $obj_ret;
     }
 
     /**
@@ -340,7 +338,7 @@ class Tickets extends DolibarrApi
         }
 
         if ($this->ticket->create(DolibarrApiAccess::$user) < 0) {
-        	throw new RestException(500, "Error creating ticket", array_merge(array($this->ticket->error), $this->ticket->errors));
+            throw new RestException(500, "Error creating ticket", array_merge(array($this->ticket->error), $this->ticket->errors));
         }
 
         return $this->ticket->id;
@@ -537,12 +535,12 @@ class Tickets extends DolibarrApi
             "lastname",
             "firstname",
             "civility_id",
-        	"canvas",
+            "canvas",
             "cache_msgs_ticket",
             "cache_logs_ticket",
-        	"cache_types_tickets",
-        	"cache_category_tickets",
-        	"regeximgext",
+            "cache_types_tickets",
+            "cache_category_tickets",
+            "regeximgext",
             "statuts_short",
             "statuts"
         );

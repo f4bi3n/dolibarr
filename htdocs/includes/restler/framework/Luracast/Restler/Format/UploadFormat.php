@@ -109,7 +109,7 @@ class UploadFormat extends Format
     public function decode($data)
     {
         $doMimeCheck = !empty(self::$allowedMimeTypes);
-        $doSizeCheck = self::$maximumFileSize ? TRUE : FALSE;
+        $doSizeCheck = self::$maximumFileSize ? true : false;
         //validate
         foreach ($_FILES as & $file) {
             if (is_array($file['error'])) {
@@ -118,8 +118,9 @@ class UploadFormat extends Format
                     foreach ($file as $property => $value) {
                         $innerFile[$property] = $value[$i];
                     }
-                    if ($innerFile['name'])
+                    if ($innerFile['name']) {
                         static::checkFile($innerFile, $doMimeCheck, $doSizeCheck);
+                    }
 
                     if (isset($innerFile['exception'])) {
                         $file['error'][$i] = $innerFile['error'];
@@ -128,8 +129,9 @@ class UploadFormat extends Format
                     }
                 }
             } else {
-                if ($file['name'])
+                if ($file['name']) {
                     static::checkFile($file, $doMimeCheck, $doSizeCheck);
+                }
                 if (isset($innerFile['exception'])) {
                     break;
                 }
@@ -139,9 +141,8 @@ class UploadFormat extends Format
         return UrlEncodedFormat::decoderTypeFix($_FILES + $_POST);
     }
 
-    function isWritable()
+    public function isWritable()
     {
         return false;
     }
-
 }

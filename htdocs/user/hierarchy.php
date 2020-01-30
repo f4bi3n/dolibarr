@@ -29,16 +29,18 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 
-if (! $user->rights->user->user->lire && ! $user->admin)
-	accessforbidden();
+if (! $user->rights->user->user->lire && ! $user->admin) {
+    accessforbidden();
+}
 
 // Load translation files required by page
 $langs->loadLangs(array('users', 'companies'));
 
 // Security check (for external users)
 $socid=0;
-if ($user->socid > 0)
-	$socid = $user->socid;
+if ($user->socid > 0) {
+    $socid = $user->socid;
+}
 
 $sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $search_user=GETPOST('search_user', 'alpha');
@@ -46,11 +48,12 @@ $search_user=GETPOST('search_user', 'alpha');
 $userstatic=new User($db);
 $search_statut=GETPOST('search_statut', 'int');
 
-if ($search_statut == '') $search_statut='1';
+if ($search_statut == '') {
+    $search_statut='1';
+}
 
-if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // Both test are required to be compatible with all browsers
-{
-	$search_statut="";
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // Both test are required to be compatible with all browsers
+    $search_statut="";
 }
 
 // Define value to know what current user can do on users
@@ -76,67 +79,56 @@ llxHeader('', $langs->trans("ListOfUsers"). ' - '.$langs->trans("HierarchicView"
 // Load hierarchy of users
 $user_arbo = $userstatic->get_full_tree(0, ($search_statut != '' && $search_statut >= 0) ? "statut = ".$search_statut : '');
 
-if (! is_array($user_arbo) && $user_arbo < 0)
-{
+if (! is_array($user_arbo) && $user_arbo < 0) {
     setEventMessages($userstatic->error, $userstatic->errors, 'warnings');
-}
-else
-{
+} else {
     // Define fulltree array
     $fulltree=$user_arbo;
     //var_dump($fulltree);
     // Define data (format for treeview)
     $data=array();
     $data[] = array('rowid'=>0,'fk_menu'=>-1,'title'=>"racine",'mainmenu'=>'','leftmenu'=>'','fk_mainmenu'=>'','fk_leftmenu'=>'');
-    foreach($fulltree as $key => $val)
-    {
-    	$userstatic->id=$val['id'];
-    	$userstatic->ref=$val['label'];
-    	$userstatic->login=$val['login'];
-    	$userstatic->firstname=$val['firstname'];
-    	$userstatic->lastname=$val['lastname'];
-    	$userstatic->statut=$val['statut'];
+    foreach ($fulltree as $key => $val) {
+        $userstatic->id=$val['id'];
+        $userstatic->ref=$val['label'];
+        $userstatic->login=$val['login'];
+        $userstatic->firstname=$val['firstname'];
+        $userstatic->lastname=$val['lastname'];
+        $userstatic->statut=$val['statut'];
         $userstatic->email=$val['email'];
         $userstatic->gender=$val['gender'];
-    	$userstatic->socid=$val['fk_soc'];
-    	$userstatic->admin=$val['admin'];
-    	$userstatic->entity=$val['entity'];
-    	$userstatic->photo=$val['photo'];
+        $userstatic->socid=$val['fk_soc'];
+        $userstatic->admin=$val['admin'];
+        $userstatic->entity=$val['entity'];
+        $userstatic->photo=$val['photo'];
 
-    	$entity=$val['entity'];
-    	$entitystring='';
+        $entity=$val['entity'];
+        $entitystring='';
 
-    	// TODO Set of entitystring should be done with a hook
-    	if (! empty($conf->multicompany->enabled) && is_object($mc))
-    	{
-    		if (empty($entity))
-    		{
-    			$entitystring=$langs->trans("AllEntities");
-    		}
-    		else
-    		{
-    			$mc->getInfo($entity);
-    			$entitystring=$mc->label;
-    		}
-    	}
+        // TODO Set of entitystring should be done with a hook
+        if (! empty($conf->multicompany->enabled) && is_object($mc)) {
+            if (empty($entity)) {
+                $entitystring=$langs->trans("AllEntities");
+            } else {
+                $mc->getInfo($entity);
+                $entitystring=$mc->label;
+            }
+        }
 
-    	$li=$userstatic->getNomUrl(-1, '', 0, 1);
-    	if (! empty($conf->multicompany->enabled) && $userstatic->admin && ! $userstatic->entity)
-    	{
-    		$li.=img_picto($langs->trans("SuperAdministrator"), 'redstar');
-    	}
-    	elseif ($userstatic->admin)
-    	{
-    		$li.=img_picto($langs->trans("Administrator"), 'star');
-    	}
-    	$li.=' ('.$val['login'].($entitystring?' - '.$entitystring:'').')';
+        $li=$userstatic->getNomUrl(-1, '', 0, 1);
+        if (! empty($conf->multicompany->enabled) && $userstatic->admin && ! $userstatic->entity) {
+            $li.=img_picto($langs->trans("SuperAdministrator"), 'redstar');
+        } elseif ($userstatic->admin) {
+            $li.=img_picto($langs->trans("Administrator"), 'star');
+        }
+        $li.=' ('.$val['login'].($entitystring?' - '.$entitystring:'').')';
 
-    	$data[] = array(
-    		'rowid'=>$val['rowid'],
-    		'fk_menu'=>$val['fk_user'],
-    		'statut'=>$val['statut'],
-    		'entry'=>'<table class="nobordernopadding centpercent"><tr><td class="'.($val['statut']?'usertdenabled':'usertddisabled').'">'.$li.'</td><td align="right" class="'.($val['statut']?'usertdenabled':'usertddisabled').'">'.$userstatic->getLibStatut(3).'</td></tr></table>'
-    	);
+        $data[] = array(
+            'rowid'=>$val['rowid'],
+            'fk_menu'=>$val['fk_user'],
+            'statut'=>$val['statut'],
+            'entry'=>'<table class="nobordernopadding centpercent"><tr><td class="'.($val['statut']?'usertdenabled':'usertddisabled').'">'.$li.'</td><td align="right" class="'.($val['statut']?'usertdenabled':'usertddisabled').'">'.$userstatic->getLibStatut(3).'</td></tr></table>'
+        );
     }
 
     //var_dump($data);
@@ -146,8 +138,7 @@ else
     $param="search_statut=".urlencode($search_statut);
 
     $newcardbutton='';
-    if ($canadduser)
-    {
+    if ($canadduser) {
         $newcardbutton.= dolGetButtonTitle($langs->trans('NewUser'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/user/card.php?action=create'.($mode == 'employee' ? '&employee=1': '').'&leftmenu=');
     }
 
@@ -156,7 +147,9 @@ else
     print load_fiche_titre($title, $morehtmlright.' '.$newcardbutton);
 
     print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
-    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+    if ($optioncss != '') {
+        print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+    }
     print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
@@ -189,27 +182,24 @@ else
 
     $nbofentries=(count($data) - 1);
 
-    if ($nbofentries > 0)
-    {
-    	print '<tr '.$bc[false].'><td colspan="3">';
-    	tree_recur($data, $data[0], 0);
-    	print '</td>';
-    	print '<td></td>';
-    	print '</tr>';
-    }
-    else
-    {
-    	print '<tr '.$bc[true].'>';
-    	print '<td colspan="3">';
-    	print '<table class="nobordernopadding"><tr class="nobordernopadding"><td>'.img_picto_common('', 'treemenu/branchbottom.gif').'</td>';
-    	print '<td valign="middle">';
-    	print $langs->trans("NoCategoryYet");
-    	print '</td>';
-    	print '<td>&nbsp;</td>';
-    	print '</table>';
-    	print '</td>';
-    	print '<td></td>';
-    	print '</tr>';
+    if ($nbofentries > 0) {
+        print '<tr '.$bc[false].'><td colspan="3">';
+        tree_recur($data, $data[0], 0);
+        print '</td>';
+        print '<td></td>';
+        print '</tr>';
+    } else {
+        print '<tr '.$bc[true].'>';
+        print '<td colspan="3">';
+        print '<table class="nobordernopadding"><tr class="nobordernopadding"><td>'.img_picto_common('', 'treemenu/branchbottom.gif').'</td>';
+        print '<td valign="middle">';
+        print $langs->trans("NoCategoryYet");
+        print '</td>';
+        print '<td>&nbsp;</td>';
+        print '</table>';
+        print '</td>';
+        print '<td></td>';
+        print '</tr>';
     }
 
     print "</table>";
@@ -219,11 +209,11 @@ else
 //
 /*print '<script type="text/javascript" language="javascript">
 jQuery(document).ready(function() {
-	function init_myfunc()
-	{
-		jQuery(".usertddisabled").hide();
-	}
-	init_myfunc();
+    function init_myfunc()
+    {
+        jQuery(".usertddisabled").hide();
+    }
+    init_myfunc();
 });
 </script>';
 */

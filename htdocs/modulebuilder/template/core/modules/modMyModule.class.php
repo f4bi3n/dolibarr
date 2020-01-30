@@ -339,8 +339,8 @@ class modMyModule extends DolibarrModules
         include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
         //$this->export_fields_array[$r]['t.fieldtoadd']='FieldToAdd'; $this->export_TypeFields_array[$r]['t.fieldtoadd']='Text';
         //unset($this->export_fields_array[$r]['t.fieldtoremove']);
-   		//$keyforclass = 'MyObjectLine'; $keyforclassfile='/mymodule/class/myobject.class.php'; $keyforelement='myobjectline@mymodule'; $keyforalias='tl';
-		//include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
+        //$keyforclass = 'MyObjectLine'; $keyforclassfile='/mymodule/class/myobject.class.php'; $keyforelement='myobjectline@mymodule'; $keyforalias='tl';
+        //include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
         $keyforselect='myobject'; $keyforaliasextra='extra'; $keyforelement='myobject@mymodule';
         include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
         //$keyforselect='myobjectline'; $keyforaliasextra='extraline'; $keyforelement='myobjectline@mymodule';
@@ -391,7 +391,9 @@ class modMyModule extends DolibarrModules
         global $conf, $langs;
 
         $result = $this->_load_tables('/mymodule/sql/');
-        if ($result < 0) return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
+        if ($result < 0) {
+            return -1;
+        } // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
 
         // Create extrafields during init
         //include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';

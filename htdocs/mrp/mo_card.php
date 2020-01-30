@@ -80,27 +80,29 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 // Initialize array of search criterias
 $search_all = trim(GETPOST("search_all", 'alpha'));
 $search = array();
-foreach ($object->fields as $key => $val)
-{
-	if (GETPOST('search_'.$key, 'alpha')) $search[$key] = GETPOST('search_'.$key, 'alpha');
+foreach ($object->fields as $key => $val) {
+    if (GETPOST('search_'.$key, 'alpha')) {
+        $search[$key] = GETPOST('search_'.$key, 'alpha');
+    }
 }
 
-if (empty($action) && empty($id) && empty($ref)) $action = 'view';
+if (empty($action) && empty($id) && empty($ref)) {
+    $action = 'view';
+}
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
-if (GETPOST('fk_bom', 'int'))
-{
-	$objectbom->fetch(GETPOST('fk_bom', 'int'));
+if (GETPOST('fk_bom', 'int')) {
+    $objectbom->fetch(GETPOST('fk_bom', 'int'));
 
-	if ($action != 'add') {
-		// We force calling parameters if we are not in the submit of creation of MO
-		$_POST['fk_product'] = $objectbom->fk_product;
-		$_POST['qty'] = $objectbom->qty;
-		$_POST['fk_warehouse'] = $objectbom->fk_warehouse;
-		$_POST['note_private'] = $objectbom->note_private;
-	}
+    if ($action != 'add') {
+        // We force calling parameters if we are not in the submit of creation of MO
+        $_POST['fk_product'] = $objectbom->fk_product;
+        $_POST['qty'] = $objectbom->qty;
+        $_POST['fk_warehouse'] = $objectbom->fk_warehouse;
+        $_POST['note_private'] = $objectbom->note_private;
+    }
 }
 
 // Security check - Protection if external user
@@ -122,22 +124,26 @@ $upload_dir = $conf->mrp->multidir_output[isset($object->entity) ? $object->enti
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+    setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
-if (empty($reshook))
-{
+if (empty($reshook)) {
     $error = 0;
 
     $backurlforlist = dol_buildpath('/mrp/mo_list.php', 1);
 
     if (empty($backtopage) || ($cancel && empty($id))) {
-    	if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
-	    	if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) $backtopage = $backurlforlist;
-    		else $backtopage = DOL_URL_ROOT.'/mrp/mo_card.php?id='.($id > 0 ? $id : '__ID__');
-    	}
+        if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
+            if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
+                $backtopage = $backurlforlist;
+            } else {
+                $backtopage = DOL_URL_ROOT.'/mrp/mo_card.php?id='.($id > 0 ? $id : '__ID__');
+            }
+        }
     }
     if ($cancel && !empty($backtopageforcancel)) {
-    	$backtopage = $backtopageforcancel;
+        $backtopage = $backtopageforcancel;
     }
 
     $triggermodname = 'MRP_MO_MODIFY'; // Name of trigger action code to execute when we modify record
@@ -160,13 +166,11 @@ if (empty($reshook))
     // Action to move up and down lines of object
     //include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';	// Must be include, not include_once
 
-    if ($action == 'set_thirdparty' && $permissiontoadd)
-    {
-    	$object->setValueFrom('fk_soc', GETPOST('fk_soc', 'int'), '', '', 'date', '', $user, 'MO_MODIFY');
+    if ($action == 'set_thirdparty' && $permissiontoadd) {
+        $object->setValueFrom('fk_soc', GETPOST('fk_soc', 'int'), '', '', 'date', '', $user, 'MO_MODIFY');
     }
-    if ($action == 'classin' && $permissiontoadd)
-    {
-    	$object->setProject(GETPOST('projectid', 'int'));
+    if ($action == 'classin' && $permissiontoadd) {
+        $object->setProject(GETPOST('projectid', 'int'));
     }
 }
 
@@ -200,31 +204,32 @@ jQuery(document).ready(function() {
 
 
 // Part to create
-if ($action == 'create')
-{
-	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("Mo")), '', 'cubes');
+if ($action == 'create') {
+    print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("Mo")), '', 'cubes');
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="action" value="add">';
-	if ($backtopage) print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-	if ($backtopageforcancel) print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
+    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
+    print '<input type="hidden" name="action" value="add">';
+    if ($backtopage) {
+        print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+    }
+    if ($backtopageforcancel) {
+        print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
+    }
 
-	dol_fiche_head(array(), '');
+    dol_fiche_head(array(), '');
 
-	print '<table class="border centpercent tableforfieldcreate">'."\n";
+    print '<table class="border centpercent tableforfieldcreate">'."\n";
 
-	// Common attributes
-	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_add.tpl.php';
+    // Common attributes
+    include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_add.tpl.php';
 
-	// Other attributes
-	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
+    // Other attributes
+    include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 
-	print '</table>'."\n";
+    print '</table>'."\n";
 
-	dol_fiche_end();
-
-	?>
+    dol_fiche_end(); ?>
 	<script>
      	$(document).ready(function () {
 			jQuery('#fk_bom').change(function() {
@@ -279,162 +284,164 @@ if ($action == 'create')
 	</script>
 	<?php
 
-	print '<div class="center">';
-	print '<input type="submit" class="button" name="add" value="'.dol_escape_htmltag($langs->trans("Create")).'">';
-	print '&nbsp; ';
-	print '<input type="'.($backtopage ? "submit" : "button").'" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"'.($backtopage ? '' : ' onclick="javascript:history.go(-1)"').'>'; // Cancel for create does not post form if we don't know the backtopage
-	print '</div>';
+    print '<div class="center">';
+    print '<input type="submit" class="button" name="add" value="'.dol_escape_htmltag($langs->trans("Create")).'">';
+    print '&nbsp; ';
+    print '<input type="'.($backtopage ? "submit" : "button").'" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"'.($backtopage ? '' : ' onclick="javascript:history.go(-1)"').'>'; // Cancel for create does not post form if we don't know the backtopage
+    print '</div>';
 
-	if (GETPOST('fk_bom', 'int') > 0) {
-		print load_fiche_titre($langs->trans("ToConsume").' ('.$langs->trans("ForAQuantityOf1").')');
+    if (GETPOST('fk_bom', 'int') > 0) {
+        print load_fiche_titre($langs->trans("ToConsume").' ('.$langs->trans("ForAQuantityOf1").')');
 
-		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder centpercent">';
+        print '<div class="div-table-responsive-no-min">';
+        print '<table class="noborder centpercent">';
 
-		$object->lines = $objectbom->lines;
+        $object->lines = $objectbom->lines;
 
-		$object->printOriginLinesList('', array());
+        $object->printOriginLinesList('', array());
 
-		print '</table>';
-		print '</div>';
-	}
+        print '</table>';
+        print '</div>';
+    }
 
-	print '</form>';
+    print '</form>';
 }
 
 // Part to edit record
-if (($id || $ref) && $action == 'edit')
-{
-	print load_fiche_titre($langs->trans("MO"), '', 'cubes');
+if (($id || $ref) && $action == 'edit') {
+    print load_fiche_titre($langs->trans("MO"), '', 'cubes');
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
     print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="action" value="update">';
-	print '<input type="hidden" name="id" value="'.$object->id.'">';
-	if ($backtopage) print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-	if ($backtopageforcancel) print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
+    print '<input type="hidden" name="action" value="update">';
+    print '<input type="hidden" name="id" value="'.$object->id.'">';
+    if ($backtopage) {
+        print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+    }
+    if ($backtopageforcancel) {
+        print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
+    }
 
-	dol_fiche_head();
+    dol_fiche_head();
 
-	$object->fields['fk_bom']['disabled'] = 1;
+    $object->fields['fk_bom']['disabled'] = 1;
 
-	print '<table class="border centpercent tableforfieldedit">'."\n";
+    print '<table class="border centpercent tableforfieldedit">'."\n";
 
-	// Common attributes
-	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_edit.tpl.php';
+    // Common attributes
+    include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_edit.tpl.php';
 
-	// Other attributes
-	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';
+    // Other attributes
+    include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';
 
-	print '</table>';
+    print '</table>';
 
-	dol_fiche_end();
+    dol_fiche_end();
 
-	print '<div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-	print ' &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</div>';
+    print '<div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+    print ' &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+    print '</div>';
 
-	print '</form>';
+    print '</form>';
 }
 
 // Part to show record
-if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create')))
-{
-	$res = $object->fetch_thirdparty();
-	$res = $object->fetch_optionals();
+if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
+    $res = $object->fetch_thirdparty();
+    $res = $object->fetch_optionals();
 
-	$head = moPrepareHead($object);
-	dol_fiche_head($head, 'card', $langs->trans("MO"), -1, $object->picto);
+    $head = moPrepareHead($object);
+    dol_fiche_head($head, 'card', $langs->trans("MO"), -1, $object->picto);
 
-	$formconfirm = '';
+    $formconfirm = '';
 
-	// Confirmation to delete
-	if ($action == 'delete')
-	{
-	    $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteMo'), $langs->trans('ConfirmDeleteMo'), 'confirm_delete', '', 0, 1);
-	}
-	// Confirmation to delete line
-	if ($action == 'deleteline')
-	{
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_deleteline', '', 0, 1);
-	}
+    // Confirmation to delete
+    if ($action == 'delete') {
+        $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteMo'), $langs->trans('ConfirmDeleteMo'), 'confirm_delete', '', 0, 1);
+    }
+    // Confirmation to delete line
+    if ($action == 'deleteline') {
+        $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_deleteline', '', 0, 1);
+    }
 
-	// Confirmation of validation
-	if ($action == 'validate')
-	{
-		// We check that object has a temporary ref
-		$ref = substr($object->ref, 1, 4);
-		if ($ref == 'PROV') {
-			$object->fetch_product();
-			$numref = $object->getNextNumRef($object->fk_product);
-		} else {
-			$numref = $object->ref;
-		}
+    // Confirmation of validation
+    if ($action == 'validate') {
+        // We check that object has a temporary ref
+        $ref = substr($object->ref, 1, 4);
+        if ($ref == 'PROV') {
+            $object->fetch_product();
+            $numref = $object->getNextNumRef($object->fk_product);
+        } else {
+            $numref = $object->ref;
+        }
 
-		$text = $langs->trans('ConfirmValidateMo', $numref);
-		/*if (! empty($conf->notification->enabled))
-		 {
-		 require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
-		 $notify = new Notify($db);
-		 $text .= '<br>';
-		 $text .= $notify->confirmMessage('BOM_VALIDATE', $object->socid, $object);
-		 }*/
+        $text = $langs->trans('ConfirmValidateMo', $numref);
+        /*if (! empty($conf->notification->enabled))
+         {
+         require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
+         $notify = new Notify($db);
+         $text .= '<br>';
+         $text .= $notify->confirmMessage('BOM_VALIDATE', $object->socid, $object);
+         }*/
 
-		$formquestion = array();
-		if (!empty($conf->mrp->enabled))
-		{
-			$langs->load("mrp");
-			require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
-			$formproduct = new FormProduct($db);
-			$forcecombo = 0;
-			if ($conf->browser->name == 'ie') $forcecombo = 1; // There is a bug in IE10 that make combo inside popup crazy
-			$formquestion = array(
-			// 'text' => $langs->trans("ConfirmClone"),
-			// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
-			// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
-			);
-		}
+        $formquestion = array();
+        if (!empty($conf->mrp->enabled)) {
+            $langs->load("mrp");
+            require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+            $formproduct = new FormProduct($db);
+            $forcecombo = 0;
+            if ($conf->browser->name == 'ie') {
+                $forcecombo = 1;
+            } // There is a bug in IE10 that make combo inside popup crazy
+            $formquestion = array(
+            // 'text' => $langs->trans("ConfirmClone"),
+            // array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
+            // array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
+            );
+        }
 
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('Validate'), $text, 'confirm_validate', $formquestion, 0, 1, 220);
-	}
+        $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('Validate'), $text, 'confirm_validate', $formquestion, 0, 1, 220);
+    }
 
-	// Clone confirmation
-	if ($action == 'clone') {
-		// Create an array for form
-		$formquestion = array();
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneMo', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
-	}
+    // Clone confirmation
+    if ($action == 'clone') {
+        // Create an array for form
+        $formquestion = array();
+        $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneMo', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
+    }
 
-	// Call Hook formConfirm
-	$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
-	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	if (empty($reshook)) $formconfirm .= $hookmanager->resPrint;
-	elseif ($reshook > 0) $formconfirm = $hookmanager->resPrint;
+    // Call Hook formConfirm
+    $parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
+    $reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+    if (empty($reshook)) {
+        $formconfirm .= $hookmanager->resPrint;
+    } elseif ($reshook > 0) {
+        $formconfirm = $hookmanager->resPrint;
+    }
 
-	// Print form confirm
-	print $formconfirm;
+    // Print form confirm
+    print $formconfirm;
 
 
-	// Object card
-	// ------------------------------------------------------------
-	$linkback = '<a href="'.dol_buildpath('/mrp/mo_list.php', 1).'?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
+    // Object card
+    // ------------------------------------------------------------
+    $linkback = '<a href="'.dol_buildpath('/mrp/mo_list.php', 1).'?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
-	$morehtmlref = '<div class="refidno">';
-	/*
-	// Ref bis
-	$morehtmlref.=$form->editfieldkey("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->mrp->creer, 'string', '', 0, 1);
-	$morehtmlref.=$form->editfieldval("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->mrp->creer, 'string', '', null, null, '', 1);*/
-	// Thirdparty
-	$morehtmlref .= $langs->trans('ThirdParty').' : '.(is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
-	// Project
-	if (!empty($conf->projet->enabled))
-	{
-	    $langs->load("projects");
-	    $morehtmlref .= '<br>'.$langs->trans('Project').' ';
-	    if ($permissiontoadd)
-	    {
-	        if ($action != 'classify')
-	            $morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+    $morehtmlref = '<div class="refidno">';
+    /*
+    // Ref bis
+    $morehtmlref.=$form->editfieldkey("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->mrp->creer, 'string', '', 0, 1);
+    $morehtmlref.=$form->editfieldval("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->mrp->creer, 'string', '', null, null, '', 1);*/
+    // Thirdparty
+    $morehtmlref .= $langs->trans('ThirdParty').' : '.(is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
+    // Project
+    if (!empty($conf->projet->enabled)) {
+        $langs->load("projects");
+        $morehtmlref .= '<br>'.$langs->trans('Project').' ';
+        if ($permissiontoadd) {
+            if ($action != 'classify') {
+                $morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+            }
             if ($action == 'classify') {
                 //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->fk_soc, $object->fk_project, 'projectid', 0, 0, 1, 1);
                 $morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
@@ -445,259 +452,244 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
                 $morehtmlref .= '</form>';
             } else {
                 $morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_soc, $object->fk_project, 'none', 0, 0, 0, 1);
-	        }
-	    } else {
-	        if (!empty($object->fk_project)) {
-	            $proj = new Project($db);
-	            $proj->fetch($object->fk_project);
-	            $morehtmlref .= $proj->getNomUrl();
-	        } else {
-	            $morehtmlref .= '';
-	        }
-	    }
-	}
-	$morehtmlref .= '</div>';
+            }
+        } else {
+            if (!empty($object->fk_project)) {
+                $proj = new Project($db);
+                $proj->fetch($object->fk_project);
+                $morehtmlref .= $proj->getNomUrl();
+            } else {
+                $morehtmlref .= '';
+            }
+        }
+    }
+    $morehtmlref .= '</div>';
 
 
-	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+    dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
 
-	print '<div class="fichecenter">';
-	print '<div class="fichehalfleft">';
-	print '<div class="underbanner clearboth"></div>';
-	print '<table class="border centpercent tableforfield">'."\n";
+    print '<div class="fichecenter">';
+    print '<div class="fichehalfleft">';
+    print '<div class="underbanner clearboth"></div>';
+    print '<table class="border centpercent tableforfield">'."\n";
 
-	// Common attributes
-	$keyforbreak = 'fk_warehouse';
-	unset($object->fields['fk_project']);
-	unset($object->fields['fk_soc']);
-	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
+    // Common attributes
+    $keyforbreak = 'fk_warehouse';
+    unset($object->fields['fk_project']);
+    unset($object->fields['fk_soc']);
+    include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
 
-	// Other attributes
-	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
+    // Other attributes
+    include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
-	print '</table>';
-	print '</div>';
-	print '</div>';
+    print '</table>';
+    print '</div>';
+    print '</div>';
 
-	print '<div class="clearboth"></div>';
+    print '<div class="clearboth"></div>';
 
-	dol_fiche_end();
+    dol_fiche_end();
 
 
-	/*
-	 * Lines
-	 */
+    /*
+     * Lines
+     */
 
-	if (!empty($object->table_element_line))
-	{
-    	// Show object lines
-		//$result = $object->getLinesArray();
-		$object->fetchLines();
+    if (!empty($object->table_element_line)) {
+        // Show object lines
+        //$result = $object->getLinesArray();
+        $object->fetchLines();
 
-    	print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#addline' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">
+        print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#addline' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">
     	<input type="hidden" name="token" value="' . $_SESSION ['newtoken'].'">
     	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">
     	<input type="hidden" name="mode" value="">
     	<input type="hidden" name="id" value="' . $object->id.'">
     	';
 
-    	/*if (!empty($conf->use_javascript_ajax) && $object->status == 0) {
+        /*if (!empty($conf->use_javascript_ajax) && $object->status == 0) {
     	    include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
     	}*/
 
-    	if (!empty($object->lines))
-    	{
-    		print '<div class="div-table-responsive-no-min">';
-    		print '<table id="tablelines" class="noborder noshadow" width="100%">';
+        if (!empty($object->lines)) {
+            print '<div class="div-table-responsive-no-min">';
+            print '<table id="tablelines" class="noborder noshadow" width="100%">';
 
-    		print '<tr class="liste_titre">';
-    		print '<td class="liste_titre">'.$langs->trans("Summary").'</td>';
-    		print '<td></td>';
-    		print '</tr>';
+            print '<tr class="liste_titre">';
+            print '<td class="liste_titre">'.$langs->trans("Summary").'</td>';
+            print '<td></td>';
+            print '</tr>';
 
-    		print '<tr class="oddeven">';
-    		print '<td>'.$langs->trans("ToConsume").'</td>';
-    		print '<td>';
-    		if (!empty($object->lines))
-    		{
-    			$i = 0;
-    			foreach ($object->lines as $line) {
-    				if ($line->role == 'toconsume') {
-    					if ($i) print ', ';
-    					$tmpproduct = new Product($db);
-    					$tmpproduct->fetch($line->fk_product);
-    					print $tmpproduct->getNomUrl(1);
-    					$i++;
-    				}
-    			}
-    		}
-    		print '</td>';
-    		print '</tr>';
+            print '<tr class="oddeven">';
+            print '<td>'.$langs->trans("ToConsume").'</td>';
+            print '<td>';
+            if (!empty($object->lines)) {
+                $i = 0;
+                foreach ($object->lines as $line) {
+                    if ($line->role == 'toconsume') {
+                        if ($i) {
+                            print ', ';
+                        }
+                        $tmpproduct = new Product($db);
+                        $tmpproduct->fetch($line->fk_product);
+                        print $tmpproduct->getNomUrl(1);
+                        $i++;
+                    }
+                }
+            }
+            print '</td>';
+            print '</tr>';
 
-    		print '<tr class="oddeven">';
-    		print '<td>'.$langs->trans("ToProduce").'</td>';
-    		print '<td>';
-    		if (!empty($object->lines))
-    		{
-    			$i = 0;
-    			foreach ($object->lines as $line) {
-    				if ($line->role == 'toproduce') {
-    					if ($i) print ', ';
-    					$tmpproduct = new Product($db);
-    					$tmpproduct->fetch($line->fk_product);
-    					print $tmpproduct->getNomUrl(1);
-    					$i++;
-    				}
-    			}
-    		}
-    		print '</td>';
-    		print '</tr>';
+            print '<tr class="oddeven">';
+            print '<td>'.$langs->trans("ToProduce").'</td>';
+            print '<td>';
+            if (!empty($object->lines)) {
+                $i = 0;
+                foreach ($object->lines as $line) {
+                    if ($line->role == 'toproduce') {
+                        if ($i) {
+                            print ', ';
+                        }
+                        $tmpproduct = new Product($db);
+                        $tmpproduct->fetch($line->fk_product);
+                        print $tmpproduct->getNomUrl(1);
+                        $i++;
+                    }
+                }
+            }
+            print '</td>';
+            print '</tr>';
 
-    	    print '</table>';
-    	    print '</div>';
-    	}
+            print '</table>';
+            print '</div>';
+        }
 
-    	print "</form>\n";
-	}
+        print "</form>\n";
+    }
 
 
-	// Buttons for actions
+    // Buttons for actions
 
-	if ($action != 'presend' && $action != 'editline') {
-    	print '<div class="tabsAction">'."\n";
-    	$parameters = array();
-    	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-    	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+    if ($action != 'presend' && $action != 'editline') {
+        print '<div class="tabsAction">'."\n";
+        $parameters = array();
+        $reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+        if ($reshook < 0) {
+            setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+        }
 
-    	if (empty($reshook))
-    	{
-    	    // Send
+        if (empty($reshook)) {
+            // Send
             //print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a>'."\n";
 
-    		// Back to draft
-    		if ($object->status == $object::STATUS_VALIDATED)
-    		{
-	    		if ($permissiontoadd)
-	    		{
-	    			// TODO Add test that production has not started
-	    			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_setdraft&confirm=yes">'.$langs->trans("SetToDraft").'</a>';
-	    		}
-    		}
+            // Back to draft
+            if ($object->status == $object::STATUS_VALIDATED) {
+                if ($permissiontoadd) {
+                    // TODO Add test that production has not started
+                    print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_setdraft&confirm=yes">'.$langs->trans("SetToDraft").'</a>';
+                }
+            }
 
             // Modify
-    		if ($object->status == $object::STATUS_DRAFT) {
-	    		if ($permissiontoadd)
-	    		{
-	    			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>'."\n";
-	    		}
-	    		else
-	    		{
-	    			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Modify').'</a>'."\n";
-	    		}
-    		}
+            if ($object->status == $object::STATUS_DRAFT) {
+                if ($permissiontoadd) {
+                    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>'."\n";
+                } else {
+                    print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Modify').'</a>'."\n";
+                }
+            }
 
-    		// Validate
-    		if ($object->status == $object::STATUS_DRAFT)
-    		{
-	    		if ($permissiontoadd)
-	    		{
-	    			if (empty($object->table_element_line) || (is_array($object->lines) && count($object->lines) > 0))
-	    		    {
-	    		        print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=validate">'.$langs->trans("Validate").'</a>';
-	    		    }
-	    		    else
-	    		    {
-	    		    	$langs->load("errors");
-	    		        print '<a class="butActionRefused" href="" title="'.$langs->trans("ErrorAddAtLeastOneLineFirst").'">'.$langs->trans("Validate").'</a>';
-	    		    }
-	    		}
-    		}
+            // Validate
+            if ($object->status == $object::STATUS_DRAFT) {
+                if ($permissiontoadd) {
+                    if (empty($object->table_element_line) || (is_array($object->lines) && count($object->lines) > 0)) {
+                        print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=validate">'.$langs->trans("Validate").'</a>';
+                    } else {
+                        $langs->load("errors");
+                        print '<a class="butActionRefused" href="" title="'.$langs->trans("ErrorAddAtLeastOneLineFirst").'">'.$langs->trans("Validate").'</a>';
+                    }
+                }
+            }
 
-    		// Clone
-    		if ($permissiontoadd)
-    		{
-    			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->fk_soc.'&action=clone&object=mo">'.$langs->trans("ToClone").'</a>';
-    		}
+            // Clone
+            if ($permissiontoadd) {
+                print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->fk_soc.'&action=clone&object=mo">'.$langs->trans("ToClone").'</a>';
+            }
 
-    		// Cancel
-    		if ($permissiontoadd)
-    		{
-    			if ($object->status == $object::STATUS_VALIDATED || $object->status == $object::STATUS_INPROGRESS)
-    			{
-    				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_close&confirm=yes">'.$langs->trans("Cancel").'</a>'."\n";
-    			}
+            // Cancel
+            if ($permissiontoadd) {
+                if ($object->status == $object::STATUS_VALIDATED || $object->status == $object::STATUS_INPROGRESS) {
+                    print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_close&confirm=yes">'.$langs->trans("Cancel").'</a>'."\n";
+                }
 
-    			if ($object->status == $object::STATUS_CANCELED)
-    			{
-    				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_reopen&confirm=yes">'.$langs->trans("Re-Open").'</a>'."\n";
-    			}
-    		}
+                if ($object->status == $object::STATUS_CANCELED) {
+                    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_reopen&confirm=yes">'.$langs->trans("Re-Open").'</a>'."\n";
+                }
+            }
 
-    		// Delete (need delete permission, or if draft, just need create/modify permission)
-    		if ($permissiontodelete)
-    		{
-    			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete">'.$langs->trans('Delete').'</a>'."\n";
-    		}
-    		else
-    		{
-    			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Delete').'</a>'."\n";
-    		}
-    	}
-    	print '</div>'."\n";
-	}
+            // Delete (need delete permission, or if draft, just need create/modify permission)
+            if ($permissiontodelete) {
+                print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete">'.$langs->trans('Delete').'</a>'."\n";
+            } else {
+                print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Delete').'</a>'."\n";
+            }
+        }
+        print '</div>'."\n";
+    }
 
 
-	// Select mail models is same action as presend
-	if (GETPOST('modelselected')) {
-		$action = 'presend';
-	}
+    // Select mail models is same action as presend
+    if (GETPOST('modelselected')) {
+        $action = 'presend';
+    }
 
-	if ($action != 'presend')
-	{
-	    print '<div class="fichecenter"><div class="fichehalfleft">';
-	    print '<a name="builddoc"></a>'; // ancre
+    if ($action != 'presend') {
+        print '<div class="fichecenter"><div class="fichehalfleft">';
+        print '<a name="builddoc"></a>'; // ancre
 
-	    // Documents
-	    $objref = dol_sanitizeFileName($object->ref);
-	    $relativepath = $objref.'/'.$objref.'.pdf';
-	    $filedir = $conf->mrp->dir_output.'/'.$objref;
-	    $urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-	    $genallowed = $user->rights->mrp->read; // If you can read, you can build the PDF to read content
-	    $delallowed = $user->rights->mrp->create; // If you can create/edit, you can remove a file on card
-	    print $formfile->showdocuments('mrp:mo', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $mysoc->default_lang);
+        // Documents
+        $objref = dol_sanitizeFileName($object->ref);
+        $relativepath = $objref.'/'.$objref.'.pdf';
+        $filedir = $conf->mrp->dir_output.'/'.$objref;
+        $urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
+        $genallowed = $user->rights->mrp->read; // If you can read, you can build the PDF to read content
+        $delallowed = $user->rights->mrp->create; // If you can create/edit, you can remove a file on card
+        print $formfile->showdocuments('mrp:mo', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $mysoc->default_lang);
 
-	    // Show links to link elements
-	    $linktoelem = $form->showLinkToObjectBlock($object, null, array('mo'));
-	    $somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+        // Show links to link elements
+        $linktoelem = $form->showLinkToObjectBlock($object, null, array('mo'));
+        $somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 
-	    print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+        print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
-	    $MAXEVENT = 10;
+        $MAXEVENT = 10;
 
-	    $morehtmlright = '<a href="'.dol_buildpath('/mrp/mo_agenda.php', 1).'?id='.$object->id.'">';
-	    $morehtmlright .= $langs->trans("SeeAll");
-	    $morehtmlright .= '</a>';
+        $morehtmlright = '<a href="'.dol_buildpath('/mrp/mo_agenda.php', 1).'?id='.$object->id.'">';
+        $morehtmlright .= $langs->trans("SeeAll");
+        $morehtmlright .= '</a>';
 
-	    // List of actions on element
-	    include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
-	    $formactions = new FormActions($db);
-	    $somethingshown = $formactions->showactions($object, 'mo', $socid, 1, '', $MAXEVENT, '', $morehtmlright);
+        // List of actions on element
+        include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+        $formactions = new FormActions($db);
+        $somethingshown = $formactions->showactions($object, 'mo', $socid, 1, '', $MAXEVENT, '', $morehtmlright);
 
-	    print '</div></div></div>';
-	}
+        print '</div></div></div>';
+    }
 
-	//Select mail models is same action as presend
-	if (GETPOST('modelselected')) $action = 'presend';
+    //Select mail models is same action as presend
+    if (GETPOST('modelselected')) {
+        $action = 'presend';
+    }
 
-	// Presend form
-	$modelmail = 'mo';
-	$defaulttopic = 'InformationMessage';
-	$diroutput = $conf->mrp->dir_output;
-	$trackid = 'mo'.$object->id;
+    // Presend form
+    $modelmail = 'mo';
+    $defaulttopic = 'InformationMessage';
+    $diroutput = $conf->mrp->dir_output;
+    $trackid = 'mo'.$object->id;
 
-	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
+    include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 }
 
 // End of page

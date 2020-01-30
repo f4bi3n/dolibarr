@@ -29,7 +29,9 @@ $langs->load("compta");
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+    $socid = $user->socid;
+}
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 $ltt = GETPOST("localTaxType");
 
@@ -43,8 +45,7 @@ llxHeader();
 $localtax_static = new Localtax($db);
 
 $newcardbutton = '';
-if ($user->rights->tax->charges->creer)
-{
+if ($user->rights->tax->charges->creer) {
     $newcardbutton .= dolGetButtonTitle($langs->trans('NewLocalTaxPayment', ($ltt + 1)), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/localtax/card.php?action=create&localTaxType='.$ltt);
 }
 
@@ -56,8 +57,7 @@ $sql .= " WHERE f.entity = ".$conf->entity." AND localtaxtype=".$db->escape($ltt
 $sql .= " ORDER BY datev DESC";
 
 $result = $db->query($sql);
-if ($result)
-{
+if ($result) {
     $num = $db->num_rows($result);
     $i = 0;
     $total = 0;
@@ -71,15 +71,14 @@ if ($result)
     print "<td align=\"right\">".$langs->trans("PayedByThisPayment")."</td>";
     print "</tr>\n";
     $var = 1;
-    while ($i < $num)
-    {
+    while ($i < $num) {
         $obj = $db->fetch_object($result);
 
         print '<tr class="oddeven">';
 
-		$localtax_static->id = $obj->rowid;
-		$localtax_static->ref = $obj->rowid;
-		print "<td>".$localtax_static->getNomUrl(1)."</td>\n";
+        $localtax_static->id = $obj->rowid;
+        $localtax_static->ref = $obj->rowid;
+        print "<td>".$localtax_static->getNomUrl(1)."</td>\n";
         print "<td>".dol_trunc($obj->label, 40)."</td>\n";
         print '<td class="left">'.dol_print_date($db->jdate($obj->datev), 'day')."</td>\n";
         print '<td class="left">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";
@@ -95,9 +94,7 @@ if ($result)
 
     print "</table>";
     $db->free($result);
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 

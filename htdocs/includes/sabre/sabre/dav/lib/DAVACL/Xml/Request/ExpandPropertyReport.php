@@ -16,7 +16,8 @@ use Sabre\Xml\XmlDeserializable;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class ExpandPropertyReport implements XmlDeserializable {
+class ExpandPropertyReport implements XmlDeserializable
+{
 
     /**
      * An array with requested properties.
@@ -53,15 +54,14 @@ class ExpandPropertyReport implements XmlDeserializable {
      * @param Reader $reader
      * @return mixed
      */
-    static function xmlDeserialize(Reader $reader) {
-
+    public static function xmlDeserialize(Reader $reader)
+    {
         $elems = $reader->parseInnerTree();
 
         $obj = new self();
         $obj->properties = self::traverse($elems);
 
         return $obj;
-
     }
 
     /**
@@ -71,12 +71,11 @@ class ExpandPropertyReport implements XmlDeserializable {
      * @param array $elems
      * @return void
      */
-    private static function traverse($elems) {
-
+    private static function traverse($elems)
+    {
         $result = [];
 
         foreach ($elems as $elem) {
-
             if ($elem['name'] !== '{DAV:}property') {
                 continue;
             }
@@ -93,11 +92,8 @@ class ExpandPropertyReport implements XmlDeserializable {
             }
 
             $result[$propName] = $value;
-
         }
 
         return $result;
-
     }
-
 }

@@ -20,7 +20,8 @@ use Sabre\Xml\XmlSerializable;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class SupportedMethodSet implements XmlSerializable, HtmlOutput {
+class SupportedMethodSet implements XmlSerializable, HtmlOutput
+{
 
     /**
      * List of methods
@@ -34,10 +35,9 @@ class SupportedMethodSet implements XmlSerializable, HtmlOutput {
      *
      * @param string[] $methods
      */
-    function __construct(array $methods) {
-
+    public function __construct(array $methods)
+    {
         $this->methods = $methods;
-
     }
 
     /**
@@ -45,10 +45,9 @@ class SupportedMethodSet implements XmlSerializable, HtmlOutput {
      *
      * @return string[]
      */
-    function getValue() {
-
+    public function getValue()
+    {
         return $this->methods;
-
     }
 
     /**
@@ -57,13 +56,12 @@ class SupportedMethodSet implements XmlSerializable, HtmlOutput {
      * @param string $methodName
      * @return bool
      */
-    function has($methodName) {
-
+    public function has($methodName)
+    {
         return in_array(
             $methodName,
             $this->methods
         );
-
     }
 
     /**
@@ -85,14 +83,13 @@ class SupportedMethodSet implements XmlSerializable, HtmlOutput {
      * @param Writer $writer
      * @return void
      */
-    function xmlSerialize(Writer $writer) {
-
+    public function xmlSerialize(Writer $writer)
+    {
         foreach ($this->getValue() as $val) {
             $writer->startElement('{DAV:}supported-method');
             $writer->writeAttribute('name', $val);
             $writer->endElement();
         }
-
     }
 
     /**
@@ -109,13 +106,11 @@ class SupportedMethodSet implements XmlSerializable, HtmlOutput {
      * @param HtmlOutputHelper $html
      * @return string
      */
-    function toHtml(HtmlOutputHelper $html) {
-
+    public function toHtml(HtmlOutputHelper $html)
+    {
         return implode(
             ', ',
             array_map([$html, 'h'], $this->getValue())
         );
-
     }
-
 }

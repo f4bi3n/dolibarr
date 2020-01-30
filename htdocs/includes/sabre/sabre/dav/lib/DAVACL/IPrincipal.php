@@ -13,7 +13,8 @@ use Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface IPrincipal extends DAV\INode {
+interface IPrincipal extends DAV\INode
+{
 
     /**
      * Returns a list of alternative urls for a principal
@@ -22,14 +23,14 @@ interface IPrincipal extends DAV\INode {
      *
      * @return array
      */
-    function getAlternateUriSet();
+    public function getAlternateUriSet();
 
     /**
      * Returns the full principal url
      *
      * @return string
      */
-    function getPrincipalUrl();
+    public function getPrincipalUrl();
 
     /**
      * Returns the list of group members
@@ -39,7 +40,7 @@ interface IPrincipal extends DAV\INode {
      *
      * @return array
      */
-    function getGroupMemberSet();
+    public function getGroupMemberSet();
 
     /**
      * Returns the list of groups this principal is member of
@@ -49,7 +50,7 @@ interface IPrincipal extends DAV\INode {
      *
      * @return array
      */
-    function getGroupMembership();
+    public function getGroupMembership();
 
     /**
      * Sets a list of group members
@@ -62,7 +63,7 @@ interface IPrincipal extends DAV\INode {
      * @param array $principals
      * @return void
      */
-    function setGroupMemberSet(array $principals);
+    public function setGroupMemberSet(array $principals);
 
     /**
      * Returns the displayname
@@ -72,6 +73,5 @@ interface IPrincipal extends DAV\INode {
      *
      * @return string
      */
-    function getDisplayName();
-
+    public function getDisplayName();
 }

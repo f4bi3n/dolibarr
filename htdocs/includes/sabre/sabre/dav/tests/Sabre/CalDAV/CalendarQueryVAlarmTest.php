@@ -4,14 +4,15 @@ namespace Sabre\CalDAV;
 
 use Sabre\VObject;
 
-class CalendarQueryVAlarmTest extends \PHPUnit_Framework_TestCase {
+class CalendarQueryVAlarmTest extends \PHPUnit_Framework_TestCase
+{
 
     /**
      * This test is specifically for a time-range query on a VALARM, contained
      * in a VEVENT that's recurring
      */
-    function testValarm() {
-
+    public function testValarm()
+    {
         $vcalendar = new VObject\Component\VCalendar();
 
         $vevent = $vcalendar->createComponent('VEVENT');
@@ -73,8 +74,8 @@ class CalendarQueryVAlarmTest extends \PHPUnit_Framework_TestCase {
         $this->assertFalse($validator->validate($vcalendar, $filter));
     }
 
-    function testAlarmWayBefore() {
-
+    public function testAlarmWayBefore()
+    {
         $vcalendar = new VObject\Component\VCalendar();
 
         $vevent = $vcalendar->createComponent('VEVENT');
@@ -116,7 +117,5 @@ class CalendarQueryVAlarmTest extends \PHPUnit_Framework_TestCase {
 
         $validator = new CalendarQueryValidator();
         $this->assertTrue($validator->validate($vcalendar, $filter));
-
     }
-
 }

@@ -37,7 +37,7 @@ class box_boms extends ModeleBoxes
     public $boxlabel="BoxTitleLatestModifiedBoms";
     public $depends = array("bom");
 
-	/**
+    /**
      * @var DoliDB Database handler.
      */
     public $db;
@@ -84,8 +84,7 @@ class box_boms extends ModeleBoxes
 
         $this->info_box_head = array('text' => $langs->trans("BoxTitleLatestModifiedBoms", $max));
 
-        if ($user->rights->bom->read)
-        {
+        if ($user->rights->bom->read) {
             $sql = "SELECT p.ref as product_ref";
             $sql.= ", c.rowid";
             $sql.= ", c.date_creation";
@@ -128,7 +127,9 @@ class box_boms extends ModeleBoxes
                     );
 
                     if (! empty($conf->global->BOM_BOX_LAST_BOMS_SHOW_VALIDATE_USER)) {
-                        if ($objp->fk_user_valid > 0) $userstatic->fetch($objp->fk_user_valid);
+                        if ($objp->fk_user_valid > 0) {
+                            $userstatic->fetch($objp->fk_user_valid);
+                        }
                         $this->info_box_contents[$line][] = array(
                             'td' => 'class="right"',
                             'text' => (($objp->fk_user_valid > 0)?$userstatic->getNomUrl(1):''),
@@ -149,7 +150,9 @@ class box_boms extends ModeleBoxes
                     $line++;
                 }
 
-                if ($num==0) $this->info_box_contents[$line][0] = array('td' => 'class="center"','text'=>$langs->trans("NoRecordedOrders"));
+                if ($num==0) {
+                    $this->info_box_contents[$line][0] = array('td' => 'class="center"','text'=>$langs->trans("NoRecordedOrders"));
+                }
 
                 $this->db->free($result);
             } else {
@@ -167,14 +170,14 @@ class box_boms extends ModeleBoxes
         }
     }
 
-	/**
-	 *	Method to show box
-	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
-	 *	@return	string
-	 */
+    /**
+     *	Method to show box
+     *
+     *	@param	array	$head       Array with properties of box title
+     *	@param  array	$contents   Array with properties of box lines
+     *  @param	int		$nooutput	No print, only return string
+     *	@return	string
+     */
     public function showBox($head = null, $contents = null, $nooutput = 0)
     {
         return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);

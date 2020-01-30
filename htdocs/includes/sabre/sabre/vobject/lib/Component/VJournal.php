@@ -14,7 +14,8 @@ use Sabre\VObject;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class VJournal extends VObject\Component {
+class VJournal extends VObject\Component
+{
 
     /**
      * Returns true or false depending on if the event falls in the specified
@@ -28,8 +29,8 @@ class VJournal extends VObject\Component {
      *
      * @return bool
      */
-    function isInTimeRange(DateTimeInterface $start, DateTimeInterface $end) {
-
+    public function isInTimeRange(DateTimeInterface $start, DateTimeInterface $end)
+    {
         $dtstart = isset($this->DTSTART) ? $this->DTSTART->getDateTime() : null;
         if ($dtstart) {
             $effectiveEnd = $dtstart;
@@ -38,10 +39,8 @@ class VJournal extends VObject\Component {
             }
 
             return ($start <= $effectiveEnd && $end > $dtstart);
-
         }
         return false;
-
     }
 
     /**
@@ -59,8 +58,8 @@ class VJournal extends VObject\Component {
      *
      * @var array
      */
-    function getValidationRules() {
-
+    public function getValidationRules()
+    {
         return [
             'UID'     => 1,
             'DTSTAMP' => 1,
@@ -88,7 +87,6 @@ class VJournal extends VObject\Component {
             'RELATED-TO'  => '*',
             'RDATE'       => '*',
         ];
-
     }
 
     /**
@@ -96,12 +94,11 @@ class VJournal extends VObject\Component {
      *
      * @return array
      */
-    protected function getDefaults() {
-
+    protected function getDefaults()
+    {
         return [
             'UID'     => 'sabre-vobject-' . VObject\UUIDUtil::getUUID(),
             'DTSTAMP' => date('Ymd\\THis\\Z'),
         ];
-
     }
 }

@@ -34,7 +34,9 @@ $langs->load("companies");
 
 // Security check
 $id = GETPOST("id", 'int');
-if ($user->socid) $socid=$user->socid;
+if ($user->socid) {
+    $socid=$user->socid;
+}
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
 
 $object = new Contact($db);
@@ -51,33 +53,32 @@ $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("
 
 llxHeader('', $title, 'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas');
 
-if ($id > 0)
-{
-	$result = $object->fetch($id, $user);
+if ($id > 0) {
+    $result = $object->fetch($id, $user);
 
-	$object->info($id);
-
-
-	$head = contact_prepare_head($object);
-
-	dol_fiche_head($head, 'info', $title, -1, 'contact');
-
-	$linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
-
-	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '');
+    $object->info($id);
 
 
-	print '<div class="fichecenter">';
+    $head = contact_prepare_head($object);
 
-	print '<div class="underbanner clearboth"></div>';
+    dol_fiche_head($head, 'info', $title, -1, 'contact');
 
-	print '<br>';
+    $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	dol_print_object_info($object);
+    dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '');
 
-	print '</div>';
 
-	dol_fiche_end();
+    print '<div class="fichecenter">';
+
+    print '<div class="underbanner clearboth"></div>';
+
+    print '<br>';
+
+    dol_print_object_info($object);
+
+    print '</div>';
+
+    dol_fiche_end();
 }
 
 llxFooter();

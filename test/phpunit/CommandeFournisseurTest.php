@@ -61,9 +61,9 @@ class CommandeFournisseurTest extends PHPUnit\Framework\TestCase
      */
     public function __construct()
     {
-    	parent::__construct();
+        parent::__construct();
 
-    	//$this->sharedFixture
+        //$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -138,7 +138,10 @@ class CommandeFournisseurTest extends PHPUnit\Framework\TestCase
         $societe->fetch($socid);
         $product=new ProductFournisseur($db);
         $product->fetch(0, 'PIDRESS');
-        if ($product->id <= 0) { print "\n".__METHOD__." A product with ref PIDRESS must exists into database"; die(); }
+        if ($product->id <= 0) {
+            print "\n".__METHOD__." A product with ref PIDRESS must exists into database";
+            die();
+        }
 
         $quantity=10;
         $ref_fourn='SUPPLIER_REF_PHPUNIT';

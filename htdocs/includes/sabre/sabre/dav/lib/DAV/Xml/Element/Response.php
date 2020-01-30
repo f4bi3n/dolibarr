@@ -17,7 +17,8 @@ use Sabre\Xml\Writer;
  * @author Evert Pot (http://www.rooftopsolutions.nl/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Response implements Element {
+class Response implements Element
+{
 
     /**
      * Url for the response
@@ -60,12 +61,11 @@ class Response implements Element {
      * @param array $responseProperties
      * @param string $httpStatus
      */
-    function __construct($href, array $responseProperties, $httpStatus = null) {
-
+    public function __construct($href, array $responseProperties, $httpStatus = null)
+    {
         $this->href = $href;
         $this->responseProperties = $responseProperties;
         $this->httpStatus = $httpStatus;
-
     }
 
     /**
@@ -73,10 +73,9 @@ class Response implements Element {
      *
      * @return string
      */
-    function getHref() {
-
+    public function getHref()
+    {
         return $this->href;
-
     }
 
     /**
@@ -84,10 +83,9 @@ class Response implements Element {
      *
      * @return string
      */
-    function getHttpStatus() {
-
+    public function getHttpStatus()
+    {
         return $this->httpStatus;
-
     }
 
     /**
@@ -95,10 +93,9 @@ class Response implements Element {
      *
      * @return array
      */
-    function getResponseProperties() {
-
+    public function getResponseProperties()
+    {
         return $this->responseProperties;
-
     }
 
 
@@ -117,8 +114,8 @@ class Response implements Element {
      * @param Writer $writer
      * @return void
      */
-    function xmlSerialize(Writer $writer) {
-
+    public function xmlSerialize(Writer $writer)
+    {
         if ($status = $this->getHTTPStatus()) {
             $writer->writeElement('{DAV:}status', 'HTTP/1.1 ' . $status . ' ' . \Sabre\HTTP\Response::$statusCodes[$status]);
         }
@@ -137,7 +134,6 @@ class Response implements Element {
             $writer->writeElement('{DAV:}prop', $properties);
             $writer->writeElement('{DAV:}status', 'HTTP/1.1 ' . $status . ' ' . \Sabre\HTTP\Response::$statusCodes[$status]);
             $writer->endElement(); // {DAV:}propstat
-
         }
         if ($empty) {
             /*
@@ -152,9 +148,7 @@ class Response implements Element {
                 '{DAV:}prop'   => [],
                 '{DAV:}status' => 'HTTP/1.1 418 ' . \Sabre\HTTP\Response::$statusCodes[418]
             ]);
-
         }
-
     }
 
     /**
@@ -178,8 +172,8 @@ class Response implements Element {
      * @param Reader $reader
      * @return mixed
      */
-    static function xmlDeserialize(Reader $reader) {
-
+    public static function xmlDeserialize(Reader $reader)
+    {
         $reader->pushContext();
 
         $reader->elementMap['{DAV:}propstat'] = 'Sabre\\Xml\\Element\\KeyValue';
@@ -192,8 +186,7 @@ class Response implements Element {
         // called. But we don't want this, because a singular element without
         // child-elements implies 'no value' in {DAV:}prop, so we want to skip
         // deserializers and just set null for those.
-        $reader->elementMap['{DAV:}prop'] = function(Reader $reader) {
-
+        $reader->elementMap['{DAV:}prop'] = function (Reader $reader) {
             if ($reader->isEmptyElement) {
                 $reader->next();
                 return [];
@@ -216,7 +209,6 @@ class Response implements Element {
             } while ($reader->nodeType !== Reader::END_ELEMENT);
             $reader->read();
             return $values;
-
         };
         $elems = $reader->parseInnerTree();
         $reader->popContext();
@@ -226,28 +218,26 @@ class Response implements Element {
         $statusCode = null;
 
         foreach ($elems as $elem) {
-
             switch ($elem['name']) {
 
-                case '{DAV:}href' :
+                case '{DAV:}href':
                     $href = $elem['value'];
                     break;
-                case '{DAV:}propstat' :
+                case '{DAV:}propstat':
                     $status = $elem['value']['{DAV:}status'];
                     list(, $status, ) = explode(' ', $status, 3);
                     $properties = isset($elem['value']['{DAV:}prop']) ? $elem['value']['{DAV:}prop'] : [];
-                    if ($properties) $propertyLists[$status] = $properties;
+                    if ($properties) {
+                        $propertyLists[$status] = $properties;
+                    }
                     break;
-                case '{DAV:}status' :
+                case '{DAV:}status':
                     list(, $statusCode, ) = explode(' ', $elem['value'], 3);
                     break;
 
             }
-
         }
 
         return new self($href, $propertyLists, $statusCode);
-
     }
-
 }

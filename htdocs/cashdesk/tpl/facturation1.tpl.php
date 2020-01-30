@@ -21,10 +21,9 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($langs) || ! is_object($langs))
-{
-	print "Error, template page can't be called as URL";
-	exit;
+if (empty($langs) || ! is_object($langs)) {
+    print "Error, template page can't be called as URL";
+    exit;
 }
 
 // Load translation files required by the page
@@ -64,23 +63,24 @@ $id = $obj_facturation->id();
 // Si trop d'articles ont ete trouves, on n'affiche que les X premiers (defini dans le fichier de configuration) ...
 
 $nbtoshow = $nbr_enreg;
-if (! empty($conf_taille_listes) && $nbtoshow > $conf_taille_listes) $nbtoshow = $conf_taille_listes;
+if (! empty($conf_taille_listes) && $nbtoshow > $conf_taille_listes) {
+    $nbtoshow = $conf_taille_listes;
+}
 
-for ($i = 0; $i < $nbtoshow; $i++)
-{
-	if ($id == $tab_designations[$i]['rowid']) {
-		$selected = 'selected';
-	} else {
-		$selected = '';
-	}
+for ($i = 0; $i < $nbtoshow; $i++) {
+    if ($id == $tab_designations[$i]['rowid']) {
+        $selected = 'selected';
+    } else {
+        $selected = '';
+    }
 
-	$label = $tab_designations[$i]['label'];
+    $label = $tab_designations[$i]['label'];
 
-	print '<option '.$selected.' value="'.$tab_designations[$i]['rowid'].'">'.dol_trunc($tab_designations[$i]['ref'], 16).' - '.dol_trunc($label, 35, 'middle');
-	if (! empty($conf->stock->enabled) && !empty($conf_fkentrepot) && $tab_designations[$i]['fk_product_type']==0) {
-		print ' ('.$langs->trans("CashDeskStock").': '.(empty($tab_designations[$i]['reel'])?0:$tab_designations[$i]['reel']).')';
-	}
-	print '</option>'."\n";
+    print '<option '.$selected.' value="'.$tab_designations[$i]['rowid'].'">'.dol_trunc($tab_designations[$i]['ref'], 16).' - '.dol_trunc($label, 35, 'middle');
+    if (! empty($conf->stock->enabled) && !empty($conf_fkentrepot) && $tab_designations[$i]['fk_product_type']==0) {
+        print ' ('.$langs->trans("CashDeskStock").': '.(empty($tab_designations[$i]['reel'])?0:$tab_designations[$i]['reel']).')';
+    }
+    print '</option>'."\n";
 }
 ?>
 				</select>
@@ -104,7 +104,7 @@ for ($i = 0; $i < $nbtoshow; $i++)
 <?php print genkeypad("txtQte", "frmQte");?>
 				</td>
 				<!-- Show unit price -->
-				<?php // TODO Remove the disabled and use this value when adding product into cart ?>
+				<?php // TODO Remove the disabled and use this value when adding product into cart?>
 				<td><input class="texte1_off maxwidth50onsmartphone" type="text" name="txtPrixUnit" value="<?php echo price2num($obj_facturation->prix(), 'MU'); ?>" onchange="javascript: modif();" disabled /></td>
     			<!-- Choix de la remise -->
     			<td><input class="texte1 maxwidth50onsmartphone" type="text" id="txtRemise" name="txtRemise" value="0" onkeyup="javascript: modif();" onfocus="javascript: this.select();"/>
@@ -113,12 +113,14 @@ for ($i = 0; $i < $nbtoshow; $i++)
                 <!-- Choix du taux de TVA -->
                 <td class="select_tva center">
                 <?php
-					$vatrate = $obj_facturation->vatrate;      // To get vat rate we just have selected
+                    $vatrate = $obj_facturation->vatrate;      // To get vat rate we just have selected
 
-					$buyer = new Societe($db);
-					if ($_SESSION["CASHDESK_ID_THIRDPARTY"] > 0) $buyer->fetch($_SESSION["CASHDESK_ID_THIRDPARTY"]);
-					echo $form->load_tva('selTva', (isset($_POST["selTva"])?GETPOST("selTva", 'alpha', 2):$vatrate), $mysoc, $buyer, 0, 0, '', false, -1);
-			    ?>
+                    $buyer = new Societe($db);
+                    if ($_SESSION["CASHDESK_ID_THIRDPARTY"] > 0) {
+                        $buyer->fetch($_SESSION["CASHDESK_ID_THIRDPARTY"]);
+                    }
+                    echo $form->load_tva('selTva', (isset($_POST["selTva"])?GETPOST("selTva", 'alpha', 2):$vatrate), $mysoc, $buyer, 0, 0, '', false, -1);
+                ?>
                 </td>
 				<td></td>
 			</tr>
@@ -164,39 +166,39 @@ for ($i = 0; $i < $nbtoshow; $i++)
 <fieldset class="cadre_facturation"><legend class="titre1"><?php echo $langs->trans("PaymentMode"); ?></legend>
 		<div class="inline-block">
 			<?php
-			print '<div class="inline-block" style="margin: 6px;">';
-			if (empty($_SESSION['CASHDESK_ID_BANKACCOUNT_CASH']) || $_SESSION['CASHDESK_ID_BANKACCOUNT_CASH'] < 0)
-			{
-				$langs->load("errors");
-				print '<input class="bouton_mode_reglement_disabled" type="button" name="btnModeReglement" value="'.$langs->trans("Cash").'" title="'.dol_escape_htmltag($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("CashDesk"))).'" />';
-			}
-			else print '<input class="button bouton_mode_reglement" type="submit" name="btnModeReglement" value="'.$langs->trans("Cash").'" onclick="javascript: verifClic(\'ESP\');" />';
-			print '</div>';
-			print '<div class="inline-block" style="margin: 6px;">';
-			if (empty($_SESSION['CASHDESK_ID_BANKACCOUNT_CB']) || $_SESSION['CASHDESK_ID_BANKACCOUNT_CB'] < 0)
-			{
-				$langs->load("errors");
-				print '<input class="bouton_mode_reglement_disabled" type="button" name="btnModeReglement" value="'.$langs->trans("CreditCard").'" title="'.dol_escape_htmltag($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("CashDesk"))).'" />';
-			}
-			else print '<input class="button bouton_mode_reglement" type="submit" name="btnModeReglement" value="'.$langs->trans("CreditCard").'" onclick="javascript: verifClic(\'CB\');" />';
-			print '</div>';
-			print '<div class="inline-block" style="margin: 6px;">';
-			if (empty($_SESSION['CASHDESK_ID_BANKACCOUNT_CHEQUE']) || $_SESSION['CASHDESK_ID_BANKACCOUNT_CHEQUE'] < 0)
-			{
-				$langs->load("errors");
-				print '<input class="bouton_mode_reglement_disabled" type="button" name="btnModeReglement" value="'.$langs->trans("CheckBank").'" title="'.dol_escape_htmltag($langs->trans("ErrorModuleSetupNotComplete"), $langs->transnoentitiesnoconv("CashDesk")).'" />';
-			}
-			else print '<input class="button bouton_mode_reglement" type="submit" name="btnModeReglement" value="'.$langs->trans("CheckBank").'" onclick="javascript: verifClic(\'CHQ\');" />';
-			print '</div>';
-			print '<div class="clearboth">';
-			print '<div class="inline-block" style="margin: 6px;">';
-			?>
+            print '<div class="inline-block" style="margin: 6px;">';
+            if (empty($_SESSION['CASHDESK_ID_BANKACCOUNT_CASH']) || $_SESSION['CASHDESK_ID_BANKACCOUNT_CASH'] < 0) {
+                $langs->load("errors");
+                print '<input class="bouton_mode_reglement_disabled" type="button" name="btnModeReglement" value="'.$langs->trans("Cash").'" title="'.dol_escape_htmltag($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("CashDesk"))).'" />';
+            } else {
+                print '<input class="button bouton_mode_reglement" type="submit" name="btnModeReglement" value="'.$langs->trans("Cash").'" onclick="javascript: verifClic(\'ESP\');" />';
+            }
+            print '</div>';
+            print '<div class="inline-block" style="margin: 6px;">';
+            if (empty($_SESSION['CASHDESK_ID_BANKACCOUNT_CB']) || $_SESSION['CASHDESK_ID_BANKACCOUNT_CB'] < 0) {
+                $langs->load("errors");
+                print '<input class="bouton_mode_reglement_disabled" type="button" name="btnModeReglement" value="'.$langs->trans("CreditCard").'" title="'.dol_escape_htmltag($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("CashDesk"))).'" />';
+            } else {
+                print '<input class="button bouton_mode_reglement" type="submit" name="btnModeReglement" value="'.$langs->trans("CreditCard").'" onclick="javascript: verifClic(\'CB\');" />';
+            }
+            print '</div>';
+            print '<div class="inline-block" style="margin: 6px;">';
+            if (empty($_SESSION['CASHDESK_ID_BANKACCOUNT_CHEQUE']) || $_SESSION['CASHDESK_ID_BANKACCOUNT_CHEQUE'] < 0) {
+                $langs->load("errors");
+                print '<input class="bouton_mode_reglement_disabled" type="button" name="btnModeReglement" value="'.$langs->trans("CheckBank").'" title="'.dol_escape_htmltag($langs->trans("ErrorModuleSetupNotComplete"), $langs->transnoentitiesnoconv("CashDesk")).'" />';
+            } else {
+                print '<input class="button bouton_mode_reglement" type="submit" name="btnModeReglement" value="'.$langs->trans("CheckBank").'" onclick="javascript: verifClic(\'CHQ\');" />';
+            }
+            print '</div>';
+            print '<div class="clearboth">';
+            print '<div class="inline-block" style="margin: 6px;">';
+            ?>
 				<input class="button bouton_mode_reglement" type="submit" name="btnModeReglement" value="<?php echo $langs->trans("Reported"); ?>" onclick="javascript: verifClic('DIF');" />
 			<?php
-			print $langs->trans("DateDue").' :';
-			print $form->selectDate(-1, 'txtDatePaiement', 0, 0, 0, 'paymentmode', 1, 0);
-			print '</div>';
-			?>
+            print $langs->trans("DateDue").' :';
+            print $form->selectDate(-1, 'txtDatePaiement', 0, 0, 0, 'paymentmode', 1, 0);
+            print '</div>';
+            ?>
 		</div>
 </fieldset>
 </form>

@@ -40,7 +40,6 @@ if (!$userName = $digestAuth->getUsername()) {
 
     // No username given
     $digestAuth->requireLogin();
-
 } elseif (!isset($userList[$userName]) || !$digestAuth->validatePassword($userList[$userName])) {
 
     // Username or password are incorrect
@@ -49,7 +48,6 @@ if (!$userName = $digestAuth->getUsername()) {
 
     // Success !
     $response->setBody('You are logged in!');
-
 }
 
 // Sending the response

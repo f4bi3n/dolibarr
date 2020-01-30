@@ -67,23 +67,23 @@ class box_task extends ModeleBoxes
         $this->hidden = (!empty($conf->global->PROJECT_HIDE_TASKS) || !($user->rights->projet->lire));
     }
 
-	/**
-	 *  Load data for box to show them later
-	 *
-	 *  @param  int     $max        Maximum number of records to load
-	 *  @return void
-	 */
-	public function loadBox($max = 5)
-	{
-		global $conf, $user, $langs;
+    /**
+     *  Load data for box to show them later
+     *
+     *  @param  int     $max        Maximum number of records to load
+     *  @return void
+     */
+    public function loadBox($max = 5)
+    {
+        global $conf, $user, $langs;
 
-		$this->max = $max;
-		include_once DOL_DOCUMENT_ROOT."/projet/class/task.class.php";
-		include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+        $this->max = $max;
+        include_once DOL_DOCUMENT_ROOT."/projet/class/task.class.php";
+        include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
         require_once DOL_DOCUMENT_ROOT."/core/lib/project.lib.php";
         $projectstatic = new Project($this->db);
-		$taskstatic = new Task($this->db);
-		$form = new Form($this->db);
+        $taskstatic = new Task($this->db);
+        $form = new Form($this->db);
         $cookie_name = 'boxfilter_task';
         $boxcontent = '';
 
@@ -92,22 +92,20 @@ class box_task extends ModeleBoxes
         $filterValue = 'all';
         if (in_array(GETPOST($cookie_name), array('all', 'im_project_contact', 'im_task_contact'))) {
             $filterValue = GETPOST($cookie_name);
-        }
-        elseif (!empty($_COOKIE[$cookie_name])) {
+        } elseif (!empty($_COOKIE[$cookie_name])) {
             $filterValue = $_COOKIE[$cookie_name];
         }
 
 
         if ($filterValue == 'im_task_contact') {
             $textHead .= ' : '.$langs->trans("WhichIamLinkedTo");
-        }
-        elseif ($filterValue == 'im_project_contact') {
+        } elseif ($filterValue == 'im_project_contact') {
             $textHead .= ' : '.$langs->trans("WhichIamLinkedToProject");
         }
 
 
-		$this->info_box_head = array(
-		    'text' => $textHead,
+        $this->info_box_head = array(
+            'text' => $textHead,
             'limit'=> dol_strlen($textHead),
             'sublink'=>'',
             'subtext'=>$langs->trans("Filter"),
@@ -116,8 +114,8 @@ class box_task extends ModeleBoxes
             'target'=>'none'	// Set '' to get target="_blank"
         );
 
-		// list the summary of the orders
-		if ($user->rights->projet->lire) {
+        // list the summary of the orders
+        if ($user->rights->projet->lire) {
             $boxcontent .= '<div id="ancor-idfilter'.$this->boxcode.'" style="display: block; position: absolute; margin-top: -100px"></div>'."\n";
             $boxcontent .= '<div id="idfilter'.$this->boxcode.'" class="center" >'."\n";
             $boxcontent .= '<form class="flat " method="POST" action="'.$_SERVER["PHP_SELF"].'#ancor-idfilter'.$this->boxcode.'">'."\n";
@@ -144,34 +142,33 @@ class box_task extends ModeleBoxes
 
 
             $sql = "SELECT pt.rowid, pt.ref, pt.fk_projet, pt.fk_task_parent, pt.datec, pt.dateo, pt.datee, pt.datev, pt.label, pt.description, pt.duration_effective, pt.planned_workload, pt.progress";
-			$sql .= ", p.rowid project_id, p.ref project_ref, p.title project_title";
+            $sql .= ", p.rowid project_id, p.ref project_ref, p.title project_title";
 
-			$sql .= " FROM ".MAIN_DB_PREFIX."projet_task as pt";
-			$sql .= " JOIN ".MAIN_DB_PREFIX."projet as p ON (pt.fk_projet = p.rowid)";
+            $sql .= " FROM ".MAIN_DB_PREFIX."projet_task as pt";
+            $sql .= " JOIN ".MAIN_DB_PREFIX."projet as p ON (pt.fk_projet = p.rowid)";
 
             if ($filterValue === 'im_task_contact') {
                 $sql .= " JOIN ".MAIN_DB_PREFIX."element_contact as ec ON (ec.element_id = pt.rowid AND ec.fk_socpeople = '".$user->id."' )";
                 $sql .= " JOIN ".MAIN_DB_PREFIX."c_type_contact  as tc ON (ec.fk_c_type_contact = tc.rowid AND tc.element = 'project_task' AND tc.source = 'internal' )";
-            }
-            elseif ($filterValue === 'im_project_contact') {
+            } elseif ($filterValue === 'im_project_contact') {
                 $sql .= " JOIN ".MAIN_DB_PREFIX."element_contact as ec ON (ec.element_id = p.rowid AND ec.fk_socpeople = '".$user->id."' )";
                 $sql .= " JOIN ".MAIN_DB_PREFIX."c_type_contact  as tc ON (ec.fk_c_type_contact = tc.rowid AND tc.element = 'project' AND tc.source = 'internal' )";
             }
 
-			$sql .= " WHERE ";
-			$sql .= " pt.entity = ".$conf->entity;
-			$sql .= " AND p.fk_statut = ".Project::STATUS_VALIDATED;
-			$sql .= " AND (pt.progress < 100 OR pt.progress IS NULL ) "; // 100% is done and not displayed
+            $sql .= " WHERE ";
+            $sql .= " pt.entity = ".$conf->entity;
+            $sql .= " AND p.fk_statut = ".Project::STATUS_VALIDATED;
+            $sql .= " AND (pt.progress < 100 OR pt.progress IS NULL ) "; // 100% is done and not displayed
             $sql .= " AND p.usage_task = 1 ";
 
 
-			$sql .= " ORDER BY pt.datee ASC, pt.dateo ASC";
-			$sql .= $this->db->plimit($max, 0);
+            $sql .= " ORDER BY pt.datee ASC, pt.dateo ASC";
+            $sql .= $this->db->plimit($max, 0);
 
-			$result = $this->db->query($sql);
-			$i = 1;
-			if ($result) {
-				$num = $this->db->num_rows($result);
+            $result = $this->db->query($sql);
+            $i = 1;
+            if ($result) {
+                $num = $this->db->num_rows($result);
                 while ($objp = $this->db->fetch_object($result)) {
                     $taskstatic->id = $objp->rowid;
                     $taskstatic->ref = $objp->ref;
@@ -194,24 +191,24 @@ class box_task extends ModeleBoxes
                         'td' => '',
                         'text' => $boxcontent,
                     );
-					$i++;
-				}
-			} else {
+                    $i++;
+                }
+            } else {
                 dol_print_error($this->db);
             }
-		}
-	}
+        }
+    }
 
-	/**
-	 *	Method to show box
-	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
-	 *	@return	string
-	 */
-	public function showBox($head = null, $contents = null, $nooutput = 0)
-	{
-		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
-	}
+    /**
+     *	Method to show box
+     *
+     *	@param	array	$head       Array with properties of box title
+     *	@param  array	$contents   Array with properties of box lines
+     *  @param	int		$nooutput	No print, only return string
+     *	@return	string
+     */
+    public function showBox($head = null, $contents = null, $nooutput = 0)
+    {
+        return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+    }
 }

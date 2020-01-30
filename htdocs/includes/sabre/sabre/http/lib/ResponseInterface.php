@@ -9,14 +9,15 @@ namespace Sabre\HTTP;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface ResponseInterface extends MessageInterface {
+interface ResponseInterface extends MessageInterface
+{
 
     /**
      * Returns the current HTTP status code.
      *
      * @return int
      */
-    function getStatus();
+    public function getStatus();
 
     /**
      * Returns the human-readable status string.
@@ -25,7 +26,7 @@ interface ResponseInterface extends MessageInterface {
      *
      * @return string
      */
-    function getStatusText();
+    public function getStatusText();
 
     /**
      * Sets the HTTP status code.
@@ -40,6 +41,5 @@ interface ResponseInterface extends MessageInterface {
      * @throws \InvalidArgumentException
      * @return void
      */
-    function setStatus($status);
-
+    public function setStatus($status);
 }

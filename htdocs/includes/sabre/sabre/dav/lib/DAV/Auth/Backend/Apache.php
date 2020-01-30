@@ -17,7 +17,8 @@ use Sabre\HTTP\ResponseInterface;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Apache implements BackendInterface {
+class Apache implements BackendInterface
+{
 
     /**
      * This is the prefix that will be used to generate principal urls.
@@ -54,8 +55,8 @@ class Apache implements BackendInterface {
      * @param ResponseInterface $response
      * @return array
      */
-    function check(RequestInterface $request, ResponseInterface $response) {
-
+    public function check(RequestInterface $request, ResponseInterface $response)
+    {
         $remoteUser = $request->getRawServerValue('REMOTE_USER');
         if (is_null($remoteUser)) {
             $remoteUser = $request->getRawServerValue('REDIRECT_REMOTE_USER');
@@ -65,7 +66,6 @@ class Apache implements BackendInterface {
         }
 
         return [true, $this->principalPrefix . $remoteUser];
-
     }
 
     /**
@@ -89,8 +89,7 @@ class Apache implements BackendInterface {
      * @param ResponseInterface $response
      * @return void
      */
-    function challenge(RequestInterface $request, ResponseInterface $response) {
-
+    public function challenge(RequestInterface $request, ResponseInterface $response)
+    {
     }
-
 }

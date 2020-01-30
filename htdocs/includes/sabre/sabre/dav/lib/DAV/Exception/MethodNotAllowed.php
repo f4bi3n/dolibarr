@@ -13,17 +13,17 @@ use Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class MethodNotAllowed extends DAV\Exception {
+class MethodNotAllowed extends DAV\Exception
+{
 
     /**
      * Returns the HTTP statuscode for this exception
      *
      * @return int
      */
-    function getHTTPCode() {
-
+    public function getHTTPCode()
+    {
         return 405;
-
     }
 
     /**
@@ -34,14 +34,12 @@ class MethodNotAllowed extends DAV\Exception {
      * @param \Sabre\DAV\Server $server
      * @return array
      */
-    function getHTTPHeaders(\Sabre\DAV\Server $server) {
-
+    public function getHTTPHeaders(\Sabre\DAV\Server $server)
+    {
         $methods = $server->getAllowedMethods($server->getRequestUri());
 
         return [
             'Allow' => strtoupper(implode(', ', $methods)),
         ];
-
     }
-
 }

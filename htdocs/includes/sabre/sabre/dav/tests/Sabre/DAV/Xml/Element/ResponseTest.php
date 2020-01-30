@@ -4,10 +4,10 @@ namespace Sabre\DAV\Xml\Element;
 
 use Sabre\DAV;
 
-class ResponseTest extends DAV\Xml\XmlTest {
-
-    function testSimple() {
-
+class ResponseTest extends DAV\Xml\XmlTest
+{
+    public function testSimple()
+    {
         $innerProps = [
             200 => [
                 '{DAV:}displayname' => 'my file',
@@ -21,15 +21,13 @@ class ResponseTest extends DAV\Xml\XmlTest {
 
         $this->assertEquals('uri', $property->getHref());
         $this->assertEquals($innerProps, $property->getResponseProperties());
-
-
     }
 
     /**
      * @depends testSimple
      */
-    function testSerialize() {
-
+    public function testSerialize()
+    {
         $innerProps = [
             200 => [
                 '{DAV:}displayname' => 'my file',
@@ -44,7 +42,7 @@ class ResponseTest extends DAV\Xml\XmlTest {
         $xml = $this->write(['{DAV:}root' => ['{DAV:}response' => $property]]);
 
         $this->assertXmlStringEqualsXmlString(
-'<?xml version="1.0"?>
+            '<?xml version="1.0"?>
 <d:root xmlns:d="DAV:">
   <d:response>
     <d:href>/uri</d:href>
@@ -62,8 +60,9 @@ class ResponseTest extends DAV\Xml\XmlTest {
     </d:propstat>
   </d:response>
 </d:root>
-', $xml);
-
+',
+            $xml
+        );
     }
 
     /**
@@ -71,8 +70,8 @@ class ResponseTest extends DAV\Xml\XmlTest {
      *
      * @depends testSerialize
      */
-    function testSerializeEmptyNamespace() {
-
+    public function testSerializeEmptyNamespace()
+    {
         $innerProps = [
             200 => [
                 '{}propertyname' => 'value',
@@ -84,7 +83,7 @@ class ResponseTest extends DAV\Xml\XmlTest {
         $xml = $this->write(['{DAV:}root' => ['{DAV:}response' => $property]]);
 
         $this->assertEquals(
-'<d:root xmlns:d="DAV:">
+            '<d:root xmlns:d="DAV:">
  <d:response>
   <d:href>/uri</d:href>
   <d:propstat>
@@ -95,8 +94,9 @@ class ResponseTest extends DAV\Xml\XmlTest {
   </d:propstat>
  </d:response>
 </d:root>
-', $xml);
-
+',
+            $xml
+        );
     }
 
     /**
@@ -104,8 +104,8 @@ class ResponseTest extends DAV\Xml\XmlTest {
      *
      * @depends testSerialize
      */
-    function testSerializeCustomNamespace() {
-
+    public function testSerializeCustomNamespace()
+    {
         $innerProps = [
             200 => [
                 '{http://sabredav.org/NS/example}propertyname' => 'value',
@@ -116,7 +116,7 @@ class ResponseTest extends DAV\Xml\XmlTest {
         $xml = $this->write(['{DAV:}root' => ['{DAV:}response' => $property]]);
 
         $this->assertXmlStringEqualsXmlString(
-'<?xml version="1.0"?>
+            '<?xml version="1.0"?>
 <d:root xmlns:d="DAV:">
   <d:response>
       <d:href>/uri</d:href>
@@ -127,15 +127,16 @@ class ResponseTest extends DAV\Xml\XmlTest {
       <d:status>HTTP/1.1 200 OK</d:status>
       </d:propstat>
   </d:response>
-</d:root>', $xml);
-
+</d:root>',
+            $xml
+        );
     }
 
     /**
      * @depends testSerialize
      */
-    function testSerializeComplexProperty() {
-
+    public function testSerializeComplexProperty()
+    {
         $innerProps = [
             200 => [
                 '{DAV:}link' => new DAV\Xml\Property\Href('http://sabredav.org/', false)
@@ -146,7 +147,7 @@ class ResponseTest extends DAV\Xml\XmlTest {
         $xml = $this->write(['{DAV:}root' => ['{DAV:}response' => $property]]);
 
         $this->assertXmlStringEqualsXmlString(
-'<?xml version="1.0"?>
+            '<?xml version="1.0"?>
 <d:root xmlns:d="DAV:">
   <d:response>
       <d:href>/uri</d:href>
@@ -158,16 +159,17 @@ class ResponseTest extends DAV\Xml\XmlTest {
       </d:propstat>
   </d:response>
 </d:root>
-', $xml);
-
+',
+            $xml
+        );
     }
 
     /**
      * @depends testSerialize
      * @expectedException \InvalidArgumentException
      */
-    function testSerializeBreak() {
-
+    public function testSerializeBreak()
+    {
         $innerProps = [
             200 => [
                 '{DAV:}link' => new \STDClass()
@@ -176,11 +178,10 @@ class ResponseTest extends DAV\Xml\XmlTest {
 
         $property = new Response('uri', $innerProps);
         $this->write(['{DAV:}root' => ['{DAV:}response' => $property]]);
-
     }
 
-    function testDeserializeComplexProperty() {
-
+    public function testDeserializeComplexProperty()
+    {
         $xml = '<?xml version="1.0"?>
 <d:response xmlns:d="DAV:">
   <d:href>/uri</d:href>
@@ -195,8 +196,7 @@ class ResponseTest extends DAV\Xml\XmlTest {
 
         $result = $this->parse($xml, [
             '{DAV:}response' => 'Sabre\DAV\Xml\Element\Response',
-            '{DAV:}foo'      => function($reader) {
-
+            '{DAV:}foo'      => function ($reader) {
                 $reader->next();
                 return 'world';
             },
@@ -209,14 +209,13 @@ class ResponseTest extends DAV\Xml\XmlTest {
             ]),
             $result['value']
         );
-
     }
 
     /**
      * @depends testSimple
      */
-    function testSerializeUrlencoding() {
-
+    public function testSerializeUrlencoding()
+    {
         $innerProps = [
             200 => [
                 '{DAV:}displayname' => 'my file',
@@ -228,7 +227,7 @@ class ResponseTest extends DAV\Xml\XmlTest {
         $xml = $this->write(['{DAV:}root' => ['{DAV:}response' => $property]]);
 
         $this->assertXmlStringEqualsXmlString(
-'<?xml version="1.0"?>
+            '<?xml version="1.0"?>
 <d:root xmlns:d="DAV:">
   <d:response>
     <d:href>/space%20here</d:href>
@@ -240,8 +239,9 @@ class ResponseTest extends DAV\Xml\XmlTest {
     </d:propstat>
   </d:response>
 </d:root>
-', $xml);
-
+',
+            $xml
+        );
     }
 
     /**
@@ -254,15 +254,15 @@ class ResponseTest extends DAV\Xml\XmlTest {
      * In those cases we MUST specify at least one DAV:propstat anyway, with
      * no properties.
      */
-    function testSerializeNoProperties() {
-
+    public function testSerializeNoProperties()
+    {
         $innerProps = [];
 
         $property = new Response('uri', $innerProps);
         $xml = $this->write(['{DAV:}root' => ['{DAV:}response' => $property]]);
 
         $this->assertXmlStringEqualsXmlString(
-'<?xml version="1.0"?>
+            '<?xml version="1.0"?>
 <d:root xmlns:d="DAV:">
   <d:response>
       <d:href>/uri</d:href>
@@ -272,16 +272,17 @@ class ResponseTest extends DAV\Xml\XmlTest {
       </d:propstat>
   </d:response>
 </d:root>
-', $xml);
-
+',
+            $xml
+        );
     }
 
     /**
      * In the case of {DAV:}prop, a deserializer should never get called, if
      * the property element is empty.
      */
-    function testDeserializeComplexPropertyEmpty() {
-
+    public function testDeserializeComplexPropertyEmpty()
+    {
         $xml = '<?xml version="1.0"?>
 <d:response xmlns:d="DAV:">
   <d:href>/uri</d:href>
@@ -296,7 +297,7 @@ class ResponseTest extends DAV\Xml\XmlTest {
 
         $result = $this->parse($xml, [
             '{DAV:}response' => 'Sabre\DAV\Xml\Element\Response',
-            '{DAV:}foo'      => function($reader) {
+            '{DAV:}foo'      => function ($reader) {
                 throw new \LogicException('This should never happen');
             },
         ]);
@@ -308,6 +309,5 @@ class ResponseTest extends DAV\Xml\XmlTest {
             ]),
             $result['value']
         );
-
     }
 }

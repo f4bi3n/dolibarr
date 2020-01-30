@@ -12,7 +12,8 @@ namespace Sabre\Event;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface EventEmitterInterface {
+interface EventEmitterInterface
+{
 
     /**
      * Subscribe to an event.
@@ -22,7 +23,7 @@ interface EventEmitterInterface {
      * @param int $priority
      * @return void
      */
-    function on($eventName, callable $callBack, $priority = 100);
+    public function on($eventName, callable $callBack, $priority = 100);
 
     /**
      * Subscribe to an event exactly once.
@@ -32,7 +33,7 @@ interface EventEmitterInterface {
      * @param int $priority
      * @return void
      */
-    function once($eventName, callable $callBack, $priority = 100);
+    public function once($eventName, callable $callBack, $priority = 100);
 
     /**
      * Emits an event.
@@ -60,7 +61,7 @@ interface EventEmitterInterface {
      * @param callback $continueCallBack
      * @return bool
      */
-    function emit($eventName, array $arguments = [], callable $continueCallBack = null);
+    public function emit($eventName, array $arguments = [], callable $continueCallBack = null);
 
     /**
      * Returns the list of listeners for an event.
@@ -71,7 +72,7 @@ interface EventEmitterInterface {
      * @param string $eventName
      * @return callable[]
      */
-    function listeners($eventName);
+    public function listeners($eventName);
 
     /**
      * Removes a specific listener from an event.
@@ -83,7 +84,7 @@ interface EventEmitterInterface {
      * @param callable $listener
      * @return bool
      */
-    function removeListener($eventName, callable $listener);
+    public function removeListener($eventName, callable $listener);
 
     /**
      * Removes all listeners.
@@ -95,6 +96,5 @@ interface EventEmitterInterface {
      * @param string $eventName
      * @return void
      */
-    function removeAllListeners($eventName = null);
-
+    public function removeAllListeners($eventName = null);
 }

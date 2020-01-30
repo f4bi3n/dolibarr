@@ -28,14 +28,17 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
-if (! empty($conf->resouce->enabled)) require_once DOL_DOCUMENT_ROOT . '/resource/class/html.formresource.class.php';
+if (! empty($conf->resouce->enabled)) {
+    require_once DOL_DOCUMENT_ROOT . '/resource/class/html.formresource.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin","resource"));
 
 // Security check
-if (!$user->admin)
+if (!$user->admin) {
     accessforbidden();
+}
 
 $action = GETPOST('action', 'alpha');
 
@@ -44,17 +47,14 @@ $action = GETPOST('action', 'alpha');
  * Actions
  */
 
-if ($action == 'updateoptions')
-{
-	if (GETPOST('activate_RESOURCE_USE_SEARCH_TO_SELECT') != '')
-	{
-		if (dolibarr_set_const($db, "RESOURCE_USE_SEARCH_TO_SELECT", GETPOST('activate_RESOURCE_USE_SEARCH_TO_SELECT'), 'chaine', 0, '', $conf->entity))
-		{
-			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-		} else {
-			setEventMessages($langs->trans("Error"), null, 'errors');
-		}
-	}
+if ($action == 'updateoptions') {
+    if (GETPOST('activate_RESOURCE_USE_SEARCH_TO_SELECT') != '') {
+        if (dolibarr_set_const($db, "RESOURCE_USE_SEARCH_TO_SELECT", GETPOST('activate_RESOURCE_USE_SEARCH_TO_SELECT'), 'chaine', 0, '', $conf->entity)) {
+            setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+        } else {
+            setEventMessages($langs->trans("Error"), null, 'errors');
+        }
+    }
 }
 
 /*
@@ -86,26 +86,23 @@ print '<td></td>';
 // Utilisation formulaire Ajax sur choix produit
 print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("UseSearchToSelectResource").'</td>';
-if (empty($conf->use_javascript_ajax))
-{
-	print '<td class="nowrap right" colspan="2">';
-	print $langs->trans("NotAvailableWhenAjaxDisabled");
-	print '</td>';
-}
-else
-{
-	print '<td width="60" class="right">';
-	$arrval=array(
-			'0'=>$langs->trans("No"),
-			'1'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')',
-			'2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')',
-			'3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')',
-	);
-	print $form->selectarray("activate_RESOURCE_USE_SEARCH_TO_SELECT", $arrval, $conf->global->RESOURCE_USE_SEARCH_TO_SELECT);
-	print '</td>';
-	print '<td class="right">';
-	print '<input type="submit" class="button" name="RESOURCE_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
-	print '</td>';
+if (empty($conf->use_javascript_ajax)) {
+    print '<td class="nowrap right" colspan="2">';
+    print $langs->trans("NotAvailableWhenAjaxDisabled");
+    print '</td>';
+} else {
+    print '<td width="60" class="right">';
+    $arrval=array(
+            '0'=>$langs->trans("No"),
+            '1'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')',
+            '2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')',
+            '3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')',
+    );
+    print $form->selectarray("activate_RESOURCE_USE_SEARCH_TO_SELECT", $arrval, $conf->global->RESOURCE_USE_SEARCH_TO_SELECT);
+    print '</td>';
+    print '<td class="right">';
+    print '<input type="submit" class="button" name="RESOURCE_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
+    print '</td>';
 }
 print '</tr>';
 

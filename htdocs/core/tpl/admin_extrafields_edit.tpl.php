@@ -27,10 +27,9 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
-{
-	print "Error, template page can't be called as URL";
-	exit;
+if (empty($conf) || ! is_object($conf)) {
+    print "Error, template page can't be called as URL";
+    exit;
 }
 
 
@@ -54,17 +53,15 @@ $langs->load("modulebuilder");
     		var list = jQuery("#list");
             var totalizable = jQuery("#totalizable");
     		<?php
-    		if ((GETPOST('type', 'alpha') != "select") &&  (GETPOST('type', 'alpha') != "sellist"))
-    		{
-    			print 'jQuery("#value_choice").hide();';
-    		}
+            if ((GETPOST('type', 'alpha') != "select") &&  (GETPOST('type', 'alpha') != "sellist")) {
+                print 'jQuery("#value_choice").hide();';
+            }
 
-    		if (GETPOST('type', 'alpha') == "separate")
-    		{
-				print "jQuery('#size, #default_value, #langfile').val('').prop('disabled', true);";
-    			print 'jQuery("#value_choice").hide();';
-    		}
-    		?>
+            if (GETPOST('type', 'alpha') == "separate") {
+                print "jQuery('#size, #default_value, #langfile').val('').prop('disabled', true);";
+                print 'jQuery("#value_choice").hide();';
+            }
+            ?>
 
     		// Case of computed field
     		if (type == 'varchar' || type == 'int' || type == 'double' || type == 'price') {
@@ -166,21 +163,16 @@ $totalizable = $extrafields->attributes[$elementtype]['totalizable'][$attrname];
 $help=$extrafields->attributes[$elementtype]['help'][$attrname];
 $entitycurrentorall=$extrafields->attributes[$elementtype]['entityid'][$attrname];
 
-if((($type == 'select') || ($type == 'checkbox') || ($type == 'radio')) && is_array($param))
-{
-	$param_chain = '';
-	foreach ($param['options'] as $key => $value)
-	{
-		if(strlen($key))
-		{
-			$param_chain .= $key.','.$value."\n";
-		}
-	}
-}
-elseif (($type== 'sellist') || ($type == 'chkbxlst') || ($type == 'link') || ($type == 'password') || ($type == 'separate'))
-{
-	$paramlist=array_keys($param['options']);
-	$param_chain = $paramlist[0];
+if ((($type == 'select') || ($type == 'checkbox') || ($type == 'radio')) && is_array($param)) {
+    $param_chain = '';
+    foreach ($param['options'] as $key => $value) {
+        if (strlen($key)) {
+            $param_chain .= $key.','.$value."\n";
+        }
+    }
+} elseif (($type== 'sellist') || ($type == 'chkbxlst') || ($type == 'link') || ($type == 'password') || ($type == 'separate')) {
+    $paramlist=array_keys($param['options']);
+    $param_chain = $paramlist[0];
 }
 ?>
 <!-- Label -->
@@ -192,31 +184,32 @@ elseif (($type== 'sellist') || ($type == 'chkbxlst') || ($type == 'link') || ($t
 <?php
 // Define list of possible type transition
 $typewecanchangeinto=array(
-	'varchar'=>array('varchar', 'phone', 'mail', 'url', 'select', 'password', 'text', 'html'),
-	'text'=>array('text','html'),
-	'html'=>array('text','html'),
-	'password'=>array('password', 'varchar'),
-	'mail'=>array('varchar', 'phone', 'mail', 'url', 'select'),
+    'varchar'=>array('varchar', 'phone', 'mail', 'url', 'select', 'password', 'text', 'html'),
+    'text'=>array('text','html'),
+    'html'=>array('text','html'),
+    'password'=>array('password', 'varchar'),
+    'mail'=>array('varchar', 'phone', 'mail', 'url', 'select'),
     'url'=>array('varchar', 'phone', 'mail', 'url', 'select'),
     'phone'=>array('varchar', 'phone', 'mail', 'url', 'select'),
     'select'=>array('varchar', 'phone', 'mail', 'url', 'select')
 );
-if (in_array($type, array_keys($typewecanchangeinto)))
-{
+if (in_array($type, array_keys($typewecanchangeinto))) {
     $newarray=array();
     print '<select id="type" class="flat type" name="type">';
-    foreach($type2label as $key => $val)
-    {
+    foreach ($type2label as $key => $val) {
         $selected='';
-        if ($key == (GETPOST('type', 'alpha')?GETPOST('type', 'alpha'):$type)) $selected=' selected="selected"';
-        if (in_array($key, $typewecanchangeinto[$type])) print '<option value="'.$key.'"'.$selected.'>'.$val.'</option>';
-        else print '<option value="'.$key.'" disabled="disabled"'.$selected.'>'.$val.'</option>';
+        if ($key == (GETPOST('type', 'alpha')?GETPOST('type', 'alpha'):$type)) {
+            $selected=' selected="selected"';
+        }
+        if (in_array($key, $typewecanchangeinto[$type])) {
+            print '<option value="'.$key.'"'.$selected.'>'.$val.'</option>';
+        } else {
+            print '<option value="'.$key.'" disabled="disabled"'.$selected.'>'.$val.'</option>';
+        }
     }
     print '</select>';
-}
-else
-{
-	print $type2label[$type];
+} else {
+    print $type2label[$type];
     print '<input type="hidden" name="type" id="type" value="'.$type.'">';
 }
 ?>
@@ -256,19 +249,19 @@ else
 <!-- Default Value (at sql setup level) -->
 <tr class="extra_default_value"><td><?php echo $langs->trans("DefaultValue").' ('.$langs->trans("Database").')'; ?></td><td class="valeur"><input id="default_value" type="text" name="default_value" size="5" value="<?php echo dol_escape_htmltag($default); ?>"></td></tr>
 <!-- Unique -->
-<tr class="extra_unique"><td><?php echo $langs->trans("Unique"); ?></td><td class="valeur"><input id="unique" type="checkbox" name="unique"<?php echo ($unique?' checked':''); ?>></td></tr>
+<tr class="extra_unique"><td><?php echo $langs->trans("Unique"); ?></td><td class="valeur"><input id="unique" type="checkbox" name="unique"<?php echo($unique?' checked':''); ?>></td></tr>
 <!-- Required -->
-<tr class="extra_required"><td><?php echo $langs->trans("Required"); ?></td><td class="valeur"><input id="required" type="checkbox" name="required"<?php echo ($required?' checked':''); ?>></td></tr>
+<tr class="extra_required"><td><?php echo $langs->trans("Required"); ?></td><td class="valeur"><input id="required" type="checkbox" name="required"<?php echo($required?' checked':''); ?>></td></tr>
 <!-- Always editable -->
-<tr class="extra_alwayseditable"><td><?php echo $langs->trans("AlwaysEditable"); ?></td><td class="valeur"><input id="alwayseditable" type="checkbox" name="alwayseditable"<?php echo ($alwayseditable?' checked':''); ?>></td></tr>
+<tr class="extra_alwayseditable"><td><?php echo $langs->trans("AlwaysEditable"); ?></td><td class="valeur"><input id="alwayseditable" type="checkbox" name="alwayseditable"<?php echo($alwayseditable?' checked':''); ?>></td></tr>
 <tr><td class="extra_list"><?php echo $form->textwithpicto($langs->trans("Visibility"), $langs->trans("VisibleDesc")); ?>
-</td><td class="valeur"><input id="list" class="minwidth100" type="text" name="list" value="<?php echo ($list!=''?$list:'1'); ?>"></td></tr>
-<tr class="extra_totalizable"><td><?php echo $form->textwithpicto($langs->trans("Totalizable"), $langs->trans("TotalizableDesc")); ?></td><td class="valeur"><input id="totalizable" type="checkbox" name="totalizable"<?php echo ($totalizable?' checked':''); ?>></td></tr>
+</td><td class="valeur"><input id="list" class="minwidth100" type="text" name="list" value="<?php echo($list!=''?$list:'1'); ?>"></td></tr>
+<tr class="extra_totalizable"><td><?php echo $form->textwithpicto($langs->trans("Totalizable"), $langs->trans("TotalizableDesc")); ?></td><td class="valeur"><input id="totalizable" type="checkbox" name="totalizable"<?php echo($totalizable?' checked':''); ?>></td></tr>
 <!-- Help tooltip -->
 <tr class="help"><td><?php echo $form->textwithpicto($langs->trans("HelpOnTooltip"), $langs->trans("HelpOnTooltipDesc")); ?></td><td class="valeur"><input id="help" class="quatrevingtpercent" type="text" name="help" value="<?php echo dol_escape_htmltag($help); ?>"></td></tr>
 <?php if ($conf->multicompany->enabled) { ?>
 	<!-- Multicompany entity -->
-    <tr><td><?php echo $langs->trans("AllEntities"); ?></td><td class="valeur"><input id="entitycurrentorall" type="checkbox" name="entitycurrentorall"<?php echo (empty($entitycurrentorall) ?' checked':''); ?>></td></tr>
+    <tr><td><?php echo $langs->trans("AllEntities"); ?></td><td class="valeur"><input id="entitycurrentorall" type="checkbox" name="entitycurrentorall"<?php echo(empty($entitycurrentorall) ?' checked':''); ?>></td></tr>
 <?php } ?>
 <!-- Visibility -->
 </table>

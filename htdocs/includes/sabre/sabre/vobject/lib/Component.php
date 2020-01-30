@@ -14,7 +14,8 @@ use Sabre\Xml;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Component extends Node {
+class Component extends Node
+{
 
     /**
      * Component name.
@@ -50,8 +51,8 @@ class Component extends Node {
      *
      * @return void
      */
-    function __construct(Document $root, $name, array $children = [], $defaults = true) {
-
+    public function __construct(Document $root, $name, array $children = [], $defaults = true)
+    {
         $this->name = strtoupper($name);
         $this->root = $root;
 
@@ -90,7 +91,6 @@ class Component extends Node {
                 }
             }
         }
-
     }
 
     /**
@@ -106,8 +106,8 @@ class Component extends Node {
      *
      * @return Node
      */
-    function add() {
-
+    public function add()
+    {
         $arguments = func_get_args();
 
         if ($arguments[0] instanceof Node) {
@@ -116,15 +116,10 @@ class Component extends Node {
             }
             $arguments[0]->parent = $this;
             $newNode = $arguments[0];
-
         } elseif (is_string($arguments[0])) {
-
             $newNode = call_user_func_array([$this->root, 'create'], $arguments);
-
         } else {
-
             throw new \InvalidArgumentException('The first argument must either be a \\Sabre\\VObject\\Node or a string');
-
         }
 
         $name = $newNode->name;
@@ -134,7 +129,6 @@ class Component extends Node {
             $this->children[$name] = [$newNode];
         }
         return $newNode;
-
     }
 
     /**
@@ -148,8 +142,8 @@ class Component extends Node {
      * @param string|Property|Component $item
      * @return void
      */
-    function remove($item) {
-
+    public function remove($item)
+    {
         if (is_string($item)) {
             // If there's no dot in the name, it's an exact property name and
             // we can just wipe out all those properties.
@@ -161,9 +155,7 @@ class Component extends Node {
             // If there was a dot, we need to ask select() to help us out and
             // then we just call remove recursively.
             foreach ($this->select($item) as $child) {
-
                 $this->remove($child);
-
             }
         } else {
             foreach ($this->select($item->name) as $k => $child) {
@@ -175,7 +167,6 @@ class Component extends Node {
         }
 
         throw new \InvalidArgumentException('The item you passed to remove() was not a child of this component');
-
     }
 
     /**
@@ -184,14 +175,13 @@ class Component extends Node {
      *
      * @return array
      */
-    function children() {
-
+    public function children()
+    {
         $result = [];
         foreach ($this->children as $childGroup) {
             $result = array_merge($result, $childGroup);
         }
         return $result;
-
     }
 
     /**
@@ -200,8 +190,8 @@ class Component extends Node {
      *
      * @return array
      */
-    function getComponents() {
-
+    public function getComponents()
+    {
         $result = [];
 
         foreach ($this->children as $childGroup) {
@@ -212,7 +202,6 @@ class Component extends Node {
             }
         }
         return $result;
-
     }
 
     /**
@@ -228,17 +217,18 @@ class Component extends Node {
      * @param string $name
      * @return array
      */
-    function select($name) {
-
+    public function select($name)
+    {
         $group = null;
         $name = strtoupper($name);
         if (strpos($name, '.') !== false) {
             list($group, $name) = explode('.', $name, 2);
         }
-        if ($name === '') $name = null;
+        if ($name === '') {
+            $name = null;
+        }
 
         if (!is_null($name)) {
-
             $result = isset($this->children[$name]) ? $this->children[$name] : [];
 
             if (is_null($group)) {
@@ -248,32 +238,24 @@ class Component extends Node {
                 // more.
                 return array_filter(
                     $result,
-                    function($child) use ($group) {
-
+                    function ($child) use ($group) {
                         return $child instanceof Property && strtoupper($child->group) === $group;
-
                     }
                 );
             }
-
         }
 
         // If we got to this point, it means there was no 'name' specified for
         // searching, implying that this is a group-only search.
         $result = [];
         foreach ($this->children as $childGroup) {
-
             foreach ($childGroup as $child) {
-
                 if ($child instanceof Property && strtoupper($child->group) === $group) {
                     $result[] = $child;
                 }
-
             }
-
         }
         return $result;
-
     }
 
     /**
@@ -281,8 +263,8 @@ class Component extends Node {
      *
      * @return string
      */
-    function serialize() {
-
+    public function serialize()
+    {
         $str = "BEGIN:" . $this->name . "\r\n";
 
         /**
@@ -300,8 +282,7 @@ class Component extends Node {
          *
          * @return int
          */
-        $sortScore = function($key, $array) {
-
+        $sortScore = function ($key, $array) {
             if ($array[$key] instanceof Component) {
 
                 // We want to encode VTIMEZONE first, this is a personal
@@ -327,28 +308,26 @@ class Component extends Node {
                     }
                 }
             }
-
         };
 
         $children = $this->children();
         $tmp = $children;
         uksort(
             $children,
-            function($a, $b) use ($sortScore, $tmp) {
-
+            function ($a, $b) use ($sortScore, $tmp) {
                 $sA = $sortScore($a, $tmp);
                 $sB = $sortScore($b, $tmp);
 
                 return $sA - $sB;
-
             }
         );
 
-        foreach ($children as $child) $str .= $child->serialize();
+        foreach ($children as $child) {
+            $str .= $child->serialize();
+        }
         $str .= "END:" . $this->name . "\r\n";
 
         return $str;
-
     }
 
     /**
@@ -357,8 +336,8 @@ class Component extends Node {
      *
      * @return array
      */
-    function jsonSerialize() {
-
+    public function jsonSerialize()
+    {
         $components = [];
         $properties = [];
 
@@ -377,7 +356,6 @@ class Component extends Node {
             $properties,
             $components
         ];
-
     }
 
     /**
@@ -388,8 +366,8 @@ class Component extends Node {
      *
      * @return void
      */
-    function xmlSerialize(Xml\Writer $writer) {
-
+    public function xmlSerialize(Xml\Writer $writer)
+    {
         $components = [];
         $properties = [];
 
@@ -406,7 +384,6 @@ class Component extends Node {
         $writer->startElement(strtolower($this->name));
 
         if (!empty($properties)) {
-
             $writer->startElement('properties');
 
             foreach ($properties as $property) {
@@ -414,11 +391,9 @@ class Component extends Node {
             }
 
             $writer->endElement();
-
         }
 
         if (!empty($components)) {
-
             $writer->startElement('components');
 
             foreach ($components as $component) {
@@ -429,7 +404,6 @@ class Component extends Node {
         }
 
         $writer->endElement();
-
     }
 
     /**
@@ -437,10 +411,9 @@ class Component extends Node {
      *
      * @return array
      */
-    protected function getDefaults() {
-
+    protected function getDefaults()
+    {
         return [];
-
     }
 
     /* Magic property accessors {{{ */
@@ -459,12 +432,10 @@ class Component extends Node {
      *
      * @return Property
      */
-    function __get($name) {
-
+    public function __get($name)
+    {
         if ($name === 'children') {
-
             throw new \RuntimeException('Starting sabre/vobject 4.0 the children property is now protected. You should use the children() method instead');
-
         }
 
         $matches = $this->select($name);
@@ -476,7 +447,6 @@ class Component extends Node {
             $firstMatch->setIterator(new ElementList(array_values($matches)));
             return $firstMatch;
         }
-
     }
 
     /**
@@ -486,11 +456,10 @@ class Component extends Node {
      *
      * @return bool
      */
-    function __isset($name) {
-
+    public function __isset($name)
+    {
         $matches = $this->select($name);
         return count($matches) > 0;
-
     }
 
     /**
@@ -507,8 +476,8 @@ class Component extends Node {
      *
      * @return void
      */
-    function __set($name, $value) {
-
+    public function __set($name, $value)
+    {
         $name = strtoupper($name);
         $this->remove($name);
         if ($value instanceof self || $value instanceof Property) {
@@ -526,10 +495,9 @@ class Component extends Node {
      *
      * @return void
      */
-    function __unset($name) {
-
+    public function __unset($name)
+    {
         $this->remove($name);
-
     }
 
     /* }}} */
@@ -540,8 +508,8 @@ class Component extends Node {
      *
      * @return void
      */
-    function __clone() {
-
+    public function __clone()
+    {
         foreach ($this->children as $childName => $childGroup) {
             foreach ($childGroup as $key => $child) {
                 $clonedChild = clone $child;
@@ -550,7 +518,6 @@ class Component extends Node {
                 $this->children[$childName][$key] = $clonedChild;
             }
         }
-
     }
 
     /**
@@ -574,10 +541,9 @@ class Component extends Node {
      *
      * @var array
      */
-    function getValidationRules() {
-
+    public function getValidationRules()
+    {
         return [];
-
     }
 
     /**
@@ -604,8 +570,8 @@ class Component extends Node {
      *
      * @return array
      */
-    function validate($options = 0) {
-
+    public function validate($options = 0)
+    {
         $rules = $this->getValidationRules();
         $defaults = $this->getDefaults();
 
@@ -624,9 +590,8 @@ class Component extends Node {
         }
 
         foreach ($rules as $propName => $rule) {
-
             switch ($rule) {
-                case '0' :
+                case '0':
                     if (isset($propertyCounters[$propName])) {
                         $messages[] = [
                             'level'   => 3,
@@ -635,7 +600,7 @@ class Component extends Node {
                         ];
                     }
                     break;
-                case '1' :
+                case '1':
                     if (!isset($propertyCounters[$propName]) || $propertyCounters[$propName] !== 1) {
                         $repaired = false;
                         if ($options & self::REPAIR && isset($defaults[$propName])) {
@@ -649,7 +614,7 @@ class Component extends Node {
                         ];
                     }
                     break;
-                case '+' :
+                case '+':
                     if (!isset($propertyCounters[$propName]) || $propertyCounters[$propName] < 1) {
                         $messages[] = [
                             'level'   => 3,
@@ -658,9 +623,9 @@ class Component extends Node {
                         ];
                     }
                     break;
-                case '*' :
+                case '*':
                     break;
-                case '?' :
+                case '?':
                     if (isset($propertyCounters[$propName]) && $propertyCounters[$propName] > 1) {
                         $messages[] = [
                             'level'   => 3,
@@ -671,10 +636,8 @@ class Component extends Node {
                     break;
 
             }
-
         }
         return $messages;
-
     }
 
     /**
@@ -685,8 +648,8 @@ class Component extends Node {
      *
      * @return void
      */
-    function destroy() {
-
+    public function destroy()
+    {
         parent::destroy();
         foreach ($this->children as $childGroup) {
             foreach ($childGroup as $child) {
@@ -694,7 +657,5 @@ class Component extends Node {
             }
         }
         $this->children = [];
-
     }
-
 }

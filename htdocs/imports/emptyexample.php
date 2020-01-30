@@ -55,14 +55,13 @@ $format=GETPOST('format');
 $langs->load("exports");
 
 // Check exportkey
-if (empty($datatoimport))
-{
-	$user->getrights();
+if (empty($datatoimport)) {
+    $user->getrights();
 
-	llxHeader();
-	print '<div class="error">Bad value for datatoimport.</div>';
-	llxFooter();
-	exit;
+    llxHeader();
+    print '<div class="error">Bad value for datatoimport.</div>';
+    llxFooter();
+    exit;
 }
 
 
@@ -78,26 +77,33 @@ $fieldstarget=$objimport->array_import_fields[0];
 $valuestarget=$objimport->array_import_examplevalues[0];
 
 $attachment = true;
-if (isset($_GET["attachment"])) $attachment=$_GET["attachment"];
+if (isset($_GET["attachment"])) {
+    $attachment=$_GET["attachment"];
+}
 //$attachment = false;
 $contenttype=dol_mimetype($format);
-if (isset($_GET["contenttype"])) $contenttype=$_GET["contenttype"];
+if (isset($_GET["contenttype"])) {
+    $contenttype=$_GET["contenttype"];
+}
 //$contenttype='text/plain';
 $outputencoding='UTF-8';
 
-if ($contenttype)       header('Content-Type: '.$contenttype.($outputencoding?'; charset='.$outputencoding:''));
-if ($attachment) 		header('Content-Disposition: attachment; filename="'.$filename.'"');
+if ($contenttype) {
+    header('Content-Type: '.$contenttype.($outputencoding?'; charset='.$outputencoding:''));
+}
+if ($attachment) {
+    header('Content-Disposition: attachment; filename="'.$filename.'"');
+}
 
 
 // List of targets fields
 $headerlinefields=array();
 $contentlinevalues=array();
 $i = 0;
-foreach($fieldstarget as $code=>$label)
-{
-	$withoutstar=preg_replace('/\*/', '', $fieldstarget[$code]);
-	$headerlinefields[]=$langs->transnoentities($withoutstar).($withoutstar != $fieldstarget[$code]?'*':'').' ('.$code.')';
-	$contentlinevalues[]=$valuestarget[$code];
+foreach ($fieldstarget as $code=>$label) {
+    $withoutstar=preg_replace('/\*/', '', $fieldstarget[$code]);
+    $headerlinefields[]=$langs->transnoentities($withoutstar).($withoutstar != $fieldstarget[$code]?'*':'').' ('.$code.')';
+    $contentlinevalues[]=$valuestarget[$code];
 }
 //var_dump($headerlinefields);
 //var_dump($contentlinevalues);

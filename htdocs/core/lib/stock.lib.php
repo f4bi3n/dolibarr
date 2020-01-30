@@ -29,42 +29,41 @@
  */
 function stock_prepare_head($object)
 {
-	global $langs, $conf, $user;
+    global $langs, $conf, $user;
 
-	$h = 0;
-	$head = array();
+    $h = 0;
+    $head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/product/stock/card.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Card");
-	$head[$h][2] = 'card';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/product/stock/card.php?id='.$object->id;
+    $head[$h][1] = $langs->trans("Card");
+    $head[$h][2] = 'card';
+    $h++;
 
-	if (!empty($user->rights->stock->mouvement->lire))
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/product/stock/movement_list.php?id='.$object->id;
-		$head[$h][1] = $langs->trans("StockMovements");
-		$head[$h][2] = 'movements';
-		$h++;
-	}
+    if (!empty($user->rights->stock->mouvement->lire)) {
+        $head[$h][0] = DOL_URL_ROOT.'/product/stock/movement_list.php?id='.$object->id;
+        $head[$h][1] = $langs->trans("StockMovements");
+        $head[$h][2] = 'movements';
+        $h++;
+    }
 
-	/*
-	$head[$h][0] = DOL_URL_ROOT.'/product/stock/fiche-valo.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("EnhancedValue");
-	$head[$h][2] = 'value';
-	$h++;
-	*/
+    /*
+    $head[$h][0] = DOL_URL_ROOT.'/product/stock/fiche-valo.php?id='.$object->id;
+    $head[$h][1] = $langs->trans("EnhancedValue");
+    $head[$h][2] = 'value';
+    $h++;
+    */
 
-	/* Disabled because will never be implemented. Table always empty.
-	if (! empty($conf->global->STOCK_USE_WAREHOUSE_BY_USER))
-	{
-		// Should not be enabled by defaut because does not work yet correctly because
-		// personnal stocks are not tagged into table llx_entrepot
-		$head[$h][0] = DOL_URL_ROOT.'/product/stock/user.php?id='.$object->id;
-		$head[$h][1] = $langs->trans("Users");
-		$head[$h][2] = 'user';
-		$h++;
-	}
-	*/
+    /* Disabled because will never be implemented. Table always empty.
+    if (! empty($conf->global->STOCK_USE_WAREHOUSE_BY_USER))
+    {
+        // Should not be enabled by defaut because does not work yet correctly because
+        // personnal stocks are not tagged into table llx_entrepot
+        $head[$h][0] = DOL_URL_ROOT.'/product/stock/user.php?id='.$object->id;
+        $head[$h][1] = $langs->trans("Users");
+        $head[$h][2] = 'user';
+        $h++;
+    }
+    */
 
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
@@ -73,9 +72,9 @@ function stock_prepare_head($object)
     complete_head_from_modules($conf, $langs, $object, $head, $h, 'stock');
 
     $head[$h][0] = DOL_URL_ROOT.'/product/stock/info.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Info");
-	$head[$h][2] = 'info';
-	$h++;
+    $head[$h][1] = $langs->trans("Info");
+    $head[$h][2] = 'info';
+    $h++;
 
     complete_head_from_modules($conf, $langs, $object, $head, $h, 'stock', 'remove');
 

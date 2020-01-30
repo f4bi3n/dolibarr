@@ -15,7 +15,8 @@ use Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface ISyncCollection extends DAV\ICollection {
+interface ISyncCollection extends DAV\ICollection
+{
 
     /**
      * This method returns the current sync-token for this collection.
@@ -26,7 +27,7 @@ interface ISyncCollection extends DAV\ICollection {
      *
      * @return string|null
      */
-    function getSyncToken();
+    public function getSyncToken();
 
     /**
      * The getChanges method returns all the changes that have happened, since
@@ -83,6 +84,5 @@ interface ISyncCollection extends DAV\ICollection {
      * @param int $limit
      * @return array
      */
-    function getChanges($syncToken, $syncLevel, $limit = null);
-
+    public function getChanges($syncToken, $syncLevel, $limit = null);
 }

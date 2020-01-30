@@ -14,7 +14,8 @@ use Sabre\DAV\Locks\LockInfo;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class PDO extends AbstractBackend {
+class PDO extends AbstractBackend
+{
 
     /**
      * The PDO tablename this backend uses.
@@ -35,10 +36,9 @@ class PDO extends AbstractBackend {
      *
      * @param \PDO $pdo
      */
-    function __construct(\PDO $pdo) {
-
+    public function __construct(\PDO $pdo)
+    {
         $this->pdo = $pdo;
-
     }
 
     /**
@@ -54,7 +54,8 @@ class PDO extends AbstractBackend {
      * @param bool $returnChildLocks
      * @return array
      */
-    function getLocks($uri, $returnChildLocks) {
+    public function getLocks($uri, $returnChildLocks)
+    {
 
         // NOTE: the following 10 lines or so could be easily replaced by
         // pure sql. MySQL's non-standard string concatenation prevents us
@@ -71,20 +72,18 @@ class PDO extends AbstractBackend {
         $currentPath = '';
 
         foreach ($uriParts as $part) {
-
-            if ($currentPath) $currentPath .= '/';
+            if ($currentPath) {
+                $currentPath .= '/';
+            }
             $currentPath .= $part;
 
             $query .= ' OR (depth!=0 AND uri = ?)';
             $params[] = $currentPath;
-
         }
 
         if ($returnChildLocks) {
-
             $query .= ' OR (uri LIKE ?)';
             $params[] = $uri . '/%';
-
         }
         $query .= ')';
 
@@ -94,7 +93,6 @@ class PDO extends AbstractBackend {
 
         $lockList = [];
         foreach ($result as $row) {
-
             $lockInfo = new LockInfo();
             $lockInfo->owner = $row['owner'];
             $lockInfo->token = $row['token'];
@@ -104,11 +102,9 @@ class PDO extends AbstractBackend {
             $lockInfo->depth = $row['depth'];
             $lockInfo->uri = $row['uri'];
             $lockList[] = $lockInfo;
-
         }
 
         return $lockList;
-
     }
 
     /**
@@ -118,7 +114,8 @@ class PDO extends AbstractBackend {
      * @param LockInfo $lockInfo
      * @return bool
      */
-    function lock($uri, LockInfo $lockInfo) {
+    public function lock($uri, LockInfo $lockInfo)
+    {
 
         // We're making the lock timeout 30 minutes
         $lockInfo->timeout = 30 * 60;
@@ -128,7 +125,9 @@ class PDO extends AbstractBackend {
         $locks = $this->getLocks($uri, false);
         $exists = false;
         foreach ($locks as $lock) {
-            if ($lock->token == $lockInfo->token) $exists = true;
+            if ($lock->token == $lockInfo->token) {
+                $exists = true;
+            }
         }
 
         if ($exists) {
@@ -156,7 +155,6 @@ class PDO extends AbstractBackend {
         }
 
         return true;
-
     }
 
 
@@ -168,13 +166,11 @@ class PDO extends AbstractBackend {
      * @param LockInfo $lockInfo
      * @return bool
      */
-    function unlock($uri, LockInfo $lockInfo) {
-
+    public function unlock($uri, LockInfo $lockInfo)
+    {
         $stmt = $this->pdo->prepare('DELETE FROM ' . $this->tableName . ' WHERE uri = ? AND token = ?');
         $stmt->execute([$uri, $lockInfo->token]);
 
         return $stmt->rowCount() === 1;
-
     }
-
 }

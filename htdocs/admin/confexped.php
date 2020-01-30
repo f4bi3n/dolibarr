@@ -32,8 +32,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/expedition.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'sendings', 'deliveries'));
 
-if (!$user->admin)
-  accessforbidden();
+if (!$user->admin) {
+    accessforbidden();
+}
 
 $action=GETPOST('action', 'alpha');
 
@@ -43,8 +44,7 @@ $action=GETPOST('action', 'alpha');
  */
 
 // Shipment note
-if (! empty($conf->expedition->enabled) && empty($conf->global->MAIN_SUBMODULE_EXPEDITION))
-{
+if (! empty($conf->expedition->enabled) && empty($conf->global->MAIN_SUBMODULE_EXPEDITION)) {
     // This option should always be set to on when module is on.
     dolibarr_set_const($db, "MAIN_SUBMODULE_EXPEDITION", "1", 'chaine', 0, '', $conf->entity);
 }
@@ -57,23 +57,20 @@ if ($action == 'activate_sending')
 }
 if ($action == 'disable_sending')
 {
-	dolibarr_del_const($db, "MAIN_SUBMODULE_EXPEDITION",$conf->entity);
+    dolibarr_del_const($db, "MAIN_SUBMODULE_EXPEDITION",$conf->entity);
     header("Location: confexped.php");
     exit;
 }
 */
 
 // Delivery note
-if ($action == 'activate_delivery')
-{
+if ($action == 'activate_delivery') {
     dolibarr_set_const($db, "MAIN_SUBMODULE_EXPEDITION", "1", 'chaine', 0, '', $conf->entity);    // We must also enable this
     dolibarr_set_const($db, "MAIN_SUBMODULE_LIVRAISON", "1", 'chaine', 0, '', $conf->entity);
-	header("Location: confexped.php");
-	exit;
-}
-elseif ($action == 'disable_delivery')
-{
-	dolibarr_del_const($db, "MAIN_SUBMODULE_LIVRAISON", $conf->entity);
+    header("Location: confexped.php");
+    exit;
+} elseif ($action == 'disable_delivery') {
+    dolibarr_del_const($db, "MAIN_SUBMODULE_LIVRAISON", $conf->entity);
     header("Location: confexped.php");
     exit;
 }
@@ -113,11 +110,11 @@ print '<td class="center">';
 print $langs->trans("Required");
 /*if (empty($conf->global->MAIN_SUBMODULE_EXPEDITION))
 {
-	print '<a href="confexped.php?action=activate_sending">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+    print '<a href="confexped.php?action=activate_sending">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
 }
 else
 {
-	print '<a href="confexped.php?action=disable_sending">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
+    print '<a href="confexped.php?action=disable_sending">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
 }*/
 print "</td>";
 print '</tr>';
@@ -132,13 +129,10 @@ print '<td>';
 print '</td>';
 print '<td class="center">';
 
-if (empty($conf->global->MAIN_SUBMODULE_LIVRAISON))
-{
-	print '<a href="confexped.php?action=activate_delivery">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
-}
-else
-{
-	print '<a href="confexped.php?action=disable_delivery">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
+if (empty($conf->global->MAIN_SUBMODULE_LIVRAISON)) {
+    print '<a href="confexped.php?action=activate_delivery">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+} else {
+    print '<a href="confexped.php?action=disable_delivery">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
 }
 
 print "</td>";

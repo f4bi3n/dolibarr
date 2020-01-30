@@ -17,10 +17,9 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
-{
-	print "Error, template page can't be called as URL";
-	exit;
+if (empty($conf) || ! is_object($conf)) {
+    print "Error, template page can't be called as URL";
+    exit;
 }
 
 ?>
@@ -108,7 +107,7 @@ if (empty($conf) || ! is_object($conf))
 
 <?php
 if ($this->control->tpl['fournisseur']) {
-	if (count($this->control->tpl['suppliercategory']) > 0) { ?>
+    if (count($this->control->tpl['suppliercategory']) > 0) { ?>
 <tr>
 	<td><?php echo $langs->trans('SupplierCategory'); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['select_suppliercategory']; ?></td>
@@ -173,7 +172,9 @@ if ($this->control->tpl['fournisseur']) {
 	<td colspan="3"><?php echo $this->control->tpl['yn_assujtva']; ?></td>
 </tr>
 
-<?php if(!empty($this->control->tpl['localtax'])) echo $this->control->tpl['localtax']; ?>
+<?php if (!empty($this->control->tpl['localtax'])) {
+    echo $this->control->tpl['localtax'];
+} ?>
 
 </table>
 <br>

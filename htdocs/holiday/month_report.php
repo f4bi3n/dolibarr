@@ -35,10 +35,9 @@ $langs->loadLangs(array("holiday"));
 
 // Security check
 $socid = 0;
-if ($user->socid > 0)	// Protection if external user
-{
-	//$socid = $user->socid;
-	accessforbidden();
+if ($user->socid > 0) {	// Protection if external user
+    //$socid = $user->socid;
+    accessforbidden();
 }
 $result = restrictedArea($user, 'holiday', $id, '');
 
@@ -88,10 +87,9 @@ $sql .= " AND (date_format(cp.date_debut, '%Y-%m') = '".$db->escape($year_month)
 $sql .= " ORDER BY u.lastname, cp.date_debut";
 
 $resql = $db->query($sql);
-if (empty($resql))
-{
-	dol_print_error($db);
-	exit;
+if (empty($resql)) {
+    dol_print_error($db);
+    exit;
 }
 
 $num = $db->num_rows($resql);
@@ -117,14 +115,10 @@ print '<td class="right">'.$langs->trans('NbUseDaysCPShortInMonth').'</td>';
 print '<td class="maxwidth300">'.$langs->trans('DescCP').'</td>';
 print '</tr>';
 
-if ($num == 0)
-{
+if ($num == 0) {
     print '<tr><td colspan="10" class="opacitymedium">'.$langs->trans('None').'</td></tr>';
-}
-else
-{
-    while ($obj = $db->fetch_object($resql))
-    {
+} else {
+    while ($obj = $db->fetch_object($resql)) {
         $user = new User($db);
         $user->fetch($obj->fk_user);
 
@@ -146,19 +140,25 @@ else
         // Set date_start_gmt and date_end_gmt that are date to show for the selected month
         $date_start_inmonth = $db->jdate($obj->date_debut, true);
         $date_end_inmonth = $db->jdate($obj->date_fin, true);
-        if ($tmpstart['year'] < $search_year || $tmpstart['mon'] < $search_month)
-        {
+        if ($tmpstart['year'] < $search_year || $tmpstart['mon'] < $search_month) {
             $date_start_inmonth = dol_get_first_day($search_year, $search_month, true);
             $starthalfdayinmonth = 'morning';
-            if ($halfdayinmonth == 2) $halfdayinmonth = 1;
-            if ($halfdayinmonth == -1) $halfdayinmonth = 0;
+            if ($halfdayinmonth == 2) {
+                $halfdayinmonth = 1;
+            }
+            if ($halfdayinmonth == -1) {
+                $halfdayinmonth = 0;
+            }
         }
-        if ($tmpend['year'] > $search_year || $tmpend['mon'] > $search_month)
-        {
+        if ($tmpend['year'] > $search_year || $tmpend['mon'] > $search_month) {
             $date_end_inmonth = dol_get_last_day($search_year, $search_month, true) - ((24 * 3600) - 1);
             $endhalfdayinmonth = 'afternoon';
-            if ($halfdayinmonth == 2) $halfdayinmonth = -1;
-            if ($halfdayinmonth == 1) $halfdayinmonth = 0;
+            if ($halfdayinmonth == 2) {
+                $halfdayinmonth = -1;
+            }
+            if ($halfdayinmonth == 1) {
+                $halfdayinmonth = 0;
+            }
         }
 
         // Leave request

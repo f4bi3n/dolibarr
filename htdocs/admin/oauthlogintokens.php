@@ -31,7 +31,9 @@ use OAuth\Common\Storage\DoliStorage;
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'printing', 'oauth'));
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+    accessforbidden();
+}
 
 $action = GETPOST('action', 'alpha');
 $mode = GETPOST('mode', 'alpha');
@@ -39,9 +41,13 @@ $value = GETPOST('value', 'alpha');
 $varname = GETPOST('varname', 'alpha');
 $driver = GETPOST('driver', 'alpha');
 
-if (!empty($driver)) $langs->load($driver);
+if (!empty($driver)) {
+    $langs->load($driver);
+}
 
-if (!$mode) $mode = 'setup';
+if (!$mode) {
+    $mode = 'setup';
+}
 
 
 /*
@@ -55,43 +61,39 @@ if (!$mode) $mode = 'setup';
     exit;
 }*/
 
-if ($action == 'setconst' && $user->admin)
-{
+if ($action == 'setconst' && $user->admin) {
     $error = 0;
     $db->begin();
     foreach ($_POST['setupdriver'] as $setupconst) {
         //print '<pre>'.print_r($setupconst, true).'</pre>';
         $result = dolibarr_set_const($db, $setupconst['varname'], $setupconst['value'], 'chaine', 0, '', $conf->entity);
-        if (!$result > 0) $error++;
+        if (!$result > 0) {
+            $error++;
+        }
     }
 
-    if (!$error)
-    {
+    if (!$error) {
         $db->commit();
         setEventMessages($langs->trans("SetupSaved"), null);
-    }
-    else
-    {
+    } else {
         $db->rollback();
         dol_print_error($db);
     }
     $action = '';
 }
 
-if ($action == 'setvalue' && $user->admin)
-{
+if ($action == 'setvalue' && $user->admin) {
     $db->begin();
 
     $result = dolibarr_set_const($db, $varname, $value, 'chaine', 0, '', $conf->entity);
-    if (!$result > 0) $error++;
+    if (!$result > 0) {
+        $error++;
+    }
 
-    if (!$error)
-    {
+    if (!$error) {
         $db->commit();
         setEventMessages($langs->trans("SetupSaved"), null);
-    }
-    else
-    {
+    } else {
         $db->rollback();
         dol_print_error($db);
     }
@@ -120,55 +122,48 @@ $head = oauthadmin_prepare_head();
 dol_fiche_head($head, 'tokengeneration', '', -1, 'technic');
 
 
-if ($mode == 'setup' && $user->admin)
-{
+if ($mode == 'setup' && $user->admin) {
     print '<span class="opacitymedium">'.$langs->trans("OAuthSetupForLogin")."</span><br><br>\n";
 
-    foreach ($list as $key)
-    {
+    foreach ($list as $key) {
         $supported = 0;
-        if (in_array($key[0], array_keys($supportedoauth2array))) $supported = 1;
-        if (!$supported) continue; // show only supported
+        if (in_array($key[0], array_keys($supportedoauth2array))) {
+            $supported = 1;
+        }
+        if (!$supported) {
+            continue;
+        } // show only supported
 
 
         $OAUTH_SERVICENAME = 'Unknown';
-        if ($key[0] == 'OAUTH_GITHUB_NAME')
-        {
+        if ($key[0] == 'OAUTH_GITHUB_NAME') {
             $OAUTH_SERVICENAME = 'GitHub';
             $state='user,public_repo'; 	// List of keys that will be converted into scopes (from constants 'SCOPE_state_in_uppercase' in file of service)
             $urltorenew = $urlwithroot.'/core/modules/oauth/github_oauthcallback.php?state='.$state.'&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
             $urltodelete = $urlwithroot.'/core/modules/oauth/github_oauthcallback.php?action=delete&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
             $urltocheckperms = 'https://github.com/settings/applications/';
-        }
-        elseif ($key[0] == 'OAUTH_GOOGLE_NAME')
-        {
+        } elseif ($key[0] == 'OAUTH_GOOGLE_NAME') {
             $OAUTH_SERVICENAME = 'Google';
             $state='userinfo_email,userinfo_profile,cloud_print'; 	// List of keys that will be converted into scopes (from constants 'SCOPE_state_in_uppercase' in file of service)
             //$state.=',gmail_full';
             $urltorenew = $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?state='.$state.'&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
             $urltodelete = $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?action=delete&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
             $urltocheckperms = 'https://security.google.com/settings/security/permissions';
+        } elseif ($key[0] == 'OAUTH_STRIPE_TEST_NAME') {
+            $OAUTH_SERVICENAME = 'StripeTest';
+            $urltorenew = $urlwithroot.'/core/modules/oauth/stripetest_oauthcallback.php?backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
+            $urltodelete = '';
+            $urltocheckperms = '';
+        } elseif ($key[0] == 'OAUTH_STRIPE_LIVE_NAME') {
+            $OAUTH_SERVICENAME = 'StripeLive';
+            $urltorenew = $urlwithroot.'/core/modules/oauth/stripelive_oauthcallback.php?backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
+            $urltodelete = '';
+            $urltocheckperms = '';
+        } else {
+            $urltorenew = '';
+            $urltodelete = '';
+            $urltocheckperms = '';
         }
-        elseif ($key[0] == 'OAUTH_STRIPE_TEST_NAME')
-        {
-        	$OAUTH_SERVICENAME = 'StripeTest';
-        	$urltorenew = $urlwithroot.'/core/modules/oauth/stripetest_oauthcallback.php?backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
-        	$urltodelete = '';
-        	$urltocheckperms = '';
-        }
-        elseif ($key[0] == 'OAUTH_STRIPE_LIVE_NAME')
-        {
-        	$OAUTH_SERVICENAME = 'StripeLive';
-        	$urltorenew = $urlwithroot.'/core/modules/oauth/stripelive_oauthcallback.php?backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
-        	$urltodelete = '';
-        	$urltocheckperms = '';
-        }
-        else
-		{
-			$urltorenew = '';
-			$urltodelete = '';
-			$urltocheckperms = '';
-		}
 
 
         // Show value of token
@@ -178,12 +173,9 @@ if ($mode == 'setup' && $user->admin)
         require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
         // Dolibarr storage
         $storage = new DoliStorage($db, $conf);
-        try
-        {
+        try {
             $tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
-        }
-        catch (Exception $e)
-        {
+        } catch (Exception $e) {
             // Return an error if token not found
         }
 
@@ -202,16 +194,11 @@ if ($mode == 'setup' && $user->admin)
                 $refreshtoken = $tokenobj->getRefreshToken();
 
                 $endoflife = $tokenobj->getEndOfLife();
-                if ($endoflife == $tokenobj::EOL_NEVER_EXPIRES)
-                {
+                if ($endoflife == $tokenobj::EOL_NEVER_EXPIRES) {
                     $expiredat = $langs->trans("Never");
-                }
-                elseif ($endoflife == $tokenobj::EOL_UNKNOWN)
-                {
+                } elseif ($endoflife == $tokenobj::EOL_UNKNOWN) {
                     $expiredat = $langs->trans("Unknown");
-                }
-                else
-                {
+                } else {
                     $expiredat = dol_print_date($endoflife, "dayhour");
                 }
             }
@@ -249,24 +236,24 @@ if ($mode == 'setup' && $user->admin)
         print $langs->trans("IsTokenGenerated");
         print '</td>';
         print '<td>';
-        if (is_object($tokenobj)) print $langs->trans("HasAccessToken");
-        else print $langs->trans("NoAccessToken");
+        if (is_object($tokenobj)) {
+            print $langs->trans("HasAccessToken");
+        } else {
+            print $langs->trans("NoAccessToken");
+        }
         print '</td>';
         print '<td>';
         // Links to delete/checks token
-        if (is_object($tokenobj))
-        {
+        if (is_object($tokenobj)) {
             //test on $storage->hasAccessToken($OAUTH_SERVICENAME) ?
             print '<a class="button" href="'.$urltodelete.'">'.$langs->trans('DeleteAccess').'</a><br>';
         }
         // Request remote token
-        if ($urltorenew)
-        {
-        	print '<a class="button" href="'.$urltorenew.'">'.$langs->trans('RequestAccess').'</a><br>';
+        if ($urltorenew) {
+            print '<a class="button" href="'.$urltorenew.'">'.$langs->trans('RequestAccess').'</a><br>';
         }
         // Check remote access
-        if ($urltocheckperms)
-        {
+        if ($urltocheckperms) {
             print '<br>'.$langs->trans("ToCheckDeleteTokenOnProvider", $OAUTH_SERVICENAME).': <a href="'.$urltocheckperms.'" target="_'.strtolower($OAUTH_SERVICENAME).'">'.$urltocheckperms.'</a>';
         }
         print '</td>';
@@ -277,8 +264,7 @@ if ($mode == 'setup' && $user->admin)
         //var_dump($key);
         print $langs->trans("Token").'</td>';
         print '<td colspan="2">';
-        if (is_object($tokenobj))
-        {
+        if (is_object($tokenobj)) {
             //var_dump($tokenobj);
             print $tokenobj->getAccessToken().'<br>';
             //print 'Refresh: '.$tokenobj->getRefreshToken().'<br>';
@@ -291,8 +277,7 @@ if ($mode == 'setup' && $user->admin)
         print '</td>';
         print '</tr>'."\n";
 
-        if (is_object($tokenobj))
-        {
+        if (is_object($tokenobj)) {
             // Token refresh
             print '<tr class="oddeven">';
             print '<td'.($key['required'] ? ' class="required"' : '').'>';
@@ -326,8 +311,7 @@ if ($mode == 'setup' && $user->admin)
 
         print '</table>';
 
-        if (!empty($driver))
-        {
+        if (!empty($driver)) {
             if ($submit_enabled) {
                 print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Modify")).'"></div>';
             }
@@ -338,13 +322,11 @@ if ($mode == 'setup' && $user->admin)
     }
 }
 
-if ($mode == 'test' && $user->admin)
-{
+if ($mode == 'test' && $user->admin) {
     print $langs->trans('PrintTestDesc'.$driver)."<br><br>\n";
 
     print '<table class="noborder centpercent">';
-    if (!empty($driver))
-    {
+    if (!empty($driver)) {
         require_once DOL_DOCUMENT_ROOT.'/core/modules/printing/'.$driver.'.modules.php';
         $classname = 'printing_'.$driver;
         $langs->load($driver);
@@ -356,8 +338,7 @@ if ($mode == 'test' && $user->admin)
             } else {
                 setEventMessages($printer->error, $printer->errors, 'errors');
             }
-        }
-        else {
+        } else {
             print $langs->trans('PleaseConfigureDriverfromList');
         }
     }
@@ -365,8 +346,7 @@ if ($mode == 'test' && $user->admin)
     print '</table>';
 }
 
-if ($mode == 'userconf' && $user->admin)
-{
+if ($mode == 'userconf' && $user->admin) {
     print $langs->trans('PrintUserConfDesc'.$driver)."<br><br>\n";
 
     print '<table class="noborder centpercent">';

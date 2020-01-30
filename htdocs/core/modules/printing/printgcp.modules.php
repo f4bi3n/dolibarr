@@ -149,16 +149,11 @@ class printing_printgcp extends PrintingDriver
 
                     $endoflife = $token->getEndOfLife();
 
-                    if ($endoflife == $token::EOL_NEVER_EXPIRES)
-                    {
+                    if ($endoflife == $token::EOL_NEVER_EXPIRES) {
                         $expiredat = $langs->trans("Never");
-                    }
-                    elseif ($endoflife == $token::EOL_UNKNOWN)
-                    {
+                    } elseif ($endoflife == $token::EOL_UNKNOWN) {
                         $expiredat = $langs->trans("Unknown");
-                    }
-                    else
-                    {
+                    } else {
                         $expiredat = dol_print_date($endoflife, "dayhour");
                     }
 
@@ -204,8 +199,7 @@ class printing_printgcp extends PrintingDriver
         $html .= '</tr>'."\n";
         $list = $this->getlistAvailablePrinters();
         //$html.= '<td><pre>'.print_r($list,true).'</pre></td>';
-        foreach ($list['available'] as $printer_det)
-        {
+        foreach ($list['available'] as $printer_det) {
             $html .= '<tr class="oddeven">';
             $html .= '<td>'.$printer_det['name'].'</td>';
             $html .= '<td>'.$printer_det['displayName'].'</td>';
@@ -216,12 +210,11 @@ class printing_printgcp extends PrintingDriver
             $html .= '<td>'.$langs->trans('TYPE_'.$printer_det['type']).'</td>';
             // Defaut
             $html .= '<td class="center">';
-            if ($conf->global->PRINTING_GCP_DEFAULT == $printer_det['id'])
-            {
+            if ($conf->global->PRINTING_GCP_DEFAULT == $printer_det['id']) {
                 $html .= img_picto($langs->trans("Default"), 'on');
-            }
-            else
+            } else {
                 $html .= '<a href="'.$_SERVER["PHP_SELF"].'?action=setvalue&amp;mode=test&amp;varname=PRINTING_GCP_DEFAULT&amp;driver=printgcp&amp;value='.urlencode($printer_det['id']).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+            }
             $html .= '</td>';
             $html .= '</tr>'."\n";
         }
@@ -319,21 +312,14 @@ class printing_printgcp extends PrintingDriver
         // select printer uri for module order, propal,...
         $sql = "SELECT rowid, printer_id, copy FROM ".MAIN_DB_PREFIX."printing WHERE module='".$module."' AND driver='printgcp' AND userid=".$user->id;
         $result = $this->db->query($sql);
-        if ($result)
-        {
+        if ($result) {
             $obj = $this->db->fetch_object($result);
-            if ($obj)
-            {
+            if ($obj) {
                 $printer_id = $obj->printer_id;
-            }
-            else
-            {
-                if (!empty($conf->global->PRINTING_GCP_DEFAULT))
-                {
+            } else {
+                if (!empty($conf->global->PRINTING_GCP_DEFAULT)) {
                     $printer_id = $conf->global->PRINTING_GCP_DEFAULT;
-                }
-                else
-                {
+                } else {
                     $this->errors[] = 'NoDefaultPrinterDefined';
                     $error++;
                     return $error;
@@ -506,12 +492,10 @@ class printing_printgcp extends PrintingDriver
                 $html .= '<td>&nbsp;</td>';
                 $html .= '</tr>';
             }
-        }
-        else
-        {
-                $html .= '<tr class="oddeven">';
-                $html .= '<td colspan="7" class="opacitymedium">'.$langs->trans("None").'</td>';
-                $html .= '</tr>';
+        } else {
+            $html .= '<tr class="oddeven">';
+            $html .= '<td colspan="7" class="opacitymedium">'.$langs->trans("None").'</td>';
+            $html .= '</tr>';
         }
         $html .= '</table>';
         $html .= '</div>';

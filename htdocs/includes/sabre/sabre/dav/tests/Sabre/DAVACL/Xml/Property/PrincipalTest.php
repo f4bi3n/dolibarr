@@ -7,10 +7,10 @@ use Sabre\DAV\Browser\HtmlOutputHelper;
 use Sabre\HTTP;
 use Sabre\Xml\Reader;
 
-class PrincipalTest extends \PHPUnit_Framework_TestCase {
-
-    function testSimple() {
-
+class PrincipalTest extends \PHPUnit_Framework_TestCase
+{
+    public function testSimple()
+    {
         $principal = new Principal(Principal::UNAUTHENTICATED);
         $this->assertEquals(Principal::UNAUTHENTICATED, $principal->getType());
         $this->assertNull($principal->getHref());
@@ -22,24 +22,22 @@ class PrincipalTest extends \PHPUnit_Framework_TestCase {
         $principal = new Principal(Principal::HREF, 'admin');
         $this->assertEquals(Principal::HREF, $principal->getType());
         $this->assertEquals('admin/', $principal->getHref());
-
     }
 
     /**
      * @depends testSimple
      * @expectedException Sabre\DAV\Exception
      */
-    function testNoHref() {
-
+    public function testNoHref()
+    {
         $principal = new Principal(Principal::HREF);
-
     }
 
     /**
      * @depends testSimple
      */
-    function testSerializeUnAuthenticated() {
-
+    public function testSerializeUnAuthenticated()
+    {
         $prin = new Principal(Principal::UNAUTHENTICATED);
 
         $xml = (new DAV\Server())->xml->write('{DAV:}principal', $prin);
@@ -48,15 +46,14 @@ class PrincipalTest extends \PHPUnit_Framework_TestCase {
 <d:principal xmlns:d="DAV:" xmlns:s="http://sabredav.org/ns">
 <d:unauthenticated/>
 </d:principal>', $xml);
-
     }
 
 
     /**
      * @depends testSerializeUnAuthenticated
      */
-    function testSerializeAuthenticated() {
-
+    public function testSerializeAuthenticated()
+    {
         $prin = new Principal(Principal::AUTHENTICATED);
         $xml = (new DAV\Server())->xml->write('{DAV:}principal', $prin);
 
@@ -64,15 +61,14 @@ class PrincipalTest extends \PHPUnit_Framework_TestCase {
 <d:principal xmlns:d="DAV:" xmlns:s="http://sabredav.org/ns">
 <d:authenticated/>
 </d:principal>', $xml);
-
     }
 
 
     /**
      * @depends testSerializeUnAuthenticated
      */
-    function testSerializeHref() {
-
+    public function testSerializeHref()
+    {
         $prin = new Principal(Principal::HREF, 'principals/admin');
         $xml = (new DAV\Server())->xml->write('{DAV:}principal', $prin, '/');
 
@@ -80,11 +76,10 @@ class PrincipalTest extends \PHPUnit_Framework_TestCase {
 <d:principal xmlns:d="DAV:" xmlns:s="http://sabredav.org/ns">
 <d:href>/principals/admin/</d:href>
 </d:principal>', $xml);
-
     }
 
-    function testUnserializeHref() {
-
+    public function testUnserializeHref()
+    {
         $xml = '<?xml version="1.0"?>
 <d:principal xmlns:d="DAV:">' .
 '<d:href>/principals/admin</d:href>' .
@@ -93,11 +88,10 @@ class PrincipalTest extends \PHPUnit_Framework_TestCase {
         $principal = $this->parse($xml);
         $this->assertEquals(Principal::HREF, $principal->getType());
         $this->assertEquals('/principals/admin/', $principal->getHref());
-
     }
 
-    function testUnserializeAuthenticated() {
-
+    public function testUnserializeAuthenticated()
+    {
         $xml = '<?xml version="1.0"?>
 <d:principal xmlns:d="DAV:">' .
 '  <d:authenticated />' .
@@ -105,11 +99,10 @@ class PrincipalTest extends \PHPUnit_Framework_TestCase {
 
         $principal = $this->parse($xml);
         $this->assertEquals(Principal::AUTHENTICATED, $principal->getType());
-
     }
 
-    function testUnserializeUnauthenticated() {
-
+    public function testUnserializeUnauthenticated()
+    {
         $xml = '<?xml version="1.0"?>
 <d:principal xmlns:d="DAV:">' .
 '  <d:unauthenticated />' .
@@ -117,46 +110,42 @@ class PrincipalTest extends \PHPUnit_Framework_TestCase {
 
         $principal = $this->parse($xml);
         $this->assertEquals(Principal::UNAUTHENTICATED, $principal->getType());
-
     }
 
     /**
      * @expectedException Sabre\DAV\Exception\BadRequest
      */
-    function testUnserializeUnknown() {
-
+    public function testUnserializeUnknown()
+    {
         $xml = '<?xml version="1.0"?>
 <d:principal xmlns:d="DAV:">' .
 '  <d:foo />' .
 '</d:principal>';
 
         $this->parse($xml);
-
     }
 
-    function parse($xml) {
-
+    public function parse($xml)
+    {
         $reader = new Reader();
         $reader->elementMap['{DAV:}principal'] = 'Sabre\\DAVACL\\Xml\\Property\\Principal';
         $reader->xml($xml);
         $result = $reader->parse();
         return $result['value'];
-
     }
 
     /**
      * @depends testSimple
      * @dataProvider htmlProvider
      */
-    function testToHtml($principal, $output) {
-
+    public function testToHtml($principal, $output)
+    {
         $html = $principal->toHtml(new HtmlOutputHelper('/', []));
 
         $this->assertXmlStringEqualsXmlString(
             $output,
             $html
         );
-
     }
 
     /**
@@ -164,8 +153,8 @@ class PrincipalTest extends \PHPUnit_Framework_TestCase {
      *
      * @return array
      */
-    function htmlProvider() {
-
+    public function htmlProvider()
+    {
         return [
             [
                 new Principal(Principal::UNAUTHENTICATED),
@@ -185,7 +174,5 @@ class PrincipalTest extends \PHPUnit_Framework_TestCase {
             ],
 
         ];
-
     }
-
 }

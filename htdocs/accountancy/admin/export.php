@@ -36,9 +36,8 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancyexport.class.php';
 $langs->loadLangs(array("compta", "bills", "admin", "accountancy"));
 
 // Security access
-if (empty($user->rights->accounting->chartofaccount))
-{
-	accessforbidden();
+if (empty($user->rights->accounting->chartofaccount)) {
+    accessforbidden();
 }
 
 $action = GETPOST('action', 'aZ09');
@@ -82,28 +81,28 @@ $model_option = array(
  */
 
 if ($action == 'update') {
-	$error = 0;
+    $error = 0;
 
-	$modelcsv = GETPOST('ACCOUNTING_EXPORT_MODELCSV', 'int');
+    $modelcsv = GETPOST('ACCOUNTING_EXPORT_MODELCSV', 'int');
 
-	if (!empty($modelcsv)) {
-		if (!dolibarr_set_const($db, 'ACCOUNTING_EXPORT_MODELCSV', $modelcsv, 'chaine', 0, '', $conf->entity)) {
-			$error++;
-		}
-		//if ($modelcsv==AccountancyExport::$EXPORT_TYPE_QUADRATUS || $modelcsv==AccountancyExport::$EXPORT_TYPE_CIEL) {
-		//	dolibarr_set_const($db, 'ACCOUNTING_EXPORT_FORMAT', 'txt', 'chaine', 0, '', $conf->entity);
-		//}
-	} else {
-		$error++;
-	}
+    if (!empty($modelcsv)) {
+        if (!dolibarr_set_const($db, 'ACCOUNTING_EXPORT_MODELCSV', $modelcsv, 'chaine', 0, '', $conf->entity)) {
+            $error++;
+        }
+        //if ($modelcsv==AccountancyExport::$EXPORT_TYPE_QUADRATUS || $modelcsv==AccountancyExport::$EXPORT_TYPE_CIEL) {
+        //	dolibarr_set_const($db, 'ACCOUNTING_EXPORT_FORMAT', 'txt', 'chaine', 0, '', $conf->entity);
+        //}
+    } else {
+        $error++;
+    }
 
-	foreach ($main_option as $constname) {
-		$constvalue = GETPOST($constname, 'alpha');
+    foreach ($main_option as $constname) {
+        $constvalue = GETPOST($constname, 'alpha');
 
-		if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
-			$error++;
-		}
-	}
+        if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+            $error++;
+        }
+    }
 
     foreach ($listparam[$modelcsv] as $key => $value) {
         $constante = $key;
@@ -116,14 +115,14 @@ if ($action == 'update') {
         }
     }
 
-	if (!$error) {
+    if (!$error) {
         // reload
         $configuration = AccountancyExport::getTypeConfig();
         $listparam = $configuration['param'];
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	} else {
-		setEventMessages($langs->trans("Error"), null, 'errors');
-	}
+    } else {
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
 }
 
 
@@ -202,18 +201,18 @@ print "</tr>\n";
 
 $num = count($main_option);
 if ($num) {
-	foreach ($main_option as $key) {
-		print '<tr class="oddeven value">';
+    foreach ($main_option as $key) {
+        print '<tr class="oddeven value">';
 
-		// Param
-		$label = $langs->trans($key);
-		print '<td width="50%">'.$label.'</td>';
+        // Param
+        $label = $langs->trans($key);
+        print '<td width="50%">'.$label.'</td>';
 
-		// Value
-		print '<td>';
-		print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
-		print '</td></tr>';
-	}
+        // Value
+        print '<td>';
+        print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
+        print '</td></tr>';
+    }
 }
 
 print "</table>\n";
@@ -233,15 +232,15 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td width="50%">'.$langs->trans("Selectmodelcsv").'</td>';
 if (!$conf->use_javascript_ajax) {
-	print '<td class="nowrap">';
-	print $langs->trans("NotAvailableWhenAjaxDisabled");
-	print "</td>";
+    print '<td class="nowrap">';
+    print $langs->trans("NotAvailableWhenAjaxDisabled");
+    print "</td>";
 } else {
-	print '<td>';
-	$listmodelcsv = AccountancyExport::getType();
-	print $form->selectarray("ACCOUNTING_EXPORT_MODELCSV", $listmodelcsv, $conf->global->ACCOUNTING_EXPORT_MODELCSV, 0, 0, 0, '', 0, 0, 0, '', '', 1);
+    print '<td>';
+    $listmodelcsv = AccountancyExport::getType();
+    print $form->selectarray("ACCOUNTING_EXPORT_MODELCSV", $listmodelcsv, $conf->global->ACCOUNTING_EXPORT_MODELCSV, 0, 0, 0, '', 0, 0, 0, '', '', 1);
 
-	print '</td>';
+    print '</td>';
 }
 print "</td></tr>";
 print "</table>";
@@ -254,19 +253,19 @@ print "<br>\n";
 
 $num2 = count($model_option);
 if ($num2) {
-	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre">';
-	print '<td colspan="3">'.$langs->trans('OtherOptions').'</td>';
-	print "</tr>\n";
+    print '<table class="noborder centpercent">';
+    print '<tr class="liste_titre">';
+    print '<td colspan="3">'.$langs->trans('OtherOptions').'</td>';
+    print "</tr>\n";
 
-	foreach ($model_option as $key) {
-		print '<tr class="oddeven value">';
+    foreach ($model_option as $key) {
+        print '<tr class="oddeven value">';
 
         // Param
         $label = $key['label'];
-		print '<td width="50%">'.$langs->trans($label).'</td>';
+        print '<td width="50%">'.$langs->trans($label).'</td>';
 
-		// Value
+        // Value
         print '<td>';
         if (is_array($key['param'])) {
             print $form->selectarray($label, $key['param'], $conf->global->$label, 0);
@@ -274,10 +273,10 @@ if ($num2) {
             print '<input type="text" size="20" id="'.$label.'" name="'.$key['label'].'" value="'.$conf->global->$label.'">';
         }
 
-		print '</td></tr>';
-	}
+        print '</td></tr>';
+    }
 
-	print "</table>\n";
+    print "</table>\n";
 }
 
 print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Modify')).'" name="button"></div>';

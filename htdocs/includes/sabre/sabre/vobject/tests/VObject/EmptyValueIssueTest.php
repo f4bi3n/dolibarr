@@ -7,10 +7,10 @@ namespace Sabre\VObject;
  *
  * https://github.com/fruux/sabre-vobject/issues/68
  */
-class EmptyValueIssueTest extends \PHPUnit_Framework_TestCase {
-
-    function testDecodeValue() {
-
+class EmptyValueIssueTest extends \PHPUnit_Framework_TestCase
+{
+    public function testDecodeValue()
+    {
         $input = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -24,7 +24,5 @@ ICS;
 
         // Before this bug was fixed, getValue() would return nothing.
         $this->assertEquals("This is a descpription\nwith a linebreak and a ; , and :", $vobj->VEVENT->DESCRIPTION->getValue());
-
     }
-
 }

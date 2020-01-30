@@ -17,7 +17,8 @@ use
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Boolean extends Property {
+class Boolean extends Property
+{
 
     /**
      * Sets a raw value coming from a mimedir (iCalendar/vCard) file.
@@ -29,11 +30,10 @@ class Boolean extends Property {
      *
      * @return void
      */
-    function setRawMimeDirValue($val) {
-
+    public function setRawMimeDirValue($val)
+    {
         $val = strtoupper($val) === 'TRUE' ? true : false;
         $this->setValue($val);
-
     }
 
     /**
@@ -41,10 +41,9 @@ class Boolean extends Property {
      *
      * @return string
      */
-    function getRawMimeDirValue() {
-
+    public function getRawMimeDirValue()
+    {
         return $this->value ? 'TRUE' : 'FALSE';
-
     }
 
     /**
@@ -55,10 +54,9 @@ class Boolean extends Property {
      *
      * @return string
      */
-    function getValueType() {
-
+    public function getValueType()
+    {
         return 'BOOLEAN';
-
     }
 
     /**
@@ -69,16 +67,14 @@ class Boolean extends Property {
      *
      * @return void
      */
-    function setXmlValue(array $value) {
-
+    public function setXmlValue(array $value)
+    {
         $value = array_map(
-            function($value) {
+            function ($value) {
                 return 'true' === $value;
             },
             $value
         );
         parent::setXmlValue($value);
-
     }
-
 }

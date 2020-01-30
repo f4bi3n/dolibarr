@@ -52,7 +52,7 @@ class modReceiptPrinter extends DolibarrModules
         $this->name = preg_replace('/^mod/i', '', get_class($this));
         // Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
         $this->description = "ReceiptPrinterDesc";
-		// Possible values for version are: 'development', 'experimental', 'dolibarr' or 'dolibarr_deprecated' or version
+        // Possible values for version are: 'development', 'experimental', 'dolibarr' or 'dolibarr_deprecated' or version
         $this->version = 'development';
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         // Name of image file used for this module.
@@ -68,10 +68,10 @@ class modReceiptPrinter extends DolibarrModules
 
         // Dependencies
         $this->hidden = false;			// A condition to hide module
-		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
-		$this->requiredby = array();	// List of module ids to disable if this one is disabled
-		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
-		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
+        $this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
+        $this->requiredby = array();	// List of module ids to disable if this one is disabled
+        $this->conflictwith = array();	// List of module class names as string this module is in conflict with
+        $this->phpmin = array(5,4);		// Minimum version of PHP required by module
         $this->need_dolibarr_version = array(3,9,-2);   // Minimum version of Dolibarr required by module
         $this->conflictwith = array();
         $this->langfiles = array("receiptprinter");
@@ -138,9 +138,9 @@ class modReceiptPrinter extends DolibarrModules
         $sql = array(
             "CREATE TABLE IF NOT EXISTS ".MAIN_DB_PREFIX."printer_receipt (rowid integer AUTO_INCREMENT PRIMARY KEY, name varchar(128), fk_type integer, fk_profile integer, parameter varchar(128), entity integer) ENGINE=innodb;",
             "CREATE TABLE IF NOT EXISTS ".MAIN_DB_PREFIX."printer_receipt_template (rowid integer AUTO_INCREMENT PRIMARY KEY, name varchar(128), template text, entity integer) ENGINE=innodb;",
-        	"DELETE FROM ".MAIN_DB_PREFIX."printer_receipt_template WHERE name = '".$langs->trans('Example')."';",
-			"INSERT INTO ".MAIN_DB_PREFIX."printer_receipt_template (name,template,entity) VALUES ('".$langs->trans('Example')."', '<dol_align_center>\r\n<dol_print_text><dol_value_mysoc_name>\r\n<dol_print_text><dol_value_mysoc_address>\r\n<dol_print_text><dol_value_mysoc_zip><dol_value_mysoc_town>\r\n<dol_line_feed>\r\n<dol_print_text>Facture <dol_value_object_ref>\r\n<dol_line_feed>\r\n<dol_align_left>\r\n<dol_print_object_lines>\r\n<dol_line_feed>\r\n<dol_print_object_tax>\r\n<dol_line_feed>\r\n<dol_print_object_total>\r\n<dol_line_feed>\r\n<dol_cut_paper_full>', 1);",
-		);
+            "DELETE FROM ".MAIN_DB_PREFIX."printer_receipt_template WHERE name = '".$langs->trans('Example')."';",
+            "INSERT INTO ".MAIN_DB_PREFIX."printer_receipt_template (name,template,entity) VALUES ('".$langs->trans('Example')."', '<dol_align_center>\r\n<dol_print_text><dol_value_mysoc_name>\r\n<dol_print_text><dol_value_mysoc_address>\r\n<dol_print_text><dol_value_mysoc_zip><dol_value_mysoc_town>\r\n<dol_line_feed>\r\n<dol_print_text>Facture <dol_value_object_ref>\r\n<dol_line_feed>\r\n<dol_align_left>\r\n<dol_print_object_lines>\r\n<dol_line_feed>\r\n<dol_print_object_tax>\r\n<dol_line_feed>\r\n<dol_print_object_total>\r\n<dol_line_feed>\r\n<dol_cut_paper_full>', 1);",
+        );
         return $this->_init($sql, $options);
     }
 }

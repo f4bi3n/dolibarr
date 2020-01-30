@@ -2,8 +2,7 @@
 
 namespace Sabre\DAV\Locks\Backend;
 
-class PDOPgSqlTest extends PDOTest {
-
+class PDOPgSqlTest extends PDOTest
+{
     public $driver = 'pgsql';
-
 }

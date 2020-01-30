@@ -1,7 +1,6 @@
 <?php
 namespace Luracast\Restler\Format;
 
-
 use Luracast\Restler\RestException;
 
 abstract class DependentMultiFormat extends MultiFormat
@@ -35,5 +34,4 @@ abstract class DependentMultiFormat extends MultiFormat
     {
         $this->checkDependency();
     }
-
-} 
+}

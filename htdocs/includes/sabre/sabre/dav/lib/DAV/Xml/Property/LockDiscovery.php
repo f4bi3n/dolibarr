@@ -20,7 +20,8 @@ use Sabre\Xml\XmlSerializable;
  * @author Evert Pot (http://www.rooftopsolutions.nl/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class LockDiscovery implements XmlSerializable {
+class LockDiscovery implements XmlSerializable
+{
 
     /**
      * locks
@@ -37,17 +38,16 @@ class LockDiscovery implements XmlSerializable {
      *
      * @var bool
      */
-    static $hideLockRoot = false;
+    public static $hideLockRoot = false;
 
     /**
      * __construct
      *
      * @param LockInfo[] $locks
      */
-    function __construct($locks) {
-
+    public function __construct($locks)
+    {
         $this->locks = $locks;
-
     }
 
     /**
@@ -65,10 +65,9 @@ class LockDiscovery implements XmlSerializable {
      * @param Writer $writer
      * @return void
      */
-    function xmlSerialize(Writer $writer) {
-
+    public function xmlSerialize(Writer $writer)
+    {
         foreach ($this->locks as $lock) {
-
             $writer->startElement('{DAV:}activelock');
 
             $writer->startElement('{DAV:}lockscope');
@@ -98,9 +97,6 @@ class LockDiscovery implements XmlSerializable {
 
             $writer->writeElement('{DAV:}owner', new XmlFragment($lock->owner));
             $writer->endElement(); // {DAV:}activelock
-
         }
-
     }
-
 }

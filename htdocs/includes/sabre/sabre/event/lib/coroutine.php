@@ -44,8 +44,8 @@ use Exception;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-function coroutine(callable $gen) {
-
+function coroutine(callable $gen)
+{
     $generator = $gen();
     if (!$generator instanceof Generator) {
         throw new \InvalidArgumentException('You must pass a generator function');
@@ -60,19 +60,17 @@ function coroutine(callable $gen) {
      * So tempted to use the mythical y-combinator here, but it's not needed in
      * PHP.
      */
-    $advanceGenerator = function() use (&$advanceGenerator, $generator, $promise, &$lastYieldResult) {
-
+    $advanceGenerator = function () use (&$advanceGenerator, $generator, $promise, &$lastYieldResult) {
         while ($generator->valid()) {
-
             $yieldedValue = $generator->current();
             if ($yieldedValue instanceof Promise) {
                 $yieldedValue->then(
-                    function($value) use ($generator, &$advanceGenerator, &$lastYieldResult) {
+                    function ($value) use ($generator, &$advanceGenerator, &$lastYieldResult) {
                         $lastYieldResult = $value;
                         $generator->send($value);
                         $advanceGenerator();
                     },
-                    function($reason) use ($generator, $advanceGenerator) {
+                    function ($reason) use ($generator, $advanceGenerator) {
                         if ($reason instanceof Exception) {
                             $generator->throw($reason);
                         } elseif (is_scalar($reason)) {
@@ -83,7 +81,7 @@ function coroutine(callable $gen) {
                         }
                         $advanceGenerator();
                     }
-                )->error(function($reason) use ($promise) {
+                )->error(function ($reason) use ($promise) {
                     // This error handler would be called, if something in the
                     // generator throws an exception, and it's not caught
                     // locally.
@@ -97,7 +95,6 @@ function coroutine(callable $gen) {
                 $lastYieldResult = $yieldedValue;
                 $generator->send($yieldedValue);
             }
-
         }
 
         // If the generator is at the end, and we didn't run into an exception,
@@ -106,7 +103,6 @@ function coroutine(callable $gen) {
         if (!$generator->valid() && $promise->state === Promise::PENDING) {
             $promise->fulfill($lastYieldResult);
         }
-
     };
 
     try {
@@ -116,5 +112,4 @@ function coroutine(callable $gen) {
     }
 
     return $promise;
-
 }

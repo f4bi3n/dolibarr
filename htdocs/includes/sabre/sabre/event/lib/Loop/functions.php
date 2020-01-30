@@ -9,10 +9,9 @@ namespace Sabre\Event\Loop;
  * @param float $timeout timeout in seconds
  * @return void
  */
-function setTimeout(callable $cb, $timeout) {
-
+function setTimeout(callable $cb, $timeout)
+{
     instance()->setTimeout($cb, $timeout);
-
 }
 
 /**
@@ -25,10 +24,9 @@ function setTimeout(callable $cb, $timeout) {
  * @param float $timeout
  * @return array
  */
-function setInterval(callable $cb, $timeout) {
-
+function setInterval(callable $cb, $timeout)
+{
     return instance()->setInterval($cb, $timeout);
-
 }
 
 /**
@@ -37,10 +35,9 @@ function setInterval(callable $cb, $timeout) {
  * @param array $intervalId
  * @return void
  */
-function clearInterval($intervalId) {
-
+function clearInterval($intervalId)
+{
     instance()->clearInterval($intervalId);
-
 }
 
 /**
@@ -49,10 +46,9 @@ function clearInterval($intervalId) {
  * @param callable $cb
  * @return void
  */
-function nextTick(callable $cb) {
-
+function nextTick(callable $cb)
+{
     instance()->nextTick($cb);
-
 }
 
 
@@ -69,10 +65,9 @@ function nextTick(callable $cb) {
  * @param callable $cb
  * @return void
  */
-function addReadStream($stream, callable $cb) {
-
+function addReadStream($stream, callable $cb)
+{
     instance()->addReadStream($stream, $cb);
-
 }
 
 /**
@@ -88,10 +83,9 @@ function addReadStream($stream, callable $cb) {
  * @param callable $cb
  * @return void
  */
-function addWriteStream($stream, callable $cb) {
-
+function addWriteStream($stream, callable $cb)
+{
     instance()->addWriteStream($stream, $cb);
-
 }
 
 /**
@@ -100,10 +94,9 @@ function addWriteStream($stream, callable $cb) {
  * @param resource $stream
  * @return void
  */
-function removeReadStream($stream) {
-
+function removeReadStream($stream)
+{
     instance()->removeReadStream($stream);
-
 }
 
 /**
@@ -112,10 +105,9 @@ function removeReadStream($stream) {
  * @param resource $stream
  * @return void
  */
-function removeWriteStream($stream) {
-
+function removeWriteStream($stream)
+{
     instance()->removeWriteStream($stream);
-
 }
 
 
@@ -127,10 +119,9 @@ function removeWriteStream($stream) {
  *
  * @return void
  */
-function run() {
-
+function run()
+{
     instance()->run();
-
 }
 
 /**
@@ -148,10 +139,9 @@ function run() {
  * @param bool $block
  * @return bool
  */
-function tick($block = false) {
-
+function tick($block = false)
+{
     return instance()->tick($block);
-
 }
 
 /**
@@ -159,10 +149,9 @@ function tick($block = false) {
  *
  * @return void
  */
-function stop() {
-
+function stop()
+{
     instance()->stop();
-
 }
 
 /**
@@ -170,8 +159,8 @@ function stop() {
  *
  * @param Loop $newLoop
  */
-function instance(Loop $newLoop = null) {
-
+function instance(Loop $newLoop = null)
+{
     static $loop;
     if ($newLoop) {
         $loop = $newLoop;
@@ -179,5 +168,4 @@ function instance(Loop $newLoop = null) {
         $loop = new Loop();
     }
     return $loop;
-
 }

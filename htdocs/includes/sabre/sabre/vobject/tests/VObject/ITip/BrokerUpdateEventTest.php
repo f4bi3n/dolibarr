@@ -2,10 +2,10 @@
 
 namespace Sabre\VObject\ITip;
 
-class BrokerUpdateEventTest extends BrokerTester {
-
-    function testInviteChange() {
-
+class BrokerUpdateEventTest extends BrokerTester
+{
+    public function testInviteChange()
+    {
         $oldMessage = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -136,11 +136,10 @@ ICS
         ];
 
         $this->parse($oldMessage, $newMessage, $expected, 'mailto:strunk@example.org');
-
     }
 
-    function testInviteChangeFromNonSchedulingToSchedulingObject() {
-
+    public function testInviteChangeFromNonSchedulingToSchedulingObject()
+    {
         $oldMessage = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -201,11 +200,10 @@ ICS
         ];
 
         $this->parse($oldMessage, $newMessage, $expected, 'mailto:strunk@example.org');
-
     }
 
-    function testInviteChangeFromSchedulingToNonSchedulingObject() {
-
+    public function testInviteChangeFromSchedulingToNonSchedulingObject()
+    {
         $oldMessage = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -263,11 +261,10 @@ ICS
         ];
 
         $this->parse($oldMessage, $newMessage, $expected, 'mailto:strunk@example.org');
-
     }
 
-    function testNoAttendees() {
-
+    public function testNoAttendees()
+    {
         $oldMessage = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -297,11 +294,10 @@ ICS;
 
         $expected = [];
         $this->parse($oldMessage, $newMessage, $expected, 'mailto:strunk@example.org');
-
     }
 
-    function testRemoveInstance() {
-
+    public function testRemoveInstance()
+    {
         $oldMessage = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -368,7 +364,6 @@ ICS
         ];
 
         $this->parse($oldMessage, $newMessage, $expected, 'mailto:strunk@example.org');
-
     }
 
     /**
@@ -377,8 +372,8 @@ ICS
      *
      * This should ensure that the message is significant for every attendee,
      */
-    function testInviteChangeSignificantChange() {
-
+    public function testInviteChangeSignificantChange()
+    {
         $oldMessage = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -508,11 +503,10 @@ ICS
         ];
 
         $this->parse($oldMessage, $newMessage, $expected, 'mailto:strunk@example.org');
-
     }
 
-    function testInviteNoChange() {
-
+    public function testInviteNoChange()
+    {
         $oldMessage = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -579,11 +573,10 @@ ICS
         ];
 
         $this->parse($oldMessage, $newMessage, $expected, 'mailto:strunk@example.org');
-
     }
 
-    function testInviteNoChangeForceSend() {
-
+    public function testInviteNoChangeForceSend()
+    {
         $oldMessage = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -650,11 +643,10 @@ ICS
         ];
 
         $this->parse($oldMessage, $newMessage, $expected, 'mailto:strunk@example.org');
-
     }
 
-    function testInviteRemoveAttendees() {
-
+    public function testInviteRemoveAttendees()
+    {
         $oldMessage = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -750,11 +742,10 @@ ICS
         ];
 
         $result = $this->parse($oldMessage, $newMessage, $expected, 'mailto:strunk@example.org');
-
     }
 
-    function testInviteChangeExdateOrder() {
-
+    public function testInviteChangeExdateOrder()
+    {
         $oldMessage = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -841,6 +832,5 @@ ICS
         ];
 
         $this->parse($oldMessage, $newMessage, $expected, 'mailto:strunk@example.org');
-
     }
 }

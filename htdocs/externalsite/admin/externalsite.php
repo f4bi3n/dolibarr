@@ -26,14 +26,17 @@
  *    \brief      Page de configuration du module externalsite
  */
 
-if (! defined('NOSCANPOSTFORINJECTION')) define('NOSCANPOSTFORINJECTION', '1');		// Do not check anti CSRF attack test
+if (! defined('NOSCANPOSTFORINJECTION')) {
+    define('NOSCANPOSTFORINJECTION', '1');
+}		// Do not check anti CSRF attack test
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 
-if (!$user->admin)
+if (!$user->admin) {
     accessforbidden();
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'other', 'externalsite'));
@@ -43,27 +46,23 @@ $def = array();
 $action = GETPOST('action', 'alpha');
 
 // Sauvegardes parametres
-if ($action == 'update')
-{
+if ($action == 'update') {
     $i=0;
 
     $db->begin();
 
-	$label  = GETPOST('EXTERNALSITE_LABEL', 'alpha');
+    $label  = GETPOST('EXTERNALSITE_LABEL', 'alpha');
     $exturl = GETPOST('EXTERNALSITE_URL', 'none');
 
     $i+=dolibarr_set_const($db, 'EXTERNALSITE_LABEL', trim($label), 'chaine', 0, '', $conf->entity);
     $i+=dolibarr_set_const($db, 'EXTERNALSITE_URL', trim($exturl), 'chaine', 0, '', $conf->entity);
 
-    if ($i >= 2)
-    {
+    if ($i >= 2) {
         $db->commit();
-	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    } else {
         $db->rollback();
-	    setEventMessages($db->lasterror(), null, 'errors');
+        setEventMessages($db->lasterror(), null, 'errors');
     }
 }
 
@@ -103,7 +102,7 @@ print "</tr>";
 print '<tr class="oddeven">';
 print '<td class="fieldrequired">'.$langs->trans("ExternalSiteURL")."</td>";
 print '<td><textarea class="flat minwidth500" name="EXTERNALSITE_URL">';
-print (GETPOST('EXTERNALSITE_URL', 'none')?GETPOST('EXTERNALSITE_URL', 'none'):(empty($conf->global->EXTERNALSITE_URL)?'':$conf->global->EXTERNALSITE_URL));
+print(GETPOST('EXTERNALSITE_URL', 'none')?GETPOST('EXTERNALSITE_URL', 'none'):(empty($conf->global->EXTERNALSITE_URL)?'':$conf->global->EXTERNALSITE_URL));
 print '</textarea></td>';
 print "<td>http://localhost/myurl/";
 print "<br>https://wikipedia.org/";

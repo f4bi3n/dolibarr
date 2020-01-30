@@ -6,21 +6,25 @@ use Sabre\CalDAV;
 use Sabre\DAV;
 use Sabre\DAV\PropPatch;
 
-class SimplePDOTest extends \PHPUnit_Framework_TestCase {
-
+class SimplePDOTest extends \PHPUnit_Framework_TestCase
+{
     protected $pdo;
 
-    function setUp() {
+    public function setUp()
+    {
+        if (!SABRE_HASSQLITE) {
+            $this->markTestSkipped('SQLite driver is not available');
+        }
 
-        if (!SABRE_HASSQLITE) $this->markTestSkipped('SQLite driver is not available');
-
-        if (file_exists(SABRE_TEMPDIR . '/testdb.sqlite'))
+        if (file_exists(SABRE_TEMPDIR . '/testdb.sqlite')) {
             unlink(SABRE_TEMPDIR . '/testdb.sqlite');
+        }
 
         $pdo = new \PDO('sqlite:' . SABRE_TEMPDIR . '/testdb.sqlite');
         $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
-        $pdo->exec(<<<SQL
+        $pdo->exec(
+            <<<SQL
 CREATE TABLE simple_calendars (
     id INTEGER PRIMARY KEY ASC NOT NULL,
     uri TEXT NOT NULL,
@@ -28,7 +32,8 @@ CREATE TABLE simple_calendars (
 )
 SQL
         );
-        $pdo->exec(<<<SQL
+        $pdo->exec(
+            <<<SQL
 CREATE TABLE simple_calendarobjects (
     id INTEGER PRIMARY KEY ASC NOT NULL,
     calendarid INT UNSIGNED NOT NULL,
@@ -39,32 +44,29 @@ SQL
         );
 
         $this->pdo = $pdo;
-
     }
 
-    function testConstruct() {
-
+    public function testConstruct()
+    {
         $backend = new SimplePDO($this->pdo);
         $this->assertTrue($backend instanceof SimplePDO);
-
     }
 
     /**
      * @depends testConstruct
      */
-    function testGetCalendarsForUserNoCalendars() {
-
+    public function testGetCalendarsForUserNoCalendars()
+    {
         $backend = new SimplePDO($this->pdo);
         $calendars = $backend->getCalendarsForUser('principals/user2');
         $this->assertEquals([], $calendars);
-
     }
 
     /**
      * @depends testConstruct
      */
-    function testCreateCalendarAndFetch() {
-
+    public function testCreateCalendarAndFetch()
+    {
         $backend = new SimplePDO($this->pdo);
         $returnedId = $backend->createCalendar('principals/user2', 'somerandomid', [
             '{urn:ietf:params:xml:ns:caldav}supported-calendar-component-set' => new CalDAV\Xml\Property\SupportedCalendarComponentSet(['VEVENT']),
@@ -81,19 +83,16 @@ SQL
         $this->assertEquals(1, count($calendars));
 
         foreach ($elementCheck as $name => $value) {
-
             $this->assertArrayHasKey($name, $calendars[0]);
             $this->assertEquals($value, $calendars[0][$name]);
-
         }
-
     }
 
     /**
      * @depends testConstruct
      */
-    function testUpdateCalendarAndFetch() {
-
+    public function testUpdateCalendarAndFetch()
+    {
         $backend = new SimplePDO($this->pdo);
 
         //Creating a new calendar
@@ -110,14 +109,13 @@ SQL
 
         // Verifying the result of the update
         $this->assertFalse($result);
-
     }
 
     /**
      * @depends testCreateCalendarAndFetch
      */
-    function testDeleteCalendar() {
-
+    public function testDeleteCalendar()
+    {
         $backend = new SimplePDO($this->pdo);
         $returnedId = $backend->createCalendar('principals/user2', 'somerandomid', [
             '{urn:ietf:params:xml:ns:caldav}supported-calendar-component-set' => new CalDAV\Xml\Property\SupportedCalendarComponentSet(['VEVENT']),
@@ -128,11 +126,10 @@ SQL
 
         $calendars = $backend->getCalendarsForUser('principals/user2');
         $this->assertEquals([], $calendars);
-
     }
 
-    function testCreateCalendarObject() {
-
+    public function testCreateCalendarObject()
+    {
         $backend = new SimplePDO($this->pdo);
         $returnedId = $backend->createCalendar('principals/user2', 'somerandomid', []);
 
@@ -144,10 +141,9 @@ SQL
         $this->assertEquals([
             'calendardata' => $object,
         ], $result->fetch(\PDO::FETCH_ASSOC));
-
     }
-    function testGetMultipleObjects() {
-
+    public function testGetMultipleObjects()
+    {
         $backend = new SimplePDO($this->pdo);
         $returnedId = $backend->createCalendar('principals/user2', 'somerandomid', []);
 
@@ -176,26 +172,21 @@ SQL
         $result = $backend->getMultipleCalendarObjects($returnedId, ['id-1', 'id-2']);
 
         foreach ($check as $index => $props) {
-
             foreach ($props as $key => $value) {
-
                 if ($key !== 'lastmodified') {
                     $this->assertEquals($value, $result[$index][$key]);
                 } else {
                     $this->assertTrue(isset($result[$index][$key]));
                 }
-
             }
-
         }
-
     }
 
     /**
      * @depends testCreateCalendarObject
      */
-    function testGetCalendarObjects() {
-
+    public function testGetCalendarObjects()
+    {
         $backend = new SimplePDO($this->pdo);
         $returnedId = $backend->createCalendar('principals/user2', 'somerandomid', []);
 
@@ -209,14 +200,13 @@ SQL
 
         $this->assertEquals('random-id', $data['uri']);
         $this->assertEquals(strlen($object), $data['size']);
-
     }
 
     /**
      * @depends testCreateCalendarObject
      */
-    function testGetCalendarObjectByUID() {
-
+    public function testGetCalendarObjectByUID()
+    {
         $backend = new SimplePDO($this->pdo);
         $returnedId = $backend->createCalendar('principals/user2', 'somerandomid', []);
 
@@ -230,14 +220,13 @@ SQL
             'somerandomid/random-id',
             $backend->getCalendarObjectByUID('principals/user2', 'foo')
         );
-
     }
 
     /**
      * @depends testCreateCalendarObject
      */
-    function testUpdateCalendarObject() {
-
+    public function testUpdateCalendarObject()
+    {
         $backend = new SimplePDO($this->pdo);
         $returnedId = $backend->createCalendar('principals/user2', 'somerandomid', []);
 
@@ -250,16 +239,14 @@ SQL
 
         $this->assertEquals($object2, $data['calendardata']);
         $this->assertEquals('random-id', $data['uri']);
-
-
     }
 
 
     /**
      * @depends testCreateCalendarObject
      */
-    function testDeleteCalendarObject() {
-
+    public function testDeleteCalendarObject()
+    {
         $backend = new SimplePDO($this->pdo);
         $returnedId = $backend->createCalendar('principals/user2', 'somerandomid', []);
 
@@ -269,12 +256,11 @@ SQL
 
         $data = $backend->getCalendarObject($returnedId, 'random-id');
         $this->assertNull($data);
-
     }
 
 
-    function testCalendarQueryNoResult() {
-
+    public function testCalendarQueryNoResult()
+    {
         $abstract = new SimplePDO($this->pdo);
         $filters = [
             'name'         => 'VCALENDAR',
@@ -294,11 +280,10 @@ SQL
 
         $this->assertEquals([
         ], $abstract->calendarQuery(1, $filters));
-
     }
 
-    function testCalendarQueryTodo() {
-
+    public function testCalendarQueryTodo()
+    {
         $backend = new SimplePDO($this->pdo);
         $backend->createCalendarObject(1, "todo", "BEGIN:VCALENDAR\r\nBEGIN:VTODO\r\nEND:VTODO\r\nEND:VCALENDAR\r\n");
         $backend->createCalendarObject(1, "event", "BEGIN:VCALENDAR\r\nBEGIN:VEVENT\r\nDTSTART:20120101\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n");
@@ -322,10 +307,9 @@ SQL
         $this->assertEquals([
             "todo",
         ], $backend->calendarQuery(1, $filters));
-
     }
-    function testCalendarQueryTodoNotMatch() {
-
+    public function testCalendarQueryTodoNotMatch()
+    {
         $backend = new SimplePDO($this->pdo);
         $backend->createCalendarObject(1, "todo", "BEGIN:VCALENDAR\r\nBEGIN:VTODO\r\nEND:VTODO\r\nEND:VCALENDAR\r\n");
         $backend->createCalendarObject(1, "event", "BEGIN:VCALENDAR\r\nBEGIN:VEVENT\r\nDTSTART:20120101\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n");
@@ -356,11 +340,10 @@ SQL
 
         $this->assertEquals([
         ], $backend->calendarQuery(1, $filters));
-
     }
 
-    function testCalendarQueryNoFilter() {
-
+    public function testCalendarQueryNoFilter()
+    {
         $backend = new SimplePDO($this->pdo);
         $backend->createCalendarObject(1, "todo", "BEGIN:VCALENDAR\r\nBEGIN:VTODO\r\nEND:VTODO\r\nEND:VCALENDAR\r\n");
         $backend->createCalendarObject(1, "event", "BEGIN:VCALENDAR\r\nBEGIN:VEVENT\r\nDTSTART:20120101\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n");
@@ -376,11 +359,10 @@ SQL
         $result = $backend->calendarQuery(1, $filters);
         $this->assertTrue(in_array('todo', $result));
         $this->assertTrue(in_array('event', $result));
-
     }
 
-    function testCalendarQueryTimeRange() {
-
+    public function testCalendarQueryTimeRange()
+    {
         $backend = new SimplePDO($this->pdo);
         $backend->createCalendarObject(1, "todo", "BEGIN:VCALENDAR\r\nBEGIN:VTODO\r\nEND:VTODO\r\nEND:VCALENDAR\r\n");
         $backend->createCalendarObject(1, "event", "BEGIN:VCALENDAR\r\nBEGIN:VEVENT\r\nDTSTART;VALUE=DATE:20120101\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n");
@@ -408,10 +390,9 @@ SQL
         $this->assertEquals([
             "event2",
         ], $backend->calendarQuery(1, $filters));
-
     }
-    function testCalendarQueryTimeRangeNoEnd() {
-
+    public function testCalendarQueryTimeRangeNoEnd()
+    {
         $backend = new SimplePDO($this->pdo);
         $backend->createCalendarObject(1, "todo", "BEGIN:VCALENDAR\r\nBEGIN:VTODO\r\nEND:VTODO\r\nEND:VCALENDAR\r\n");
         $backend->createCalendarObject(1, "event", "BEGIN:VCALENDAR\r\nBEGIN:VEVENT\r\nDTSTART:20120101\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n");
@@ -439,7 +420,5 @@ SQL
         $this->assertEquals([
             "event2",
         ], $backend->calendarQuery(1, $filters));
-
     }
-
 }

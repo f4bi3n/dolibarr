@@ -2,10 +2,10 @@
 
 namespace Sabre\Xml;
 
-class ServiceTest extends \PHPUnit_Framework_TestCase {
-
-    function testGetReader() {
-
+class ServiceTest extends \PHPUnit_Framework_TestCase
+{
+    public function testGetReader()
+    {
         $elems = [
             '{http://sabre.io/ns}test' => 'Test!',
         ];
@@ -16,11 +16,10 @@ class ServiceTest extends \PHPUnit_Framework_TestCase {
         $reader = $util->getReader();
         $this->assertInstanceOf('Sabre\\Xml\\Reader', $reader);
         $this->assertEquals($elems, $reader->elementMap);
-
     }
 
-    function testGetWriter() {
-
+    public function testGetWriter()
+    {
         $ns = [
             'http://sabre.io/ns' => 's',
         ];
@@ -31,14 +30,13 @@ class ServiceTest extends \PHPUnit_Framework_TestCase {
         $writer = $util->getWriter();
         $this->assertInstanceOf('Sabre\\Xml\\Writer', $writer);
         $this->assertEquals($ns, $writer->namespaceMap);
-
     }
 
     /**
      * @depends testGetReader
      */
-    function testParse() {
-
+    public function testParse()
+    {
         $xml = <<<XML
 <root xmlns="http://sabre.io/ns">
   <child>value</child>
@@ -60,14 +58,13 @@ XML;
             $expected,
             $result
         );
-
     }
 
     /**
      * @depends testGetReader
      */
-    function testParseStream() {
-
+    public function testParseStream()
+    {
         $xml = <<<XML
 <root xmlns="http://sabre.io/ns">
   <child>value</child>
@@ -93,14 +90,13 @@ XML;
             $expected,
             $result
         );
-
     }
 
     /**
      * @depends testGetReader
      */
-    function testExpect() {
-
+    public function testExpect()
+    {
         $xml = <<<XML
 <root xmlns="http://sabre.io/ns">
   <child>value</child>
@@ -126,8 +122,8 @@ XML;
     /**
      * @depends testGetReader
      */
-    function testExpectStream() {
-
+    public function testExpectStream()
+    {
         $xml = <<<XML
 <root xmlns="http://sabre.io/ns">
   <child>value</child>
@@ -159,8 +155,8 @@ XML;
      * @depends testGetReader
      * @expectedException \Sabre\Xml\ParseException
      */
-    function testExpectWrong() {
-
+    public function testExpectWrong()
+    {
         $xml = <<<XML
 <root xmlns="http://sabre.io/ns">
   <child>value</child>
@@ -168,14 +164,13 @@ XML;
 XML;
         $util = new Service();
         $util->expect('{http://sabre.io/ns}error', $xml);
-
     }
 
     /**
      * @depends testGetWriter
      */
-    function testWrite() {
-
+    public function testWrite()
+    {
         $util = new Service();
         $util->namespaceMap = [
             'http://sabre.io/ns' => 's',
@@ -195,11 +190,10 @@ XML;
             $expected,
             $result
         );
-
     }
 
-    function testMapValueObject() {
-
+    public function testMapValueObject()
+    {
         $input = <<<XML
 <?xml version="1.0"?>
 <order xmlns="http://sabredav.org/ns">
@@ -235,8 +229,8 @@ XML;
         $this->assertEquals($input, $writtenXml);
     }
 
-    function testMapValueObjectArrayProperty() {
-
+    public function testMapValueObjectArrayProperty()
+    {
         $input = <<<XML
 <?xml version="1.0"?>
 <order xmlns="http://sabredav.org/ns">
@@ -278,38 +272,35 @@ XML;
     /**
      * @expectedException \InvalidArgumentException
      */
-    function testWriteVoNotFound() {
-
+    public function testWriteVoNotFound()
+    {
         $service = new Service();
         $service->writeValueObject(new \StdClass());
-
     }
 
-    function testParseClarkNotation() {
-
+    public function testParseClarkNotation()
+    {
         $this->assertEquals([
             'http://sabredav.org/ns',
             'elem',
         ], Service::parseClarkNotation('{http://sabredav.org/ns}elem'));
-
     }
 
     /**
      * @expectedException \InvalidArgumentException
      */
-    function testParseClarkNotationFail() {
-
+    public function testParseClarkNotationFail()
+    {
         Service::parseClarkNotation('http://sabredav.org/ns}elem');
-
     }
-
 }
 
 /**
  * asset for testMapValueObject()
  * @internal
  */
-class Order {
+class Order
+{
     public $id;
     public $amount;
     public $description;
@@ -322,7 +313,8 @@ class Order {
  * asset for testMapValueObject()
  * @internal
  */
-class OrderStatus {
+class OrderStatus
+{
     public $id;
     public $label;
 }

@@ -59,9 +59,9 @@ class UserTest extends PHPUnit\Framework\TestCase
      */
     public function __construct()
     {
-    	parent::__construct();
+        parent::__construct();
 
-    	//$this->sharedFixture
+        //$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -78,7 +78,10 @@ class UserTest extends PHPUnit\Framework\TestCase
     {
         global $conf,$user,$langs,$db;
 
-        if (! empty($conf->global->MAIN_MODULE_LDAP)) { print "\n".__METHOD__." module LDAP must be disabled.\n"; die(); }
+        if (! empty($conf->global->MAIN_MODULE_LDAP)) {
+            print "\n".__METHOD__." module LDAP must be disabled.\n";
+            die();
+        }
 
         $db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
@@ -284,19 +287,19 @@ class UserTest extends PHPUnit\Framework\TestCase
      */
     public function testUserAddPermission($id)
     {
-    	global $conf,$user,$langs,$db;
-    	$conf=$this->savconf;
-    	$user=$this->savuser;
-    	$langs=$this->savlangs;
-    	$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-    	$localobject=new User($this->savdb);
-    	$result=$localobject->fetch(1);			// Other tests use the user id 1
-    	$result=$localobject->addrights(0, 'supplier_proposal');
+        $localobject=new User($this->savdb);
+        $result=$localobject->fetch(1);			// Other tests use the user id 1
+        $result=$localobject->addrights(0, 'supplier_proposal');
 
-    	print __METHOD__." id=".$id." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
-    	return $result;
+        print __METHOD__." id=".$id." result=".$result."\n";
+        $this->assertLessThan($result, 0);
+        return $result;
     }
 
 
@@ -331,9 +334,10 @@ class UserTest extends PHPUnit\Framework\TestCase
             $oVarsA=get_object_vars($oA);
             $oVarsB=get_object_vars($oB);
             $aKeys=array_keys($oVarsA);
-            foreach($aKeys as $sKey) {
-                if (in_array($sKey, $fieldstoignorearray))
+            foreach ($aKeys as $sKey) {
+                if (in_array($sKey, $fieldstoignorearray)) {
                     continue;
+                }
                 if (! $ignoretype && $oVarsA[$sKey] !== $oVarsB[$sKey]) {
                     $retAr[]=$sKey.' : '.(is_object($oVarsA[$sKey])?get_class($oVarsA[$sKey]):$oVarsA[$sKey]).' <> '.(is_object($oVarsB[$sKey])?get_class($oVarsB[$sKey]):$oVarsB[$sKey]);
                 }

@@ -4,10 +4,10 @@ namespace Sabre\DAVACL;
 
 use Sabre\DAV;
 
-class PluginUpdatePropertiesTest extends \PHPUnit_Framework_TestCase {
-
-    function testUpdatePropertiesPassthrough() {
-
+class PluginUpdatePropertiesTest extends \PHPUnit_Framework_TestCase
+{
+    public function testUpdatePropertiesPassthrough()
+    {
         $tree = [
             new DAV\SimpleCollection('foo'),
         ];
@@ -24,11 +24,10 @@ class PluginUpdatePropertiesTest extends \PHPUnit_Framework_TestCase {
         ];
 
         $this->assertEquals($expected, $result);
-
     }
 
-    function testRemoveGroupMembers() {
-
+    public function testRemoveGroupMembers()
+    {
         $tree = [
             new MockPrincipal('foo', 'foo'),
         ];
@@ -47,11 +46,10 @@ class PluginUpdatePropertiesTest extends \PHPUnit_Framework_TestCase {
 
         $this->assertEquals($expected, $result);
         $this->assertEquals([], $tree[0]->getGroupMemberSet());
-
     }
 
-    function testSetGroupMembers() {
-
+    public function testSetGroupMembers()
+    {
         $tree = [
             new MockPrincipal('foo', 'foo'),
         ];
@@ -70,14 +68,13 @@ class PluginUpdatePropertiesTest extends \PHPUnit_Framework_TestCase {
 
         $this->assertEquals($expected, $result);
         $this->assertEquals(['bar', 'baz'], $tree[0]->getGroupMemberSet());
-
     }
 
     /**
      * @expectedException Sabre\DAV\Exception
      */
-    function testSetBadValue() {
-
+    public function testSetBadValue()
+    {
         $tree = [
             new MockPrincipal('foo', 'foo'),
         ];
@@ -89,11 +86,10 @@ class PluginUpdatePropertiesTest extends \PHPUnit_Framework_TestCase {
         $result = $server->updateProperties('foo', [
             '{DAV:}group-member-set' => new \StdClass(),
         ]);
-
     }
 
-    function testSetBadNode() {
-
+    public function testSetBadNode()
+    {
         $tree = [
             new DAV\SimpleCollection('foo'),
         ];
@@ -111,6 +107,5 @@ class PluginUpdatePropertiesTest extends \PHPUnit_Framework_TestCase {
         ];
 
         $this->assertEquals($expected, $result);
-
     }
 }

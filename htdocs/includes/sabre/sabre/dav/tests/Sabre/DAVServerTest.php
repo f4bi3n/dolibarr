@@ -16,8 +16,8 @@ use Sabre\HTTP\Sapi;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-abstract class DAVServerTest extends \PHPUnit_Framework_TestCase {
-
+abstract class DAVServerTest extends \PHPUnit_Framework_TestCase
+{
     protected $setupCalDAV = false;
     protected $setupCardDAV = false;
     protected $setupACL = false;
@@ -108,14 +108,13 @@ abstract class DAVServerTest extends \PHPUnit_Framework_TestCase {
      */
     protected $autoLogin = null;
 
-    function setUp() {
-
+    public function setUp()
+    {
         $this->initializeEverything();
-
     }
 
-    function initializeEverything() {
-
+    public function initializeEverything()
+    {
         $this->setUpBackends();
         $this->setUpTree();
 
@@ -173,7 +172,6 @@ abstract class DAVServerTest extends \PHPUnit_Framework_TestCase {
             $this->aclPlugin->adminPrincipals = ['principals/admin'];
             $this->server->addPlugin($this->aclPlugin);
         }
-
     }
 
     /**
@@ -190,8 +188,8 @@ abstract class DAVServerTest extends \PHPUnit_Framework_TestCase {
      * @param int $expectedStatus
      * @return \Sabre\HTTP\Response
      */
-    function request($request, $expectedStatus = null) {
-
+    public function request($request, $expectedStatus = null)
+    {
         if (is_array($request)) {
             $request = HTTP\Request::createFromServerArray($request);
         }
@@ -206,7 +204,6 @@ abstract class DAVServerTest extends \PHPUnit_Framework_TestCase {
             $this->assertEquals($expectedStatus, $response->getStatus(), 'Incorrect HTTP status received for request. Response body: ' . $responseBody);
         }
         return $this->server->httpResponse;
-
     }
 
     /**
@@ -215,7 +212,8 @@ abstract class DAVServerTest extends \PHPUnit_Framework_TestCase {
      *
      * @param string $userName
      */
-    function autoLogin($userName) {
+    public function autoLogin($userName)
+    {
         $authBackend = new DAV\Auth\Backend\Mock();
         $authBackend->setPrincipal('principals/' . $userName);
         $this->authPlugin = new DAV\Auth\Plugin($authBackend);
@@ -233,8 +231,8 @@ abstract class DAVServerTest extends \PHPUnit_Framework_TestCase {
     /**
      * Override this to provide your own Tree for your test-case.
      */
-    function setUpTree() {
-
+    public function setUpTree()
+    {
         if ($this->setupCalDAV) {
             $this->tree[] = new CalDAV\CalendarRoot(
                 $this->principalBackend,
@@ -258,15 +256,12 @@ abstract class DAVServerTest extends \PHPUnit_Framework_TestCase {
             );
         }
         if ($this->setupFiles) {
-
             $this->tree[] = new DAV\Mock\Collection('files');
-
         }
-
     }
 
-    function setUpBackends() {
-
+    public function setUpBackends()
+    {
         if ($this->setupCalDAVSharing && is_null($this->caldavBackend)) {
             $this->caldavBackend = new CalDAV\Backend\MockSharing($this->caldavCalendars, $this->caldavCalendarObjects);
         }
@@ -289,18 +284,15 @@ abstract class DAVServerTest extends \PHPUnit_Framework_TestCase {
         if ($this->setupLocks) {
             $this->locksBackend = new DAV\Locks\Backend\Mock();
         }
-        if ($this->setupPropertyStorage)  {
+        if ($this->setupPropertyStorage) {
             $this->propertyStorageBackend = new DAV\PropertyStorage\Backend\Mock();
         }
-
     }
 
 
-    function assertHttpStatus($expectedStatus, HTTP\Request $req) {
-
+    public function assertHttpStatus($expectedStatus, HTTP\Request $req)
+    {
         $resp = $this->request($req);
         $this->assertEquals((int)$expectedStatus, (int)$resp->status, 'Incorrect HTTP status received: ' . $resp->body);
-
     }
-
 }

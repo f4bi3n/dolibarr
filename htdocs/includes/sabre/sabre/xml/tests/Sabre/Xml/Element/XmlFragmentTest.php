@@ -5,13 +5,14 @@ namespace Sabre\Xml\Element;
 use Sabre\Xml\Reader;
 use Sabre\Xml\Writer;
 
-class XmlFragmentTest extends \PHPUnit_Framework_TestCase {
+class XmlFragmentTest extends \PHPUnit_Framework_TestCase
+{
 
     /**
      * @dataProvider xmlProvider
      */
-    function testDeserialize($input, $expected) {
-
+    public function testDeserialize($input, $expected)
+    {
         $input = <<<BLA
 <?xml version="1.0"?>
 <root xmlns="http://sabredav.org/ns">
@@ -38,7 +39,6 @@ BLA;
             ],
             'attributes' => [],
         ], $output);
-
     }
 
     /**
@@ -54,8 +54,8 @@ BLA;
      *
      * @return void
      */
-    function xmlProvider() {
-
+    public function xmlProvider()
+    {
         return [
             [
                 'hello',
@@ -104,14 +104,13 @@ BLA;
                 '<x1:element xmlns:x1="http://example.org/ns"><child a="b"/></x1:element>',
             ],
         ];
-
     }
 
     /**
      * @dataProvider xmlProvider
      */
-    function testSerialize($expectedFallback, $input, $expected = null) {
-
+    public function testSerialize($expectedFallback, $input, $expected = null)
+    {
         if (is_null($expected)) {
             $expected = $expectedFallback;
         }
@@ -137,7 +136,5 @@ BLA;
 XML;
 
         $this->assertEquals($expected, $output);
-
     }
-
 }

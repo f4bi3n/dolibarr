@@ -25,11 +25,21 @@
 //if (! defined('NOREQUIREDB'))		define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIRESOC'))		define('NOREQUIRESOC','1');
 //if (! defined('NOREQUIRETRAN'))		define('NOREQUIRETRAN','1');
-if (!defined('NOCSRFCHECK'))		define('NOCSRFCHECK', '1');
-if (!defined('NOTOKENRENEWAL'))	define('NOTOKENRENEWAL', '1');
-if (!defined('NOREQUIREMENU'))		define('NOREQUIREMENU', '1');
-if (!defined('NOREQUIREHTML'))		define('NOREQUIREHTML', '1');
-if (!defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX', '1');
+if (!defined('NOCSRFCHECK')) {
+    define('NOCSRFCHECK', '1');
+}
+if (!defined('NOTOKENRENEWAL')) {
+    define('NOTOKENRENEWAL', '1');
+}
+if (!defined('NOREQUIREMENU')) {
+    define('NOREQUIREMENU', '1');
+}
+if (!defined('NOREQUIREHTML')) {
+    define('NOREQUIREHTML', '1');
+}
+if (!defined('NOREQUIREAJAX')) {
+    define('NOREQUIREAJAX', '1');
+}
 
 require '../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -41,9 +51,8 @@ $place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0); // $place 
 $action = GETPOST('action', 'alpha');
 $setterminal = GETPOST('setterminal', 'int');
 
-if ($setterminal > 0)
-{
-	$_SESSION["takeposterminal"] = $setterminal;
+if ($setterminal > 0) {
+    $_SESSION["takeposterminal"] = $setterminal;
 }
 
 $langs->loadLangs(array("bills", "orders", "commercial", "cashdesk", "receiptprinter"));
@@ -54,7 +63,9 @@ $langs->loadLangs(array("bills", "orders", "commercial", "cashdesk", "receiptpri
 
 // Title
 $title = 'TakePOS - Dolibarr '.DOL_VERSION;
-if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $title = 'TakePOS - '.$conf->global->MAIN_APPLICATION_TITLE;
+if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+    $title = 'TakePOS - '.$conf->global->MAIN_APPLICATION_TITLE;
+}
 $head = '<meta name="apple-mobile-web-app-title" content="TakePOS"/>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -71,12 +82,9 @@ $categories = $categorie->get_full_arbo('product', (($conf->global->TAKEPOS_ROOT
 // Search root category to know its level
 //$conf->global->TAKEPOS_ROOT_CATEGORY_ID=0;
 $levelofrootcategory = 0;
-if ($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0)
-{
-    foreach ($categories as $key => $categorycursor)
-    {
-        if ($categorycursor['id'] == $conf->global->TAKEPOS_ROOT_CATEGORY_ID)
-        {
+if ($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0) {
+    foreach ($categories as $key => $categorycursor) {
+        if ($categorycursor['id'] == $conf->global->TAKEPOS_ROOT_CATEGORY_ID) {
             $levelofrootcategory = $categorycursor['level'];
             break;
         }
@@ -86,14 +94,10 @@ $levelofmaincategories = $levelofrootcategory + 1;
 
 $maincategories = array();
 $subcategories = array();
-foreach ($categories as $key => $categorycursor)
-{
-    if ($categorycursor['level'] == $levelofmaincategories)
-    {
+foreach ($categories as $key => $categorycursor) {
+    if ($categorycursor['level'] == $levelofmaincategories) {
         $maincategories[$key] = $categorycursor;
-    }
-    else
-    {
+    } else {
         $subcategories[$key] = $categorycursor;
     }
 }
@@ -166,7 +170,9 @@ function Exit(){
 
 <body style="overflow: hidden; background-color:#D1D1D1;">
 <?php
-if ($conf->global->TAKEPOS_NUM_TERMINALS != "1" && $_SESSION["takeposterminal"] == "") print '<div id="dialog-info" title="TakePOS">'.$langs->trans('TerminalSelect').'</div>';
+if ($conf->global->TAKEPOS_NUM_TERMINALS != "1" && $_SESSION["takeposterminal"] == "") {
+    print '<div id="dialog-info" title="TakePOS">'.$langs->trans('TerminalSelect').'</div>';
+}
 ?>
 <div class="container">
 	<div class="phonebuttonsrow">

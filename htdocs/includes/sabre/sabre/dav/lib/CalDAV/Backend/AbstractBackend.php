@@ -14,7 +14,8 @@ use Sabre\VObject;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-abstract class AbstractBackend implements BackendInterface {
+abstract class AbstractBackend implements BackendInterface
+{
 
     /**
      * Updates properties for a calendar.
@@ -32,8 +33,8 @@ abstract class AbstractBackend implements BackendInterface {
      * @param \Sabre\DAV\PropPatch $propPatch
      * @return void
      */
-    function updateCalendar($calendarId, \Sabre\DAV\PropPatch $propPatch) {
-
+    public function updateCalendar($calendarId, \Sabre\DAV\PropPatch $propPatch)
+    {
     }
 
     /**
@@ -48,12 +49,11 @@ abstract class AbstractBackend implements BackendInterface {
      * @param array $uris
      * @return array
      */
-    function getMultipleCalendarObjects($calendarId, array $uris) {
-
-        return array_map(function($uri) use ($calendarId) {
+    public function getMultipleCalendarObjects($calendarId, array $uris)
+    {
+        return array_map(function ($uri) use ($calendarId) {
             return $this->getCalendarObject($calendarId, $uri);
         }, $uris);
-
     }
 
     /**
@@ -105,21 +105,18 @@ abstract class AbstractBackend implements BackendInterface {
      * @param array $filters
      * @return array
      */
-    function calendarQuery($calendarId, array $filters) {
-
+    public function calendarQuery($calendarId, array $filters)
+    {
         $result = [];
         $objects = $this->getCalendarObjects($calendarId);
 
         foreach ($objects as $object) {
-
             if ($this->validateFilterForObject($object, $filters)) {
                 $result[] = $object['uri'];
             }
-
         }
 
         return $result;
-
     }
 
     /**
@@ -130,7 +127,8 @@ abstract class AbstractBackend implements BackendInterface {
      * @param array $filters
      * @return bool
      */
-    protected function validateFilterForObject(array $object, array $filters) {
+    protected function validateFilterForObject(array $object, array $filters)
+    {
 
         // Unfortunately, setting the 'calendardata' here is optional. If
         // it was excluded, we actually need another call to get this as
@@ -148,7 +146,6 @@ abstract class AbstractBackend implements BackendInterface {
         $vObject->destroy();
 
         return $result;
-
     }
 
     /**
@@ -170,7 +167,8 @@ abstract class AbstractBackend implements BackendInterface {
      * @param string $uid
      * @return string|null
      */
-    function getCalendarObjectByUID($principalUri, $uid) {
+    public function getCalendarObjectByUID($principalUri, $uid)
+    {
 
         // Note: this is a super slow naive implementation of this method. You
         // are highly recommended to optimize it, if your backend allows it.
@@ -218,9 +216,6 @@ abstract class AbstractBackend implements BackendInterface {
                 // We have a match
                 return $calendar['uri'] . '/' . $results[0];
             }
-
         }
-
     }
-
 }

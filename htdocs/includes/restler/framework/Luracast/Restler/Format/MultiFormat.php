@@ -1,5 +1,6 @@
 <?php
 namespace Luracast\Restler\Format;
+
 /**
  * Describe the purpose of this class/interface/trait
  *
@@ -45,12 +46,12 @@ abstract class MultiFormat implements iFormat
      */
     public function getMIMEMap()
     {
-        $extensions = explode(',',static::EXTENSION);
-        $mimes = explode(',',static::MIME);
+        $extensions = explode(',', static::EXTENSION);
+        $mimes = explode(',', static::MIME);
         $count = max(count($extensions), count($mimes));
         $extensions += array_fill(0, $count, end($extensions));
         $mimes += array_fill(0, $count, end($mimes));
-        return array_combine($mimes,$extensions);
+        return array_combine($mimes, $extensions);
     }
 
     /**
@@ -141,4 +142,3 @@ abstract class MultiFormat implements iFormat
         return $this->getExtension();
     }
 }
-

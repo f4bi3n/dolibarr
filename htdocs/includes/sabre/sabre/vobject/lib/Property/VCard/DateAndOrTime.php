@@ -19,7 +19,8 @@ use Sabre\Xml;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class DateAndOrTime extends Property {
+class DateAndOrTime extends Property
+{
 
     /**
      * Field separator.
@@ -36,10 +37,9 @@ class DateAndOrTime extends Property {
      *
      * @return string
      */
-    function getValueType() {
-
+    public function getValueType()
+    {
         return 'DATE-AND-OR-TIME';
-
     }
 
     /**
@@ -51,8 +51,8 @@ class DateAndOrTime extends Property {
      *
      * @return void
      */
-    function setParts(array $parts) {
-
+    public function setParts(array $parts)
+    {
         if (count($parts) > 1) {
             throw new \InvalidArgumentException('Only one value allowed');
         }
@@ -61,7 +61,6 @@ class DateAndOrTime extends Property {
         } else {
             parent::setParts($parts);
         }
-
     }
 
     /**
@@ -75,14 +74,13 @@ class DateAndOrTime extends Property {
      *
      * @return void
      */
-    function setValue($value) {
-
+    public function setValue($value)
+    {
         if ($value instanceof DateTimeInterface) {
             $this->setDateTime($value);
         } else {
             parent::setValue($value);
         }
-
     }
 
     /**
@@ -92,8 +90,8 @@ class DateAndOrTime extends Property {
      *
      * @return void
      */
-    function setDateTime(DateTimeInterface $dt) {
-
+    public function setDateTime(DateTimeInterface $dt)
+    {
         $tz = $dt->getTimeZone();
         $isUtc = in_array($tz->getName(), ['UTC', 'GMT', 'Z']);
 
@@ -105,7 +103,6 @@ class DateAndOrTime extends Property {
         }
 
         $this->value = $value;
-
     }
 
     /**
@@ -124,8 +121,8 @@ class DateAndOrTime extends Property {
      *
      * @return DateTimeImmutable
      */
-    function getDateTime() {
-
+    public function getDateTime()
+    {
         $now = new DateTime();
 
         $tzFormat = $now->getTimezone()->getOffset($now) === 0 ? '\\Z' : 'O';
@@ -142,7 +139,6 @@ class DateAndOrTime extends Property {
             }
         }
         return new DateTimeImmutable("$dateParts[year]-$dateParts[month]-$dateParts[date] $dateParts[hour]:$dateParts[minute]:$dateParts[second] $dateParts[timezone]");
-
     }
 
     /**
@@ -152,15 +148,14 @@ class DateAndOrTime extends Property {
      *
      * @return array
      */
-    function getJsonValue() {
-
+    public function getJsonValue()
+    {
         $parts = DateTimeParser::parseVCardDateTime($this->getValue());
 
         $dateStr = '';
 
         // Year
         if (!is_null($parts['year'])) {
-
             $dateStr .= $parts['year'];
 
             if (!is_null($parts['month'])) {
@@ -168,26 +163,21 @@ class DateAndOrTime extends Property {
                 // dash.
                 $dateStr .= '-';
             }
-
         } else {
-
             if (!is_null($parts['month']) || !is_null($parts['date'])) {
                 // Inserting two dashes
                 $dateStr .= '--';
             }
-
         }
 
         // Month
         if (!is_null($parts['month'])) {
-
             $dateStr .= $parts['month'];
 
             if (isset($parts['date'])) {
                 // If month and date are set, we need the separator dash.
                 $dateStr .= '-';
             }
-
         } elseif (isset($parts['date'])) {
             // If the month is empty, and a date is set, we need a 'empty
             // dash'
@@ -209,13 +199,11 @@ class DateAndOrTime extends Property {
 
         // Hour
         if (!is_null($parts['hour'])) {
-
             $dateStr .= $parts['hour'];
 
             if (!is_null($parts['minute'])) {
                 $dateStr .= ':';
             }
-
         } else {
             // We know either minute or second _must_ be set, so we insert a
             // dash for an empty value.
@@ -224,13 +212,11 @@ class DateAndOrTime extends Property {
 
         // Minute
         if (!is_null($parts['minute'])) {
-
             $dateStr .= $parts['minute'];
 
             if (!is_null($parts['second'])) {
                 $dateStr .= ':';
             }
-
         } elseif (isset($parts['second'])) {
             // Dash for empty minute
             $dateStr .= '-';
@@ -247,7 +233,6 @@ class DateAndOrTime extends Property {
         }
 
         return [$dateStr];
-
     }
 
     /**
@@ -258,19 +243,19 @@ class DateAndOrTime extends Property {
      *
      * @return void
      */
-    protected function xmlSerializeValue(Xml\Writer $writer) {
-
+    protected function xmlSerializeValue(Xml\Writer $writer)
+    {
         $valueType = strtolower($this->getValueType());
         $parts = DateTimeParser::parseVCardDateAndOrTime($this->getValue());
         $value = '';
 
         // $d = defined
-        $d = function($part) use ($parts) {
+        $d = function ($part) use ($parts) {
             return !is_null($parts[$part]);
         };
 
         // $r = read
-        $r = function($part) use ($parts) {
+        $r = function ($part) use ($parts) {
             return $parts[$part];
         };
 
@@ -282,7 +267,6 @@ class DateAndOrTime extends Property {
         //   }
         if (($d('year') || $d('month') || $d('date'))
             && (!$d('hour') && !$d('minute') && !$d('second') && !$d('timezone'))) {
-
             if ($d('year') && $d('month') && $d('date')) {
                 $value .= $r('year') . $r('month') . $r('date');
             } elseif ($d('year') && $d('month') && !$d('date')) {
@@ -293,14 +277,13 @@ class DateAndOrTime extends Property {
                 $value .= '---' . $r('date');
             }
 
-        // # 4.3.2
+            // # 4.3.2
         // value-time = element time {
         //     xsd:string { pattern = "(\d\d(\d\d(\d\d)?)?|-\d\d(\d\d?)|--\d\d)"
         //                          ~ "(Z|[+\-]\d\d(\d\d)?)?" }
         //   }
         } elseif ((!$d('year') && !$d('month') && !$d('date'))
                   && ($d('hour') || $d('minute') || $d('second'))) {
-
             if ($d('hour')) {
                 $value .= $r('hour') . $r('minute') . $r('second');
             } elseif ($d('minute')) {
@@ -317,7 +300,6 @@ class DateAndOrTime extends Property {
         //                          ~ "(Z|[+\-]\d\d(\d\d)?)?" }
         //   }
         } elseif ($d('date') && $d('hour')) {
-
             if ($d('year') && $d('month') && $d('date')) {
                 $value .= $r('year') . $r('month') . $r('date');
             } elseif (!$d('year') && $d('month') && $d('date')) {
@@ -328,11 +310,9 @@ class DateAndOrTime extends Property {
 
             $value .= 'T' . $r('hour') . $r('minute') . $r('second') .
                       $r('timezone');
-
         }
 
         $writer->writeElement($valueType, $value);
-
     }
 
     /**
@@ -345,10 +325,9 @@ class DateAndOrTime extends Property {
      *
      * @return void
      */
-    function setRawMimeDirValue($val) {
-
+    public function setRawMimeDirValue($val)
+    {
         $this->setValue($val);
-
     }
 
     /**
@@ -356,10 +335,9 @@ class DateAndOrTime extends Property {
      *
      * @return string
      */
-    function getRawMimeDirValue() {
-
+    public function getRawMimeDirValue()
+    {
         return implode($this->delimiter, $this->getParts());
-
     }
 
     /**
@@ -384,8 +362,8 @@ class DateAndOrTime extends Property {
      *
      * @return array
      */
-    function validate($options = 0) {
-
+    public function validate($options = 0)
+    {
         $messages = parent::validate($options);
         $value = $this->getValue();
 
@@ -400,6 +378,5 @@ class DateAndOrTime extends Property {
         }
 
         return $messages;
-
     }
 }

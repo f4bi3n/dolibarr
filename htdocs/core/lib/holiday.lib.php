@@ -29,10 +29,10 @@
  */
 function holiday_prepare_head($object)
 {
-	global $db, $langs, $conf, $user;
+    global $db, $langs, $conf, $user;
 
-	$h = 0;
-	$head = array();
+    $h = 0;
+    $head = array();
 
     $head[$h][0] = DOL_URL_ROOT.'/holiday/card.php?id='.$object->id;
     $head[$h][1] = $langs->trans("Card");
@@ -47,7 +47,9 @@ function holiday_prepare_head($object)
     $nbLinks=Link::count($db, $object->element, $object->id);
     $head[$h][0] = DOL_URL_ROOT.'/holiday/document.php?id='.$object->id;
     $head[$h][1] = $langs->trans('Documents');
-    if (($nbFiles+$nbLinks) > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.($nbFiles+$nbLinks).'</span>';
+    if (($nbFiles+$nbLinks) > 0) {
+        $head[$h][1].= '<span class="badge marginleftonlyshort">'.($nbFiles+$nbLinks).'</span>';
+    }
     $head[$h][2] = 'documents';
     $h++;
 
@@ -57,9 +59,9 @@ function holiday_prepare_head($object)
     // $this->tabs = array('entity:-tabname);   												to remove a tab
     complete_head_from_modules($conf, $langs, $object, $head, $h, 'holiday');
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'holiday', 'remove');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'holiday', 'remove');
 
-	return $head;
+    return $head;
 }
 
 
@@ -70,10 +72,10 @@ function holiday_prepare_head($object)
  */
 function holiday_admin_prepare_head()
 {
-	global $db, $langs, $conf, $user;
+    global $db, $langs, $conf, $user;
 
-	$h = 0;
-	$head = array();
+    $h = 0;
+    $head = array();
 
     $head[$h][0] = DOL_URL_ROOT.'/admin/holiday.php';
     $head[$h][1] = $langs->trans("Setup");
@@ -91,7 +93,7 @@ function holiday_admin_prepare_head()
     $head[$h][2] = 'attributes';
     $h++;
 
-	complete_head_from_modules($conf, $langs, null, $head, $h, 'holiday_admin', 'remove');
+    complete_head_from_modules($conf, $langs, null, $head, $h, 'holiday_admin', 'remove');
 
-	return $head;
+    return $head;
 }

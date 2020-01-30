@@ -43,30 +43,33 @@ function dolDispatchToDo($order_id)
     $sql.= ' GROUP BY fk_product';
     $sql.= ' ORDER by fk_product';
     $resql = $db->query($sql);
-    if ($resql && $db->num_rows($resql))
-    {
-        while ($obj = $db->fetch_object($resql))
+    if ($resql && $db->num_rows($resql)) {
+        while ($obj = $db->fetch_object($resql)) {
             $dispatched[$obj->fk_product] = $obj;
+        }
     }
 
     // Count nb of quantity to dispatch per product
     $sql = 'SELECT fk_product, SUM(qty) FROM ' . MAIN_DB_PREFIX . 'commande_fournisseurdet';
     $sql.= ' WHERE fk_commande = ' . $order_id;
     $sql.= ' AND fk_product > 0';
-    if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) $sql.= ' AND product_type = 0';
+    if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+        $sql.= ' AND product_type = 0';
+    }
     $sql.= ' GROUP BY fk_product';
     $sql.= ' ORDER by fk_product';
     $resql = $db->query($sql);
-    if ($resql && $db->num_rows($resql))
-    {
-        while ($obj = $db->fetch_object($resql))
+    if ($resql && $db->num_rows($resql)) {
+        while ($obj = $db->fetch_object($resql)) {
             $ordered[$obj->fk_product] = $obj;
+        }
     }
 
     $todispatch=0;
-    foreach ($ordered as $key => $val)
-    {
-		if ($ordered[$key] > $dispatched[$key]) $todispatch++;
+    foreach ($ordered as $key => $val) {
+        if ($ordered[$key] > $dispatched[$key]) {
+            $todispatch++;
+        }
     }
 
     return ($todispatch ? true : false);
@@ -85,19 +88,15 @@ function dispatchedOrders()
     $sql = 'SELECT rowid FROM ' . MAIN_DB_PREFIX . 'commande_fournisseur';
     $resql = $db->query($sql);
     $resarray = array();
-    if ($resql && $db->num_rows($resql) > 0)
-    {
-        while ($obj = $db->fetch_object($resql))
-        {
-            if (! dolDispatchToDo($obj->rowid))
-            {
+    if ($resql && $db->num_rows($resql) > 0) {
+        while ($obj = $db->fetch_object($resql)) {
+            if (! dolDispatchToDo($obj->rowid)) {
                 $resarray[] = $obj->rowid;
             }
         }
     }
 
-    if (count($resarray))
-    {
+    if (count($resarray)) {
         $res = '(' . implode(',', $resarray) . ')';
     } else {
         //hack to make sure ordered SQL request won't syntax error
@@ -114,41 +113,37 @@ function dispatchedOrders()
  */
 function ordered($product_id)
 {
-	global $db, $langs, $conf;
+    global $db, $langs, $conf;
 
-	$sql = 'SELECT DISTINCT cfd.fk_product, SUM(cfd.qty) as qty FROM';
-	$sql .= ' ' . MAIN_DB_PREFIX . 'commande_fournisseurdet as cfd ';
-	$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'commande_fournisseur as cf';
-	$sql .= ' ON cfd.fk_commande = cf.rowid WHERE';
-	if ($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) {
-		$sql .= ' cf.fk_statut < 3';
-	} elseif ($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) {
-		$sql .= ' cf.fk_statut < 6 AND cf.rowid NOT IN ' . dispatchedOrders();
-	} else {
-		$sql .= ' cf.fk_statut < 5';
-	}
-	$sql .= ' AND cfd.fk_product = ' . $product_id;
-	$sql .= ' GROUP BY cfd.fk_product';
+    $sql = 'SELECT DISTINCT cfd.fk_product, SUM(cfd.qty) as qty FROM';
+    $sql .= ' ' . MAIN_DB_PREFIX . 'commande_fournisseurdet as cfd ';
+    $sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'commande_fournisseur as cf';
+    $sql .= ' ON cfd.fk_commande = cf.rowid WHERE';
+    if ($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) {
+        $sql .= ' cf.fk_statut < 3';
+    } elseif ($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) {
+        $sql .= ' cf.fk_statut < 6 AND cf.rowid NOT IN ' . dispatchedOrders();
+    } else {
+        $sql .= ' cf.fk_statut < 5';
+    }
+    $sql .= ' AND cfd.fk_product = ' . $product_id;
+    $sql .= ' GROUP BY cfd.fk_product';
 
-	$resql = $db->query($sql);
-	if ($resql)
-	{
-		$exists = $db->num_rows($resql);
-		if ($exists)
-		{
-			$obj = $db->fetch_array($resql);
-			return $obj['qty']; //. ' ' . img_picto('','tick');
-		} else {
-			return null; //img_picto('', 'stcomm-1');
-		}
-	}
-	else
-	{
-		$error = $db->lasterror();
-		dol_print_error($db);
+    $resql = $db->query($sql);
+    if ($resql) {
+        $exists = $db->num_rows($resql);
+        if ($exists) {
+            $obj = $db->fetch_array($resql);
+            return $obj['qty']; //. ' ' . img_picto('','tick');
+        } else {
+            return null; //img_picto('', 'stcomm-1');
+        }
+    } else {
+        $error = $db->lasterror();
+        dol_print_error($db);
 
-		return $langs->trans('error');
-	}
+        return $langs->trans('error');
+    }
 }
 
 /**
@@ -163,8 +158,8 @@ function getProducts($order_id)
     $order = new CommandeFournisseur($db);
     $f = $order->fetch($order_id);
     $products = array();
-    if($f) {
-        foreach($order->lines as $line) {
+    if ($f) {
+        foreach ($order->lines as $line) {
             if (!in_array($line->fk_product, $products)) {
                 $products[] = $line->fk_product;
             }

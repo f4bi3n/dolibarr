@@ -11,7 +11,8 @@ use Sabre\VObject\Component\VCalendar;
  * @author Dominik Tobschall (http://tobschall.de/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class BirthdayCalendarGenerator {
+class BirthdayCalendarGenerator
+{
 
     /**
      * Input objects.
@@ -41,12 +42,11 @@ class BirthdayCalendarGenerator {
      *
      * @param mixed $objects
      */
-    function __construct($objects = null) {
-
+    public function __construct($objects = null)
+    {
         if ($objects) {
             $this->setObjects($objects);
         }
-
     }
 
     /**
@@ -59,36 +59,27 @@ class BirthdayCalendarGenerator {
      *
      * @return void
      */
-    function setObjects($objects) {
-
+    public function setObjects($objects)
+    {
         if (!is_array($objects)) {
             $objects = [$objects];
         }
 
         $this->objects = [];
         foreach ($objects as $object) {
-
             if (is_string($object)) {
-
                 $vObj = Reader::read($object);
                 if (!$vObj instanceof Component\VCard) {
                     throw new \InvalidArgumentException('String could not be parsed as \\Sabre\\VObject\\Component\\VCard by setObjects');
                 }
 
                 $this->objects[] = $vObj;
-
             } elseif ($object instanceof Component\VCard) {
-
                 $this->objects[] = $object;
-
             } else {
-
                 throw new \InvalidArgumentException('You can only pass strings or \\Sabre\\VObject\\Component\\VCard arguments to setObjects');
-
             }
-
         }
-
     }
 
     /**
@@ -98,10 +89,9 @@ class BirthdayCalendarGenerator {
      *
      * @return void
      */
-    function setFormat($format) {
-
+    public function setFormat($format)
+    {
         $this->format = $format;
-
     }
 
     /**
@@ -109,8 +99,8 @@ class BirthdayCalendarGenerator {
      *
      * @return Component/VCalendar
      */
-    function getResult() {
-
+    public function getResult()
+    {
         $calendar = new VCalendar();
 
         foreach ($this->objects as $object) {
@@ -181,11 +171,8 @@ class BirthdayCalendarGenerator {
                     'X-SABRE-VCARD-FN'  => $object->FN->getValue(),
                 ]);
             }
-
         }
 
         return $calendar;
-
     }
-
 }

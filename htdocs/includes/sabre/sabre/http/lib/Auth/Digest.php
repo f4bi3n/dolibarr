@@ -27,7 +27,8 @@ use Sabre\HTTP\ResponseInterface;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Digest extends AbstractAuth {
+class Digest extends AbstractAuth
+{
 
     /**
      * These constants are used in setQOP();
@@ -44,12 +45,11 @@ class Digest extends AbstractAuth {
     /**
      * Initializes the object
      */
-    function __construct($realm = 'SabreTooth', RequestInterface $request, ResponseInterface $response) {
-
+    public function __construct($realm = 'SabreTooth', RequestInterface $request, ResponseInterface $response)
+    {
         $this->nonce = uniqid();
         $this->opaque = md5($realm);
         parent::__construct($realm, $request, $response);
-
     }
 
     /**
@@ -59,11 +59,10 @@ class Digest extends AbstractAuth {
      *
      * @return void
      */
-    function init() {
-
+    public function init()
+    {
         $digest = $this->getDigest();
         $this->digestParts = $this->parseDigest($digest);
-
     }
 
     /**
@@ -82,10 +81,9 @@ class Digest extends AbstractAuth {
      * @param int $qop
      * @return void
      */
-    function setQOP($qop) {
-
+    public function setQOP($qop)
+    {
         $this->qop = $qop;
-
     }
 
     /**
@@ -96,11 +94,10 @@ class Digest extends AbstractAuth {
      * @param string $A1
      * @return bool
      */
-    function validateA1($A1) {
-
+    public function validateA1($A1)
+    {
         $this->A1 = $A1;
         return $this->validate();
-
     }
 
     /**
@@ -110,11 +107,10 @@ class Digest extends AbstractAuth {
      * @param string $password
      * @return bool
      */
-    function validatePassword($password) {
-
+    public function validatePassword($password)
+    {
         $this->A1 = md5($this->digestParts['username'] . ':' . $this->realm . ':' . $password);
         return $this->validate();
-
     }
 
     /**
@@ -122,10 +118,9 @@ class Digest extends AbstractAuth {
      *
      * @return string
      */
-    function getUsername() {
-
+    public function getUsername()
+    {
         return $this->digestParts['username'];
-
     }
 
     /**
@@ -133,13 +128,15 @@ class Digest extends AbstractAuth {
      *
      * @return bool
      */
-    protected function validate() {
-
+    protected function validate()
+    {
         $A2 = $this->request->getMethod() . ':' . $this->digestParts['uri'];
 
         if ($this->digestParts['qop'] == 'auth-int') {
             // Making sure we support this qop value
-            if (!($this->qop & self::QOP_AUTHINT)) return false;
+            if (!($this->qop & self::QOP_AUTHINT)) {
+                return false;
+            }
             // We need to add an md5 of the entire request body to the A2 part of the hash
             $body = $this->request->getBody($asString = true);
             $this->request->setBody($body);
@@ -147,7 +144,9 @@ class Digest extends AbstractAuth {
         } else {
 
             // We need to make sure we support this qop value
-            if (!($this->qop & self::QOP_AUTH)) return false;
+            if (!($this->qop & self::QOP_AUTH)) {
+                return false;
+            }
         }
 
         $A2 = md5($A2);
@@ -155,8 +154,6 @@ class Digest extends AbstractAuth {
         $validResponse = md5("{$this->A1}:{$this->digestParts['nonce']}:{$this->digestParts['nc']}:{$this->digestParts['cnonce']}:{$this->digestParts['qop']}:{$A2}");
 
         return $this->digestParts['response'] == $validResponse;
-
-
     }
 
     /**
@@ -166,24 +163,23 @@ class Digest extends AbstractAuth {
      *
      * @return void
      */
-    function requireLogin() {
-
+    public function requireLogin()
+    {
         $qop = '';
         switch ($this->qop) {
-            case self::QOP_AUTH    :
+            case self::QOP_AUTH:
                 $qop = 'auth';
                 break;
-            case self::QOP_AUTHINT :
+            case self::QOP_AUTHINT:
                 $qop = 'auth-int';
                 break;
-            case self::QOP_AUTH | self::QOP_AUTHINT :
+            case self::QOP_AUTH | self::QOP_AUTHINT:
                 $qop = 'auth,auth-int';
                 break;
         }
 
         $this->response->addHeader('WWW-Authenticate', 'Digest realm="' . $this->realm . '",qop="' . $qop . '",nonce="' . $this->nonce . '",opaque="' . $this->opaque . '"');
         $this->response->setStatus(401);
-
     }
 
 
@@ -196,10 +192,9 @@ class Digest extends AbstractAuth {
      *
      * @return mixed
      */
-    function getDigest() {
-
+    public function getDigest()
+    {
         return $this->request->getHeader('Authorization');
-
     }
 
 
@@ -211,7 +206,8 @@ class Digest extends AbstractAuth {
      * @param string $digest
      * @return mixed
      */
-    protected function parseDigest($digest) {
+    protected function parseDigest($digest)
+    {
 
         // protect against missing data
         $needed_parts = ['nonce' => 1, 'nc' => 1, 'cnonce' => 1, 'qop' => 1, 'username' => 1, 'uri' => 1, 'response' => 1];
@@ -225,7 +221,5 @@ class Digest extends AbstractAuth {
         }
 
         return $needed_parts ? false : $data;
-
     }
-
 }

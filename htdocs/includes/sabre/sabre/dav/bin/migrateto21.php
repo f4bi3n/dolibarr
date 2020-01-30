@@ -4,7 +4,6 @@
 echo "SabreDAV migrate script for version 2.1\n";
 
 if ($argc < 2) {
-
     echo <<<HELLO
 
 This script help you migrate from a pre-2.1 database to 2.1.
@@ -37,7 +36,6 @@ php {$argv[0]} sqlite:data/sabredav.db
 HELLO;
 
     exit();
-
 }
 
 // There's a bunch of places where the autoloader could be, so we'll try all of
@@ -68,13 +66,13 @@ $driver = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
 
 switch ($driver) {
 
-    case 'mysql' :
+    case 'mysql':
         echo "Detected MySQL.\n";
         break;
-    case 'sqlite' :
+    case 'sqlite':
         echo "Detected SQLite.\n";
         break;
-    default :
+    default:
         echo "Error: unsupported driver: " . $driver . "\n";
         die(-1);
 }
@@ -95,19 +93,17 @@ try {
         echo "2.0 schema detected.\n";
         $addUid = true;
     }
-
 } catch (Exception $e) {
     echo "Could not find a calendarobjects table. Skipping this part of the\n";
     echo "upgrade.\n";
 }
 
 if ($addUid) {
-
     switch ($driver) {
-        case 'mysql' :
+        case 'mysql':
             $pdo->exec('ALTER TABLE calendarobjects ADD uid VARCHAR(200)');
             break;
-        case 'sqlite' :
+        case 'sqlite':
             $pdo->exec('ALTER TABLE calendarobjects ADD uid TEXT');
             break;
     }
@@ -117,7 +113,6 @@ if ($addUid) {
     $counter = 0;
 
     while ($row = $result->fetch(\PDO::FETCH_ASSOC)) {
-
         try {
             $vobj = \Sabre\VObject\Reader::read($row['calendardata']);
         } catch (\Exception $e) {
@@ -133,16 +128,14 @@ if ($addUid) {
         $uid = (string)$item->UID;
         $stmt->execute([$uid, $row['id']]);
         $counter++;
-
     }
-
 }
 
 echo "Creating 'schedulingobjects'\n";
 
 switch ($driver) {
 
-    case 'mysql' :
+    case 'mysql':
         $pdo->exec('CREATE TABLE IF NOT EXISTS schedulingobjects
 (
     id INT(11) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -157,7 +150,7 @@ switch ($driver) {
         break;
 
 
-    case 'sqlite' :
+    case 'sqlite':
         $pdo->exec('CREATE TABLE IF NOT EXISTS schedulingobjects (
     id integer primary key asc,
     principaluri text,

@@ -20,7 +20,8 @@ namespace Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface IMultiGet extends ICollection {
+interface IMultiGet extends ICollection
+{
 
     /**
      * This method receives a list of paths in it's first argument.
@@ -31,6 +32,5 @@ interface IMultiGet extends ICollection {
      * @param string[] $paths
      * @return array
      */
-    function getMultipleChildren(array $paths);
-
+    public function getMultipleChildren(array $paths);
 }

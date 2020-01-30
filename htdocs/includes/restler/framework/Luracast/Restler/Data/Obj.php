@@ -72,9 +72,10 @@ class Obj
      *
      * @return array
      */
-    public static function toArray($object,
-                                   $forceObjectTypeWhenEmpty = false)
-    {
+    public static function toArray(
+        $object,
+        $forceObjectTypeWhenEmpty = false
+    ) {
         //if ($object instanceof JsonSerializable) { //wont work on PHP < 5.4
         if (is_object($object)) {
             if (method_exists($object, 'jsonSerialize')) {
@@ -83,12 +84,14 @@ class Obj
                 $properties = $object->__sleep();
                 $array = array();
                 foreach ($properties as $key) {
-                    $value = self::toArray($object->{$key},
-                        $forceObjectTypeWhenEmpty);
+                    $value = self::toArray(
+                        $object->{$key},
+                        $forceObjectTypeWhenEmpty
+                    );
                     if (self::$stringEncoderFunction && is_string($value)) {
-                        $value = self::$stringEncoderFunction ($value);
+                        $value = self::$stringEncoderFunction($value);
                     } elseif (self::$numberEncoderFunction && is_numeric($value)) {
-                        $value = self::$numberEncoderFunction ($value);
+                        $value = self::$numberEncoderFunction($value);
                     }
                     $array [$key] = $value;
                 }
@@ -121,9 +124,9 @@ class Obj
                 }
                 $value = self::toArray($value, $forceObjectTypeWhenEmpty);
                 if (self::$stringEncoderFunction && is_string($value)) {
-                    $value = self::$encoderFunctionName ($value);
+                    $value = self::$encoderFunctionName($value);
                 } elseif (self::$numberEncoderFunction && is_numeric($value)) {
-                    $value = self::$numberEncoderFunction ($value);
+                    $value = self::$numberEncoderFunction($value);
                 }
                 $array [$key] = $value;
                 $count++;
@@ -154,4 +157,3 @@ class Obj
         unset(self::$fix[$name]);
     }
 }
-

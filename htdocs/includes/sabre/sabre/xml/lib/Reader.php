@@ -17,8 +17,8 @@ use XMLReader;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Reader extends XMLReader {
-
+class Reader extends XMLReader
+{
     use ContextStackTrait;
 
     /**
@@ -31,14 +31,13 @@ class Reader extends XMLReader {
      *
      * @return string|null
      */
-    function getClark() {
-
+    public function getClark()
+    {
         if (! $this->localName) {
             return null;
         }
 
         return '{' . $this->namespaceURI . '}' . $this->localName;
-
     }
 
     /**
@@ -54,8 +53,8 @@ class Reader extends XMLReader {
      *
      * @return array
      */
-    function parse() {
-
+    public function parse()
+    {
         $previousEntityState = libxml_disable_entity_loader(true);
         $previousSetting = libxml_use_internal_errors(true);
 
@@ -75,7 +74,6 @@ class Reader extends XMLReader {
             if ($errors) {
                 throw new LibXMLException($errors);
             }
-
         } finally {
             libxml_use_internal_errors($previousSetting);
             libxml_disable_entity_loader($previousEntityState);
@@ -102,14 +100,13 @@ class Reader extends XMLReader {
      * @param array $elementMap
      * @return array
      */
-    function parseGetElements(array $elementMap = null) {
-
+    public function parseGetElements(array $elementMap = null)
+    {
         $result = $this->parseInnerTree($elementMap);
         if (!is_array($result)) {
             return [];
         }
         return $result;
-
     }
 
     /**
@@ -126,8 +123,8 @@ class Reader extends XMLReader {
      * @param array $elementMap
      * @return array|string
      */
-    function parseInnerTree(array $elementMap = null) {
-
+    public function parseInnerTree(array $elementMap = null)
+    {
         $text = null;
         $elements = [];
 
@@ -158,9 +155,7 @@ class Reader extends XMLReader {
             }
 
             while (true) {
-
                 if (!$this->isValid()) {
-
                     $errors = libxml_get_errors();
 
                     if ($errors) {
@@ -170,37 +165,32 @@ class Reader extends XMLReader {
                 }
 
                 switch ($this->nodeType) {
-                    case self::ELEMENT :
+                    case self::ELEMENT:
                         $elements[] = $this->parseCurrentElement();
                         break;
-                    case self::TEXT :
-                    case self::CDATA :
+                    case self::TEXT:
+                    case self::CDATA:
                         $text .= $this->value;
                         $this->read();
                         break;
-                    case self::END_ELEMENT :
+                    case self::END_ELEMENT:
                         // Ensuring we are moving the cursor after the end element.
                         $this->read();
                         break 2;
-                    case self::NONE :
+                    case self::NONE:
                         throw new ParseException('We hit the end of the document prematurely. This likely means that some parser "eats" too many elements. Do not attempt to continue parsing.');
-                    default :
+                    default:
                         // Advance to the next element
                         $this->read();
                         break;
                 }
-
             }
-
         } finally {
-
             if (!is_null($elementMap)) {
                 $this->popContext();
             }
-
         }
         return ($elements ? $elements : $text);
-
     }
 
     /**
@@ -208,8 +198,8 @@ class Reader extends XMLReader {
      *
      * @return string
      */
-    function readText() {
-
+    public function readText()
+    {
         $result = '';
         $previousDepth = $this->depth;
 
@@ -219,7 +209,6 @@ class Reader extends XMLReader {
             }
         }
         return $result;
-
     }
 
     /**
@@ -232,8 +221,8 @@ class Reader extends XMLReader {
      *
      * @return array
      */
-    function parseCurrentElement() {
-
+    public function parseCurrentElement()
+    {
         $name = $this->getClark();
 
         $attributes = [];
@@ -265,8 +254,8 @@ class Reader extends XMLReader {
      *
      * @return array
      */
-    function parseAttributes() {
-
+    public function parseAttributes()
+    {
         $attributes = [];
 
         while ($this->moveToNextAttribute()) {
@@ -279,7 +268,6 @@ class Reader extends XMLReader {
 
                 $name = $this->getClark();
                 $attributes[$name] = $this->value;
-
             } else {
                 $attributes[$this->localName] = $this->value;
             }
@@ -287,7 +275,6 @@ class Reader extends XMLReader {
         $this->moveToElement();
 
         return $attributes;
-
     }
 
     /**
@@ -297,9 +284,8 @@ class Reader extends XMLReader {
      * @param string $name
      * @return callable
      */
-    function getDeserializerForElementName($name) {
-
-
+    public function getDeserializerForElementName($name)
+    {
         if (!array_key_exists($name, $this->elementMap)) {
             if (substr($name, 0, 2) == '{}' && array_key_exists(substr($name, 2), $this->elementMap)) {
                 $name = substr($name, 2);
@@ -324,7 +310,5 @@ class Reader extends XMLReader {
             $type .= ' (' . get_class($deserializer) . ')';
         }
         throw new \LogicException('Could not use this type as a deserializer: ' . $type . ' for element: ' . $name);
-
     }
-
 }

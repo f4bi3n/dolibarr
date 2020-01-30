@@ -39,7 +39,7 @@ class box_external_rss extends ModeleBoxes
     public $boxlabel="BoxLastRssInfos";
     public $depends = array("externalrss");
 
-	/**
+    /**
      * @var DoliDB Database handler.
      */
     public $db;
@@ -58,14 +58,14 @@ class box_external_rss extends ModeleBoxes
      */
     public function __construct($db, $param)
     {
-		$this->db=$db;
-		$this->paramdef=$param;
+        $this->db=$db;
+        $this->paramdef=$param;
     }
 
     /**
-	 *  Load data into info_box_contents array to show array later.
-	 *
-	 *  @param	int		$max        	Maximum number of records to load
+     *  Load data into info_box_contents array to show array later.
+     *
+     *  @param	int		$max        	Maximum number of records to load
      *  @param	int		$cachedelay		Delay we accept for cache file
      *  @return	void
      */
@@ -74,38 +74,35 @@ class box_external_rss extends ModeleBoxes
         global $user, $langs, $conf;
         $langs->load("boxes");
 
-		$this->max=$max;
+        $this->max=$max;
 
-		// On recupere numero de param de la boite
-		preg_match('/^([0-9]+) /', $this->paramdef, $reg);
-		$site=$reg[1];
+        // On recupere numero de param de la boite
+        preg_match('/^([0-9]+) /', $this->paramdef, $reg);
+        $site=$reg[1];
 
-		// Create dir nor required
-		// documents/externalrss is created by module activation
-		// documents/externalrss/tmp is created by rssparser
+        // Create dir nor required
+        // documents/externalrss is created by module activation
+        // documents/externalrss/tmp is created by rssparser
 
-		$keyforparamurl="EXTERNAL_RSS_URLRSS_".$site;
-		$keyforparamtitle="EXTERNAL_RSS_TITLE_".$site;
+        $keyforparamurl="EXTERNAL_RSS_URLRSS_".$site;
+        $keyforparamtitle="EXTERNAL_RSS_TITLE_".$site;
 
-		// Get RSS feed
-		$url=$conf->global->$keyforparamurl;
+        // Get RSS feed
+        $url=$conf->global->$keyforparamurl;
 
         $rssparser=new RssParser($this->db);
-		$result = $rssparser->parser($url, $this->max, $cachedelay, $conf->externalrss->dir_temp);
+        $result = $rssparser->parser($url, $this->max, $cachedelay, $conf->externalrss->dir_temp);
 
-		// INFO on channel
-		$description=$rssparser->getDescription();
-		$link=$rssparser->getLink();
+        // INFO on channel
+        $description=$rssparser->getDescription();
+        $link=$rssparser->getLink();
 
         $title=$langs->trans("BoxTitleLastRssInfos", $max, $conf->global->$keyforparamtitle);
-        if ($result < 0 || ! empty($rssparser->error))
-        {
+        if ($result < 0 || ! empty($rssparser->error)) {
             // Show warning
             $title.=" ".img_error($langs->trans("FailedToRefreshDataInfoNotUpToDate", ($rssparser->getLastFetchDate()?dol_print_date($rssparser->getLastFetchDate(), "dayhourtext"):$langs->trans("Unknown"))));
             $this->info_box_head = array('text' => $title,'limit' => 0);
-        }
-        else
-        {
+        } else {
             $this->info_box_head = array(
                 'text' => $title,
                 'sublink' => $link,
@@ -113,40 +110,50 @@ class box_external_rss extends ModeleBoxes
                 'subpicto'=>'help',
                 'target'=>'_blank',
             );
-		}
+        }
 
-		// INFO on items
-		$items=$rssparser->getItems();
+        // INFO on items
+        $items=$rssparser->getItems();
         //print '<pre>'.print_r($items,true).'</pre>';
-		$nbitems=count($items);
-        for($line = 0; $line < $max && $line < $nbitems; $line++)
-        {
+        $nbitems=count($items);
+        for ($line = 0; $line < $max && $line < $nbitems; $line++) {
             $item = $items[$line];
 
-			// Feed common fields
+            // Feed common fields
             $href  = $item['link'];
-        	$title = urldecode($item['title']);
-			$date  = $item['date_timestamp'];       // date will be empty if conversion into timestamp failed
-			if ($rssparser->getFormat() == 'rss')   // If RSS
-			{
-				if (! $date && isset($item['pubdate']))    $date=$item['pubdate'];
-				if (! $date && isset($item['dc']['date'])) $date=$item['dc']['date'];
-				//$item['dc']['language']
-				//$item['dc']['publisher']
-			}
-			if ($rssparser->getFormat() == 'atom')	// If Atom
-			{
-				if (! $date && isset($item['issued']))    $date=$item['issued'];
-				if (! $date && isset($item['modified']))  $date=$item['modified'];
-				//$item['issued']
-				//$item['modified']
-				//$item['atom_content']
-			}
-			if (is_numeric($date)) $date=dol_print_date($date, "dayhour");
+            $title = urldecode($item['title']);
+            $date  = $item['date_timestamp'];       // date will be empty if conversion into timestamp failed
+            if ($rssparser->getFormat() == 'rss') {   // If RSS
+                if (! $date && isset($item['pubdate'])) {
+                    $date=$item['pubdate'];
+                }
+                if (! $date && isset($item['dc']['date'])) {
+                    $date=$item['dc']['date'];
+                }
+                //$item['dc']['language']
+                //$item['dc']['publisher']
+            }
+            if ($rssparser->getFormat() == 'atom') {	// If Atom
+                if (! $date && isset($item['issued'])) {
+                    $date=$item['issued'];
+                }
+                if (! $date && isset($item['modified'])) {
+                    $date=$item['modified'];
+                }
+                //$item['issued']
+                //$item['modified']
+                //$item['atom_content']
+            }
+            if (is_numeric($date)) {
+                $date=dol_print_date($date, "dayhour");
+            }
 
-			$isutf8 = utf8_check($title);
-	        if (! $isutf8 && $conf->file->character_set_client == 'UTF-8') $title=utf8_encode($title);
-	        elseif ($isutf8 && $conf->file->character_set_client == 'ISO-8859-1') $title=utf8_decode($title);
+            $isutf8 = utf8_check($title);
+            if (! $isutf8 && $conf->file->character_set_client == 'UTF-8') {
+                $title=utf8_encode($title);
+            } elseif ($isutf8 && $conf->file->character_set_client == 'ISO-8859-1') {
+                $title=utf8_decode($title);
+            }
 
             $title=preg_replace("/([[:alnum:]])\?([[:alnum:]])/", "\\1'\\2", $title);   // Gere probleme des apostrophes mal codee/decodee par utf8
             $title=preg_replace("/^\s+/", "", $title);                                  // Supprime espaces de debut
@@ -155,8 +162,11 @@ class box_external_rss extends ModeleBoxes
             $tooltip = $title;
             $description = ! empty($item['description'])?$item['description']:'';
             $isutf8 = utf8_check($description);
-            if (! $isutf8 && $conf->file->character_set_client == 'UTF-8') $description=utf8_encode($description);
-            elseif ($isutf8 && $conf->file->character_set_client == 'ISO-8859-1') $description=utf8_decode($description);
+            if (! $isutf8 && $conf->file->character_set_client == 'UTF-8') {
+                $description=utf8_encode($description);
+            } elseif ($isutf8 && $conf->file->character_set_client == 'ISO-8859-1') {
+                $description=utf8_decode($description);
+            }
             $description=preg_replace("/([[:alnum:]])\?([[:alnum:]])/", "\\1'\\2", $description);
             $description=preg_replace("/^\s+/", "", $description);
             $description=str_replace("\r\n", "", $description);
@@ -187,14 +197,14 @@ class box_external_rss extends ModeleBoxes
     }
 
 
-	/**
-	 *	Method to show box
-	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
-	 *	@return	string
-	 */
+    /**
+     *	Method to show box
+     *
+     *	@param	array	$head       Array with properties of box title
+     *	@param  array	$contents   Array with properties of box lines
+     *  @param	int		$nooutput	No print, only return string
+     *	@return	string
+     */
     public function showBox($head = null, $contents = null, $nooutput = 0)
     {
         return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);

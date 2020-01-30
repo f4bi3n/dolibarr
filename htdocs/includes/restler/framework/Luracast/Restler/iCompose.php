@@ -15,7 +15,8 @@ use Exception;
  * @link       http://luracast.com/products/restler/
  * @version    3.0.0rc6
  */
-interface iCompose {
+interface iCompose
+{
     /**
      * Result of an api call is passed to this method
      * to create a standard structure for the data

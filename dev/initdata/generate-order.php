@@ -49,7 +49,7 @@ require_once DOL_DOCUMENT_ROOT."/commande/class/commande.class.php";
 
 define(GEN_NUMBER_COMMANDE, 10);
 $year = 2016;
-$dates = array (mktime(12, 0, 0, 1, 3, $year),
+$dates = array(mktime(12, 0, 0, 1, 3, $year),
     mktime(12, 0, 0, 1, 9, $year),
     mktime(12, 0, 0, 2, 13, $year),
     mktime(12, 0, 0, 2, 23, $year),
@@ -102,8 +102,7 @@ $dates = array (mktime(12, 0, 0, 1, 3, $year),
 );
 
 $ret=$user->fetch('', 'admin');
-if ($ret <= 0)
-{
+if ($ret <= 0) {
     print 'A user with login "admin" and all permissions must be created to use this script.'."\n";
     exit;
 }
@@ -120,8 +119,9 @@ if ($resql) {
         $row = $db->fetch_row($resql);
         $societesid[$i] = $row[0];
     }
+} else {
+    print "err";
 }
-else { print "err"; }
 
 $commandesid = array();
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande";
@@ -134,8 +134,9 @@ if ($resql) {
         $row = $db->fetch_row($resql);
         $commandesid[$i] = $row[0];
     }
+} else {
+    print "err";
 }
-else { print "err"; }
 
 $prodids = array();
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product WHERE tosell=1";
@@ -154,8 +155,7 @@ if ($resql) {
 
 
 print "Build ".GEN_NUMBER_COMMANDE." orders\n";
-for ($s = 0 ; $s < GEN_NUMBER_COMMANDE ; $s++)
-{
+for ($s = 0 ; $s < GEN_NUMBER_COMMANDE ; $s++) {
     print "Process order ".$s."\n";
 
     $object = new Commande($db);
@@ -180,38 +180,30 @@ for ($s = 0 ; $s < GEN_NUMBER_COMMANDE ; $s++)
     $db->begin();
 
     $result=$object->create($fuser);
-    if ($result >= 0)
-    {
+    if ($result >= 0) {
         $nbp = mt_rand(2, 5);
         $xnbp = 0;
-        while ($xnbp < $nbp)
-        {
+        while ($xnbp < $nbp) {
             $prodid = mt_rand(1, $num_prods);
             $product=new Product($db);
             $result=$product->fetch($prodids[$prodid]);
             $result=$object->addline($product->description, $product->price, mt_rand(1, 5), 0, 0, 0, $prodids[$prodid], 0, 0, 0, $product->price_base_type, $product->price_ttc, '', '', $product->type);
-            if ($result <= 0)
-            {
+            if ($result <= 0) {
                 dol_print_error($db, $object->error);
             }
             $xnbp++;
         }
 
         $result=$object->valid($fuser);
-        if ($result > 0)
-        {
+        if ($result > 0) {
             $db->commit();
             print " OK with ref ".$object->ref."\n";
-        }
-        else
-        {
+        } else {
             print " KO\n";
             $db->rollback();
             dol_print_error($db, $object->error);
         }
-    }
-    else
-    {
+    } else {
         print " KO\n";
         $db->rollback();
         dol_print_error($db, $object->error);

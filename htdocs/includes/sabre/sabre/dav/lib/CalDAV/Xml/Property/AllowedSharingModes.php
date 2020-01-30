@@ -22,7 +22,8 @@ use Sabre\Xml\XmlSerializable;
  * @author Evert Pot (http://www.rooftopsolutions.nl/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class AllowedSharingModes implements XmlSerializable {
+class AllowedSharingModes implements XmlSerializable
+{
 
     /**
      * Whether or not a calendar can be shared with another user
@@ -45,11 +46,10 @@ class AllowedSharingModes implements XmlSerializable {
      * @param bool $canBePublished
      * @return void
      */
-    function __construct($canBeShared, $canBePublished) {
-
+    public function __construct($canBeShared, $canBePublished)
+    {
         $this->canBeShared = $canBeShared;
         $this->canBePublished = $canBePublished;
-
     }
 
     /**
@@ -71,17 +71,13 @@ class AllowedSharingModes implements XmlSerializable {
      * @param Writer $writer
      * @return void
      */
-    function xmlSerialize(Writer $writer) {
-
+    public function xmlSerialize(Writer $writer)
+    {
         if ($this->canBeShared) {
             $writer->writeElement('{' . Plugin::NS_CALENDARSERVER . '}can-be-shared');
         }
         if ($this->canBePublished) {
             $writer->writeElement('{' . Plugin::NS_CALENDARSERVER . '}can-be-published');
         }
-
     }
-
-
-
 }

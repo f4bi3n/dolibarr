@@ -17,10 +17,9 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || !is_object($conf))
-{
-	print "Error, template page can't be called as URL";
-	exit;
+if (empty($conf) || !is_object($conf)) {
+    print "Error, template page can't be called as URL";
+    exit;
 }
 
 
@@ -29,14 +28,26 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 header('Cache-Control: Public, must-revalidate');
 header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
-if (GETPOST('dol_hide_topmenu')) $conf->dol_hide_topmenu = 1;
-if (GETPOST('dol_hide_leftmenu')) $conf->dol_hide_leftmenu = 1;
-if (GETPOST('dol_optimize_smallscreen')) $conf->dol_optimize_smallscreen = 1;
-if (GETPOST('dol_no_mouse_hover')) $conf->dol_no_mouse_hover = 1;
-if (GETPOST('dol_use_jmobile')) $conf->dol_use_jmobile = 1;
+if (GETPOST('dol_hide_topmenu')) {
+    $conf->dol_hide_topmenu = 1;
+}
+if (GETPOST('dol_hide_leftmenu')) {
+    $conf->dol_hide_leftmenu = 1;
+}
+if (GETPOST('dol_optimize_smallscreen')) {
+    $conf->dol_optimize_smallscreen = 1;
+}
+if (GETPOST('dol_no_mouse_hover')) {
+    $conf->dol_no_mouse_hover = 1;
+}
+if (GETPOST('dol_use_jmobile')) {
+    $conf->dol_use_jmobile = 1;
+}
 
 // If we force to use jmobile, then we reenable javascript
-if (!empty($conf->dol_use_jmobile)) $conf->use_javascript_ajax = 1;
+if (!empty($conf->dol_use_jmobile)) {
+    $conf->use_javascript_ajax = 1;
+}
 
 $php_self = $_SERVER['PHP_SELF'];
 $php_self .= dol_escape_htmltag($_SERVER["QUERY_STRING"]) ? '?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]) : '';
@@ -47,7 +58,9 @@ print top_htmlhead('', $titleofpage);
 
 
 $colorbackhmenu1 = '60,70,100'; // topmenu
-if (!isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) $conf->global->THEME_ELDY_TOPMENU_BACK1 = $colorbackhmenu1;
+if (!isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) {
+    $conf->global->THEME_ELDY_TOPMENU_BACK1 = $colorbackhmenu1;
+}
 $colorbackhmenu1 = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (empty($conf->global->THEME_ELDY_TOPMENU_BACK1) ? $colorbackhmenu1 : $conf->global->THEME_ELDY_TOPMENU_BACK1) : (empty($user->conf->THEME_ELDY_TOPMENU_BACK1) ? $colorbackhmenu1 : $user->conf->THEME_ELDY_TOPMENU_BACK1);
 $colorbackhmenu1 = join(',', colorStringToArray($colorbackhmenu1)); // Normalize value to 'x,y,z'
 
@@ -77,9 +90,13 @@ $(document).ready(function () {
 <!-- Title with version -->
 <div class="login_table_title center" title="<?php echo dol_escape_htmltag($title); ?>">
 <?php
-if ($disablenofollow) echo '<a class="login_table_title" href="https://www.dolibarr.org" target="_blank">';
+if ($disablenofollow) {
+    echo '<a class="login_table_title" href="https://www.dolibarr.org" target="_blank">';
+}
 echo dol_escape_htmltag($title);
-if ($disablenofollow) echo '</a>';
+if ($disablenofollow) {
+    echo '</a>';
+}
 ?>
 </div>
 
@@ -111,28 +128,28 @@ if ($disablenofollow) echo '</a>';
 
 <?php
 if (!empty($morelogincontent)) {
-	if (is_array($morelogincontent)) {
-		foreach ($morelogincontent as $format => $option)
-		{
-			if ($format == 'table') {
-				echo '<!-- Option by hook -->';
-				echo $option;
-			}
-		}
-	}
-	else {
-		echo '<!-- Option by hook -->';
-		echo $morelogincontent;
-	}
+    if (is_array($morelogincontent)) {
+        foreach ($morelogincontent as $format => $option) {
+            if ($format == 'table') {
+                echo '<!-- Option by hook -->';
+                echo $option;
+            }
+        }
+    } else {
+        echo '<!-- Option by hook -->';
+        echo $morelogincontent;
+    }
 }
 ?>
 
 <?php if ($captcha) {
-	// Add a variable param to force not using cache (jmobile)
-	$php_self = preg_replace('/[&\?]time=(\d+)/', '', $php_self); // Remove param time
-	if (preg_match('/\?/', $php_self)) $php_self .= '&time='.dol_print_date(dol_now(), 'dayhourlog');
-	else $php_self .= '?time='.dol_print_date(dol_now(), 'dayhourlog');
-	?>
+    // Add a variable param to force not using cache (jmobile)
+    $php_self = preg_replace('/[&\?]time=(\d+)/', '', $php_self); // Remove param time
+    if (preg_match('/\?/', $php_self)) {
+        $php_self .= '&time='.dol_print_date(dol_now(), 'dayhourlog');
+    } else {
+        $php_self .= '?time='.dol_print_date(dol_now(), 'dayhourlog');
+    } ?>
 	<!-- Captcha -->
 	<div class="trinputlogin">
 	<div class="tdinputlogin nowraponall none center valignmiddle tdinputlogin">
@@ -150,7 +167,8 @@ if (!empty($morelogincontent)) {
 	</tr></table>
 
 	</div></div>
-<?php } ?>
+<?php
+} ?>
 
 </div>
 
@@ -167,14 +185,22 @@ if (!empty($morelogincontent)) {
 <br>
 <div class="center" style="margin-top: 15px;">
 	<?php
-	$moreparam = '';
-	if (!empty($conf->dol_hide_topmenu))   $moreparam .= (strpos($moreparam, '?') === false ? '?' : '&').'dol_hide_topmenu='.$conf->dol_hide_topmenu;
-	if (!empty($conf->dol_hide_leftmenu))  $moreparam .= (strpos($moreparam, '?') === false ? '?' : '&').'dol_hide_leftmenu='.$conf->dol_hide_leftmenu;
-	if (!empty($conf->dol_no_mouse_hover)) $moreparam .= (strpos($moreparam, '?') === false ? '?' : '&').'dol_no_mouse_hover='.$conf->dol_no_mouse_hover;
-	if (!empty($conf->dol_use_jmobile))    $moreparam .= (strpos($moreparam, '?') === false ? '?' : '&').'dol_use_jmobile='.$conf->dol_use_jmobile;
+    $moreparam = '';
+    if (!empty($conf->dol_hide_topmenu)) {
+        $moreparam .= (strpos($moreparam, '?') === false ? '?' : '&').'dol_hide_topmenu='.$conf->dol_hide_topmenu;
+    }
+    if (!empty($conf->dol_hide_leftmenu)) {
+        $moreparam .= (strpos($moreparam, '?') === false ? '?' : '&').'dol_hide_leftmenu='.$conf->dol_hide_leftmenu;
+    }
+    if (!empty($conf->dol_no_mouse_hover)) {
+        $moreparam .= (strpos($moreparam, '?') === false ? '?' : '&').'dol_no_mouse_hover='.$conf->dol_no_mouse_hover;
+    }
+    if (!empty($conf->dol_use_jmobile)) {
+        $moreparam .= (strpos($moreparam, '?') === false ? '?' : '&').'dol_use_jmobile='.$conf->dol_use_jmobile;
+    }
 
-	print '<a class="alogin" href="'.$dol_url_root.'/index.php'.$moreparam.'">'.$langs->trans('BackToLoginPage').'</a>';
-	?>
+    print '<a class="alogin" href="'.$dol_url_root.'/index.php'.$moreparam.'">'.$langs->trans('BackToLoginPage').'</a>';
+    ?>
 </div>
 
 </div>
@@ -206,17 +232,15 @@ if (!empty($morelogincontent)) {
 <?php } ?>
 
 <?php if (!empty($morelogincontent) && is_array($morelogincontent)) {
-	foreach ($morelogincontent as $format => $option)
-	{
-		if ($format == 'js') {
-			echo "\n".'<!-- Javascript by hook -->';
-			echo $option."\n";
-		}
-	}
-}
-elseif (!empty($moreloginextracontent)) {
-	echo '<!-- Javascript by hook -->';
-	echo $moreloginextracontent;
+        foreach ($morelogincontent as $format => $option) {
+            if ($format == 'js') {
+                echo "\n".'<!-- Javascript by hook -->';
+                echo $option."\n";
+            }
+        }
+    } elseif (!empty($moreloginextracontent)) {
+    echo '<!-- Javascript by hook -->';
+    echo $moreloginextracontent;
 }
 ?>
 

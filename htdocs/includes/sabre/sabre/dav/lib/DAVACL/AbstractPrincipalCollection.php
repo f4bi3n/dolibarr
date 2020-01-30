@@ -17,7 +17,8 @@ use Sabre\HTTP\URLUtil;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-abstract class AbstractPrincipalCollection extends DAV\Collection implements IPrincipalCollection {
+abstract class AbstractPrincipalCollection extends DAV\Collection implements IPrincipalCollection
+{
 
     /**
      * Principal backend
@@ -53,11 +54,10 @@ abstract class AbstractPrincipalCollection extends DAV\Collection implements IPr
      * @param PrincipalBackend\BackendInterface $principalBackend
      * @param string $principalPrefix
      */
-    function __construct(PrincipalBackend\BackendInterface $principalBackend, $principalPrefix = 'principals') {
-
+    public function __construct(PrincipalBackend\BackendInterface $principalBackend, $principalPrefix = 'principals')
+    {
         $this->principalPrefix = $principalPrefix;
         $this->principalBackend = $principalBackend;
-
     }
 
     /**
@@ -70,18 +70,17 @@ abstract class AbstractPrincipalCollection extends DAV\Collection implements IPr
      * @param array $principalInfo
      * @return IPrincipal
      */
-    abstract function getChildForPrincipal(array $principalInfo);
+    abstract public function getChildForPrincipal(array $principalInfo);
 
     /**
      * Returns the name of this collection.
      *
      * @return string
      */
-    function getName() {
-
+    public function getName()
+    {
         list(, $name) = URLUtil::splitPath($this->principalPrefix);
         return $name;
-
     }
 
     /**
@@ -89,20 +88,17 @@ abstract class AbstractPrincipalCollection extends DAV\Collection implements IPr
      *
      * @return array
      */
-    function getChildren() {
-
-        if ($this->disableListing)
+    public function getChildren()
+    {
+        if ($this->disableListing) {
             throw new DAV\Exception\MethodNotAllowed('Listing members of this collection is disabled');
+        }
 
         $children = [];
         foreach ($this->principalBackend->getPrincipalsByPrefix($this->principalPrefix) as $principalInfo) {
-
             $children[] = $this->getChildForPrincipal($principalInfo);
-
-
         }
         return $children;
-
     }
 
     /**
@@ -112,12 +108,13 @@ abstract class AbstractPrincipalCollection extends DAV\Collection implements IPr
      * @throws DAV\Exception\NotFound
      * @return DAV\INode
      */
-    function getChild($name) {
-
+    public function getChild($name)
+    {
         $principalInfo = $this->principalBackend->getPrincipalByPath($this->principalPrefix . '/' . $name);
-        if (!$principalInfo) throw new DAV\Exception\NotFound('Principal with name ' . $name . ' not found');
+        if (!$principalInfo) {
+            throw new DAV\Exception\NotFound('Principal with name ' . $name . ' not found');
+        }
         return $this->getChildForPrincipal($principalInfo);
-
     }
 
     /**
@@ -143,8 +140,8 @@ abstract class AbstractPrincipalCollection extends DAV\Collection implements IPr
      * @param string $test
      * @return array
      */
-    function searchPrincipals(array $searchProperties, $test = 'allof') {
-
+    public function searchPrincipals(array $searchProperties, $test = 'allof')
+    {
         $result = $this->principalBackend->searchPrincipals($this->principalPrefix, $searchProperties, $test);
         $r = [];
 
@@ -153,7 +150,6 @@ abstract class AbstractPrincipalCollection extends DAV\Collection implements IPr
         }
 
         return $r;
-
     }
 
     /**
@@ -172,10 +168,8 @@ abstract class AbstractPrincipalCollection extends DAV\Collection implements IPr
      * @param string $uri
      * @return string
      */
-    function findByUri($uri) {
-
+    public function findByUri($uri)
+    {
         return $this->principalBackend->findByUri($uri, $this->principalPrefix);
-
     }
-
 }

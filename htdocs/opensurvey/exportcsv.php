@@ -30,14 +30,15 @@ require_once DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php";
 
 $action=GETPOST('action', 'aZ09');
 $numsondage = '';
-if (GETPOST('id'))
-{
-	$numsondage=GETPOST("id", 'alpha');
+if (GETPOST('id')) {
+    $numsondage=GETPOST("id", 'alpha');
 }
 
 $object=new Opensurveysondage($db);
 $result=$object->fetch(0, $numsondage);
-if ($result <= 0) dol_print_error('', 'Failed to get survey id '.$numsondage);
+if ($result <= 0) {
+    dol_print_error('', 'Failed to get survey id '.$numsondage);
+}
 
 
 /*
@@ -57,28 +58,24 @@ $toutsujet=explode(",", $object->sujet);
 
 // affichage des sujets du sondage
 $input.=$langs->trans("Name").";";
-for ($i=0;$toutsujet[$i];$i++)
-{
-	if ($object->format=="D")
-	{
-		$input.=''.dol_print_date($toutsujet[$i], 'dayhour').';';
-	} else {
-		$input.=''.$toutsujet[$i].';';
-	}
+for ($i=0;$toutsujet[$i];$i++) {
+    if ($object->format=="D") {
+        $input.=''.dol_print_date($toutsujet[$i], 'dayhour').';';
+    } else {
+        $input.=''.$toutsujet[$i].';';
+    }
 }
 
 $input.="\r\n";
 
-if (strpos($object->sujet, '@') !== false)
-{
-	$input.=";";
-	for ($i=0;$toutsujet[$i];$i++)
-	{
-		$heures=explode("@", $toutsujet[$i]);
-		$input.=''.$heures[1].';';
-	}
+if (strpos($object->sujet, '@') !== false) {
+    $input.=";";
+    for ($i=0;$toutsujet[$i];$i++) {
+        $heures=explode("@", $toutsujet[$i]);
+        $input.=''.$heures[1].';';
+    }
 
-	$input.="\r\n";
+    $input.="\r\n";
 }
 
 
@@ -87,44 +84,37 @@ $sql.=' FROM '.MAIN_DB_PREFIX."opensurvey_user_studs";
 $sql.=" WHERE id_sondage='" . $db->escape($numsondage) . "'";
 $sql.=" ORDER BY id_users";
 $resql=$db->query($sql);
-if ($resql)
-{
-	$num=$db->num_rows($resql);
-	$i=0;
-	while ($i < $num)
-	{
-		$obj=$db->fetch_object($resql);
+if ($resql) {
+    $num=$db->num_rows($resql);
+    $i=0;
+    while ($i < $num) {
+        $obj=$db->fetch_object($resql);
 
-		// Le name de l'utilisateur
-		$nombase=str_replace("°", "'", $obj->name);
-		$input.=$nombase.';';
+        // Le name de l'utilisateur
+        $nombase=str_replace("°", "'", $obj->name);
+        $input.=$nombase.';';
 
-		//affichage des resultats
-		$ensemblereponses=$obj->reponses;
-		for ($k=0;$k<$nbcolonnes;$k++)
-		{
-			$car=substr($ensemblereponses, $k, 1);
-			if ($car == "1")
-			{
-				$input.='OK;';
-				$somme[$k]++;
-			}
-			elseif ($car == "2")
-			{
-				$input.='KO;';
-				$somme[$k]++;
-			}
-			else
-			{
-				$input.=';';
-			}
-		}
+        //affichage des resultats
+        $ensemblereponses=$obj->reponses;
+        for ($k=0;$k<$nbcolonnes;$k++) {
+            $car=substr($ensemblereponses, $k, 1);
+            if ($car == "1") {
+                $input.='OK;';
+                $somme[$k]++;
+            } elseif ($car == "2") {
+                $input.='KO;';
+                $somme[$k]++;
+            } else {
+                $input.=';';
+            }
+        }
 
-		$input.="\r\n";
-		$i++;
-	}
+        $input.="\r\n";
+        $i++;
+    }
+} else {
+    dol_print_error($db);
 }
-else dol_print_error($db);
 
 
 $filesize = strlen($input);

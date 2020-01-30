@@ -4,9 +4,9 @@ namespace Sabre\VObject\ITip;
 
 use Sabre\VObject\Reader;
 
-class BrokerTimezoneInParseEventInfoWithoutMasterTest extends \PHPUnit_Framework_TestCase {
-
-    function testTimezoneInParseEventInfoWithoutMaster()
+class BrokerTimezoneInParseEventInfoWithoutMasterTest extends \PHPUnit_Framework_TestCase
+{
+    public function testTimezoneInParseEventInfoWithoutMaster()
     {
         $calendar = <<<ICS
 BEGIN:VCALENDAR

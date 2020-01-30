@@ -51,8 +51,11 @@ class HumanReadableCache implements iCache
                         $s .= PHP_EOL . PHP_EOL . "//==== $key $ke ===="
                             . PHP_EOL . PHP_EOL;
                         $s .= '$o[\'' . $key . '\'][\'' . $ke . '\'] = ' .
-                            str_replace('  ', '    ',
-                                var_export($va, true)) . ';';
+                            str_replace(
+                                '  ',
+                                '    ',
+                                var_export($va, true)
+                            ) . ';';
                     }
                 } else {
                     $s .= '$o[\'' . $key . '\'] = '
@@ -126,4 +129,3 @@ class HumanReadableCache implements iCache
         );
     }
 }
-

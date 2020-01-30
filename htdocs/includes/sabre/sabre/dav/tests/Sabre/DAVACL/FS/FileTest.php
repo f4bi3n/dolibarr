@@ -2,7 +2,8 @@
 
 namespace Sabre\DAVACL\FS;
 
-class FileTest extends \PHPUnit_Framework_TestCase {
+class FileTest extends \PHPUnit_Framework_TestCase
+{
 
     /**
      * System under test
@@ -21,53 +22,46 @@ class FileTest extends \PHPUnit_Framework_TestCase {
 
     protected $owner = 'principals/evert';
 
-    function setUp() {
-
+    public function setUp()
+    {
         $this->sut = new File($this->path, $this->acl, $this->owner);
-
     }
 
-    function testGetOwner() {
-
+    public function testGetOwner()
+    {
         $this->assertEquals(
             $this->owner,
             $this->sut->getOwner()
         );
-
     }
 
-    function testGetGroup() {
-
+    public function testGetGroup()
+    {
         $this->assertNull(
             $this->sut->getGroup()
         );
-
     }
 
-    function testGetACL() {
-
+    public function testGetACL()
+    {
         $this->assertEquals(
             $this->acl,
             $this->sut->getACL()
         );
-
     }
 
     /**
      * @expectedException \Sabre\DAV\Exception\Forbidden
      */
-    function testSetAcl() {
-
+    public function testSetAcl()
+    {
         $this->sut->setACL([]);
-
     }
 
-    function testGetSupportedPrivilegeSet() {
-
+    public function testGetSupportedPrivilegeSet()
+    {
         $this->assertNull(
             $this->sut->getSupportedPrivilegeSet()
         );
-
     }
-
 }

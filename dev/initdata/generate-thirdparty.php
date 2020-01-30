@@ -53,10 +53,9 @@ define(GEN_NUMBER_SOCIETE, 10);
 
 
 $ret=$user->fetch('', 'admin');
-if (! $ret > 0)
-{
-	print 'A user with login "admin" and all permissions must be created to use this script.'."\n";
-	exit;
+if (! $ret > 0) {
+    print 'A user with login "admin" and all permissions must be created to use this script.'."\n";
+    exit;
 }
 $user->getrights();
 
@@ -64,41 +63,47 @@ $user->getrights();
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product"; $productsid = array();
 $resql=$db->query($sql);
 if ($resql) {
-    $num = $db->num_rows($resql); $i = 0;
+    $num = $db->num_rows($resql);
+    $i = 0;
     while ($i < $num) {
-		$row = $db->fetch_row($resql);
-		$productsid[$i] = $row[0];
-		$i++;
-	}
+        $row = $db->fetch_row($resql);
+        $productsid[$i] = $row[0];
+        $i++;
+    }
 }
 
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe"; $societesid = array();
 $resql=$db->query($sql);
 if ($resql) {
-	$num = $db->num_rows($resql); $i = 0;
+    $num = $db->num_rows($resql);
+    $i = 0;
     while ($i < $num) {
-		$row = $db->fetch_row($resql);
-		$societesid[$i] = $row[0];
-		$i++;
-	}
-} else { print "err"; }
+        $row = $db->fetch_row($resql);
+        $societesid[$i] = $row[0];
+        $i++;
+    }
+} else {
+    print "err";
+}
 
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande"; $commandesid = array();
 $resql=$db->query($sql);
 if ($resql) {
-	$num = $db->num_rows($resql); $i = 0;
+    $num = $db->num_rows($resql);
+    $i = 0;
     while ($i < $num) {
-		$row = $db->fetch_row($resql);
-		$commandesid[$i] = $row[0];
-		$i++;
-	}
-} else { print "err"; }
+        $row = $db->fetch_row($resql);
+        $commandesid[$i] = $row[0];
+        $i++;
+    }
+} else {
+    print "err";
+}
 
 
 
 print "Generates ".GEN_NUMBER_SOCIETE." companies\n";
-for ($s = 0 ; $s < GEN_NUMBER_SOCIETE ; $s++)
-{
+for ($s = 0 ; $s < GEN_NUMBER_SOCIETE ; $s++) {
     print "Company $s\n";
     $soc = new Societe($db);
     $soc->name = "Company num ".time()."$s";
@@ -110,31 +115,29 @@ for ($s = 0 ; $s < GEN_NUMBER_SOCIETE ; $s++)
     $soc->tva_assuj=1;
     $soc->country_id=1;
     $soc->country_code='FR';
-	// Un client sur 3 a une remise de 5%
-    $user_remise=mt_rand(1, 3); if ($user_remise==3) $soc->remise_percent=5;
-	print "> client=".$soc->client.", fournisseur=".$soc->fournisseur.", remise=".$soc->remise_percent."\n";
+    // Un client sur 3 a une remise de 5%
+    $user_remise=mt_rand(1, 3);
+    if ($user_remise==3) {
+        $soc->remise_percent=5;
+    }
+    print "> client=".$soc->client.", fournisseur=".$soc->fournisseur.", remise=".$soc->remise_percent."\n";
     $soc->note_private = 'Company created by the script generate-societe.php';
     $socid = $soc->create();
 
-    if ($socid >= 0)
-    {
+    if ($socid >= 0) {
         $rand = mt_rand(1, 4);
         print "> Generates $rand contact(s)\n";
-        for ($c = 0 ; $c < $rand ; $c++)
-        {
+        for ($c = 0 ; $c < $rand ; $c++) {
             $contact = new Contact($db);
             $contact->socid = $soc->id;
             $contact->lastname = "Lastname".$c;
             $contact->firstname = $listoflastname[mt_rand(0, count($listoflastname)-1)];
-            if ( $contact->create($user) )
-            {
+            if ($contact->create($user)) {
             }
         }
 
         print "Company ".$s." created nom=".$soc->name."\n";
-    }
-    else
-    {
-    	print "Error: ".$soc->error."\n";
+    } else {
+        print "Error: ".$soc->error."\n";
     }
 }

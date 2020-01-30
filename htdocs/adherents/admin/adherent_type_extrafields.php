@@ -40,13 +40,17 @@ $form = new Form($db);
 // List of supported format
 $tmptype2label=ExtraFields::$type2label;
 $type2label=array('');
-foreach ($tmptype2label as $key => $val) $type2label[$key]=$langs->transnoentitiesnoconv($val);
+foreach ($tmptype2label as $key => $val) {
+    $type2label[$key]=$langs->transnoentitiesnoconv($val);
+}
 
 $action=GETPOST('action', 'alpha');
 $attrname=GETPOST('attrname', 'alpha');
 $elementtype='adherent_type'; //Must be the $table_element of the class that manage extrafield
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+    accessforbidden();
+}
 
 
 /*
@@ -81,11 +85,10 @@ dol_fiche_end();
 
 
 // Buttons
-if ($action != 'create' && $action != 'edit')
-{
-	print '<div class="tabsAction">';
-	print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"]."?action=create\">".$langs->trans("NewAttribute").'</a></div>';
-	print "</div>";
+if ($action != 'create' && $action != 'edit') {
+    print '<div class="tabsAction">';
+    print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"]."?action=create\">".$langs->trans("NewAttribute").'</a></div>';
+    print "</div>";
 }
 
 
@@ -95,10 +98,9 @@ if ($action != 'create' && $action != 'edit')
 /*                                                                            */
 /* ************************************************************************** */
 
-if ($action == 'create')
-{
-	print "<br>";
-	print load_fiche_titre($langs->trans('NewAttribute'));
+if ($action == 'create') {
+    print "<br>";
+    print load_fiche_titre($langs->trans('NewAttribute'));
 
     require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_add.tpl.php';
 }
@@ -108,10 +110,9 @@ if ($action == 'create')
 /* Edition of an optional field                                               */
 /*                                                                            */
 /* ************************************************************************** */
-if ($action == 'edit' && ! empty($attrname))
-{
-	print "<br>";
-	print load_fiche_titre($langs->trans("FieldEdition", $attrname));
+if ($action == 'edit' && ! empty($attrname)) {
+    print "<br>";
+    print load_fiche_titre($langs->trans("FieldEdition", $attrname));
 
     require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_edit.tpl.php';
 }

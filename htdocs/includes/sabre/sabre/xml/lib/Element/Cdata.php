@@ -31,7 +31,7 @@ class Cdata implements Xml\XmlSerializable
      *
      * @param string $value
      */
-    function __construct($value)
+    public function __construct($value)
     {
         $this->value = $value;
     }
@@ -55,10 +55,8 @@ class Cdata implements Xml\XmlSerializable
      * @param Writer $writer
      * @return void
      */
-    function xmlSerialize(Xml\Writer $writer) {
-
+    public function xmlSerialize(Xml\Writer $writer)
+    {
         $writer->writeCData($this->value);
-
     }
-
 }

@@ -11,7 +11,8 @@ namespace Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface IProperties extends INode {
+interface IProperties extends INode
+{
 
     /**
      * Updates properties on this node.
@@ -25,7 +26,7 @@ interface IProperties extends INode {
      * @param PropPatch $propPatch
      * @return void
      */
-    function propPatch(PropPatch $propPatch);
+    public function propPatch(PropPatch $propPatch);
 
     /**
      * Returns a list of properties for this nodes.
@@ -42,6 +43,5 @@ interface IProperties extends INode {
      * @param array $properties
      * @return array
      */
-    function getProperties($properties);
-
+    public function getProperties($properties);
 }

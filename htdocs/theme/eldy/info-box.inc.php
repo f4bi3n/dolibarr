@@ -1,5 +1,7 @@
 <?php
-if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
+if (! defined('ISLOADEDBYSTEELSHEET')) {
+    die('Must be call by steelsheet');
+} ?>
 /* <style type="text/css" > */
 
 /*
@@ -92,7 +94,7 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     transition: opacity 0.5s, visibility 0s 0.5s;
 }
 
-<?php if(empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS) && !empty($conf->global->MAIN_INCLUDE_GLOBAL_STATS_IN_OPENED_DASHBOARD)){ ?>
+<?php if (empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS) && !empty($conf->global->MAIN_INCLUDE_GLOBAL_STATS_IN_OPENED_DASHBOARD)) { ?>
 .info-box-icon-text{
     opacity: 1;
 }
@@ -154,10 +156,16 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 $prefix='';
 //$prefix = 'background-';
-if (! empty($conf->global->THEME_INFOBOX_COLOR_ON_BACKGROUND)) $prefix = 'background-';
+if (! empty($conf->global->THEME_INFOBOX_COLOR_ON_BACKGROUND)) {
+    $prefix = 'background-';
+}
 
-if (! isset($conf->global->THEME_AGRESSIVENESS_RATIO) && $prefix) $conf->global->THEME_AGRESSIVENESS_RATIO=-50;
-if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENESS_RATIO=GETPOST('THEME_AGRESSIVENESS_RATIO', 'int');
+if (! isset($conf->global->THEME_AGRESSIVENESS_RATIO) && $prefix) {
+    $conf->global->THEME_AGRESSIVENESS_RATIO=-50;
+}
+if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) {
+    $conf->global->THEME_AGRESSIVENESS_RATIO=GETPOST('THEME_AGRESSIVENESS_RATIO', 'int');
+}
 //var_dump($conf->global->THEME_AGRESSIVENESS_RATIO);
 ?>
 .info-box-icon {

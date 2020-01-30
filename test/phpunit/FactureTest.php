@@ -60,9 +60,9 @@ class FactureTest extends PHPUnit\Framework\TestCase
      */
     public function __construct()
     {
-    	parent::__construct();
+        parent::__construct();
 
-    	//$this->sharedFixture
+        //$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -79,8 +79,14 @@ class FactureTest extends PHPUnit\Framework\TestCase
     {
         global $conf,$user,$langs,$db;
 
-        if (empty($conf->facture->enabled)) { print __METHOD__." module customer invoice must be enabled.\n"; die(); }
-        if (! empty($conf->ecotaxdeee->enabled)) { print __METHOD__." ecotaxdeee module must not be enabled.\n"; die(); }
+        if (empty($conf->facture->enabled)) {
+            print __METHOD__." module customer invoice must be enabled.\n";
+            die();
+        }
+        if (! empty($conf->ecotaxdeee->enabled)) {
+            print __METHOD__." ecotaxdeee module must not be enabled.\n";
+            die();
+        }
 
         $db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
 
@@ -225,17 +231,17 @@ class FactureTest extends PHPUnit\Framework\TestCase
         unset($localobject->array_options['options_reseller']);
 
         $arraywithdiff = $this->objCompare(
-			$localobject,
-			$newlocalobject,
-			true,
-			array(
-				'newref','oldref','id','lines','client','thirdparty','brouillon','user_author','date_creation','date_validation','datem','date_modification',
-				'ref','statut','paye','specimen','ref','actiontypecode','actionmsg2','actionmsg','mode_reglement','cond_reglement',
-				'cond_reglement_doc','situation_cycle_ref','situation_counter','situation_final','multicurrency_total_ht','multicurrency_total_tva',
-				'multicurrency_total_ttc','fk_multicurrency','multicurrency_code','multicurrency_tx',
+            $localobject,
+            $newlocalobject,
+            true,
+            array(
+                'newref','oldref','id','lines','client','thirdparty','brouillon','user_author','date_creation','date_validation','datem','date_modification',
+                'ref','statut','paye','specimen','ref','actiontypecode','actionmsg2','actionmsg','mode_reglement','cond_reglement',
+                'cond_reglement_doc','situation_cycle_ref','situation_counter','situation_final','multicurrency_total_ht','multicurrency_total_tva',
+                'multicurrency_total_ttc','fk_multicurrency','multicurrency_code','multicurrency_tx',
                 'retained_warranty' ,'retained_warranty_date_limit', 'retained_warranty_fk_cond_reglement'
-			)
-		);
+            )
+        );
         $this->assertEquals($arraywithdiff, array());    // Actual, Expected
 
         return $localobject;
@@ -269,7 +275,7 @@ class FactureTest extends PHPUnit\Framework\TestCase
 
         $result=$localobject->demande_prelevement($user);
         print __METHOD__." result=".$result."\n";
-       	$this->assertLessThan($result, 0);
+        $this->assertLessThan($result, 0);
 
         return $localobject->id;
     }
@@ -303,7 +309,7 @@ class FactureTest extends PHPUnit\Framework\TestCase
         $result=$localobject2->initAsSpecimen();
         $result=$localobject2->create($user);
         $result=$localobject2->validate($user);
-		print 'Invoice $localobject ref = '.$localobject->ref."\n";
+        print 'Invoice $localobject ref = '.$localobject->ref."\n";
         print 'Invoice $localobject2 created with ref = '.$localobject2->ref."\n";
 
         $conf->global->INVOICE_CAN_NEVER_BE_REMOVED = 1;
@@ -354,24 +360,20 @@ class FactureTest extends PHPUnit\Framework\TestCase
     {
         $retAr=array();
 
-        if (get_class($oA) !== get_class($oB))
-        {
+        if (get_class($oA) !== get_class($oB)) {
             $retAr[]="Supplied objects are not of same class.";
-        }
-        else
-        {
+        } else {
             $oVarsA=get_object_vars($oA);
             $oVarsB=get_object_vars($oB);
             $aKeys=array_keys($oVarsA);
-            foreach($aKeys as $sKey)
-            {
-                if (in_array($sKey, $fieldstoignorearray)) continue;
-                if (! $ignoretype && $oVarsA[$sKey] !== $oVarsB[$sKey])
-                {
+            foreach ($aKeys as $sKey) {
+                if (in_array($sKey, $fieldstoignorearray)) {
+                    continue;
+                }
+                if (! $ignoretype && $oVarsA[$sKey] !== $oVarsB[$sKey]) {
                     $retAr[]=$sKey.' : '.(is_object($oVarsA[$sKey])?get_class($oVarsA[$sKey]):$oVarsA[$sKey]).' <> '.(is_object($oVarsB[$sKey])?get_class($oVarsB[$sKey]):$oVarsB[$sKey]);
                 }
-                if ($ignoretype && $oVarsA[$sKey] != $oVarsB[$sKey])
-                {
+                if ($ignoretype && $oVarsA[$sKey] != $oVarsB[$sKey]) {
                     $retAr[]=$sKey.' : '.(is_object($oVarsA[$sKey])?get_class($oVarsA[$sKey]):$oVarsA[$sKey]).' <> '.(is_object($oVarsB[$sKey])?get_class($oVarsB[$sKey]):$oVarsB[$sKey]);
                 }
             }

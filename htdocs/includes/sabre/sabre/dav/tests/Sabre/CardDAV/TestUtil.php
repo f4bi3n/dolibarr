@@ -2,17 +2,16 @@
 
 namespace Sabre\CardDAV;
 
-class TestUtil {
-
-    static function getBackend() {
-
+class TestUtil
+{
+    public static function getBackend()
+    {
         $backend = new Backend\PDO(self::getSQLiteDB());
         return $backend;
-
     }
 
-    static function getSQLiteDB() {
-
+    public static function getSQLiteDB()
+    {
         $pdo = Backend\PDOSqliteTest::getSQLite();
 
         // Inserting events through a backend class.
@@ -35,16 +34,16 @@ class TestUtil {
         );
         $backend->createCard($addressbookId, 'UUID-2345', self::getTestCardData());
         return $pdo;
-
     }
 
-    static function deleteSQLiteDB() {
+    public static function deleteSQLiteDB()
+    {
         $sqliteTest = new Backend\PDOSqliteTest();
         $pdo = $sqliteTest->tearDown();
     }
 
-    static function getTestCardData() {
-
+    public static function getTestCardData()
+    {
         $addressbookData = 'BEGIN:VCARD
 VERSION:3.0
 PRODID:-//Acme Inc.//RoadRunner 1.0//EN
@@ -56,7 +55,5 @@ REV:2012-06-20T07:00:39+00:00
 END:VCARD';
 
         return $addressbookData;
-
     }
-
 }

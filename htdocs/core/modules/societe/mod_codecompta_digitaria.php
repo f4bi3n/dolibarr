@@ -58,31 +58,39 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
     public $position = 30;
 
 
-	/**
-	 * 	Constructor
-	 */
-	public function __construct()
-	{
+    /**
+     * 	Constructor
+     */
+    public function __construct()
+    {
         global $conf, $langs;
-        if (!isset($conf->global->COMPANY_DIGITARIA_MASK_CUSTOMER) || trim($conf->global->COMPANY_DIGITARIA_MASK_CUSTOMER) == '') $conf->global->COMPANY_DIGITARIA_MASK_CUSTOMER = '411';
-        if (!isset($conf->global->COMPANY_DIGITARIA_MASK_SUPPLIER) || trim($conf->global->COMPANY_DIGITARIA_MASK_SUPPLIER) == '') $conf->global->COMPANY_DIGITARIA_MASK_SUPPLIER = '401';
+        if (!isset($conf->global->COMPANY_DIGITARIA_MASK_CUSTOMER) || trim($conf->global->COMPANY_DIGITARIA_MASK_CUSTOMER) == '') {
+            $conf->global->COMPANY_DIGITARIA_MASK_CUSTOMER = '411';
+        }
+        if (!isset($conf->global->COMPANY_DIGITARIA_MASK_SUPPLIER) || trim($conf->global->COMPANY_DIGITARIA_MASK_SUPPLIER) == '') {
+            $conf->global->COMPANY_DIGITARIA_MASK_SUPPLIER = '401';
+        }
         $this->prefixcustomeraccountancycode = $conf->global->COMPANY_DIGITARIA_MASK_CUSTOMER;
         $this->prefixsupplieraccountancycode = $conf->global->COMPANY_DIGITARIA_MASK_SUPPLIER;
 
-        if (!isset($conf->global->COMPANY_DIGITARIA_MASK_NBCHARACTER_CUSTOMER) || trim($conf->global->COMPANY_DIGITARIA_MASK_NBCHARACTER_CUSTOMER) == '') $conf->global->COMPANY_DIGITARIA_MASK_NBCHARACTER_CUSTOMER = '5';
-        if (!isset($conf->global->COMPANY_DIGITARIA_MASK_NBCHARACTER_SUPPLIER) || trim($conf->global->COMPANY_DIGITARIA_MASK_NBCHARACTER_SUPPLIER) == '') $conf->global->COMPANY_DIGITARIA_MASK_NBCHARACTER_SUPPLIER = '5';
+        if (!isset($conf->global->COMPANY_DIGITARIA_MASK_NBCHARACTER_CUSTOMER) || trim($conf->global->COMPANY_DIGITARIA_MASK_NBCHARACTER_CUSTOMER) == '') {
+            $conf->global->COMPANY_DIGITARIA_MASK_NBCHARACTER_CUSTOMER = '5';
+        }
+        if (!isset($conf->global->COMPANY_DIGITARIA_MASK_NBCHARACTER_SUPPLIER) || trim($conf->global->COMPANY_DIGITARIA_MASK_NBCHARACTER_SUPPLIER) == '') {
+            $conf->global->COMPANY_DIGITARIA_MASK_NBCHARACTER_SUPPLIER = '5';
+        }
         $this->customeraccountancycodecharacternumber = $conf->global->COMPANY_DIGITARIA_MASK_NBCHARACTER_CUSTOMER;
         $this->supplieraccountancycodecharacternumber = $conf->global->COMPANY_DIGITARIA_MASK_NBCHARACTER_SUPPLIER;
-	}
+    }
 
-	/**
-	 * Return description of module
-	 *
-	 * @param	Translate	$langs	Object langs
-	 * @return 	string      		Description of module
-	 */
-	public function info($langs)
-	{
+    /**
+     * Return description of module
+     *
+     * @param	Translate	$langs	Object langs
+     * @return 	string      		Description of module
+     */
+    public function info($langs)
+    {
         global $conf, $form;
 
         $tooltip = '';
@@ -103,84 +111,88 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
         $texte .= $langs->trans("ModuleCompanyCodeSupplier".$this->name, $s1, $s3)."<br>\n";
         $texte .= "<br>\n";
         // Remove special char if COMPANY_DIGITARIA_REMOVE_SPECIAL is set to 1 or not set (default)
-        if (!isset($conf->global->COMPANY_DIGITARIA_REMOVE_SPECIAL) || !empty($conf->global->$conf->global->COMPANY_DIGITARIA_REMOVE_SPECIAL)) $texte .= $langs->trans('RemoveSpecialChars').' = '.yn(1)."<br>\n";
+        if (!isset($conf->global->COMPANY_DIGITARIA_REMOVE_SPECIAL) || !empty($conf->global->$conf->global->COMPANY_DIGITARIA_REMOVE_SPECIAL)) {
+            $texte .= $langs->trans('RemoveSpecialChars').' = '.yn(1)."<br>\n";
+        }
         // Apply a regex replacement pattern on code if COMPANY_DIGITARIA_CLEAN_REGEX is set. Value must be a regex with parenthesis. The part into parenthesis is kept, the rest removed.
-        if (!empty($conf->global->COMPANY_DIGITARIA_CLEAN_REGEX))  $texte .= $langs->trans('COMPANY_DIGITARIA_CLEAN_REGEX').' = '.$conf->global->COMPANY_DIGITARIA_CLEAN_REGEX."<br>\n";
+        if (!empty($conf->global->COMPANY_DIGITARIA_CLEAN_REGEX)) {
+            $texte .= $langs->trans('COMPANY_DIGITARIA_CLEAN_REGEX').' = '.$conf->global->COMPANY_DIGITARIA_CLEAN_REGEX."<br>\n";
+        }
         // Unique index on code if COMPANY_DIGITARIA_UNIQUE_CODE is set to 1 or not set (default)
-        if (!isset($conf->global->COMPANY_DIGITARIA_UNIQUE_CODE) || !empty($conf->global->COMPANY_DIGITARIA_UNIQUE_CODE)) $texte .= $langs->trans('COMPANY_DIGITARIA_UNIQUE_CODE').' = '.yn(1)."<br>\n";
+        if (!isset($conf->global->COMPANY_DIGITARIA_UNIQUE_CODE) || !empty($conf->global->COMPANY_DIGITARIA_UNIQUE_CODE)) {
+            $texte .= $langs->trans('COMPANY_DIGITARIA_UNIQUE_CODE').' = '.yn(1)."<br>\n";
+        }
         $texte .= '</td>';
         $texte .= '<td class="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
         $texte .= '</tr></table>';
         $texte .= '</form>';
 
         return $texte;
-	}
+    }
 
-	/**
-	 *  Return an example of result returned by getNextValue
-	 *
-	 *  @param	Translate	$langs		Object langs
-	 *  @param	Societe		$objsoc		Object thirdparty
-	 *  @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
-	 *  @return	string					Example
-	 */
-	public function getExample($langs, $objsoc = 0, $type = -1)
-	{
-	    global $conf, $mysoc;
+    /**
+     *  Return an example of result returned by getNextValue
+     *
+     *  @param	Translate	$langs		Object langs
+     *  @param	Societe		$objsoc		Object thirdparty
+     *  @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
+     *  @return	string					Example
+     */
+    public function getExample($langs, $objsoc = 0, $type = -1)
+    {
+        global $conf, $mysoc;
 
         $s = $langs->trans("ThirdPartyName").": ".$mysoc->name;
         $s .= "<br>\n";
 
-        if (!isset($conf->global->COMPANY_DIGITARIA_REMOVE_SPECIAL)) $thirdpartylabelexample = preg_replace('/([^a-z0-9])/i', '', $mysoc->name);
+        if (!isset($conf->global->COMPANY_DIGITARIA_REMOVE_SPECIAL)) {
+            $thirdpartylabelexample = preg_replace('/([^a-z0-9])/i', '', $mysoc->name);
+        }
         $s .= "<br>\n";
         $s .= $this->prefixcustomeraccountancycode.strtoupper(substr($thirdpartylabelexample, 0, $this->customeraccountancycodecharacternumber));
         $s .= "<br>\n";
         $s .= $this->prefixsupplieraccountancycode.strtoupper(substr($thirdpartylabelexample, 0, $this->supplieraccountancycodecharacternumber));
         return $s;
-	}
+    }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
-	 *  Set accountancy account code for a third party into this->code
-	 *
-	 *  @param	DoliDB	$db              Database handler
-	 *  @param  Societe	$societe         Third party object
-	 *  @param  int		$type			'customer' or 'supplier'
-	 *  @return	int						>=0 if OK, <0 if KO
-	 */
-	public function get_code($db, $societe, $type = '')
-	{
+     *  Set accountancy account code for a third party into this->code
+     *
+     *  @param	DoliDB	$db              Database handler
+     *  @param  Societe	$societe         Third party object
+     *  @param  int		$type			'customer' or 'supplier'
+     *  @return	int						>=0 if OK, <0 if KO
+     */
+    public function get_code($db, $societe, $type = '')
+    {
         // phpcs:enable
         global $conf;
         $i = 0;
         $this->code = '';
 
-		if (is_object($societe))
-		{
+        if (is_object($societe)) {
             dol_syslog("mod_codecompta_digitaria::get_code search code for type=".$type." & company=".(!empty($societe->name) ? $societe->name : ''));
 
-			if ($type == 'supplier') {
+            if ($type == 'supplier') {
                 $codetouse = $societe->name;
                 $prefix = $this->prefixsupplieraccountancycode;
                 $width = $this->supplieraccountancycodecharacternumber;
-			}
-			elseif ($type == 'customer')
-            {
+            } elseif ($type == 'customer') {
                 $codetouse = $societe->name;
                 $prefix = $this->prefixcustomeraccountancycode;
                 $width = $this->customeraccountancycodecharacternumber;
-            }
-            else
-            {
+            } else {
                 $this->error = 'Bad value for parameter type';
                 return -1;
             }
 
             // Remove special char if COMPANY_DIGITARIA_REMOVE_SPECIAL is set to 1 or not set (default)
-            if (!isset($conf->global->COMPANY_DIGITARIA_REMOVE_SPECIAL) || !empty($conf->global->COMPANY_DIGITARIA_REMOVE_SPECIAL)) $codetouse = preg_replace('/([^a-z0-9])/i', '', $codetouse);
+            if (!isset($conf->global->COMPANY_DIGITARIA_REMOVE_SPECIAL) || !empty($conf->global->COMPANY_DIGITARIA_REMOVE_SPECIAL)) {
+                $codetouse = preg_replace('/([^a-z0-9])/i', '', $codetouse);
+            }
             // Apply a regex replacement pattern on code if COMPANY_DIGITARIA_CLEAN_REGEX is set. Value must be a regex with parenthesis. The part into parenthesis is kept, the rest removed.
-            if (!empty($conf->global->COMPANY_DIGITARIA_CLEAN_REGEX))	// Example: $conf->global->COMPANY_DIGITARIA_CLEAN_REGEX='^..(..)..';
-            {
+            if (!empty($conf->global->COMPANY_DIGITARIA_CLEAN_REGEX)) {	// Example: $conf->global->COMPANY_DIGITARIA_CLEAN_REGEX='^..(..)..';
                 $codetouse = preg_replace('/'.$conf->global->COMPANY_DIGITARIA_CLEAN_REGEX.'/', '\1\2\3', $codetouse);
             }
 
@@ -188,8 +200,7 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
             dol_syslog("mod_codecompta_digitaria::get_code search code proposed=".$this->code);
 
             // Unique index on code if COMPANY_DIGITARIA_UNIQUE_CODE is set to 1 or not set (default)
-            if (!isset($conf->global->COMPANY_DIGITARIA_UNIQUE_CODE) || !empty($conf->global->COMPANY_DIGITARIA_UNIQUE_CODE))
-            {
+            if (!isset($conf->global->COMPANY_DIGITARIA_UNIQUE_CODE) || !empty($conf->global->COMPANY_DIGITARIA_UNIQUE_CODE)) {
                 $disponibility = $this->checkIfAccountancyCodeIsAlreadyUsed($db, $this->code, $type);
 
                 while ($disponibility <> 0 && $i < 100) {
@@ -215,17 +226,14 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
             } else {
                 $disponibility == 0;
             }
-		}
-
-        if ($disponibility == 0)
-        {
-            return 0; // return ok
         }
-        else
-        {
+
+        if ($disponibility == 0) {
+            return 0; // return ok
+        } else {
             return -1; // return ko
         }
-	}
+    }
 
     /**
      *  Check accountancy account code for a third party into this->code
@@ -237,16 +245,11 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
      */
     public function checkIfAccountancyCodeIsAlreadyUsed($db, $code, $type = '')
     {
-        if ($type == 'supplier')
-        {
+        if ($type == 'supplier') {
             $typethirdparty = 'code_compta_fournisseur';
-        }
-        elseif ($type == 'customer')
-        {
+        } elseif ($type == 'customer') {
             $typethirdparty = 'code_compta';
-        }
-        else
-        {
+        } else {
             $this->error = 'Bad value for parameter type';
             return -1;
         }
@@ -255,21 +258,15 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
         $sql .= " WHERE ".$typethirdparty." = '".$code."'";
 
         $resql = $db->query($sql);
-        if ($resql)
-        {
-            if ($db->num_rows($resql) == 0)
-            {
+        if ($resql) {
+            if ($db->num_rows($resql) == 0) {
                 dol_syslog("mod_codecompta_digitaria::checkIfAccountancyCodeIsAlreadyUsed '".$code."' available");
                 return 0; // Available
-            }
-            else
-            {
+            } else {
                 dol_syslog("mod_codecompta_digitaria::checkIfAccountancyCodeIsAlreadyUsed '".$code."' not available");
                 return -1; // Not available
             }
-        }
-        else
-        {
+        } else {
             $this->error = $db->error()." sql=".$sql;
             return -2; // Error
         }

@@ -12,8 +12,8 @@ use Psr\Log\AbstractLogger;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class MockLogger extends AbstractLogger {
-
+class MockLogger extends AbstractLogger
+{
     public $logs = [];
 
     /**
@@ -24,13 +24,12 @@ class MockLogger extends AbstractLogger {
      * @param array $context
      * @return null
      */
-    function log($level, $message, array $context = []) {
-
+    public function log($level, $message, array $context = [])
+    {
         $this->logs[] = [
             $level,
             $message,
             $context
         ];
-
     }
 }

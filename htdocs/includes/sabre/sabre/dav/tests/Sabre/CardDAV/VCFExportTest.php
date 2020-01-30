@@ -4,8 +4,8 @@ namespace Sabre\CardDAV;
 
 use Sabre\HTTP;
 
-class VCFExportTest extends \Sabre\DAVServerTest {
-
+class VCFExportTest extends \Sabre\DAVServerTest
+{
     protected $setupCardDAV = true;
     protected $autoLogin = 'user1';
     protected $setupACL = true;
@@ -26,18 +26,17 @@ class VCFExportTest extends \Sabre\DAVServerTest {
         ]
     ];
 
-    function setUp() {
-
+    public function setUp()
+    {
         parent::setUp();
         $plugin = new VCFExportPlugin();
         $this->server->addPlugin(
             $plugin
         );
-
     }
 
-    function testSimple() {
-
+    public function testSimple()
+    {
         $plugin = $this->server->getPlugin('vcf-export');
         $this->assertInstanceOf('Sabre\\CardDAV\\VCFExportPlugin', $plugin);
 
@@ -45,11 +44,10 @@ class VCFExportTest extends \Sabre\DAVServerTest {
             'vcf-export',
             $plugin->getPluginInfo()['name']
         );
-
     }
 
-    function testExport() {
-
+    public function testExport()
+    {
         $request = HTTP\Sapi::createFromServerArray([
             'REQUEST_URI'    => '/addressbooks/user1/book1?export',
             'QUERY_STRING'   => 'export',
@@ -76,21 +74,19 @@ END:VCARD
         $expected = str_replace("\n", "\r\n", $expected);
 
         $this->assertEquals($expected, $response->body);
-
     }
 
-    function testBrowserIntegration() {
-
+    public function testBrowserIntegration()
+    {
         $plugin = $this->server->getPlugin('vcf-export');
         $actions = '';
         $addressbook = new AddressBook($this->carddavBackend, []);
         $this->server->emit('browserButtonActions', ['/foo', $addressbook, &$actions]);
         $this->assertContains('/foo?export', $actions);
-
     }
 
-    function testContentDisposition() {
-
+    public function testContentDisposition()
+    {
         $request = new HTTP\Request(
             'GET',
             '/addressbooks/user1/book1?export'
@@ -102,11 +98,10 @@ END:VCARD
             'attachment; filename="book1-' . date('Y-m-d') . '.vcf"',
             $response->getHeader('Content-Disposition')
         );
-
     }
 
-    function testContentDispositionBadChars() {
-
+    public function testContentDispositionBadChars()
+    {
         $this->carddavBackend->createAddressBook(
             'principals/user1',
             'book-b_ad"(ch)ars',
@@ -129,7 +124,5 @@ END:VCARD
             'attachment; filename="book-b_adchars-' . date('Y-m-d') . '.vcf"',
             $response->getHeader('Content-Disposition')
         );
-
     }
-
 }

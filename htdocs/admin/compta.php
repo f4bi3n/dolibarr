@@ -32,8 +32,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'compta', 'accountancy'));
 
-if (!$user->admin)
-accessforbidden();
+if (!$user->admin) {
+    accessforbidden();
+}
 
 $action = GETPOST('action', 'alpha');
 
@@ -55,8 +56,7 @@ $list = array(
 
 $accounting_mode = empty($conf->global->ACCOUNTING_MODE) ? 'RECETTES-DEPENSES' : $conf->global->ACCOUNTING_MODE;
 
-if ($action == 'update')
-{
+if ($action == 'update') {
     $error = 0;
 
     $accounting_modes = array(
@@ -83,12 +83,9 @@ if ($action == 'update')
         }
     }
 
-    if (! $error)
-    {
+    if (! $error) {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
+    } else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
@@ -144,18 +141,17 @@ print '<td colspan="3">'.$langs->trans('OtherOptions').'</td>';
 print "</tr>\n";
 
 
-foreach ($list as $key)
-{
-	print '<tr class="oddeven value">';
+foreach ($list as $key) {
+    print '<tr class="oddeven value">';
 
-	// Param
-	$libelle = $langs->trans($key);
-	print '<td><label for="'.$key.'">'.$libelle.'</label></td>';
+    // Param
+    $libelle = $langs->trans($key);
+    print '<td><label for="'.$key.'">'.$libelle.'</label></td>';
 
-	// Value
-	print '<td>';
-	print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
-	print '</td></tr>';
+    // Value
+    print '<td>';
+    print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
+    print '</td></tr>';
 }
 
 print "</table>\n";

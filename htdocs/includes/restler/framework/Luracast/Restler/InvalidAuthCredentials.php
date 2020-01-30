@@ -18,5 +18,4 @@ namespace Luracast\Restler;
 
 class InvalidAuthCredentials extends RestException
 {
-
 }

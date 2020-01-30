@@ -5,7 +5,8 @@ namespace Sabre\VObject\Recur;
 use DateTime;
 use Sabre\VObject\Reader;
 
-class BySetPosHangTest extends \PHPUnit_Framework_TestCase {
+class BySetPosHangTest extends \PHPUnit_Framework_TestCase
+{
 
     /**
      * Using this iCalendar object, including BYSETPOS=-2 causes the iterator
@@ -13,8 +14,8 @@ class BySetPosHangTest extends \PHPUnit_Framework_TestCase {
      *
      * See: https://github.com/fruux/sabre-vobject/issues/212
      */
-    function testExpand() {
-
+    public function testExpand()
+    {
         $ics = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -56,5 +57,4 @@ ICS;
 
         $this->assertEquals($expectedDates, $dates);
     }
-
 }

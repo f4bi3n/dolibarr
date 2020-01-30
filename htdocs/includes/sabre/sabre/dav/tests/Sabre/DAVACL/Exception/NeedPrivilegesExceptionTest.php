@@ -4,10 +4,10 @@ namespace Sabre\DAVACL\Exception;
 
 use Sabre\DAV;
 
-class NeedPrivilegesExceptionTest extends \PHPUnit_Framework_TestCase {
-
-    function testSerialize() {
-
+class NeedPrivilegesExceptionTest extends \PHPUnit_Framework_TestCase
+{
+    public function testSerialize()
+    {
         $uri = 'foo';
         $privileges = [
             '{DAV:}read',
@@ -39,11 +39,7 @@ class NeedPrivilegesExceptionTest extends \PHPUnit_Framework_TestCase {
         $dxpath = new \DOMXPath($dom2);
         $dxpath->registerNamespace('d', 'DAV:');
         foreach ($xpaths as $xpath => $count) {
-
             $this->assertEquals($count, $dxpath->query($xpath)->length, 'Looking for : ' . $xpath . ', we could only find ' . $dxpath->query($xpath)->length . ' elements, while we expected ' . $count);
-
         }
-
     }
-
 }

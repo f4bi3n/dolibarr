@@ -457,7 +457,7 @@ function cleanObjectDatas($toclean)
     unset($toclean->oldcopy);
 
     // If object has lines, remove $db property
-    if (isset($toclean->lines) && count($toclean->lines) > 0)  {
+    if (isset($toclean->lines) && count($toclean->lines) > 0) {
         $nboflines = count($toclean->lines);
         for ($i=0; $i < $nboflines; $i++) {
             cleanObjectDatas($toclean->lines[$i]);

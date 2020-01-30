@@ -29,19 +29,19 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 class Link extends CommonObject
 {
     /**
-	 * @var string ID to identify managed object
-	 */
-	public $element = 'link';
+     * @var string ID to identify managed object
+     */
+    public $element = 'link';
 
     /**
-	 * @var string Name of table without prefix where object is stored
-	 */
-	public $table_element = 'links';
+     * @var string Name of table without prefix where object is stored
+     */
+    public $table_element = 'links';
 
     /**
-	 * @var int Entity
-	 */
-	public $entity;
+     * @var int Entity
+     */
+    public $entity;
 
     public $datea;
     public $url;
@@ -112,34 +112,28 @@ class Link extends CommonObject
             if ($this->id > 0) {
                 // Call trigger
                 $result = $this->call_trigger('LINK_CREATE', $user);
-                if ($result < 0) $error++;
+                if ($result < 0) {
+                    $error++;
+                }
                 // End call triggers
             } else {
                 $error++;
             }
 
-            if (!$error)
-            {
+            if (!$error) {
                 dol_syslog(get_class($this)."::Create success id=".$this->id);
                 $this->db->commit();
                 return $this->id;
-            }
-            else
-            {
+            } else {
                 dol_syslog(get_class($this)."::Create echec update ".$this->error, LOG_ERR);
                 $this->db->rollback();
                 return -3;
             }
-        }
-        else
-        {
-            if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
-            {
+        } else {
+            if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
                 $this->error = $langs->trans("ErrorCompanyNameAlreadyExists", $this->name);
                 $result = -1;
-            }
-            else
-            {
+            } else {
                 $this->error = $this->db->lasterror();
                 $result = -2;
             }
@@ -166,15 +160,16 @@ class Link extends CommonObject
         dol_syslog(get_class($this)."::Update id = ".$this->id." call_trigger = ".$call_trigger);
 
         // Check parameters
-        if (empty($this->url))
-        {
+        if (empty($this->url)) {
             $this->error = $langs->trans("NoURL");
             return -1;
         }
 
         // Clean parameters
         $this->url       = clean_url($this->url, 1);
-        if (empty($this->label)) $this->label = basename($this->url);
+        if (empty($this->label)) {
+            $this->label = basename($this->url);
+        }
         $this->label     = trim($this->label);
 
 
@@ -191,18 +186,17 @@ class Link extends CommonObject
 
         dol_syslog(get_class($this)."::update sql = ".$sql);
         $resql = $this->db->query($sql);
-        if ($resql)
-        {
-            if ($call_trigger)
-            {
+        if ($resql) {
+            if ($call_trigger) {
                 // Call trigger
                 $result = $this->call_trigger('LINK_MODIFY', $user);
-                if ($result < 0) $error++;
+                if ($result < 0) {
+                    $error++;
+                }
                 // End call triggers
             }
 
-            if (!$error)
-            {
+            if (!$error) {
                 dol_syslog(get_class($this)."::Update success");
                 $this->db->commit();
                 return 1;
@@ -211,17 +205,12 @@ class Link extends CommonObject
                 $this->db->rollback();
                 return -1;
             }
-        }
-        else
-        {
-            if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
-            {
+        } else {
+            if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
                 // Doublon
                 $this->error = $langs->trans("ErrorDuplicateField");
                 $result = -1;
-            }
-            else
-            {
+            } else {
                 $this->error = $langs->trans("Error sql = ".$sql);
                 $result = -2;
             }
@@ -246,7 +235,9 @@ class Link extends CommonObject
 
         $sql = "SELECT rowid, entity, datea, url, label, objecttype, objectid FROM ".MAIN_DB_PREFIX."links";
         $sql .= " WHERE objecttype = '".$objecttype."' AND objectid = ".$objectid;
-        if ($conf->entity != 0) $sql .= " AND entity = ".$conf->entity;
+        if ($conf->entity != 0) {
+            $sql .= " AND entity = ".$conf->entity;
+        }
         if ($sortfield) {
             if (empty($sortorder)) {
                 $sortorder = "ASC";
@@ -256,14 +247,11 @@ class Link extends CommonObject
 
         dol_syslog(get_class($this)."::fetchAll", LOG_DEBUG);
         $resql = $this->db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             $num = $this->db->num_rows($resql);
             dol_syslog(get_class($this)."::fetchAll ".$num."records", LOG_DEBUG);
-            if ($num > 0)
-            {
-                while ($obj = $this->db->fetch_object($resql))
-                {
+            if ($num > 0) {
+                while ($obj = $this->db->fetch_object($resql)) {
                     $link = new Link($this->db);
                     $link->id = $obj->rowid;
                     $link->entity = $obj->entity;
@@ -297,13 +285,16 @@ class Link extends CommonObject
 
         $sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."links";
         $sql .= " WHERE objecttype = '".$objecttype."' AND objectid = ".$objectid;
-        if ($conf->entity != 0) $sql .= " AND entity = ".$conf->entity;
+        if ($conf->entity != 0) {
+            $sql .= " AND entity = ".$conf->entity;
+        }
 
         $resql = $db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             $obj = $db->fetch_object($resql);
-            if ($obj) return $obj->nb;
+            if ($obj) {
+                return $obj->nb;
+            }
         }
         return -1;
     }
@@ -324,14 +315,14 @@ class Link extends CommonObject
 
         $sql = "SELECT rowid, entity, datea, url, label, objecttype, objectid FROM ".MAIN_DB_PREFIX."links";
         $sql .= " WHERE rowid = ".$rowid;
-        if ($conf->entity != 0) $sql .= " AND entity = ".$conf->entity;
+        if ($conf->entity != 0) {
+            $sql .= " AND entity = ".$conf->entity;
+        }
 
         dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql = $this->db->query($sql);
-        if ($resql)
-        {
-            if ($this->db->num_rows($resql) > 0)
-            {
+        if ($resql) {
+            if ($this->db->num_rows($resql) > 0) {
                 $obj = $this->db->fetch_object($resql);
 
                 $this->id = $obj->rowid;
@@ -342,9 +333,7 @@ class Link extends CommonObject
                 $this->objecttype = $obj->objecttype;
                 $this->objectid = $obj->objectid;
                 return 1;
-            }
-            else
-			{
+            } else {
                 return 0;
             }
         } else {
@@ -368,10 +357,9 @@ class Link extends CommonObject
 
         // Call trigger
         $result = $this->call_trigger('LINK_DELETE', $user);
-        if ($result < 0)
-        {
-        	$this->db->rollback();
-        	return -1;
+        if ($result < 0) {
+            $this->db->rollback();
+            return -1;
         }
         // End call triggers
 
@@ -380,8 +368,7 @@ class Link extends CommonObject
         $sql .= " WHERE rowid = ".$this->id;
 
         dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-        if (!$this->db->query($sql))
-        {
+        if (!$this->db->query($sql)) {
             $error++;
             $this->error = $this->db->lasterror();
         }

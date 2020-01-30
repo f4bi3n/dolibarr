@@ -22,7 +22,8 @@ use Sabre\HTTP;
  * @author Evert Pot (http://www.rooftopsolutions.nl/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class LocalHref extends Href {
+class LocalHref extends Href
+{
 
     /**
      * Constructor
@@ -34,15 +35,13 @@ class LocalHref extends Href {
      *
      * @param string|string[] $hrefs
      */
-    function __construct($hrefs) {
-
+    public function __construct($hrefs)
+    {
         parent::__construct(array_map(
-            function($href) {
+            function ($href) {
                 return \Sabre\HTTP\encodePath($href);
             },
             (array)$hrefs
         ));
-
     }
-
 }

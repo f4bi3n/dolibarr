@@ -4,18 +4,17 @@ namespace Sabre\DAV;
 
 use Sabre\HTTP;
 
-class TemporaryFileFilterTest extends AbstractServer {
-
-    function setUp() {
-
+class TemporaryFileFilterTest extends AbstractServer
+{
+    public function setUp()
+    {
         parent::setUp();
         $plugin = new TemporaryFileFilterPlugin(SABRE_TEMPDIR . '/tff');
         $this->server->addPlugin($plugin);
-
     }
 
-    function testPutNormal() {
-
+    public function testPutNormal()
+    {
         $request = new HTTP\Request('PUT', '/testput.txt', [], 'Testing new file');
 
         $this->server->httpRequest = ($request);
@@ -26,10 +25,10 @@ class TemporaryFileFilterTest extends AbstractServer {
         $this->assertEquals('0', $this->response->getHeader('Content-Length'));
 
         $this->assertEquals('Testing new file', file_get_contents(SABRE_TEMPDIR . '/testput.txt'));
-
     }
 
-    function testPutTemp() {
+    public function testPutTemp()
+    {
 
         // mimicking an OS/X resource fork
         $request = new HTTP\Request('PUT', '/._testput.txt', [], 'Testing new file');
@@ -44,10 +43,10 @@ class TemporaryFileFilterTest extends AbstractServer {
         ], $this->response->getHeaders());
 
         $this->assertFalse(file_exists(SABRE_TEMPDIR . '/._testput.txt'), '._testput.txt should not exist in the regular file structure.');
-
     }
 
-    function testPutTempIfNoneMatch() {
+    public function testPutTempIfNoneMatch()
+    {
 
         // mimicking an OS/X resource fork
         $request = new HTTP\Request('PUT', '/._testput.txt', ['If-None-Match' => '*'], 'Testing new file');
@@ -71,10 +70,10 @@ class TemporaryFileFilterTest extends AbstractServer {
             'X-Sabre-Temp' => ['true'],
             'Content-Type' => ['application/xml; charset=utf-8'],
         ], $this->response->getHeaders());
-
     }
 
-    function testPutGet() {
+    public function testPutGet()
+    {
 
         // mimicking an OS/X resource fork
         $request = new HTTP\Request('PUT', '/._testput.txt', [], 'Testing new file');
@@ -100,11 +99,10 @@ class TemporaryFileFilterTest extends AbstractServer {
         ], $this->response->getHeaders());
 
         $this->assertEquals('Testing new file', stream_get_contents($this->response->body));
-
     }
 
-    function testLockNonExistant() {
-
+    public function testLockNonExistant()
+    {
         mkdir(SABRE_TEMPDIR . '/locksdir');
         $locksBackend = new Locks\Backend\File(SABRE_TEMPDIR . '/locks');
         $locksPlugin = new Locks\Plugin($locksBackend);
@@ -130,10 +128,10 @@ class TemporaryFileFilterTest extends AbstractServer {
         $this->assertEquals('true', $this->response->getHeader('X-Sabre-Temp'));
 
         $this->assertFalse(file_exists(SABRE_TEMPDIR . '/._testlock.txt'), '._testlock.txt should not exist in the regular file structure.');
-
     }
 
-    function testPutDelete() {
+    public function testPutDelete()
+    {
 
         // mimicking an OS/X resource fork
         $request = new HTTP\Request('PUT', '/._testput.txt', [], 'Testing new file');
@@ -157,10 +155,10 @@ class TemporaryFileFilterTest extends AbstractServer {
         ], $this->response->getHeaders());
 
         $this->assertEquals('', $this->response->body);
-
     }
 
-    function testPutPropfind() {
+    public function testPutPropfind()
+    {
 
         // mimicking an OS/X resource fork
         $request = new HTTP\Request('PUT', '/._testput.txt', [], 'Testing new file');
@@ -193,7 +191,5 @@ class TemporaryFileFilterTest extends AbstractServer {
 
         $data = $xml->xpath('/d:multistatus/d:response/d:propstat/d:prop/d:resourcetype');
         $this->assertEquals(1, count($data));
-
     }
-
 }

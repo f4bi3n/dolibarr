@@ -5,8 +5,8 @@ namespace Sabre\DAV\PropertyStorage\Backend;
 use Sabre\DAV\PropFind;
 use Sabre\DAV\PropPatch;
 
-class Mock implements BackendInterface {
-
+class Mock implements BackendInterface
+{
     public $data = [];
 
     /**
@@ -23,8 +23,8 @@ class Mock implements BackendInterface {
      * @param PropFind $propFind
      * @return void
      */
-    function propFind($path, PropFind $propFind) {
-
+    public function propFind($path, PropFind $propFind)
+    {
         if (!isset($this->data[$path])) {
             return;
         }
@@ -32,7 +32,6 @@ class Mock implements BackendInterface {
         foreach ($this->data[$path] as $name => $value) {
             $propFind->set($name, $value);
         }
-
     }
 
     /**
@@ -48,26 +47,21 @@ class Mock implements BackendInterface {
      * @param PropPatch $propPatch
      * @return void
      */
-    function propPatch($path, PropPatch $propPatch) {
-
+    public function propPatch($path, PropPatch $propPatch)
+    {
         if (!isset($this->data[$path])) {
             $this->data[$path] = [];
         }
-        $propPatch->handleRemaining(function($properties) use ($path) {
-
+        $propPatch->handleRemaining(function ($properties) use ($path) {
             foreach ($properties as $propName => $propValue) {
-
                 if (is_null($propValue)) {
                     unset($this->data[$path][$propName]);
                 } else {
                     $this->data[$path][$propName] = $propValue;
                 }
                 return true;
-
             }
-
         });
-
     }
 
     /**
@@ -78,10 +72,9 @@ class Mock implements BackendInterface {
      * @param string $path
      * @return void
      */
-    function delete($path) {
-
+    public function delete($path)
+    {
         unset($this->data[$path]);
-
     }
 
     /**
@@ -95,10 +88,9 @@ class Mock implements BackendInterface {
      * @param string $destination
      * @return void
      */
-    function move($source, $destination) {
-
+    public function move($source, $destination)
+    {
         foreach ($this->data as $path => $props) {
-
             if ($path === $source) {
                 $this->data[$destination] = $props;
                 unset($this->data[$path]);
@@ -109,9 +101,6 @@ class Mock implements BackendInterface {
                 $this->data[$destination . substr($path, strlen($source) + 1)] = $props;
                 unset($this->data[$path]);
             }
-
         }
-
     }
-
 }

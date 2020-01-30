@@ -16,6 +16,6 @@ use Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface ICalendarObject extends DAV\IFile {
-
+interface ICalendarObject extends DAV\IFile
+{
 }

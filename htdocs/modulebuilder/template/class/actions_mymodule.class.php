@@ -99,8 +99,7 @@ class ActionsMyModule
         $error = 0; // Error counter
 
         /* print_r($parameters); print_r($object); echo "action: " . $action; */
-        if (in_array($parameters['currentcontext'], array('somecontext1','somecontext2')))	    // do something only for the context 'somecontext1' or 'somecontext2'
-        {
+        if (in_array($parameters['currentcontext'], array('somecontext1','somecontext2'))) {	    // do something only for the context 'somecontext1' or 'somecontext2'
             // Do what you want here...
             // You can for example call global vars like $fieldstosearchall to overwrite them, or update database depending on $action and $_POST values.
         }
@@ -132,10 +131,8 @@ class ActionsMyModule
         $error = 0; // Error counter
 
         /* print_r($parameters); print_r($object); echo "action: " . $action; */
-        if (in_array($parameters['currentcontext'], array('somecontext1','somecontext2')))		// do something only for the context 'somecontext1' or 'somecontext2'
-        {
-            foreach($parameters['toselect'] as $objectid)
-            {
+        if (in_array($parameters['currentcontext'], array('somecontext1','somecontext2'))) {		// do something only for the context 'somecontext1' or 'somecontext2'
+            foreach ($parameters['toselect'] as $objectid) {
                 // Do action on each object id
             }
         }
@@ -167,8 +164,7 @@ class ActionsMyModule
         $error = 0; // Error counter
 
         /* print_r($parameters); print_r($object); echo "action: " . $action; */
-        if (in_array($parameters['currentcontext'], array('somecontext1','somecontext2')))		// do something only for the context 'somecontext1' or 'somecontext2'
-        {
+        if (in_array($parameters['currentcontext'], array('somecontext1','somecontext2'))) {		// do something only for the context 'somecontext1' or 'somecontext2'
             $this->resprints = '<option value="0"'.($disabled?' disabled="disabled"':'').'>'.$langs->trans("MyModuleMassAction").'</option>';
         }
 
@@ -199,12 +195,13 @@ class ActionsMyModule
 
         $outputlangs=$langs;
 
-        $ret=0; $deltemp=array();
+        $ret=0;
+        $deltemp=array();
         dol_syslog(get_class($this).'::executeHooks action='.$action);
 
         /* print_r($parameters); print_r($object); echo "action: " . $action; */
-        if (in_array($parameters['currentcontext'], array('somecontext1','somecontext2')))		// do something only for the context 'somecontext1' or 'somecontext2'
-        {
+        if (in_array($parameters['currentcontext'], array('somecontext1','somecontext2'))) {		// do something only for the context 'somecontext1' or 'somecontext2'
+        
         }
 
         return $ret;
@@ -227,12 +224,13 @@ class ActionsMyModule
 
         $outputlangs=$langs;
 
-        $ret=0; $deltemp=array();
+        $ret=0;
+        $deltemp=array();
         dol_syslog(get_class($this).'::executeHooks action='.$action);
 
         /* print_r($parameters); print_r($object); echo "action: " . $action; */
-        if (in_array($parameters['currentcontext'], array('somecontext1','somecontext2')))		// do something only for the context 'somecontext1' or 'somecontext2'
-        {
+        if (in_array($parameters['currentcontext'], array('somecontext1','somecontext2'))) {		// do something only for the context 'somecontext1' or 'somecontext2'
+        
         }
 
         return $ret;

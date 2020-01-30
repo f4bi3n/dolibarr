@@ -16,7 +16,8 @@ use Sabre\DAVACL;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class User extends DAVACL\Principal implements DAV\ICollection {
+class User extends DAVACL\Principal implements DAV\ICollection
+{
 
     /**
      * Creates a new file in the directory
@@ -26,10 +27,9 @@ class User extends DAVACL\Principal implements DAV\ICollection {
      * @throws DAV\Exception\Forbidden
      * @return void
      */
-    function createFile($name, $data = null) {
-
+    public function createFile($name, $data = null)
+    {
         throw new DAV\Exception\Forbidden('Permission denied to create file (filename ' . $name . ')');
-
     }
 
     /**
@@ -39,10 +39,9 @@ class User extends DAVACL\Principal implements DAV\ICollection {
      * @throws DAV\Exception\Forbidden
      * @return void
      */
-    function createDirectory($name) {
-
+    public function createDirectory($name)
+    {
         throw new DAV\Exception\Forbidden('Permission denied to create directory');
-
     }
 
     /**
@@ -51,20 +50,21 @@ class User extends DAVACL\Principal implements DAV\ICollection {
      * @param string $name
      * @return DAV\INode
      */
-    function getChild($name) {
-
+    public function getChild($name)
+    {
         $principal = $this->principalBackend->getPrincipalByPath($this->getPrincipalURL() . '/' . $name);
         if (!$principal) {
             throw new DAV\Exception\NotFound('Node with name ' . $name . ' was not found');
         }
-        if ($name === 'calendar-proxy-read')
+        if ($name === 'calendar-proxy-read') {
             return new ProxyRead($this->principalBackend, $this->principalProperties);
+        }
 
-        if ($name === 'calendar-proxy-write')
+        if ($name === 'calendar-proxy-write') {
             return new ProxyWrite($this->principalBackend, $this->principalProperties);
+        }
 
         throw new DAV\Exception\NotFound('Node with name ' . $name . ' was not found');
-
     }
 
     /**
@@ -72,8 +72,8 @@ class User extends DAVACL\Principal implements DAV\ICollection {
      *
      * @return DAV\INode[]
      */
-    function getChildren() {
-
+    public function getChildren()
+    {
         $r = [];
         if ($this->principalBackend->getPrincipalByPath($this->getPrincipalURL() . '/calendar-proxy-read')) {
             $r[] = new ProxyRead($this->principalBackend, $this->principalProperties);
@@ -83,7 +83,6 @@ class User extends DAVACL\Principal implements DAV\ICollection {
         }
 
         return $r;
-
     }
 
     /**
@@ -92,15 +91,14 @@ class User extends DAVACL\Principal implements DAV\ICollection {
      * @param string $name
      * @return bool
      */
-    function childExists($name) {
-
+    public function childExists($name)
+    {
         try {
             $this->getChild($name);
             return true;
         } catch (DAV\Exception\NotFound $e) {
             return false;
         }
-
     }
 
     /**
@@ -115,8 +113,8 @@ class User extends DAVACL\Principal implements DAV\ICollection {
      *
      * @return array
      */
-    function getACL() {
-
+    public function getACL()
+    {
         $acl = parent::getACL();
         $acl[] = [
             'privilege' => '{DAV:}read',
@@ -129,7 +127,5 @@ class User extends DAVACL\Principal implements DAV\ICollection {
             'protected' => true,
         ];
         return $acl;
-
     }
-
 }

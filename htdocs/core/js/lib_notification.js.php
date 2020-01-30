@@ -18,19 +18,32 @@
  * Library javascript to enable Browser notifications
  */
 
-if (!defined('NOREQUIREUSER')) define('NOREQUIREUSER', '1');
-if (!defined('NOREQUIRESOC')) define('NOREQUIRESOC', '1');
-if (!defined('NOCSRFCHECK')) define('NOCSRFCHECK', 1);
-if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1);
-if (!defined('NOLOGIN')) define('NOLOGIN', 1);
-if (!defined('NOREQUIREMENU')) define('NOREQUIREMENU', 1);
-if (!defined('NOREQUIREHTML')) define('NOREQUIREHTML', 1);
+if (!defined('NOREQUIREUSER')) {
+    define('NOREQUIREUSER', '1');
+}
+if (!defined('NOREQUIRESOC')) {
+    define('NOREQUIRESOC', '1');
+}
+if (!defined('NOCSRFCHECK')) {
+    define('NOCSRFCHECK', 1);
+}
+if (!defined('NOTOKENRENEWAL')) {
+    define('NOTOKENRENEWAL', 1);
+}
+if (!defined('NOLOGIN')) {
+    define('NOLOGIN', 1);
+}
+if (!defined('NOREQUIREMENU')) {
+    define('NOREQUIREMENU', 1);
+}
+if (!defined('NOREQUIREHTML')) {
+    define('NOREQUIREHTML', 1);
+}
 
 require_once '../../main.inc.php';
 
 if (! ($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root . '/' || $_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root . '/index.php'
-    || preg_match('/getmenu_div\.php/', $_SERVER['HTTP_REFERER'])))
-{
+    || preg_match('/getmenu_div\.php/', $_SERVER['HTTP_REFERER']))) {
     global $langs, $conf;
 
     top_httphead('text/javascript; charset=UTF-8');
@@ -44,8 +57,7 @@ if (! ($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root . '/' || $_SERVER['H
     header('Cache-Control: no-cache');
     session_set_cookie_params(0, '/', null, false, true);   // Add tag httponly on session cookie
     session_start();*/
-    if (! isset($_SESSION['auto_check_events_not_before']))
-    {
+    if (! isset($_SESSION['auto_check_events_not_before'])) {
         print 'console.log("_SESSION[auto_check_events_not_before] is not set");'."\n";
         // Round to eliminate the seconds
         $_SESSION['auto_check_events_not_before'] = $nowtime;
@@ -54,8 +66,7 @@ if (! ($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root . '/' || $_SERVER['H
     print 'var login = \'' . $_SESSION['dol_login'] . '\';' . "\n";
     print 'var auto_check_events_not_before = '.$_SESSION['auto_check_events_not_before']. ';'."\n";
     print 'var time_js_next_test = Math.max(nowtime, auto_check_events_not_before);'."\n";
-    print 'var time_auto_update = '.$conf->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY.';'."\n";   // Always defined
-    ?>
+    print 'var time_auto_update = '.$conf->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY.';'."\n";   // Always defined ?>
 
 	/* Check if permission ok */
 	if (Notification.permission !== "granted") {
@@ -92,8 +103,7 @@ if (! ($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root . '/' || $_SERVER['H
                         <?php
                         if (! empty($conf->global->AGENDA_REMINDER_BROWSER_SOUND)) {
                             print 'audio = new Audio(\''.DOL_URL_ROOT.'/theme/common/sound/notification_agenda.wav'.'\');';
-                        }
-                        ?>
+                        } ?>
 
                         $.each(arr, function (index, value) {
                             var url="notdefined";

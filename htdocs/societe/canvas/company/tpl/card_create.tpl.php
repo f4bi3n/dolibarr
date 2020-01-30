@@ -17,10 +17,9 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
-{
-	print "Error, template page can't be called as URL";
-	exit;
+if (empty($conf) || ! is_object($conf)) {
+    print "Error, template page can't be called as URL";
+    exit;
 }
 
 ?>
@@ -43,7 +42,9 @@ if (empty($conf) || ! is_object($conf))
 	<?php echo $this->control->tpl['ajax_selectcountry']; ?>
 <?php } ?>
 
-<?php if ($this->control->tpl['js_checkVatPopup']) echo $this->control->tpl['js_checkVatPopup']; ?>
+<?php if ($this->control->tpl['js_checkVatPopup']) {
+    echo $this->control->tpl['js_checkVatPopup'];
+} ?>
 
 <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="POST" name="formsoc">
 
@@ -154,17 +155,25 @@ if (! empty($conf->barcode->enabled)) { ?>
 
 <?php
 for ($i=1; $i<=4; $i++) {
-	if ($this->control->tpl['langprofid'.$i]!='-') {
-		if ($i==1 || $i==3) echo '<tr>';
-		echo '<td>'.$this->control->tpl['langprofid'.$i].'</td>';
-		echo '<td>'.$this->control->tpl['showprofid'.$i].'</td>';
-		if ($i==2 || $i==4) echo '</tr>';
-	} else {
-		if ($i==1 || $i==3) echo '<tr>';
-		echo '<td>&nbsp;</td>';
-		echo '<td>&nbsp;</td>';
-		if ($i==2 || $i==4) echo '</tr>';
-	}
+    if ($this->control->tpl['langprofid'.$i]!='-') {
+        if ($i==1 || $i==3) {
+            echo '<tr>';
+        }
+        echo '<td>'.$this->control->tpl['langprofid'.$i].'</td>';
+        echo '<td>'.$this->control->tpl['showprofid'.$i].'</td>';
+        if ($i==2 || $i==4) {
+            echo '</tr>';
+        }
+    } else {
+        if ($i==1 || $i==3) {
+            echo '<tr>';
+        }
+        echo '<td>&nbsp;</td>';
+        echo '<td>&nbsp;</td>';
+        if ($i==2 || $i==4) {
+            echo '</tr>';
+        }
+    }
 }
 ?>
 
@@ -194,7 +203,9 @@ for ($i=1; $i<=4; $i++) {
 	<td class="nowrap"><?php echo $this->control->tpl['tva_intra']; ?></td>
 </tr>
 
-<?php if(!empty($this->control->tpl['localtax'])) echo $this->control->tpl['localtax']; ?>
+<?php if (!empty($this->control->tpl['localtax'])) {
+    echo $this->control->tpl['localtax'];
+} ?>
 
 <?php if ($user->rights->societe->client->voir) { ?>
 <tr>

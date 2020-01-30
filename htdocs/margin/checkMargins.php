@@ -44,12 +44,18 @@ $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
 $page = GETPOST('page', 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+    $page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortorder) $sortorder = "DESC";
-if (!$sortfield) $sortfield = 'f.ref';
+if (!$sortorder) {
+    $sortorder = "DESC";
+}
+if (!$sortfield) {
+    $sortfield = 'f.ref';
+}
 
 $startdate = $enddate = '';
 
@@ -73,15 +79,21 @@ if (GETPOST("button_search_x") || GETPOST("button_search")) {
  * Actions
  */
 
-if (GETPOST('cancel', 'alpha')) { $action = 'list'; $massaction = ''; }
-if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction = ''; }
+if (GETPOST('cancel', 'alpha')) {
+    $action = 'list';
+    $massaction = '';
+}
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
+    $massaction = '';
+}
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+    setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
-if (empty($reshook))
-{
+if (empty($reshook)) {
     // Selection of new fields
     include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
@@ -108,8 +120,7 @@ if (empty($reshook))
     }
 
     // Purge search criteria
-    if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
-    {
+    if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
         $search_ref = '';
         $search_array_options = array();
     }
@@ -146,12 +157,24 @@ llxHeader('', $title);
 // print load_fiche_titre($text);
 
 $param = '';
-if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
-if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
-if ($search_ref != '')   $param .= '&search_ref='.urlencode($search_ref);
-if (!empty($startdate)) $param .= '&startdatemonth='.GETPOST('startdatemonth', 'int').'&startdateday='.GETPOST('startdateday', 'int').'&startdateyear='.GETPOST('startdateyear', 'int');
-if (!empty($enddate))   $param .= '&enddatemonth='.GETPOST('enddatemonth', 'int').'&enddateday='.GETPOST('enddateday', 'int').'&enddateyear='.GETPOST('enddateyear', 'int');
-if ($optioncss != '')    $param .= '&optioncss='.$optioncss;
+if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+    $param .= '&contextpage='.$contextpage;
+}
+if ($limit > 0 && $limit != $conf->liste_limit) {
+    $param .= '&limit='.$limit;
+}
+if ($search_ref != '') {
+    $param .= '&search_ref='.urlencode($search_ref);
+}
+if (!empty($startdate)) {
+    $param .= '&startdatemonth='.GETPOST('startdatemonth', 'int').'&startdateday='.GETPOST('startdateday', 'int').'&startdateyear='.GETPOST('startdateyear', 'int');
+}
+if (!empty($enddate)) {
+    $param .= '&enddatemonth='.GETPOST('enddatemonth', 'int').'&enddateday='.GETPOST('enddateday', 'int').'&enddateyear='.GETPOST('enddateyear', 'int');
+}
+if ($optioncss != '') {
+    $param .= '&optioncss='.$optioncss;
+}
 
 // Show tabs
 $head = marges_prepare_head($user);
@@ -193,123 +216,128 @@ $sql .= " INNER JOIN ".MAIN_DB_PREFIX."facturedet as d  ON d.fk_facture = f.rowi
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON d.fk_product = p.rowid";
 $sql .= " WHERE f.fk_statut NOT IN (".implode(', ', $invoice_status_except_list).")";
 $sql .= " AND f.entity IN (".getEntity('invoice').") ";
-if (!empty($startdate)) $sql .= " AND f.datef >= '".$db->idate($startdate)."'";
-if (!empty($enddate))   $sql .= " AND f.datef <= '".$db->idate($enddate)."'";
-if ($search_ref) $sql .= natural_search('f.ref', $search_ref);
+if (!empty($startdate)) {
+    $sql .= " AND f.datef >= '".$db->idate($startdate)."'";
+}
+if (!empty($enddate)) {
+    $sql .= " AND f.datef <= '".$db->idate($enddate)."'";
+}
+if ($search_ref) {
+    $sql .= natural_search('f.ref', $search_ref);
+}
 $sql .= " AND d.buy_price_ht IS NOT NULL";
 $sql .= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	dol_syslog(__FILE__, LOG_DEBUG);
-	$result = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
-	{
-		$page = 0;
-		$offset = 0;
-	}
+    dol_syslog(__FILE__, LOG_DEBUG);
+    $result = $db->query($sql);
+    $nbtotalofrecords = $db->num_rows($result);
+    if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+        $page = 0;
+        $offset = 0;
+    }
 }
 
 $sql .= $db->plimit($limit + 1, $offset);
 
 $result = $db->query($sql);
 if ($result) {
-	$num = $db->num_rows($result);
+    $num = $db->num_rows($result);
 
-	print '<br>';
-	print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', 0, '', '', $limit);
+    print '<br>';
+    print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', 0, '', '', $limit);
 
-	if ($conf->global->MARGIN_TYPE == "1")
-	    $labelcostprice = 'BuyingPrice';
-	else   // value is 'costprice' or 'pmp'
-	    $labelcostprice = 'CostPrice';
+    if ($conf->global->MARGIN_TYPE == "1") {
+        $labelcostprice = 'BuyingPrice';
+    } else {   // value is 'costprice' or 'pmp'
+        $labelcostprice = 'CostPrice';
+    }
 
-	$moreforfilter = '';
+    $moreforfilter = '';
 
-	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-	//$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
-	//if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
-	$selectedfields = '';
+    $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+    //$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+    //if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
+    $selectedfields = '';
 
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
-	print '<tr class="liste_titre liste_titre_search">';
-	print '<td><input type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
-	print '<td></td>';
-	print '<td></td>';
-	print '<td></td>';
-	print '<td></td>';
-	print '<td></td>';
+    print '<tr class="liste_titre liste_titre_search">';
+    print '<td><input type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
+    print '<td></td>';
+    print '<td></td>';
+    print '<td></td>';
+    print '<td></td>';
+    print '<td></td>';
     print '<td class="liste_titre" align="middle">';
     $searchpitco = $form->showFilterButtons();
     print $searchpitco;
     print '</td>';
-	print "</tr>\n";
+    print "</tr>\n";
 
-	print '<tr class="liste_titre">';
-	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "f.ref", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "", "", $param, 'width=20%', $sortfield, $sortorder);
-	print_liste_field_titre("UnitPriceHT", $_SERVER["PHP_SELF"], "d.subprice", "", $param, 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre($labelcostprice, $_SERVER["PHP_SELF"], "d.buy_price_ht", "", $param, 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre("Qty", $_SERVER["PHP_SELF"], "d.qty", "", $param, 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre("AmountTTC", $_SERVER["PHP_SELF"], "d.total_ht", "", $param, 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
-	print "</tr>\n";
+    print '<tr class="liste_titre">';
+    print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "f.ref", "", $param, '', $sortfield, $sortorder);
+    print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "", "", $param, 'width=20%', $sortfield, $sortorder);
+    print_liste_field_titre("UnitPriceHT", $_SERVER["PHP_SELF"], "d.subprice", "", $param, 'align="right"', $sortfield, $sortorder);
+    print_liste_field_titre($labelcostprice, $_SERVER["PHP_SELF"], "d.buy_price_ht", "", $param, 'align="right"', $sortfield, $sortorder);
+    print_liste_field_titre("Qty", $_SERVER["PHP_SELF"], "d.qty", "", $param, 'align="right"', $sortfield, $sortorder);
+    print_liste_field_titre("AmountTTC", $_SERVER["PHP_SELF"], "d.total_ht", "", $param, 'align="right"', $sortfield, $sortorder);
+    print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+    print "</tr>\n";
 
     $i = 0;
-	while ($i < min($num, $limit))
-	{
-	    $objp = $db->fetch_object($result);
+    while ($i < min($num, $limit)) {
+        $objp = $db->fetch_object($result);
 
-		print '<tr class="oddeven">';
-		print '<td>';
-		$result_inner = $invoicestatic->fetch($objp->invoiceid);
-		if ($result_inner < 0) {
-			setEventMessages($invoicestatic->error, null, 'errors');
-		} else {
-			print $invoicestatic->getNomUrl(1);
-		}
-		print '</td>';
-		print '<td>';
-		if (!empty($objp->fk_product)) {
-			$result_inner = $productstatic->fetch($objp->fk_product);
-			if ($result_inner < 0) {
-				setEventMessages($productstatic->error, null, 'errors');
-			} else {
-				print $productstatic->getNomUrl(1);
-			}
-		} else {
-			print $objp->label;
-			print '&nbsp;';
-			print $objp->description;
-		}
-		print '</td>';
-		print '<td class="right">';
-		print price($objp->subprice);
-		print '</td>';
-		print '<td class="right">';
-		print '<input type="text" name="buyingprice_'.$objp->invoicedetid.'" id="buyingprice_'.$objp->invoicedetid.'" size="6" value="'.price($objp->buy_price_ht).'" class="right flat">';
-		print '</td>';
-		print '<td class="right">';
-		print $objp->qty;
-		print '</td>';
-		print '<td class="right">';
-		print price($objp->total_ht);
-		print '</td>';
-		print '<td></td>';
+        print '<tr class="oddeven">';
+        print '<td>';
+        $result_inner = $invoicestatic->fetch($objp->invoiceid);
+        if ($result_inner < 0) {
+            setEventMessages($invoicestatic->error, null, 'errors');
+        } else {
+            print $invoicestatic->getNomUrl(1);
+        }
+        print '</td>';
+        print '<td>';
+        if (!empty($objp->fk_product)) {
+            $result_inner = $productstatic->fetch($objp->fk_product);
+            if ($result_inner < 0) {
+                setEventMessages($productstatic->error, null, 'errors');
+            } else {
+                print $productstatic->getNomUrl(1);
+            }
+        } else {
+            print $objp->label;
+            print '&nbsp;';
+            print $objp->description;
+        }
+        print '</td>';
+        print '<td class="right">';
+        print price($objp->subprice);
+        print '</td>';
+        print '<td class="right">';
+        print '<input type="text" name="buyingprice_'.$objp->invoicedetid.'" id="buyingprice_'.$objp->invoicedetid.'" size="6" value="'.price($objp->buy_price_ht).'" class="right flat">';
+        print '</td>';
+        print '<td class="right">';
+        print $objp->qty;
+        print '</td>';
+        print '<td class="right">';
+        print price($objp->total_ht);
+        print '</td>';
+        print '<td></td>';
 
-		print "</tr>\n";
+        print "</tr>\n";
 
-		$i++;
-	}
+        $i++;
+    }
 
-	print "</table>";
+    print "</table>";
 
-	print "</div>";
+    print "</div>";
 } else {
-	dol_print_error($db);
+    dol_print_error($db);
 }
 
 

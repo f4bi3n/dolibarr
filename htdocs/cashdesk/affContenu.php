@@ -25,22 +25,18 @@
 require_once 'class/Facturation.class.php';
 
 // Si nouvelle vente, reinitialisation des donnees (destruction de l'objet et vidage de la table contenant la liste des articles)
-if ( $_GET['id'] == 'NOUV' )
-{
-	unset($_SESSION['serObjFacturation']);
-	unset($_SESSION['poscart']);
+if ($_GET['id'] == 'NOUV') {
+    unset($_SESSION['serObjFacturation']);
+    unset($_SESSION['poscart']);
 }
 
 // Recuperation, s'il existe, de l'objet contenant les infos de la vente en cours ...
-if (isset($_SESSION['serObjFacturation']))
-{
+if (isset($_SESSION['serObjFacturation'])) {
     $obj_facturation = unserialize($_SESSION['serObjFacturation']);
     unset($_SESSION['serObjFacturation']);
-}
-else
-{
-	// ... sinon, c'est une nouvelle vente
-	$obj_facturation = new Facturation();
+} else {
+    // ... sinon, c'est une nouvelle vente
+    $obj_facturation = new Facturation();
 }
 
 // $obj_facturation contains data for all invoice total + selection of current product
@@ -60,22 +56,21 @@ print '<div class="inline-block" style="vertical-align: top">';
 print '<div class="principal">';
 
 $page=GETPOST('menutpl', 'alpha');
-if (empty($page)) $page='facturation';
+if (empty($page)) {
+    $page='facturation';
+}
 
 if (in_array(
-		$page,
-		array(
-			'deconnexion',
-			'index','index_verif','facturation','facturation_verif','facturation_dhtml',
-			'validation','validation_ok','validation_ticket','validation_verif',
-		)
-	))
-{
-	include $page.'.php';
-}
-else
-{
-	dol_print_error('', 'menu param '.$page.' is not inside allowed list');
+    $page,
+    array(
+            'deconnexion',
+            'index','index_verif','facturation','facturation_verif','facturation_dhtml',
+            'validation','validation_ok','validation_ticket','validation_verif',
+        )
+)) {
+    include $page.'.php';
+} else {
+    dol_print_error('', 'menu param '.$page.' is not inside allowed list');
 }
 
 print '</div>';

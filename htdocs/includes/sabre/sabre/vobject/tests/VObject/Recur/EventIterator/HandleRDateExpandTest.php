@@ -10,10 +10,10 @@ use Sabre\VObject\Reader;
 /**
  * This is a unittest for Issue #53.
  */
-class HandleRDateExpandTest extends \PHPUnit_Framework_TestCase {
-
-    function testExpand() {
-
+class HandleRDateExpandTest extends \PHPUnit_Framework_TestCase
+{
+    public function testExpand()
+    {
         $input = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -52,9 +52,9 @@ ICS;
             new DateTimeImmutable("2015-10-20", $utc),
         ];
 
-        $result = array_map(function($ev) {return $ev->DTSTART->getDateTime();}, $result);
+        $result = array_map(function ($ev) {
+            return $ev->DTSTART->getDateTime();
+        }, $result);
         $this->assertEquals($expected, $result);
-    
     }
-
 }

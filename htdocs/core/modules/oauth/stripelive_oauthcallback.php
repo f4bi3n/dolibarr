@@ -66,12 +66,14 @@ $storage = new DoliStorage($db, $conf);
 // Setup the credentials for the requests
 $credentials = new Credentials(
     $conf->global->OAUTH_STRIPE_LIVE_ID,
-	$conf->global->STRIPE_LIVE_SECRET_KEY,
+    $conf->global->STRIPE_LIVE_SECRET_KEY,
     $currentUri->getAbsoluteUri()
 );
 
 $requestedpermissionsarray=array();
-if (GETPOST('state')) $requestedpermissionsarray=explode(',', GETPOST('state'));       // Example: 'userinfo_email,userinfo_profile,cloud_print'. 'state' parameter is standard to retrieve some parameters back
+if (GETPOST('state')) {
+    $requestedpermissionsarray=explode(',', GETPOST('state'));
+}       // Example: 'userinfo_email,userinfo_profile,cloud_print'. 'state' parameter is standard to retrieve some parameters back
 /*if ($action != 'delete' && empty($requestedpermissionsarray))
 {
     print 'Error, parameter state is not defined';
@@ -97,8 +99,7 @@ $langs->load("oauth");
  */
 
 
-if ($action == 'delete')
-{
+if ($action == 'delete') {
     $storage->clearToken('StripeLive');
 
     setEventMessages($langs->trans('TokenDeleted'), null, 'mesgs');
@@ -107,12 +108,11 @@ if ($action == 'delete')
     exit();
 }
 
-if (! empty($_GET['code']))     // We are coming from oauth provider page
-{
-	// We should have
-	//$_GET=array('code' => string 'aaaaaaaaaaaaaa' (length=20), 'state' => string 'user,public_repo' (length=16))
+if (! empty($_GET['code'])) {     // We are coming from oauth provider page
+    // We should have
+    //$_GET=array('code' => string 'aaaaaaaaaaaaaa' (length=20), 'state' => string 'user,public_repo' (length=16))
 
-	dol_syslog("We are coming from the oauth provider page");
+    dol_syslog("We are coming from the oauth provider page");
     //llxHeader('',$langs->trans("OAuthSetup"));
 
     //$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
@@ -146,22 +146,17 @@ if (! empty($_GET['code']))     // We are coming from oauth provider page
     } catch (Exception $e) {
         print $e->getMessage();
     }
-}
-else // If entry on page with no parameter, we arrive here
-{
+} else { // If entry on page with no parameter, we arrive here
     $_SESSION["backtourlsavedbeforeoauthjump"]=$backtourl;
 
     // This may create record into oauth_state before the header redirect.
     // Creation of record with state in this tables depend on the Provider used (see its constructor).
-    if (GETPOST('state'))
-    {
+    if (GETPOST('state')) {
         $url = $apiService->getAuthorizationUri(array('state'=>GETPOST('state')));
-    }
-    else
-    {
+    } else {
         //$url = $apiService->getAuthorizationUri();      // Parameter state will be randomly generated
-    	//https://connect.stripe.com/oauth/authorize?response_type=code&client_id=ca_AX27ut70tJ1j6eyFCV3ObEXhNOo2jY6V&scope=read_write
-    	$url = 'https://connect.stripe.com/oauth/authorize?response_type=code&client_id='.$conf->global->OAUTH_STRIPE_LIVE_ID.'&scope=read_write';
+        //https://connect.stripe.com/oauth/authorize?response_type=code&client_id=ca_AX27ut70tJ1j6eyFCV3ObEXhNOo2jY6V&scope=read_write
+        $url = 'https://connect.stripe.com/oauth/authorize?response_type=code&client_id='.$conf->global->OAUTH_STRIPE_LIVE_ID.'&scope=read_write';
     }
 
     // we go on oauth provider authorization page

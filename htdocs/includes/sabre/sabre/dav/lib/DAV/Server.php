@@ -20,8 +20,8 @@ use Sabre\Uri;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Server extends EventEmitter implements LoggerAwareInterface {
-
+class Server extends EventEmitter implements LoggerAwareInterface
+{
     use LoggerAwareTrait;
 
     /**
@@ -181,7 +181,7 @@ class Server extends EventEmitter implements LoggerAwareInterface {
      *
      * @var bool
      */
-    static $exposeVersion = true;
+    public static $exposeVersion = true;
 
     /**
      * Sets up the server
@@ -198,8 +198,8 @@ class Server extends EventEmitter implements LoggerAwareInterface {
      *
      * @param Tree|INode|array|null $treeOrNode The tree object
      */
-    function __construct($treeOrNode = null) {
-
+    public function __construct($treeOrNode = null)
+    {
         if ($treeOrNode instanceof Tree) {
             $this->tree = $treeOrNode;
         } elseif ($treeOrNode instanceof INode) {
@@ -216,7 +216,6 @@ class Server extends EventEmitter implements LoggerAwareInterface {
 
             $root = new SimpleCollection('root', $treeOrNode);
             $this->tree = new Tree($root);
-
         } elseif (is_null($treeOrNode)) {
             $root = new SimpleCollection('root');
             $this->tree = new Tree($root);
@@ -229,7 +228,6 @@ class Server extends EventEmitter implements LoggerAwareInterface {
         $this->httpResponse = new HTTP\Response();
         $this->httpRequest = $this->sapi->getRequest();
         $this->addPlugin(new CorePlugin());
-
     }
 
     /**
@@ -237,8 +235,8 @@ class Server extends EventEmitter implements LoggerAwareInterface {
      *
      * @return void
      */
-    function exec() {
-
+    public function exec()
+    {
         try {
 
             // If nginx (pre-1.2) is used as a proxy server, and SabreDAV as an
@@ -252,9 +250,7 @@ class Server extends EventEmitter implements LoggerAwareInterface {
             // Setting the base url
             $this->httpRequest->setBaseUrl($this->getBaseUri());
             $this->invokeMethod($this->httpRequest, $this->httpResponse);
-
         } catch (\Exception $e) {
-
             try {
                 $this->emit('exception', [$e]);
             } catch (\Exception $ignore) {
@@ -266,10 +262,8 @@ class Server extends EventEmitter implements LoggerAwareInterface {
             $error->setAttribute('xmlns:s', self::NS_SABREDAV);
             $DOM->appendChild($error);
 
-            $h = function($v) {
-
+            $h = function ($v) {
                 return htmlspecialchars($v, ENT_NOQUOTES, 'UTF-8');
-
             };
 
             if (self::$exposeVersion) {
@@ -301,16 +295,12 @@ class Server extends EventEmitter implements LoggerAwareInterface {
 
 
             if ($e instanceof Exception) {
-
                 $httpCode = $e->getHTTPCode();
                 $e->serialize($this, $error);
                 $headers = $e->getHTTPHeaders($this);
-
             } else {
-
                 $httpCode = 500;
                 $headers = [];
-
             }
             $headers['Content-Type'] = 'application/xml; charset=utf-8';
 
@@ -318,9 +308,7 @@ class Server extends EventEmitter implements LoggerAwareInterface {
             $this->httpResponse->setHeaders($headers);
             $this->httpResponse->setBody($DOM->saveXML());
             $this->sapi->sendResponse($this->httpResponse);
-
         }
-
     }
 
     /**
@@ -329,14 +317,15 @@ class Server extends EventEmitter implements LoggerAwareInterface {
      * @param string $uri
      * @return void
      */
-    function setBaseUri($uri) {
+    public function setBaseUri($uri)
+    {
 
         // If the baseUri does not end with a slash, we must add it
-        if ($uri[strlen($uri) - 1] !== '/')
+        if ($uri[strlen($uri) - 1] !== '/') {
             $uri .= '/';
+        }
 
         $this->baseUri = $uri;
-
     }
 
     /**
@@ -344,11 +333,12 @@ class Server extends EventEmitter implements LoggerAwareInterface {
      *
      * @return string
      */
-    function getBaseUri() {
-
-        if (is_null($this->baseUri)) $this->baseUri = $this->guessBaseUri();
+    public function getBaseUri()
+    {
+        if (is_null($this->baseUri)) {
+            $this->baseUri = $this->guessBaseUri();
+        }
         return $this->baseUri;
-
     }
 
     /**
@@ -359,8 +349,8 @@ class Server extends EventEmitter implements LoggerAwareInterface {
      *
      * @return string
      */
-    function guessBaseUri() {
-
+    public function guessBaseUri()
+    {
         $pathInfo = $this->httpRequest->getRawServerValue('PATH_INFO');
         $uri = $this->httpRequest->getRawServerValue('REQUEST_URI');
 
@@ -368,8 +358,9 @@ class Server extends EventEmitter implements LoggerAwareInterface {
         if (!empty($pathInfo)) {
 
             // We need to make sure we ignore the QUERY_STRING part
-            if ($pos = strpos($uri, '?'))
+            if ($pos = strpos($uri, '?')) {
                 $uri = substr($uri, 0, $pos);
+            }
 
             // PATH_INFO is only set for urls, such as: /example.php/path
             // in that case PATH_INFO contains '/path'.
@@ -385,12 +376,10 @@ class Server extends EventEmitter implements LoggerAwareInterface {
             }
 
             throw new Exception('The REQUEST_URI (' . $uri . ') did not end with the contents of PATH_INFO (' . $pathInfo . '). This server might be misconfigured.');
-
         }
 
         // The last fallback is that we're just going to assume the server root.
         return '/';
-
     }
 
     /**
@@ -401,11 +390,10 @@ class Server extends EventEmitter implements LoggerAwareInterface {
      * @param ServerPlugin $plugin
      * @return void
      */
-    function addPlugin(ServerPlugin $plugin) {
-
+    public function addPlugin(ServerPlugin $plugin)
+    {
         $this->plugins[$plugin->getPluginName()] = $plugin;
         $plugin->initialize($this);
-
     }
 
     /**
@@ -416,13 +404,13 @@ class Server extends EventEmitter implements LoggerAwareInterface {
      * @param string $name
      * @return ServerPlugin
      */
-    function getPlugin($name) {
-
-        if (isset($this->plugins[$name]))
+    public function getPlugin($name)
+    {
+        if (isset($this->plugins[$name])) {
             return $this->plugins[$name];
+        }
 
         return null;
-
     }
 
     /**
@@ -430,10 +418,9 @@ class Server extends EventEmitter implements LoggerAwareInterface {
      *
      * @return array
      */
-    function getPlugins() {
-
+    public function getPlugins()
+    {
         return $this->plugins;
-
     }
 
     /**
@@ -441,13 +428,12 @@ class Server extends EventEmitter implements LoggerAwareInterface {
      *
      * @return LoggerInterface
      */
-    function getLogger() {
-
+    public function getLogger()
+    {
         if (!$this->logger) {
             $this->logger = new NullLogger();
         }
         return $this->logger;
-
     }
 
     /**
@@ -458,12 +444,16 @@ class Server extends EventEmitter implements LoggerAwareInterface {
      * @param bool $sendResponse Whether to send the HTTP response to the DAV client.
      * @return void
      */
-    function invokeMethod(RequestInterface $request, ResponseInterface $response, $sendResponse = true) {
-
+    public function invokeMethod(RequestInterface $request, ResponseInterface $response, $sendResponse = true)
+    {
         $method = $request->getMethod();
 
-        if (!$this->emit('beforeMethod:' . $method, [$request, $response])) return;
-        if (!$this->emit('beforeMethod', [$request, $response])) return;
+        if (!$this->emit('beforeMethod:' . $method, [$request, $response])) {
+            return;
+        }
+        if (!$this->emit('beforeMethod', [$request, $response])) {
+            return;
+        }
 
         if (self::$exposeVersion) {
             $response->setHeader('X-Sabre-Version', Version::VERSION);
@@ -488,8 +478,12 @@ class Server extends EventEmitter implements LoggerAwareInterface {
             }
         }
 
-        if (!$this->emit('afterMethod:' . $method, [$request, $response])) return;
-        if (!$this->emit('afterMethod', [$request, $response])) return;
+        if (!$this->emit('afterMethod:' . $method, [$request, $response])) {
+            return;
+        }
+        if (!$this->emit('afterMethod', [$request, $response])) {
+            return;
+        }
 
         if ($response->getStatus() === null) {
             throw new Exception('No subsystem set a valid HTTP status code. Something must have interrupted the request without providing further detail.');
@@ -498,7 +492,6 @@ class Server extends EventEmitter implements LoggerAwareInterface {
             $this->sapi->sendResponse($response);
             $this->emit('afterResponse', [$request, $response]);
         }
-
     }
 
     // {{{ HTTP/WebDAV protocol helpers
@@ -509,8 +502,8 @@ class Server extends EventEmitter implements LoggerAwareInterface {
      * @param string $path
      * @return array
      */
-    function getAllowedMethods($path) {
-
+    public function getAllowedMethods($path)
+    {
         $methods = [
             'OPTIONS',
             'GET',
@@ -532,11 +525,12 @@ class Server extends EventEmitter implements LoggerAwareInterface {
         }
 
         // We're also checking if any of the plugins register any new methods
-        foreach ($this->plugins as $plugin) $methods = array_merge($methods, $plugin->getHTTPMethods($path));
+        foreach ($this->plugins as $plugin) {
+            $methods = array_merge($methods, $plugin->getHTTPMethods($path));
+        }
         array_unique($methods);
 
         return $methods;
-
     }
 
     /**
@@ -544,10 +538,9 @@ class Server extends EventEmitter implements LoggerAwareInterface {
      *
      * @return string
      */
-    function getRequestUri() {
-
+    public function getRequestUri()
+    {
         return $this->calculateUri($this->httpRequest->getUrl());
-
     }
 
     /**
@@ -562,33 +555,25 @@ class Server extends EventEmitter implements LoggerAwareInterface {
      * @throws Exception\Forbidden A permission denied exception is thrown whenever there was an attempt to supply a uri outside of the base uri
      * @return string
      */
-    function calculateUri($uri) {
-
+    public function calculateUri($uri)
+    {
         if ($uri[0] != '/' && strpos($uri, '://')) {
-
             $uri = parse_url($uri, PHP_URL_PATH);
-
         }
 
         $uri = Uri\normalize(str_replace('//', '/', $uri));
         $baseUri = Uri\normalize($this->getBaseUri());
 
         if (strpos($uri, $baseUri) === 0) {
-
             return trim(URLUtil::decodePath(substr($uri, strlen($baseUri))), '/');
 
         // A special case, if the baseUri was accessed without a trailing
         // slash, we'll accept it as well.
         } elseif ($uri . '/' === $baseUri) {
-
             return '';
-
         } else {
-
             throw new Exception\Forbidden('Requested uri (' . $uri . ') is out of base uri (' . $this->getBaseUri() . ')');
-
         }
-
     }
 
     /**
@@ -600,21 +585,27 @@ class Server extends EventEmitter implements LoggerAwareInterface {
      * @param mixed $default
      * @return int
      */
-    function getHTTPDepth($default = self::DEPTH_INFINITY) {
+    public function getHTTPDepth($default = self::DEPTH_INFINITY)
+    {
 
         // If its not set, we'll grab the default
         $depth = $this->httpRequest->getHeader('Depth');
 
-        if (is_null($depth)) return $default;
+        if (is_null($depth)) {
+            return $default;
+        }
 
-        if ($depth == 'infinity') return self::DEPTH_INFINITY;
+        if ($depth == 'infinity') {
+            return self::DEPTH_INFINITY;
+        }
 
 
         // If its an unknown value. we'll grab the default
-        if (!ctype_digit($depth)) return $default;
+        if (!ctype_digit($depth)) {
+            return $default;
+        }
 
         return (int)$depth;
-
     }
 
     /**
@@ -631,22 +622,27 @@ class Server extends EventEmitter implements LoggerAwareInterface {
      *
      * @return array|null
      */
-    function getHTTPRange() {
-
+    public function getHTTPRange()
+    {
         $range = $this->httpRequest->getHeader('range');
-        if (is_null($range)) return null;
+        if (is_null($range)) {
+            return null;
+        }
 
         // Matching "Range: bytes=1234-5678: both numbers are optional
 
-        if (!preg_match('/^bytes=([0-9]*)-([0-9]*)$/i', $range, $matches)) return null;
+        if (!preg_match('/^bytes=([0-9]*)-([0-9]*)$/i', $range, $matches)) {
+            return null;
+        }
 
-        if ($matches[1] === '' && $matches[2] === '') return null;
+        if ($matches[1] === '' && $matches[2] === '') {
+            return null;
+        }
 
         return [
             $matches[1] !== '' ? $matches[1] : null,
             $matches[2] !== '' ? $matches[2] : null,
         ];
-
     }
 
     /**
@@ -675,8 +671,8 @@ class Server extends EventEmitter implements LoggerAwareInterface {
      *
      * @return array
      */
-    function getHTTPPrefer() {
-
+    public function getHTTPPrefer()
+    {
         $result = [
             // can be true or false
             'respond-async' => false,
@@ -689,18 +685,15 @@ class Server extends EventEmitter implements LoggerAwareInterface {
         ];
 
         if ($prefer = $this->httpRequest->getHeader('Prefer')) {
-
             $result = array_merge(
                 $result,
                 HTTP\parsePrefer($prefer)
             );
-
         } elseif ($this->httpRequest->getHeader('Brief') == 't') {
             $result['return'] = 'minimal';
         }
 
         return $result;
-
     }
 
 
@@ -726,23 +719,35 @@ class Server extends EventEmitter implements LoggerAwareInterface {
      *         subtree.
      * @return array
      */
-    function getCopyAndMoveInfo(RequestInterface $request) {
+    public function getCopyAndMoveInfo(RequestInterface $request)
+    {
 
         // Collecting the relevant HTTP headers
-        if (!$request->getHeader('Destination')) throw new Exception\BadRequest('The destination header was not supplied');
+        if (!$request->getHeader('Destination')) {
+            throw new Exception\BadRequest('The destination header was not supplied');
+        }
         $destination = $this->calculateUri($request->getHeader('Destination'));
         $overwrite = $request->getHeader('Overwrite');
-        if (!$overwrite) $overwrite = 'T';
-        if (strtoupper($overwrite) == 'T') $overwrite = true;
-        elseif (strtoupper($overwrite) == 'F') $overwrite = false;
+        if (!$overwrite) {
+            $overwrite = 'T';
+        }
+        if (strtoupper($overwrite) == 'T') {
+            $overwrite = true;
+        } elseif (strtoupper($overwrite) == 'F') {
+            $overwrite = false;
+        }
         // We need to throw a bad request exception, if the header was invalid
-        else throw new Exception\BadRequest('The HTTP Overwrite header should be either T or F');
+        else {
+            throw new Exception\BadRequest('The HTTP Overwrite header should be either T or F');
+        }
 
         list($destinationDir) = URLUtil::splitPath($destination);
 
         try {
             $destinationParent = $this->tree->getNodeForPath($destinationDir);
-            if (!($destinationParent instanceof ICollection)) throw new Exception\UnsupportedMediaType('The destination node is not a collection');
+            if (!($destinationParent instanceof ICollection)) {
+                throw new Exception\UnsupportedMediaType('The destination node is not a collection');
+            }
         } catch (Exception\NotFound $e) {
 
             // If the destination parent node is not found, we throw a 409
@@ -750,18 +755,17 @@ class Server extends EventEmitter implements LoggerAwareInterface {
         }
 
         try {
-
             $destinationNode = $this->tree->getNodeForPath($destination);
 
             // If this succeeded, it means the destination already exists
             // we'll need to throw precondition failed in case overwrite is false
-            if (!$overwrite) throw new Exception\PreconditionFailed('The destination node already exists, and the overwrite header is set to false', 'Overwrite');
-
+            if (!$overwrite) {
+                throw new Exception\PreconditionFailed('The destination node already exists, and the overwrite header is set to false', 'Overwrite');
+            }
         } catch (Exception\NotFound $e) {
 
             // Destination didn't exist, we're all good
             $destinationNode = false;
-
         }
 
         $requestPath = $request->getPath();
@@ -778,7 +782,6 @@ class Server extends EventEmitter implements LoggerAwareInterface {
             'destinationExists' => !!$destinationNode,
             'destinationNode'   => $destinationNode,
         ];
-
     }
 
     /**
@@ -796,15 +799,14 @@ class Server extends EventEmitter implements LoggerAwareInterface {
      * @param array $propertyNames
      * @return array
      */
-    function getProperties($path, $propertyNames) {
-
+    public function getProperties($path, $propertyNames)
+    {
         $result = $this->getPropertiesForPath($path, $propertyNames, 0);
         if (isset($result[0][200])) {
             return $result[0][200];
         } else {
             return [];
         }
-
     }
 
     /**
@@ -819,19 +821,19 @@ class Server extends EventEmitter implements LoggerAwareInterface {
      * @param array $propertyNames
      * @return array
      */
-    function getPropertiesForChildren($path, $propertyNames) {
-
+    public function getPropertiesForChildren($path, $propertyNames)
+    {
         $result = [];
         foreach ($this->getPropertiesForPath($path, $propertyNames, 1) as $k => $row) {
 
             // Skipping the parent path
-            if ($k === 0) continue;
+            if ($k === 0) {
+                continue;
+            }
 
             $result[$row['href']] = $row[200];
-
         }
         return $result;
-
     }
 
     /**
@@ -846,8 +848,8 @@ class Server extends EventEmitter implements LoggerAwareInterface {
      * @param string $path
      * @return array
      */
-    function getHTTPHeaders($path) {
-
+    public function getHTTPHeaders($path)
+    {
         $propertyMap = [
             '{DAV:}getcontenttype'   => 'Content-Type',
             '{DAV:}getcontentlength' => 'Content-Length',
@@ -859,7 +861,9 @@ class Server extends EventEmitter implements LoggerAwareInterface {
 
         $headers = [];
         foreach ($propertyMap as $property => $header) {
-            if (!isset($properties[$property])) continue;
+            if (!isset($properties[$property])) {
+                continue;
+            }
 
             if (is_scalar($properties[$property])) {
                 $headers[$header] = $properties[$property];
@@ -868,11 +872,9 @@ class Server extends EventEmitter implements LoggerAwareInterface {
             } elseif ($properties[$property] instanceof Xml\Property\GetLastModified) {
                 $headers[$header] = HTTP\Util::toHTTPDate($properties[$property]->getTime());
             }
-
         }
 
         return $headers;
-
     }
 
     /**
@@ -882,7 +884,8 @@ class Server extends EventEmitter implements LoggerAwareInterface {
      * @param array $yieldFirst
      * @return \Iterator
      */
-    private function generatePathNodes(PropFind $propFind, array $yieldFirst = null) {
+    private function generatePathNodes(PropFind $propFind, array $yieldFirst = null)
+    {
         if ($yieldFirst !== null) {
             yield $yieldFirst;
         }
@@ -913,7 +916,6 @@ class Server extends EventEmitter implements LoggerAwareInterface {
                     yield $subItem;
                 }
             }
-
         }
     }
 
@@ -934,10 +936,9 @@ class Server extends EventEmitter implements LoggerAwareInterface {
      * @deprecated Use getPropertiesIteratorForPath() instead (as it's more memory efficient)
      * @see getPropertiesIteratorForPath()
      */
-    function getPropertiesForPath($path, $propertyNames = [], $depth = 0) {
-
+    public function getPropertiesForPath($path, $propertyNames = [], $depth = 0)
+    {
         return iterator_to_array($this->getPropertiesIteratorForPath($path, $propertyNames, $depth));
-
     }
     /**
      * Returns a list of properties for a given path
@@ -953,10 +954,13 @@ class Server extends EventEmitter implements LoggerAwareInterface {
      * @param int $depth
      * @return \Iterator
      */
-    function getPropertiesIteratorForPath($path, $propertyNames = [], $depth = 0) {
+    public function getPropertiesIteratorForPath($path, $propertyNames = [], $depth = 0)
+    {
 
         // The only two options for the depth of a propfind is 0 or 1 - as long as depth infinity is not enabled
-        if (!$this->enablePropfindDepthInfinity && $depth != 0) $depth = 1;
+        if (!$this->enablePropfindDepthInfinity && $depth != 0) {
+            $depth = 1;
+        }
 
         $path = trim($path, '/');
 
@@ -975,7 +979,6 @@ class Server extends EventEmitter implements LoggerAwareInterface {
         }
 
         foreach ($propFindRequests as $propFindRequest) {
-
             list($propFind, $node) = $propFindRequest;
             $r = $this->getPropertiesByNode($propFind, $node);
             if ($r) {
@@ -992,9 +995,7 @@ class Server extends EventEmitter implements LoggerAwareInterface {
                 }
                 yield $result;
             }
-
         }
-
     }
 
     /**
@@ -1011,15 +1012,14 @@ class Server extends EventEmitter implements LoggerAwareInterface {
      * @param array $propertyNames
      * @return array
      */
-    function getPropertiesForMultiplePaths(array $paths, array $propertyNames = []) {
-
+    public function getPropertiesForMultiplePaths(array $paths, array $propertyNames = [])
+    {
         $result = [
         ];
 
         $nodes = $this->tree->getMultipleNodes($paths);
 
         foreach ($nodes as $path => $node) {
-
             $propFind = new PropFind($path, $propertyNames);
             $r = $this->getPropertiesByNode($propFind, $node);
             if ($r) {
@@ -1031,11 +1031,9 @@ class Server extends EventEmitter implements LoggerAwareInterface {
                     $result[$path]['href'] .= '/';
                 }
             }
-
         }
 
         return $result;
-
     }
 
 
@@ -1053,10 +1051,9 @@ class Server extends EventEmitter implements LoggerAwareInterface {
      * @param INode $node
      * @return bool
      */
-    function getPropertiesByNode(PropFind $propFind, INode $node) {
-
+    public function getPropertiesByNode(PropFind $propFind, INode $node)
+    {
         return $this->emit('propFind', [$propFind, $node]);
-
     }
 
     /**
@@ -1073,11 +1070,13 @@ class Server extends EventEmitter implements LoggerAwareInterface {
      * @param string   $etag
      * @return bool
      */
-    function createFile($uri, $data, &$etag = null) {
-
+    public function createFile($uri, $data, &$etag = null)
+    {
         list($dir, $name) = URLUtil::splitPath($uri);
 
-        if (!$this->emit('beforeBind', [$uri])) return false;
+        if (!$this->emit('beforeBind', [$uri])) {
+            return false;
+        }
 
         $parent = $this->tree->getNodeForPath($dir);
         if (!$parent instanceof ICollection) {
@@ -1090,11 +1089,15 @@ class Server extends EventEmitter implements LoggerAwareInterface {
         //
         // If $modified is true, we must not send back an ETag.
         $modified = false;
-        if (!$this->emit('beforeCreateFile', [$uri, &$data, $parent, &$modified])) return false;
+        if (!$this->emit('beforeCreateFile', [$uri, &$data, $parent, &$modified])) {
+            return false;
+        }
 
         $etag = $parent->createFile($name, $data);
 
-        if ($modified) $etag = null;
+        if ($modified) {
+            $etag = null;
+        }
 
         $this->tree->markDirty($dir . '/' . $name);
 
@@ -1114,8 +1117,8 @@ class Server extends EventEmitter implements LoggerAwareInterface {
      * @param string   $etag
      * @return bool
      */
-    function updateFile($uri, $data, &$etag = null) {
-
+    public function updateFile($uri, $data, &$etag = null)
+    {
         $node = $this->tree->getNodeForPath($uri);
 
         // It is possible for an event handler to modify the content of the
@@ -1124,10 +1127,14 @@ class Server extends EventEmitter implements LoggerAwareInterface {
         //
         // If $modified is true, we must not send back an ETag.
         $modified = false;
-        if (!$this->emit('beforeWriteContent', [$uri, $node, &$data, &$modified])) return false;
+        if (!$this->emit('beforeWriteContent', [$uri, $node, &$data, &$modified])) {
+            return false;
+        }
 
         $etag = $node->put($data);
-        if ($modified) $etag = null;
+        if ($modified) {
+            $etag = null;
+        }
         $this->emit('afterWriteContent', [$uri, $node]);
 
         return true;
@@ -1141,10 +1148,9 @@ class Server extends EventEmitter implements LoggerAwareInterface {
      * @param string $uri
      * @return void
      */
-    function createDirectory($uri) {
-
+    public function createDirectory($uri)
+    {
         $this->createCollection($uri, new MkCol(['{DAV:}collection'], []));
-
     }
 
     /**
@@ -1154,17 +1160,15 @@ class Server extends EventEmitter implements LoggerAwareInterface {
      * @param MkCol $mkCol
      * @return array|null
      */
-    function createCollection($uri, MkCol $mkCol) {
-
+    public function createCollection($uri, MkCol $mkCol)
+    {
         list($parentUri, $newName) = URLUtil::splitPath($uri);
 
         // Making sure the parent exists
         try {
             $parent = $this->tree->getNodeForPath($parentUri);
-
         } catch (Exception\NotFound $e) {
             throw new Exception\Conflict('Parent node does not exist');
-
         }
 
         // Making sure the parent is a collection
@@ -1178,13 +1182,14 @@ class Server extends EventEmitter implements LoggerAwareInterface {
 
             // If we got here.. it means there's already a node on that url, and we need to throw a 405
             throw new Exception\MethodNotAllowed('The resource you tried to create already exists');
-
         } catch (Exception\NotFound $e) {
             // NotFound is the expected behavior.
         }
 
 
-        if (!$this->emit('beforeBind', [$uri])) return;
+        if (!$this->emit('beforeBind', [$uri])) {
+            return;
+        }
 
         if ($parent instanceof IExtendedCollection) {
 
@@ -1194,7 +1199,6 @@ class Server extends EventEmitter implements LoggerAwareInterface {
              * properties immediately.
              */
             $parent->createExtendedCollection($newName, $mkCol);
-
         } else {
 
             /**
@@ -1207,7 +1211,6 @@ class Server extends EventEmitter implements LoggerAwareInterface {
             }
 
             $parent->createDirectory($newName);
-
         }
 
         // If there are any properties that have not been handled/stored,
@@ -1226,19 +1229,16 @@ class Server extends EventEmitter implements LoggerAwareInterface {
             ];
 
             foreach ($result as $propertyName => $status) {
-
                 if (!isset($formattedResult[$status])) {
                     $formattedResult[$status] = [];
                 }
                 $formattedResult[$status][$propertyName] = null;
-
             }
             return $formattedResult;
         }
 
         $this->tree->markDirty($parentUri);
         $this->emit('afterBind', [$uri]);
-
     }
 
     /**
@@ -1258,14 +1258,13 @@ class Server extends EventEmitter implements LoggerAwareInterface {
      * @param array $properties
      * @return array
      */
-    function updateProperties($path, array $properties) {
-
+    public function updateProperties($path, array $properties)
+    {
         $propPatch = new PropPatch($properties);
         $this->emit('propPatch', [$path, $propPatch]);
         $propPatch->commit();
 
         return $propPatch->getResult();
-
     }
 
     /**
@@ -1290,8 +1289,8 @@ class Server extends EventEmitter implements LoggerAwareInterface {
      * @param ResponseInterface $response
      * @return bool
      */
-    function checkPreconditions(RequestInterface $request, ResponseInterface $response) {
-
+    public function checkPreconditions(RequestInterface $request, ResponseInterface $response)
+    {
         $path = $request->getPath();
         $node = null;
         $lastMod = null;
@@ -1330,11 +1329,12 @@ class Server extends EventEmitter implements LoggerAwareInterface {
                             $haveMatch = true;
                         }
                     }
-
                 }
                 if (!$haveMatch) {
-                    if ($etag) $response->setHeader('ETag', $etag);
-                     throw new Exception\PreconditionFailed('An If-Match header was specified, but none of the specified the ETags matched.', 'If-Match');
+                    if ($etag) {
+                        $response->setHeader('ETag', $etag);
+                    }
+                    throw new Exception\PreconditionFailed('An If-Match header was specified, but none of the specified the ETags matched.', 'If-Match');
                 }
             }
         }
@@ -1355,8 +1355,9 @@ class Server extends EventEmitter implements LoggerAwareInterface {
             }
             if ($nodeExists) {
                 $haveMatch = false;
-                if ($ifNoneMatch === '*') $haveMatch = true;
-                else {
+                if ($ifNoneMatch === '*') {
+                    $haveMatch = true;
+                } else {
 
                     // There might be multiple ETags
                     $ifNoneMatch = explode(',', $ifNoneMatch);
@@ -1367,14 +1368,16 @@ class Server extends EventEmitter implements LoggerAwareInterface {
                         // Stripping any extra spaces
                         $ifNoneMatchItem = trim($ifNoneMatchItem, ' ');
 
-                        if ($etag === $ifNoneMatchItem) $haveMatch = true;
-
+                        if ($etag === $ifNoneMatchItem) {
+                            $haveMatch = true;
+                        }
                     }
-
                 }
 
                 if ($haveMatch) {
-                    if ($etag) $response->setHeader('ETag', $etag);
+                    if ($etag) {
+                        $response->setHeader('ETag', $etag);
+                    }
                     if ($request->getMethod() === 'GET') {
                         $response->setStatus(304);
                         return false;
@@ -1383,7 +1386,6 @@ class Server extends EventEmitter implements LoggerAwareInterface {
                     }
                 }
             }
-
         }
 
         if (!$ifNoneMatch && ($ifModifiedSince = $request->getHeader('If-Modified-Since'))) {
@@ -1431,7 +1433,6 @@ class Server extends EventEmitter implements LoggerAwareInterface {
                     }
                 }
             }
-
         }
 
         // Now the hardest, the If: header. The If: header can contain multiple
@@ -1460,13 +1461,11 @@ class Server extends EventEmitter implements LoggerAwareInterface {
         // Every ifCondition needs to validate to true, so we exit as soon as
         // we have an invalid condition.
         foreach ($ifConditions as $ifCondition) {
-
             $uri = $ifCondition['uri'];
             $tokens = $ifCondition['tokens'];
 
             // We only need 1 valid token for the condition to succeed.
             foreach ($tokens as $token) {
-
                 $tokenValid = $token['validToken'] || !$token['token'];
 
                 $etagValid = false;
@@ -1481,7 +1480,6 @@ class Server extends EventEmitter implements LoggerAwareInterface {
                     // grab the current ETag and check it.
                     $node = $this->tree->getNodeForPath($uri);
                     $etagValid = $node instanceof IFile && $node->getETag() == $token['etag'];
-
                 }
 
 
@@ -1489,18 +1487,14 @@ class Server extends EventEmitter implements LoggerAwareInterface {
                     // Both were valid, so we can go to the next condition.
                     continue 2;
                 }
-
-
             }
 
             // If we ended here, it means there was no valid ETag + token
             // combination found for the current condition. This means we fail!
             throw new Exception\PreconditionFailed('Failed to find a valid token/etag combination for ' . $uri, 'If');
-
         }
 
         return true;
-
     }
 
     /**
@@ -1574,10 +1568,12 @@ class Server extends EventEmitter implements LoggerAwareInterface {
      * @param RequestInterface $request
      * @return array
      */
-    function getIfConditions(RequestInterface $request) {
-
+    public function getIfConditions(RequestInterface $request)
+    {
         $header = $request->getHeader('If');
-        if (!$header) return [];
+        if (!$header) {
+            return [];
+        }
 
         $matches = [];
 
@@ -1598,7 +1594,6 @@ class Server extends EventEmitter implements LoggerAwareInterface {
                     'etag'   => isset($match['etag']) ? $match['etag'] : ''
                 ];
             } else {
-
                 if (!$match['uri']) {
                     $realUri = $request->getPath();
                 } else {
@@ -1617,11 +1612,9 @@ class Server extends EventEmitter implements LoggerAwareInterface {
 
                 ];
             }
-
         }
 
         return $conditions;
-
     }
 
     /**
@@ -1630,14 +1623,15 @@ class Server extends EventEmitter implements LoggerAwareInterface {
      * @param INode $node
      * @return array
      */
-    function getResourceTypeForNode(INode $node) {
-
+    public function getResourceTypeForNode(INode $node)
+    {
         $result = [];
         foreach ($this->resourceTypeMapping as $className => $resourceType) {
-            if ($node instanceof $className) $result[] = $resourceType;
+            if ($node instanceof $className) {
+                $result[] = $resourceType;
+            }
         }
         return $result;
-
     }
 
     // }}}
@@ -1653,8 +1647,8 @@ class Server extends EventEmitter implements LoggerAwareInterface {
      * @param bool $strip404s
      * @return string
      */
-    function generateMultiStatus($fileProperties, $strip404s = false) {
-
+    public function generateMultiStatus($fileProperties, $strip404s = false)
+    {
         $w = $this->xml->getWriter();
         $w->openMemory();
         $w->contextUri = $this->baseUri;
@@ -1663,7 +1657,6 @@ class Server extends EventEmitter implements LoggerAwareInterface {
         $w->startElement('{DAV:}multistatus');
 
         foreach ($fileProperties as $entry) {
-
             $href = $entry['href'];
             unset($entry['href']);
             if ($strip404s) {
@@ -1681,7 +1674,5 @@ class Server extends EventEmitter implements LoggerAwareInterface {
         $w->endElement();
 
         return $w->outputMemory();
-
     }
-
 }

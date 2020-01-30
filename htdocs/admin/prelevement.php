@@ -34,7 +34,9 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 $langs->loadLangs(array("admin","withdrawals"));
 
 // Security check
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+    accessforbidden();
+}
 
 $action = GETPOST('action', 'alpha');
 $type = 'paymentorder';
@@ -44,16 +46,16 @@ $type = 'paymentorder';
  * Actions
  */
 
-if ($action == "set")
-{
+if ($action == "set") {
     $db->begin();
 
     $id=GETPOST('PRELEVEMENT_ID_BANKACCOUNT', 'int');
     $account = new Account($db);
-    if($account->fetch($id)>0)
-    {
+    if ($account->fetch($id)>0) {
         $res = dolibarr_set_const($db, "PRELEVEMENT_ID_BANKACCOUNT", $id, 'chaine', 0, '', $conf->entity);
-        if (! $res > 0) $error++;
+        if (! $res > 0) {
+            $error++;
+        }
         /*
         $res = dolibarr_set_const($db, "PRELEVEMENT_CODE_BANQUE", $account->code_banque,'chaine',0,'',$conf->entity);
         if (! $res > 0) $error++;
@@ -70,46 +72,49 @@ if ($action == "set")
         $res = dolibarr_set_const($db, "PRELEVEMENT_RAISON_SOCIALE", $account->proprio,'chaine',0,'',$conf->entity);
         if (! $res > 0) $error++;
         */
+    } else {
+        $error++;
     }
-    else $error++;
 
     $res = dolibarr_set_const($db, "PRELEVEMENT_ICS", GETPOST("PRELEVEMENT_ICS"), 'chaine', 0, '', $conf->entity);
-    if (! $res > 0) $error++;
+    if (! $res > 0) {
+        $error++;
+    }
 
-    if (GETPOST("PRELEVEMENT_USER") > 0)
-    {
+    if (GETPOST("PRELEVEMENT_USER") > 0) {
         $res = dolibarr_set_const($db, "PRELEVEMENT_USER", GETPOST("PRELEVEMENT_USER"), 'chaine', 0, '', $conf->entity);
-        if (! $res > 0) $error++;
+        if (! $res > 0) {
+            $error++;
+        }
     }
-    if (GETPOST("PRELEVEMENT_END_TO_END") || GETPOST("PRELEVEMENT_END_TO_END")=="")
-    {
+    if (GETPOST("PRELEVEMENT_END_TO_END") || GETPOST("PRELEVEMENT_END_TO_END")=="") {
         $res = dolibarr_set_const($db, "PRELEVEMENT_END_TO_END", GETPOST("PRELEVEMENT_END_TO_END"), 'chaine', 0, '', $conf->entity);
-        if (! $res > 0) $error++;
+        if (! $res > 0) {
+            $error++;
+        }
     }
-    if (GETPOST("PRELEVEMENT_USTRD") || GETPOST("PRELEVEMENT_USTRD")=="")
-    {
+    if (GETPOST("PRELEVEMENT_USTRD") || GETPOST("PRELEVEMENT_USTRD")=="") {
         $res = dolibarr_set_const($db, "PRELEVEMENT_USTRD", GETPOST("PRELEVEMENT_USTRD"), 'chaine', 0, '', $conf->entity);
-        if (! $res > 0) $error++;
+        if (! $res > 0) {
+            $error++;
+        }
     }
 
-    if (GETPOST("PRELEVEMENT_ADDDAYS") || GETPOST("PRELEVEMENT_ADDDAYS")=="")
-    {
+    if (GETPOST("PRELEVEMENT_ADDDAYS") || GETPOST("PRELEVEMENT_ADDDAYS")=="") {
         $res = dolibarr_set_const($db, "PRELEVEMENT_ADDDAYS", GETPOST("PRELEVEMENT_ADDDAYS"), 'chaine', 0, '', $conf->entity);
-        if (! $res > 0) $error++;
-    } elseif (! $error)
-	{
-		$db->commit();
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
-		$db->rollback();
-		setEventMessages($langs->trans("Error"), null, 'errors');
-	}
+        if (! $res > 0) {
+            $error++;
+        }
+    } elseif (! $error) {
+        $db->commit();
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    } else {
+        $db->rollback();
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
 }
 
-if ($action == "addnotif")
-{
+if ($action == "addnotif") {
     $bon = new BonPrelevement($db);
     $bon->AddNotification($db, GETPOST('user', 'int'), $action);
 
@@ -117,8 +122,7 @@ if ($action == "addnotif")
     exit;
 }
 
-if ($action == "deletenotif")
-{
+if ($action == "deletenotif") {
     $bon = new BonPrelevement($db);
     $bon->DeleteNotificationById(GETPOST('notif', 'int'));
 
@@ -251,7 +255,9 @@ print '</td></tr>';
 //ADDDAYS
 print '<tr class="pair"><td>'.$langs->trans("ADDDAYS").'</td>';
 print '<td class="left">';
-if (! $conf->global->PRELEVEMENT_ADDDAYS) $conf->global->PRELEVEMENT_ADDDAYS=0;
+if (! $conf->global->PRELEVEMENT_ADDDAYS) {
+    $conf->global->PRELEVEMENT_ADDDAYS=0;
+}
 print '<input type="text" name="PRELEVEMENT_ADDDAYS" value="'.$conf->global->PRELEVEMENT_ADDDAYS.'" size="15" ></td>';
 print '</td></tr>';
 print '</table>';
@@ -506,39 +512,39 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
 
     print '<td class="right"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
 
-	// List of current notifications for objet_type='withdraw'
-	$sql = "SELECT u.lastname, u.firstname,";
-	$sql.= " nd.rowid, ad.code, ad.label";
-	$sql.= " FROM ".MAIN_DB_PREFIX."user as u,";
-	$sql.= " ".MAIN_DB_PREFIX."notify_def as nd,";
-	$sql.= " ".MAIN_DB_PREFIX."c_action_trigger as ad";
-	$sql.= " WHERE u.rowid = nd.fk_user";
-	$sql.= " AND nd.fk_action = ad.rowid";
-	$sql.= " AND u.entity IN (0,".$conf->entity.")";
+    // List of current notifications for objet_type='withdraw'
+    $sql = "SELECT u.lastname, u.firstname,";
+    $sql.= " nd.rowid, ad.code, ad.label";
+    $sql.= " FROM ".MAIN_DB_PREFIX."user as u,";
+    $sql.= " ".MAIN_DB_PREFIX."notify_def as nd,";
+    $sql.= " ".MAIN_DB_PREFIX."c_action_trigger as ad";
+    $sql.= " WHERE u.rowid = nd.fk_user";
+    $sql.= " AND nd.fk_action = ad.rowid";
+    $sql.= " AND u.entity IN (0,".$conf->entity.")";
 
-	$resql = $db->query($sql);
-	if ($resql)
-	{
-	    $num = $db->num_rows($resql);
-	    $i = 0;
-	    while ($i < $num)
-	    {
-	        $obj = $db->fetch_object($resql);
+    $resql = $db->query($sql);
+    if ($resql)
+    {
+        $num = $db->num_rows($resql);
+        $i = 0;
+        while ($i < $num)
+        {
+            $obj = $db->fetch_object($resql);
 
 
-	        print '<tr class="oddeven">';
-	        print '<td>'.dolGetFirstLastname($obj->firstname,$obj->lastname).'</td>';
-	        $label=($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->label);
-	        print '<td>'.$label.'</td>';
-	        print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=deletenotif&amp;notif='.$obj->rowid.'">'.img_delete().'</a></td>';
-	        print '</tr>';
-	        $i++;
-	    }
-	    $db->free($resql);
-	}
+            print '<tr class="oddeven">';
+            print '<td>'.dolGetFirstLastname($obj->firstname,$obj->lastname).'</td>';
+            $label=($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->label);
+            print '<td>'.$label.'</td>';
+            print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=deletenotif&amp;notif='.$obj->rowid.'">'.img_delete().'</a></td>';
+            print '</tr>';
+            $i++;
+        }
+        $db->free($resql);
+    }
 
-	print '</table>';
-	print '</form>';
+    print '</table>';
+    print '</form>';
 }
 */
 

@@ -32,7 +32,7 @@ class Shipments extends DolibarrApi
     /**
      * @var array   $FIELDS     Mandatory fields, checked when create and update object
      */
-    static $FIELDS = array(
+    public static $FIELDS = array(
         'socid',
         'origin_id',
         'origin_type',
@@ -65,16 +65,16 @@ class Shipments extends DolibarrApi
      */
     public function get($id)
     {
-        if(! DolibarrApiAccess::$user->rights->expedition->lire) {
+        if (! DolibarrApiAccess::$user->rights->expedition->lire) {
             throw new RestException(401);
         }
 
         $result = $this->shipment->fetch($id);
-        if( ! $result ) {
+        if (! $result) {
             throw new RestException(404, 'Shipment not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
+        if (! DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
@@ -110,28 +110,37 @@ class Shipments extends DolibarrApi
 
         // If the internal user must only see his customers, force searching by him
         $search_sale = 0;
-        if (! DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) $search_sale = DolibarrApiAccess::$user->id;
+        if (! DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) {
+            $search_sale = DolibarrApiAccess::$user->id;
+        }
 
         $sql = "SELECT t.rowid";
-        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
+        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
+            $sql .= ", sc.fk_soc, sc.fk_user";
+        } // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
         $sql.= " FROM ".MAIN_DB_PREFIX."expedition as t";
 
-        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
+        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
+            $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        } // We need this table joined to the select in order to filter by sale
 
         $sql.= ' WHERE t.entity IN ('.getEntity('expedition').')';
-        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql.= " AND t.fk_soc = sc.fk_soc";
-        if ($socids) $sql.= " AND t.fk_soc IN (".$socids.")";
-        if ($search_sale > 0) $sql.= " AND t.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
+        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
+            $sql.= " AND t.fk_soc = sc.fk_soc";
+        }
+        if ($socids) {
+            $sql.= " AND t.fk_soc IN (".$socids.")";
+        }
+        if ($search_sale > 0) {
+            $sql.= " AND t.rowid = sc.fk_soc";
+        }		// Join for the needed table to filter by sale
         // Insert sale filter
-        if ($search_sale > 0)
-        {
+        if ($search_sale > 0) {
             $sql .= " AND sc.fk_user = ".$search_sale;
         }
         // Add sql filters
-        if ($sqlfilters)
-        {
-            if (! DolibarrApi::_checkFilters($sqlfilters))
-            {
+        if ($sqlfilters) {
+            if (! DolibarrApi::_checkFilters($sqlfilters)) {
                 throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
             }
             $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
@@ -139,9 +148,8 @@ class Shipments extends DolibarrApi
         }
 
         $sql.= $db->order($sortfield, $sortorder);
-        if ($limit)	{
-            if ($page < 0)
-            {
+        if ($limit) {
+            if ($page < 0) {
                 $page = 0;
             }
             $offset = $limit * $page;
@@ -152,25 +160,22 @@ class Shipments extends DolibarrApi
         dol_syslog("API Rest request");
         $result = $db->query($sql);
 
-        if ($result)
-        {
+        if ($result) {
             $num = $db->num_rows($result);
             $min = min($num, ($limit <= 0 ? $num : $limit));
             $i=0;
-            while ($i < $min)
-            {
+            while ($i < $min) {
                 $obj = $db->fetch_object($result);
                 $shipment_static = new Expedition($db);
-                if($shipment_static->fetch($obj->rowid)) {
+                if ($shipment_static->fetch($obj->rowid)) {
                     $obj_ret[] = $this->_cleanObjectDatas($shipment_static);
                 }
                 $i++;
             }
-        }
-        else {
+        } else {
             throw new RestException(503, 'Error when retrieve commande list : '.$db->lasterror());
         }
-        if( ! count($obj_ret)) {
+        if (! count($obj_ret)) {
             throw new RestException(404, 'No shipment found');
         }
         return $obj_ret;
@@ -190,7 +195,7 @@ class Shipments extends DolibarrApi
         // Check mandatory fields
         $result = $this->_validate($request_data);
 
-        foreach($request_data as $field => $value) {
+        foreach ($request_data as $field => $value) {
             $this->shipment->$field = $value;
         }
         if (isset($request_data["lines"])) {
@@ -378,16 +383,16 @@ class Shipments extends DolibarrApi
      */
     public function deleteLine($id, $lineid)
     {
-        if(! DolibarrApiAccess::$user->rights->expedition->creer) {
+        if (! DolibarrApiAccess::$user->rights->expedition->creer) {
             throw new RestException(401);
         }
 
         $result = $this->shipment->fetch($id);
-        if( ! $result ) {
+        if (! $result) {
             throw new RestException(404, 'Shipment not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
+        if (! DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
@@ -397,9 +402,7 @@ class Shipments extends DolibarrApi
         $updateRes = $this->shipment->deleteline(DolibarrApiAccess::$user, $lineid);
         if ($updateRes > 0) {
             return $this->get($id);
-        }
-        else
-        {
+        } else {
             throw new RestException(405, $this->shipment->error);
         }
     }
@@ -426,17 +429,16 @@ class Shipments extends DolibarrApi
         if (! DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
-        foreach($request_data as $field => $value) {
-            if ($field == 'id') continue;
+        foreach ($request_data as $field => $value) {
+            if ($field == 'id') {
+                continue;
+            }
             $this->shipment->$field = $value;
         }
 
-        if ($this->shipment->update(DolibarrApiAccess::$user) > 0)
-        {
+        if ($this->shipment->update(DolibarrApiAccess::$user) > 0) {
             return $this->get($id);
-        }
-        else
-        {
+        } else {
             throw new RestException(500, $this->shipment->error);
         }
     }
@@ -450,19 +452,19 @@ class Shipments extends DolibarrApi
      */
     public function delete($id)
     {
-        if(! DolibarrApiAccess::$user->rights->shipment->supprimer) {
+        if (! DolibarrApiAccess::$user->rights->shipment->supprimer) {
             throw new RestException(401);
         }
         $result = $this->shipment->fetch($id);
-        if( ! $result ) {
+        if (! $result) {
             throw new RestException(404, 'Shipment not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
+        if (! DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
-        if( ! $this->shipment->delete(DolibarrApiAccess::$user)) {
+        if (! $this->shipment->delete(DolibarrApiAccess::$user)) {
             throw new RestException(500, 'Error when deleting shipment : '.$this->shipment->error);
         }
 
@@ -499,11 +501,11 @@ class Shipments extends DolibarrApi
             throw new RestException(401);
         }
         $result = $this->shipment->fetch($id);
-        if ( ! $result ) {
+        if (! $result) {
             throw new RestException(404, 'Shipment not found');
         }
 
-        if ( ! DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
+        if (! DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
@@ -515,11 +517,11 @@ class Shipments extends DolibarrApi
             throw new RestException(500, 'Error when validating Shipment: '.$this->shipment->error);
         }
         $result = $this->shipment->fetch($id);
-        if ( ! $result ) {
+        if (! $result) {
             throw new RestException(404, 'Shipment not found');
         }
 
-        if ( ! DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
+        if (! DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
@@ -542,26 +544,26 @@ class Shipments extends DolibarrApi
     //  * @throws 404
     //  * @throws 405
     //  */
-     /*
+    /*
     public function setinvoiced($id)
     {
 
-        if(! DolibarrApiAccess::$user->rights->expedition->creer) {
-                throw new RestException(401);
-        }
-        if(empty($id)) {
-                throw new RestException(400, 'Shipment ID is mandatory');
-        }
-        $result = $this->shipment->fetch($id);
-        if( ! $result ) {
-                throw new RestException(404, 'Shipment not found');
-        }
+       if(! DolibarrApiAccess::$user->rights->expedition->creer) {
+               throw new RestException(401);
+       }
+       if(empty($id)) {
+               throw new RestException(400, 'Shipment ID is mandatory');
+       }
+       $result = $this->shipment->fetch($id);
+       if( ! $result ) {
+               throw new RestException(404, 'Shipment not found');
+       }
 
-        $result = $this->shipment->classifyBilled(DolibarrApiAccess::$user);
-        if( $result < 0) {
-                throw new RestException(400, $this->shipment->error);
-        }
-        return $result;
+       $result = $this->shipment->classifyBilled(DolibarrApiAccess::$user);
+       if( $result < 0) {
+               throw new RestException(400, $this->shipment->error);
+       }
+       return $result;
     }
     */
 
@@ -631,10 +633,8 @@ class Shipments extends DolibarrApi
         unset($object->barcode_type_label);
         unset($object->barcode_type_coder);
 
-        if (! empty($object->lines) && is_array($object->lines))
-        {
-            foreach ($object->lines as $line)
-            {
+        if (! empty($object->lines) && is_array($object->lines)) {
+            foreach ($object->lines as $line) {
                 unset($line->tva_tx);
                 unset($line->vat_src_code);
                 unset($line->total_ht);
@@ -660,8 +660,9 @@ class Shipments extends DolibarrApi
     {
         $shipment = array();
         foreach (Shipments::$FIELDS as $field) {
-            if (!isset($data[$field]))
+            if (!isset($data[$field])) {
                 throw new RestException(400, "$field field missing");
+            }
             $shipment[$field] = $data[$field];
         }
         return $shipment;

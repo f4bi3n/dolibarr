@@ -29,17 +29,15 @@ use Sabre\Event\Promise;
  * @param Promise[] $promises
  * @return Promise
  */
-function all(array $promises) {
-
-    return new Promise(function($success, $fail) use ($promises) {
-
+function all(array $promises)
+{
+    return new Promise(function ($success, $fail) use ($promises) {
         $successCount = 0;
         $completeResult = [];
 
         foreach ($promises as $promiseIndex => $subPromise) {
-
             $subPromise->then(
-                function($result) use ($promiseIndex, &$completeResult, &$successCount, $success, $promises) {
+                function ($result) use ($promiseIndex, &$completeResult, &$successCount, $success, $promises) {
                     $completeResult[$promiseIndex] = $result;
                     $successCount++;
                     if ($successCount === count($promises)) {
@@ -48,14 +46,12 @@ function all(array $promises) {
                     return $result;
                 }
             )->error(
-                function($reason) use ($fail) {
+                function ($reason) use ($fail) {
                     $fail($reason);
                 }
             );
-
         }
     });
-
 }
 
 /**
@@ -68,22 +64,20 @@ function all(array $promises) {
  * @param Promise[] $promises
  * @return Promise
  */
-function race(array $promises) {
-
-    return new Promise(function($success, $fail) use ($promises) {
-
+function race(array $promises)
+{
+    return new Promise(function ($success, $fail) use ($promises) {
         $alreadyDone = false;
         foreach ($promises as $promise) {
-
             $promise->then(
-                function($result) use ($success, &$alreadyDone) {
+                function ($result) use ($success, &$alreadyDone) {
                     if ($alreadyDone) {
                         return;
                     }
                     $alreadyDone = true;
                     $success($result);
                 },
-                function($reason) use ($fail, &$alreadyDone) {
+                function ($reason) use ($fail, &$alreadyDone) {
                     if ($alreadyDone) {
                         return;
                     }
@@ -91,11 +85,8 @@ function race(array $promises) {
                     $fail($reason);
                 }
             );
-
         }
-
     });
-
 }
 
 
@@ -108,8 +99,8 @@ function race(array $promises) {
  * @param mixed $value
  * @return Promise
  */
-function resolve($value) {
-
+function resolve($value)
+{
     if ($value instanceof Promise) {
         return $value->then();
     } else {
@@ -117,7 +108,6 @@ function resolve($value) {
         $promise->fulfill($value);
         return $promise;
     }
-
 }
 
 /**
@@ -126,10 +116,9 @@ function resolve($value) {
  * @param mixed $reason
  * @return Promise
  */
-function reject($reason) {
-
+function reject($reason)
+{
     $promise = new Promise();
     $promise->reject($reason);
     return $promise;
-
 }

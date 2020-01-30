@@ -2,10 +2,10 @@
 
 namespace Sabre\VObject\ITip;
 
-class BrokerProcessReplyTest extends BrokerTester {
-
-    function testReplyNoOriginal() {
-
+class BrokerProcessReplyTest extends BrokerTester
+{
+    public function testReplyNoOriginal()
+    {
         $itip = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -23,11 +23,10 @@ ICS;
         $expected = null;
 
         $result = $this->process($itip, $old, $expected);
-
     }
 
-    function testReplyAccept() {
-
+    public function testReplyAccept()
+    {
         $itip = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -66,11 +65,10 @@ END:VCALENDAR
 ICS;
 
         $result = $this->process($itip, $old, $expected);
-
     }
 
-    function testReplyRequestStatus() {
-
+    public function testReplyRequestStatus()
+    {
         $itip = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -111,12 +109,11 @@ END:VCALENDAR
 ICS;
 
         $result = $this->process($itip, $old, $expected);
-
     }
 
 
-    function testReplyPartyCrasher() {
-
+    public function testReplyPartyCrasher()
+    {
         $itip = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -156,10 +153,10 @@ END:VCALENDAR
 ICS;
 
         $result = $this->process($itip, $old, $expected);
-
     }
 
-    function testReplyNewException() {
+    public function testReplyNewException()
+    {
 
         // This is a reply to 1 instance of a recurring event. This should
         // automatically create an exception.
@@ -217,10 +214,10 @@ END:VCALENDAR
 ICS;
 
         $result = $this->process($itip, $old, $expected);
-
     }
 
-    function testReplyNewExceptionTz() {
+    public function testReplyNewExceptionTz()
+    {
 
         // This is a reply to 1 instance of a recurring event. This should
         // automatically create an exception.
@@ -278,10 +275,10 @@ END:VCALENDAR
 ICS;
 
         $result = $this->process($itip, $old, $expected);
-
     }
 
-    function testReplyPartyCrashCreateExcepton() {
+    public function testReplyPartyCrashCreateExcepton()
+    {
 
         // IN this test there's a recurring event that has an exception. The
         // exception is missing the attendee.
@@ -340,10 +337,10 @@ END:VCALENDAR
 ICS;
 
         $result = $this->process($itip, $old, $expected);
-
     }
 
-    function testReplyNewExceptionNoMasterEvent() {
+    public function testReplyNewExceptionNoMasterEvent()
+    {
 
         /**
          * This iTip message would normally create a new exception, but the
@@ -383,14 +380,13 @@ ICS;
 
         $expected = null;
         $result = $this->process($itip, $old, $expected);
-
     }
 
     /**
      * @depends testReplyAccept
      */
-    function testReplyAcceptUpdateRSVP() {
-
+    public function testReplyAcceptUpdateRSVP()
+    {
         $itip = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -429,10 +425,10 @@ END:VCALENDAR
 ICS;
 
         $result = $this->process($itip, $old, $expected);
-
     }
 
-    function testReplyNewExceptionFirstOccurence() {
+    public function testReplyNewExceptionFirstOccurence()
+    {
 
         // This is a reply to 1 instance of a recurring event. This should
         // automatically create an exception.
@@ -490,7 +486,5 @@ END:VCALENDAR
 ICS;
 
         $result = $this->process($itip, $old, $expected);
-
     }
-
 }

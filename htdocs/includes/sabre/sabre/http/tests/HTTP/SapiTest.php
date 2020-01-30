@@ -2,10 +2,10 @@
 
 namespace Sabre\HTTP;
 
-class SapiTest extends \PHPUnit_Framework_TestCase {
-
-    function testConstructFromServerArray() {
-
+class SapiTest extends \PHPUnit_Framework_TestCase
+{
+    public function testConstructFromServerArray()
+    {
         $request = Sapi::createFromServerArray([
             'REQUEST_URI'     => '/foo',
             'REQUEST_METHOD'  => 'GET',
@@ -27,11 +27,10 @@ class SapiTest extends \PHPUnit_Framework_TestCase {
 
         $this->assertEquals('400', $request->getRawServerValue('CONTENT_LENGTH'));
         $this->assertNull($request->getRawServerValue('FOO'));
-
     }
 
-    function testConstructPHPAuth() {
-
+    public function testConstructPHPAuth()
+    {
         $request = Sapi::createFromServerArray([
             'REQUEST_URI'    => '/foo',
             'REQUEST_METHOD' => 'GET',
@@ -44,11 +43,10 @@ class SapiTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals([
             'Authorization' => ['Basic ' . base64_encode('user:pass')],
         ], $request->getHeaders());
-
     }
 
-    function testConstructPHPAuthDigest() {
-
+    public function testConstructPHPAuthDigest()
+    {
         $request = Sapi::createFromServerArray([
             'REQUEST_URI'     => '/foo',
             'REQUEST_METHOD'  => 'GET',
@@ -60,11 +58,10 @@ class SapiTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals([
             'Authorization' => ['Digest blabla'],
         ], $request->getHeaders());
-
     }
 
-    function testConstructRedirectAuth() {
-
+    public function testConstructRedirectAuth()
+    {
         $request = Sapi::createFromServerArray([
             'REQUEST_URI'                 => '/foo',
             'REQUEST_METHOD'              => 'GET',
@@ -76,7 +73,6 @@ class SapiTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals([
             'Authorization' => ['Basic bla'],
         ], $request->getHeaders());
-
     }
 
     /**
@@ -85,8 +81,8 @@ class SapiTest extends \PHPUnit_Framework_TestCase {
      * Unfortunately we have no way of testing if the HTTP response code got
      * changed.
      */
-    function testSend() {
-
+    public function testSend()
+    {
         if (!function_exists('xdebug_get_headers')) {
             $this->markTestSkipped('XDebug needs to be installed for this test to run');
         }
@@ -114,15 +110,14 @@ class SapiTest extends \PHPUnit_Framework_TestCase {
         );
 
         $this->assertEquals('foo', $result);
-
     }
 
     /**
      * @runInSeparateProcess
      * @depends testSend
      */
-    function testSendLimitedByContentLengthString() {
-
+    public function testSendLimitedByContentLengthString()
+    {
         $response = new Response(200);
 
         $response->addHeader('Content-Length', 19);
@@ -136,15 +131,14 @@ class SapiTest extends \PHPUnit_Framework_TestCase {
         header_remove();
 
         $this->assertEquals('Send this sentence.', $result);
-
     }
 
     /**
      * @runInSeparateProcess
      * @depends testSend
      */
-    function testSendLimitedByContentLengthStream() {
-
+    public function testSendLimitedByContentLengthStream()
+    {
         $response = new Response(200, ['Content-Length' => 19]);
 
         $body = fopen('php://memory', 'w');
@@ -161,7 +155,5 @@ class SapiTest extends \PHPUnit_Framework_TestCase {
         header_remove();
 
         $this->assertEquals('Send this sentence.', $result);
-
     }
-
 }

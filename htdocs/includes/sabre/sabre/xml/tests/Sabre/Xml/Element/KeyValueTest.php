@@ -5,10 +5,10 @@ namespace Sabre\Xml\Element;
 use Sabre\Xml\Reader;
 use Sabre\Xml\Writer;
 
-class KeyValueTest extends \PHPUnit_Framework_TestCase {
-
-    function testDeserialize() {
-
+class KeyValueTest extends \PHPUnit_Framework_TestCase
+{
+    public function testDeserialize()
+    {
         $input = <<<BLA
 <?xml version="1.0"?>
 <root xmlns="http://sabredav.org/ns">
@@ -79,15 +79,14 @@ BLA;
             ],
             'attributes' => [],
         ], $output);
-
     }
 
     /**
      * This test was added to find out why an element gets eaten by the
      * SabreDAV MKCOL parser.
      */
-    function testElementEater() {
-
+    public function testElementEater()
+    {
         $input = <<<BLA
 <?xml version="1.0"?>
 <mkcol xmlns="DAV:">
@@ -128,12 +127,11 @@ BLA;
         ];
 
         $this->assertEquals($expected, $reader->parse());
-
     }
 
 
-    function testSerialize() {
-
+    public function testSerialize()
+    {
         $value = [
             '{http://sabredav.org/ns}elem1' => null,
             '{http://sabredav.org/ns}elem2' => 'textValue',
@@ -172,15 +170,14 @@ BLA;
 XML;
 
         $this->assertEquals($expected, $output);
-
     }
 
     /**
      * I discovered that when there's no whitespace between elements, elements
      * can get skipped.
      */
-    function testElementSkipProblem() {
-
+    public function testElementSkipProblem()
+    {
         $input = <<<BLA
 <?xml version="1.0" encoding="utf-8"?>
 <root xmlns="http://sabredav.org/ns">
@@ -204,7 +201,5 @@ BLA;
             ],
             'attributes' => [],
         ], $output);
-
     }
-
 }

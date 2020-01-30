@@ -47,20 +47,20 @@ abstract class ModelePDFCommandes extends CommonDocGenerator
      *  @param	DoliDB	$db     			Database handler
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
-	 */
-	public static function liste_modeles($db, $maxfilenamelength = 0)
-	{
+     */
+    public static function liste_modeles($db, $maxfilenamelength = 0)
+    {
         // phpcs:enable
-		global $conf;
+        global $conf;
 
-		$type = 'order';
-		$list = array();
+        $type = 'order';
+        $list = array();
 
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$list = getListOfModels($db, $type, $maxfilenamelength);
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+        $list = getListOfModels($db, $type, $maxfilenamelength);
 
-		return $list;
-	}
+        return $list;
+    }
 }
 
 
@@ -70,83 +70,91 @@ abstract class ModelePDFCommandes extends CommonDocGenerator
  */
 abstract class ModeleNumRefCommandes
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
+    /**
+     * @var string Error code (or message)
+     */
+    public $error='';
 
-	/**
-	 *	Return if a module can be used or not
-	 *
-	 *	@return		boolean     true if module can be used
-	 */
-	public function isEnabled()
-	{
-		return true;
-	}
+    /**
+     *	Return if a module can be used or not
+     *
+     *	@return		boolean     true if module can be used
+     */
+    public function isEnabled()
+    {
+        return true;
+    }
 
-	/**
-	 *	Renvoie la description par defaut du modele de numerotation
-	 *
-	 *	@return     string      Texte descripif
-	 */
-	public function info()
-	{
-		global $langs;
-		$langs->load("orders");
-		return $langs->trans("NoDescription");
-	}
+    /**
+     *	Renvoie la description par defaut du modele de numerotation
+     *
+     *	@return     string      Texte descripif
+     */
+    public function info()
+    {
+        global $langs;
+        $langs->load("orders");
+        return $langs->trans("NoDescription");
+    }
 
-	/**
-	 *	Renvoie un exemple de numerotation
-	 *
-	 *	@return     string      Example
-	 */
-	public function getExample()
-	{
-		global $langs;
-		$langs->load("orders");
-		return $langs->trans("NoExample");
-	}
+    /**
+     *	Renvoie un exemple de numerotation
+     *
+     *	@return     string      Example
+     */
+    public function getExample()
+    {
+        global $langs;
+        $langs->load("orders");
+        return $langs->trans("NoExample");
+    }
 
-	/**
-	 *  Checks if the numbers already in force in the data base do not
+    /**
+     *  Checks if the numbers already in force in the data base do not
      *  cause conflicts that would prevent this numbering from working.
-	 *
-	 *	@return     boolean     false if conflict, true if ok
-	 */
-	public function canBeActivated()
-	{
-		return true;
-	}
+     *
+     *	@return     boolean     false if conflict, true if ok
+     */
+    public function canBeActivated()
+    {
+        return true;
+    }
 
-	/**
-	 *	Returns next assigned value
-	 *
-	 *	@param	Societe		$objsoc     Object thirdparty
-	 *	@param	Object		$object		Object we need next value for
-	 *	@return	string      Valeur
-	 */
-	public function getNextValue($objsoc, $object)
-	{
-		global $langs;
-		return $langs->trans("NotAvailable");
-	}
+    /**
+     *	Returns next assigned value
+     *
+     *	@param	Societe		$objsoc     Object thirdparty
+     *	@param	Object		$object		Object we need next value for
+     *	@return	string      Valeur
+     */
+    public function getNextValue($objsoc, $object)
+    {
+        global $langs;
+        return $langs->trans("NotAvailable");
+    }
 
-	/**
-	 *	Returns version of numbering module
-	 *
-	 *	@return     string      Valeur
-	 */
-	public function getVersion()
-	{
-		global $langs;
-		$langs->load("admin");
+    /**
+     *	Returns version of numbering module
+     *
+     *	@return     string      Valeur
+     */
+    public function getVersion()
+    {
+        global $langs;
+        $langs->load("admin");
 
-		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
-		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-		if ($this->version == 'dolibarr') return DOL_VERSION;
-		if ($this->version) return $this->version;
-		return $langs->trans("NotAvailable");
-	}
+        if ($this->version == 'development') {
+            return $langs->trans("VersionDevelopment");
+        }
+        if ($this->version == 'experimental') {
+            return $langs->trans("VersionExperimental");
+        }
+        if ($this->version == 'dolibarr') {
+            return DOL_VERSION;
+        }
+        if ($this->version) {
+            return $this->version;
+        }
+        return $langs->trans("NotAvailable");
+    }
 }

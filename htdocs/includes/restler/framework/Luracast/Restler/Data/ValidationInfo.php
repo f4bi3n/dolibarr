@@ -223,7 +223,9 @@ class ValidationInfo implements iValueObject
         $p = Util::nestedValue($from, $property);
         unset($from[$property]);
         $p2 = Util::nestedValue(
-            $from, CommentParser::$embeddedDataName, $property
+            $from,
+            CommentParser::$embeddedDataName,
+            $property
         );
         unset($from[CommentParser::$embeddedDataName][$property]);
 
@@ -266,8 +268,7 @@ class ValidationInfo implements iValueObject
      */
     public static function __set_state(array $info)
     {
-        $o = new self ($info);
+        $o = new self($info);
         return $o;
     }
 }
-

@@ -13,8 +13,8 @@ use Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class File extends DAV\File {
-
+class File extends DAV\File
+{
     protected $name;
     protected $contents;
     protected $parent;
@@ -29,8 +29,8 @@ class File extends DAV\File {
      * @param int $lastModified
      * @return void
      */
-    function __construct($name, $contents, Collection $parent = null, $lastModified = -1) {
-
+    public function __construct($name, $contents, Collection $parent = null, $lastModified = -1)
+    {
         $this->name = $name;
         $this->put($contents);
         $this->parent = $parent;
@@ -40,7 +40,6 @@ class File extends DAV\File {
         }
 
         $this->lastModified = $lastModified;
-
     }
 
     /**
@@ -50,10 +49,9 @@ class File extends DAV\File {
      *
      * @return string
      */
-    function getName() {
-
+    public function getName()
+    {
         return $this->name;
-
     }
 
     /**
@@ -62,10 +60,9 @@ class File extends DAV\File {
      * @param string $name
      * @return void
      */
-    function setName($name) {
-
+    public function setName($name)
+    {
         $this->name = $name;
-
     }
 
     /**
@@ -88,14 +85,13 @@ class File extends DAV\File {
      * @param resource $data
      * @return string|null
      */
-    function put($data) {
-
+    public function put($data)
+    {
         if (is_resource($data)) {
             $data = stream_get_contents($data);
         }
         $this->contents = $data;
         return '"' . md5($data) . '"';
-
     }
 
     /**
@@ -105,10 +101,9 @@ class File extends DAV\File {
      *
      * @return mixed
      */
-    function get() {
-
+    public function get()
+    {
         return $this->contents;
-
     }
 
     /**
@@ -120,10 +115,9 @@ class File extends DAV\File {
      *
      * @return void
      */
-    function getETag() {
-
+    public function getETag()
+    {
         return '"' . md5($this->contents) . '"';
-
     }
 
     /**
@@ -131,10 +125,9 @@ class File extends DAV\File {
      *
      * @return int
      */
-    function getSize() {
-
+    public function getSize()
+    {
         return strlen($this->contents);
-
     }
 
     /**
@@ -142,10 +135,9 @@ class File extends DAV\File {
      *
      * @return void
      */
-    function delete() {
-
+    public function delete()
+    {
         $this->parent->deleteChild($this->name);
-
     }
 
     /**
@@ -154,10 +146,8 @@ class File extends DAV\File {
      *
      * @return int
      */
-    function getLastModified() {
-
+    public function getLastModified()
+    {
         return $this->lastModified;
-
     }
-
 }

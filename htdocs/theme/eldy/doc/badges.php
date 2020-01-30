@@ -1,11 +1,23 @@
 <?php
 
-if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC', '1');
-if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK', 1);
-if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
-if (! defined('NOLOGIN'))         define('NOLOGIN', 1);          // File must be accessed by logon page so without login
-if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML', 1);
-if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX', '1');
+if (! defined('NOREQUIRESOC')) {
+    define('NOREQUIRESOC', '1');
+}
+if (! defined('NOCSRFCHECK')) {
+    define('NOCSRFCHECK', 1);
+}
+if (! defined('NOTOKENRENEWAL')) {
+    define('NOTOKENRENEWAL', 1);
+}
+if (! defined('NOLOGIN')) {
+    define('NOLOGIN', 1);
+}          // File must be accessed by logon page so without login
+if (! defined('NOREQUIREHTML')) {
+    define('NOREQUIREHTML', 1);
+}
+if (! defined('NOREQUIREAJAX')) {
+    define('NOREQUIREAJAX', '1');
+}
 
 session_cache_limiter('public');
 
@@ -289,9 +301,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 		<h2 id="helper">Use status helper function</h2>
 		<p>Using the dolGetStatus function provide in core/lib/functions.lib.php. This function is recommended for code uniformisation and easy maintain</p>
 		<?php
-		$saveGlobalConf = $conf->global->MAIN_STATUS_USES_CSS;
-		$conf->global->MAIN_STATUS_USES_CSS = 1;
-		?>
+        $saveGlobalConf = $conf->global->MAIN_STATUS_USES_CSS;
+        $conf->global->MAIN_STATUS_USES_CSS = 1;
+        ?>
 		<h4>Using hidden global conf MAIN_STATUS_USES_CSS=1</h4>
 		<p><?php print dolGetStatus('your label for accessibility', 'your label', 'your label <u>with</u> <em>html</em>', 'status4') ?></p>
 		<p><?php print dolGetStatus('your label for accessibility', 'your label', 'your label <u>with</u> <em>html</em>', 'status4', 1) ?></p>

@@ -14,7 +14,8 @@ use Sabre\Xml\XmlSerializable;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class AclRestrictions implements XmlSerializable {
+class AclRestrictions implements XmlSerializable
+{
 
     /**
      * The xmlSerialize method is called during xml writing.
@@ -35,11 +36,9 @@ class AclRestrictions implements XmlSerializable {
      * @param Writer $writer
      * @return void
      */
-    function xmlSerialize(Writer $writer) {
-
+    public function xmlSerialize(Writer $writer)
+    {
         $writer->writeElement('{DAV:}grant-only');
         $writer->writeElement('{DAV:}no-invert');
-
     }
-
 }

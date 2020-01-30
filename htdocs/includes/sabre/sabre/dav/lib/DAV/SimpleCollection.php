@@ -12,7 +12,8 @@ namespace Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class SimpleCollection extends Collection {
+class SimpleCollection extends Collection
+{
 
     /**
      * List of childnodes
@@ -37,16 +38,15 @@ class SimpleCollection extends Collection {
      * @param string $name
      * @param INode[] $children
      */
-    function __construct($name, array $children = []) {
-
+    public function __construct($name, array $children = [])
+    {
         $this->name = $name;
         foreach ($children as $child) {
-
-            if (!($child instanceof INode)) throw new Exception('Only instances of Sabre\DAV\INode are allowed to be passed in the children argument');
+            if (!($child instanceof INode)) {
+                throw new Exception('Only instances of Sabre\DAV\INode are allowed to be passed in the children argument');
+            }
             $this->addChild($child);
-
         }
-
     }
 
     /**
@@ -55,10 +55,9 @@ class SimpleCollection extends Collection {
      * @param INode $child
      * @return void
      */
-    function addChild(INode $child) {
-
+    public function addChild(INode $child)
+    {
         $this->children[$child->getName()] = $child;
-
     }
 
     /**
@@ -66,10 +65,9 @@ class SimpleCollection extends Collection {
      *
      * @return string
      */
-    function getName() {
-
+    public function getName()
+    {
         return $this->name;
-
     }
 
     /**
@@ -85,11 +83,12 @@ class SimpleCollection extends Collection {
      * @throws Exception\NotFound
      * @return INode
      */
-    function getChild($name) {
-
-        if (isset($this->children[$name])) return $this->children[$name];
+    public function getChild($name)
+    {
+        if (isset($this->children[$name])) {
+            return $this->children[$name];
+        }
         throw new Exception\NotFound('File not found: ' . $name . ' in \'' . $this->getName() . '\'');
-
     }
 
     /**
@@ -97,11 +96,8 @@ class SimpleCollection extends Collection {
      *
      * @return INode[]
      */
-    function getChildren() {
-
+    public function getChildren()
+    {
         return array_values($this->children);
-
     }
-
-
 }

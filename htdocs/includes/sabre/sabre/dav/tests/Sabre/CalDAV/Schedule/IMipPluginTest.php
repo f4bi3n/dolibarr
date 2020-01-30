@@ -6,20 +6,19 @@ use Sabre\DAV\Server;
 use Sabre\VObject\ITip\Message;
 use Sabre\VObject\Reader;
 
-class IMipPluginTest extends \PHPUnit_Framework_TestCase {
-
-    function testGetPluginInfo() {
-
+class IMipPluginTest extends \PHPUnit_Framework_TestCase
+{
+    public function testGetPluginInfo()
+    {
         $plugin = new IMipPlugin('system@example.com');
         $this->assertEquals(
             'imip',
             $plugin->getPluginInfo()['name']
         );
-
     }
 
-    function testDeliverReply() {
-
+    public function testDeliverReply()
+    {
         $message = new Message();
         $message->sender = 'mailto:sender@example.org';
         $message->senderName = 'Sender';
@@ -57,11 +56,10 @@ ICS;
         ];
 
         $this->assertEquals($expected, $result);
-
     }
 
-    function testDeliverReplyNoMailto() {
-
+    public function testDeliverReplyNoMailto()
+    {
         $message = new Message();
         $message->sender = 'mailto:sender@example.org';
         $message->senderName = 'Sender';
@@ -87,11 +85,10 @@ ICS;
         $expected = [];
 
         $this->assertEquals($expected, $result);
-
     }
 
-    function testDeliverRequest() {
-
+    public function testDeliverRequest()
+    {
         $message = new Message();
         $message->sender = 'mailto:sender@example.org';
         $message->senderName = 'Sender';
@@ -129,11 +126,10 @@ ICS;
         ];
 
         $this->assertEquals($expected, $result);
-
     }
 
-    function testDeliverCancel() {
-
+    public function testDeliverCancel()
+    {
         $message = new Message();
         $message->sender = 'mailto:sender@example.org';
         $message->senderName = 'Sender';
@@ -172,11 +168,10 @@ ICS;
 
         $this->assertEquals($expected, $result);
         $this->assertEquals('1.1', substr($message->scheduleStatus, 0, 3));
-
     }
 
-    function schedule(Message $message) {
-
+    public function schedule(Message $message)
+    {
         $plugin = new IMip\MockPlugin('system@example.org');
 
         $server = new Server();
@@ -184,11 +179,10 @@ ICS;
         $server->emit('schedule', [$message]);
 
         return $plugin->getSentEmails();
-
     }
 
-    function testDeliverInsignificantRequest() {
-
+    public function testDeliverInsignificantRequest()
+    {
         $message = new Message();
         $message->sender = 'mailto:sender@example.org';
         $message->senderName = 'Sender';
@@ -215,7 +209,5 @@ ICS;
         $expected = [];
         $this->assertEquals($expected, $result);
         $this->assertEquals('1.0', $message->getScheduleStatus()[0]);
-
     }
-
 }

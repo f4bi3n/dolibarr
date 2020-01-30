@@ -33,8 +33,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_50_modNotification_Noti
 $langs->loadLangs(array('admin', 'other', 'orders', 'propal', 'bills', 'errors', 'mails'));
 
 // Security check
-if (!$user->admin)
-  accessforbidden();
+if (!$user->admin) {
+    accessforbidden();
+}
 
 $action = GETPOST('action', 'aZ09');
 
@@ -43,58 +44,52 @@ $action = GETPOST('action', 'aZ09');
  * Actions
  */
 
-if ($action == 'setvalue' && $user->admin)
-{
-	$db->begin();
+if ($action == 'setvalue' && $user->admin) {
+    $db->begin();
 
-	$result = dolibarr_set_const($db, "NOTIFICATION_EMAIL_FROM", $_POST["email_from"], 'chaine', 0, '', $conf->entity);
-    if ($result < 0) $error++;
-
-    if (!$error && is_array($_POST))
-    {
-    	//var_dump($_POST);
-    	$reg = array();
-	    foreach ($_POST as $key => $val)
-	    {
-	    	if (!preg_match('/^NOTIF_(.*)_key$/', $key, $reg)) continue;
-
-	    	$newval = '';
-	    	$newkey = '';
-
-	    	$shortkey = preg_replace('/_key$/', '', $key);
-    		//print $shortkey.'<br>';
-
-	    	if (preg_match('/^NOTIF_(.*)_old_(.*)_key/', $key, $reg))
-	    	{
-				dolibarr_del_const($db, 'NOTIFICATION_FIXEDEMAIL_'.$reg[1].'_THRESHOLD_HIGHER_'.$reg[2], $conf->entity);
-
-				$newkey = 'NOTIFICATION_FIXEDEMAIL_'.$reg[1].'_THRESHOLD_HIGHER_'.((int) GETPOST($shortkey.'_amount'));
-				$newval = GETPOST($shortkey.'_key');
-				//print $newkey.' - '.$newval.'<br>';
-	    	}
-	    	elseif (preg_match('/^NOTIF_(.*)_new_key/', $key, $reg))
-	    	{
-		    	// Add a new entry
-	    		$newkey = 'NOTIFICATION_FIXEDEMAIL_'.$reg[1].'_THRESHOLD_HIGHER_'.((int) GETPOST($shortkey.'_amount'));
-	    		$newval = GETPOST($shortkey.'_key');
-	    	}
-
-	    	if ($newkey && $newval)
-	    	{
-				$result = dolibarr_set_const($db, $newkey, $newval, 'chaine', 0, '', $conf->entity);
-	    	}
-	    }
+    $result = dolibarr_set_const($db, "NOTIFICATION_EMAIL_FROM", $_POST["email_from"], 'chaine', 0, '', $conf->entity);
+    if ($result < 0) {
+        $error++;
     }
 
-  	if (!$error)
-    {
-    	$db->commit();
+    if (!$error && is_array($_POST)) {
+        //var_dump($_POST);
+        $reg = array();
+        foreach ($_POST as $key => $val) {
+            if (!preg_match('/^NOTIF_(.*)_key$/', $key, $reg)) {
+                continue;
+            }
+
+            $newval = '';
+            $newkey = '';
+
+            $shortkey = preg_replace('/_key$/', '', $key);
+            //print $shortkey.'<br>';
+
+            if (preg_match('/^NOTIF_(.*)_old_(.*)_key/', $key, $reg)) {
+                dolibarr_del_const($db, 'NOTIFICATION_FIXEDEMAIL_'.$reg[1].'_THRESHOLD_HIGHER_'.$reg[2], $conf->entity);
+
+                $newkey = 'NOTIFICATION_FIXEDEMAIL_'.$reg[1].'_THRESHOLD_HIGHER_'.((int) GETPOST($shortkey.'_amount'));
+                $newval = GETPOST($shortkey.'_key');
+            //print $newkey.' - '.$newval.'<br>';
+            } elseif (preg_match('/^NOTIF_(.*)_new_key/', $key, $reg)) {
+                // Add a new entry
+                $newkey = 'NOTIFICATION_FIXEDEMAIL_'.$reg[1].'_THRESHOLD_HIGHER_'.((int) GETPOST($shortkey.'_amount'));
+                $newval = GETPOST($shortkey.'_key');
+            }
+
+            if ($newkey && $newval) {
+                $result = dolibarr_set_const($db, $newkey, $newval, 'chaine', 0, '', $conf->entity);
+            }
+        }
+    }
+
+    if (!$error) {
+        $db->commit();
 
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-	{
-		$db->rollback();
+    } else {
+        $db->rollback();
 
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
@@ -117,7 +112,9 @@ print load_fiche_titre($langs->trans("NotificationSetup"), $linkback, 'title_set
 print '<span class="opacitymedium">';
 print $langs->trans("NotificationsDesc").'<br>';
 print $langs->trans("NotificationsDescUser").'<br>';
-if (!empty($conf->societe->enabled)) print $langs->trans("NotificationsDescContact").'<br>';
+if (!empty($conf->societe->enabled)) {
+    print $langs->trans("NotificationsDescContact").'<br>';
+}
 print $langs->trans("NotificationsDescGlobal").'<br>';
 print '</span>';
 print '<br>';
@@ -136,7 +133,9 @@ print '<tr class="oddeven"><td>';
 print $langs->trans("NotificationEMailFrom").'</td>';
 print '<td>';
 print '<input size="32" type="email" name="email_from" value="'.$conf->global->NOTIFICATION_EMAIL_FROM.'">';
-if (!empty($conf->global->NOTIFICATION_EMAIL_FROM) && !isValidEmail($conf->global->NOTIFICATION_EMAIL_FROM)) print ' '.img_warning($langs->trans("ErrorBadEMail"));
+if (!empty($conf->global->NOTIFICATION_EMAIL_FROM) && !isValidEmail($conf->global->NOTIFICATION_EMAIL_FROM)) {
+    print ' '.img_warning($langs->trans("ErrorBadEMail"));
+}
 print '</td>';
 print '</tr>';
 print '</table>';
@@ -146,7 +145,9 @@ print '<br><br>';
 
 // Notification per contacts
 $title = $langs->trans("ListOfNotificationsPerUser");
-if (!empty($conf->societe->enabled)) $title = $langs->trans("ListOfNotificationsPerUserOrContact");
+if (!empty($conf->societe->enabled)) {
+    $title = $langs->trans("ListOfNotificationsPerUserOrContact");
+}
 print load_fiche_titre($title, '', '');
 
 print '<table class="noborder centpercent">';
@@ -165,20 +166,29 @@ print '<tr class="oddeven">';
 print '<td>';
 
 $i = 0;
-foreach ($listofnotifiedevents as $notifiedevent)
-{
+foreach ($listofnotifiedevents as $notifiedevent) {
     $label = $langs->trans("Notify_".$notifiedevent['code']); //!=$langs->trans("Notify_".$notifiedevent['code'])?$langs->trans("Notify_".$notifiedevent['code']):$notifiedevent['label'];
     $elementLabel = $langs->trans(ucfirst($notifiedevent['elementtype']));
 
-    if ($notifiedevent['elementtype'] == 'order_supplier') $elementLabel = $langs->trans('SupplierOrder');
-    elseif ($notifiedevent['elementtype'] == 'propal') $elementLabel = $langs->trans('Proposal');
-    elseif ($notifiedevent['elementtype'] == 'facture') $elementLabel = $langs->trans('Bill');
-    elseif ($notifiedevent['elementtype'] == 'commande') $elementLabel = $langs->trans('Order');
-    elseif ($notifiedevent['elementtype'] == 'ficheinter') $elementLabel = $langs->trans('Intervention');
-    elseif ($notifiedevent['elementtype'] == 'shipping') $elementLabel = $langs->trans('Shipping');
-    elseif ($notifiedevent['elementtype'] == 'expensereport') $elementLabel = $langs->trans('ExpenseReport');
+    if ($notifiedevent['elementtype'] == 'order_supplier') {
+        $elementLabel = $langs->trans('SupplierOrder');
+    } elseif ($notifiedevent['elementtype'] == 'propal') {
+        $elementLabel = $langs->trans('Proposal');
+    } elseif ($notifiedevent['elementtype'] == 'facture') {
+        $elementLabel = $langs->trans('Bill');
+    } elseif ($notifiedevent['elementtype'] == 'commande') {
+        $elementLabel = $langs->trans('Order');
+    } elseif ($notifiedevent['elementtype'] == 'ficheinter') {
+        $elementLabel = $langs->trans('Intervention');
+    } elseif ($notifiedevent['elementtype'] == 'shipping') {
+        $elementLabel = $langs->trans('Shipping');
+    } elseif ($notifiedevent['elementtype'] == 'expensereport') {
+        $elementLabel = $langs->trans('ExpenseReport');
+    }
 
-    if ($i) print ', ';
+    if ($i) {
+        print ', ';
+    }
     print $label;
 
     $i++;
@@ -188,7 +198,9 @@ print '</td></tr>';
 print '</table>';
 print '<div class="opacitymedium">';
 print '* '.$langs->trans("GoOntoUserCardToAddMore").'<br>';
-if (!empty($conf->societe->enabled)) print '** '.$langs->trans("GoOntoContactCardToAddMore").'<br>';
+if (!empty($conf->societe->enabled)) {
+    print '** '.$langs->trans("GoOntoContactCardToAddMore").'<br>';
+}
 print '</div>';
 print '<br><br>';
 
@@ -209,19 +221,26 @@ print "</tr>\n";
 $notificationtrigger = new InterfaceNotification($db);
 $listofnotifiedevents = $notificationtrigger->getListOfManagedEvents();
 
-foreach ($listofnotifiedevents as $notifiedevent)
-{
+foreach ($listofnotifiedevents as $notifiedevent) {
     $label = $langs->trans("Notify_".$notifiedevent['code']); //!=$langs->trans("Notify_".$notifiedevent['code'])?$langs->trans("Notify_".$notifiedevent['code']):$notifiedevent['label'];
 
     $elementLabel = $langs->trans(ucfirst($notifiedevent['elementtype']));
-	// Special cases
-    if ($notifiedevent['elementtype'] == 'order_supplier') $elementLabel = $langs->trans('SupplierOrder');
-    elseif ($notifiedevent['elementtype'] == 'propal') $elementLabel = $langs->trans('Proposal');
-    elseif ($notifiedevent['elementtype'] == 'facture') $elementLabel = $langs->trans('Bill');
-    elseif ($notifiedevent['elementtype'] == 'commande') $elementLabel = $langs->trans('Order');
-	elseif ($notifiedevent['elementtype'] == 'ficheinter') $elementLabel = $langs->trans('Intervention');
-	elseif ($notifiedevent['elementtype'] == 'shipping') $elementLabel = $langs->trans('Shipping');
-	elseif ($notifiedevent['elementtype'] == 'expensereport') $elementLabel = $langs->trans('ExpenseReport');
+    // Special cases
+    if ($notifiedevent['elementtype'] == 'order_supplier') {
+        $elementLabel = $langs->trans('SupplierOrder');
+    } elseif ($notifiedevent['elementtype'] == 'propal') {
+        $elementLabel = $langs->trans('Proposal');
+    } elseif ($notifiedevent['elementtype'] == 'facture') {
+        $elementLabel = $langs->trans('Bill');
+    } elseif ($notifiedevent['elementtype'] == 'commande') {
+        $elementLabel = $langs->trans('Order');
+    } elseif ($notifiedevent['elementtype'] == 'ficheinter') {
+        $elementLabel = $langs->trans('Intervention');
+    } elseif ($notifiedevent['elementtype'] == 'shipping') {
+        $elementLabel = $langs->trans('Shipping');
+    } elseif ($notifiedevent['elementtype'] == 'expensereport') {
+        $elementLabel = $langs->trans('ExpenseReport');
+    }
 
     print '<tr class="oddeven">';
     print '<td>'.$elementLabel.'</td>';
@@ -229,24 +248,28 @@ foreach ($listofnotifiedevents as $notifiedevent)
     print '<td>'.$label.'</td>';
     print '<td>';
     // Notification with threshold
-    foreach ($conf->global as $key => $val)
-    {
-		if ($val == '' || !preg_match('/^NOTIFICATION_FIXEDEMAIL_'.$notifiedevent['code'].'_THRESHOLD_HIGHER_(.*)/', $key, $reg)) continue;
+    foreach ($conf->global as $key => $val) {
+        if ($val == '' || !preg_match('/^NOTIFICATION_FIXEDEMAIL_'.$notifiedevent['code'].'_THRESHOLD_HIGHER_(.*)/', $key, $reg)) {
+            continue;
+        }
 
-	    $param = 'NOTIFICATION_FIXEDEMAIL_'.$notifiedevent['code'].'_THRESHOLD_HIGHER_'.$reg[1];
-    	$value = GETPOST('NOTIF_'.$notifiedevent['code'].'_old_'.$reg[1].'_key') ?GETPOST('NOTIF_'.$notifiedevent['code'].'_old_'.$reg[1].'_key', 'alpha') : $conf->global->$param;
+        $param = 'NOTIFICATION_FIXEDEMAIL_'.$notifiedevent['code'].'_THRESHOLD_HIGHER_'.$reg[1];
+        $value = GETPOST('NOTIF_'.$notifiedevent['code'].'_old_'.$reg[1].'_key') ?GETPOST('NOTIF_'.$notifiedevent['code'].'_old_'.$reg[1].'_key', 'alpha') : $conf->global->$param;
 
-    	$s = '<input type="text" size="32" name="NOTIF_'.$notifiedevent['code'].'_old_'.$reg[1].'_key" value="'.dol_escape_htmltag($value).'">'; // Do not use type="email" here, we must be able to enter a list of email with , separator.
-	    $arrayemail = explode(',', $value);
-		$showwarning = 0;
-		foreach ($arrayemail as $keydet => $valuedet)
-		{
-			$valuedet = trim($valuedet);
-			if (!empty($valuedet) && !isValidEmail($valuedet, 1)) $showwarning++;
-		}
-	    if ((!empty($conf->global->$param)) && $showwarning) $s .= ' '.img_warning($langs->trans("ErrorBadEMail"));
-	    print $form->textwithpicto($s, $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients").'<br>'.$langs->trans("YouCanAlsoUseSupervisorKeyword"), 1, 'help', '', 0, 2);
-		print '<br>';
+        $s = '<input type="text" size="32" name="NOTIF_'.$notifiedevent['code'].'_old_'.$reg[1].'_key" value="'.dol_escape_htmltag($value).'">'; // Do not use type="email" here, we must be able to enter a list of email with , separator.
+        $arrayemail = explode(',', $value);
+        $showwarning = 0;
+        foreach ($arrayemail as $keydet => $valuedet) {
+            $valuedet = trim($valuedet);
+            if (!empty($valuedet) && !isValidEmail($valuedet, 1)) {
+                $showwarning++;
+            }
+        }
+        if ((!empty($conf->global->$param)) && $showwarning) {
+            $s .= ' '.img_warning($langs->trans("ErrorBadEMail"));
+        }
+        print $form->textwithpicto($s, $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients").'<br>'.$langs->trans("YouCanAlsoUseSupervisorKeyword"), 1, 'help', '', 0, 2);
+        print '<br>';
     }
     // New entry input fields
     $s = '<input type="text" size="32" name="NOTIF_'.$notifiedevent['code'].'_new_key" value="">'; // Do not use type="email" here, we must be able to enter a list of email with , separator.
@@ -255,19 +278,20 @@ foreach ($listofnotifiedevents as $notifiedevent)
 
     print '<td>';
     // Notification with threshold
-    foreach ($conf->global as $key => $val)
-    {
-		if ($val == '' || !preg_match('/^NOTIFICATION_FIXEDEMAIL_'.$notifiedevent['code'].'_THRESHOLD_HIGHER_(.*)/', $key, $reg)) continue;
+    foreach ($conf->global as $key => $val) {
+        if ($val == '' || !preg_match('/^NOTIFICATION_FIXEDEMAIL_'.$notifiedevent['code'].'_THRESHOLD_HIGHER_(.*)/', $key, $reg)) {
+            continue;
+        }
 
-    	print $langs->trans("AmountHT").' >= <input type="text" size="4" name="NOTIF_'.$notifiedevent['code'].'_old_'.$reg[1].'_amount" value="'.dol_escape_htmltag($reg[1]).'">';
-		print '<br>';
+        print $langs->trans("AmountHT").' >= <input type="text" size="4" name="NOTIF_'.$notifiedevent['code'].'_old_'.$reg[1].'_amount" value="'.dol_escape_htmltag($reg[1]).'">';
+        print '<br>';
     }
     // New entry input fields
-	print $langs->trans("AmountHT").' >= <input type="text" size="4" name="NOTIF_'.$notifiedevent['code'].'_new_amount" value="">';
-	print '</td>';
+    print $langs->trans("AmountHT").' >= <input type="text" size="4" name="NOTIF_'.$notifiedevent['code'].'_new_amount" value="">';
+    print '</td>';
 
     print '<td>';
-	// TODO Add link to show message content
+    // TODO Add link to show message content
 
     print '</td>';
     print '</tr>';

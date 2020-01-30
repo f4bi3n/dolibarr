@@ -35,8 +35,7 @@ $HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
 $userid=GETPOST('userid', 'int');
 $socid=GETPOST('socid', 'int');
 // Security check
-if ($user->socid > 0)
-{
+if ($user->socid > 0) {
     $action = '';
     $socid = $user->socid;
 }
@@ -72,23 +71,19 @@ $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 // $data = array(array('Lib',val1,val2,val3),...)
 
 
-if (!$user->rights->societe->client->voir || $user->socid)
-{
+if (!$user->rights->societe->client->voir || $user->socid) {
     $filenamenb = $dir.'/shipmentsnbinyear-'.$user->id.'-'.$year.'.png';
-}
-else
-{
+} else {
     $filenamenb = $dir.'/shipmentsnbinyear-'.$year.'.png';
 }
 
 $px1 = new DolGraph();
 $mesg = $px1->isGraphKo();
-if (! $mesg)
-{
+if (! $mesg) {
     $px1->SetData($data);
-    $i=$startyear;$legend=array();
-    while ($i <= $endyear)
-    {
+    $i=$startyear;
+    $legend=array();
+    while ($i <= $endyear) {
         $legend[]=$i;
         $i++;
     }
@@ -189,12 +184,14 @@ if (! $mesg)
 // Show array
 $data = $stats->getAllByYear();
 $arrayyears=array();
-foreach($data as $val) {
-	if (! empty($val['year'])) {
-		$arrayyears[$val['year']]=$val['year'];
-	}
+foreach ($data as $val) {
+    if (! empty($val['year'])) {
+        $arrayyears[$val['year']]=$val['year'];
+    }
 }
-if (! count($arrayyears)) $arrayyears[$nowyear]=$nowyear;
+if (! count($arrayyears)) {
+    $arrayyears[$nowyear]=$nowyear;
+}
 
 $h=0;
 $head = array();
@@ -215,31 +212,35 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 //if (empty($socid))
 //{
-	// Show filter box
-	print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
+    // Show filter box
+    print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
 
-	print '<table class="border centpercent">';
-	print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
-	// Company
-	print '<tr><td class="left">'.$langs->trans("ThirdParty").'</td><td class="left">';
-	print $form->select_company($socid, 'socid', '', 1, 0, 0, array(), 0, '', 'style="width: 95%"');
-	print '</td></tr>';
-	// User
-	print '<tr><td class="left">'.$langs->trans("CreatedBy").'</td><td class="left">';
-	print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
-	print '</td></tr>';
-	// Year
-	print '<tr><td class="left">'.$langs->trans("Year").'</td><td class="left">';
-	if (! in_array($year, $arrayyears)) $arrayyears[$year]=$year;
-	if (! in_array($nowyear, $arrayyears)) $arrayyears[$nowyear]=$nowyear;
-	arsort($arrayyears);
-	print $form->selectarray('year', $arrayyears, $year, 0);
-	print '</td></tr>';
-	print '<tr><td class="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
-	print '</table>';
-	print '</form>';
-	print '<br><br>';
+    print '<table class="border centpercent">';
+    print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
+    // Company
+    print '<tr><td class="left">'.$langs->trans("ThirdParty").'</td><td class="left">';
+    print $form->select_company($socid, 'socid', '', 1, 0, 0, array(), 0, '', 'style="width: 95%"');
+    print '</td></tr>';
+    // User
+    print '<tr><td class="left">'.$langs->trans("CreatedBy").'</td><td class="left">';
+    print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+    print '</td></tr>';
+    // Year
+    print '<tr><td class="left">'.$langs->trans("Year").'</td><td class="left">';
+    if (! in_array($year, $arrayyears)) {
+        $arrayyears[$year]=$year;
+    }
+    if (! in_array($nowyear, $arrayyears)) {
+        $arrayyears[$nowyear]=$nowyear;
+    }
+    arsort($arrayyears);
+    print $form->selectarray('year', $arrayyears, $year, 0);
+    print '</td></tr>';
+    print '<tr><td class="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
+    print '</table>';
+    print '</form>';
+    print '<br><br>';
 //}
 
 print '<div class="div-table-responsive-no-min">';
@@ -252,28 +253,26 @@ print '<td class="center">'.$langs->trans("AmountAverage").'</td>';*/
 print '</tr>';
 
 $oldyear=0;
-foreach ($data as $val)
-{
-	$year = $val['year'];
-	while (! empty($year) && $oldyear > $year+1)
-	{ // If we have empty year
-		$oldyear--;
-		print '<tr height="24">';
-		print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'">'.$oldyear.'</a></td>';
+foreach ($data as $val) {
+    $year = $val['year'];
+    while (! empty($year) && $oldyear > $year+1) { // If we have empty year
+        $oldyear--;
+        print '<tr height="24">';
+        print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'">'.$oldyear.'</a></td>';
 
-		print '<td class="right">0</td>';
-		/*print '<td class="right">0</td>';
-		print '<td class="right">0</td>';*/
-		print '</tr>';
-	}
+        print '<td class="right">0</td>';
+        /*print '<td class="right">0</td>';
+        print '<td class="right">0</td>';*/
+        print '</tr>';
+    }
 
-	print '<tr height="24">';
-	print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'">'.$year.'</a></td>';
-	print '<td class="right">'.$val['nb'].'</td>';
-	/*print '<td class="right">'.price(price2num($val['total'],'MT'),1).'</td>';
-	print '<td class="right">'.price(price2num($val['avg'],'MT'),1).'</td>';*/
-	print '</tr>';
-	$oldyear=$year;
+    print '<tr height="24">';
+    print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'">'.$year.'</a></td>';
+    print '<td class="right">'.$val['nb'].'</td>';
+    /*print '<td class="right">'.price(price2num($val['total'],'MT'),1).'</td>';
+    print '<td class="right">'.price(price2num($val['avg'],'MT'),1).'</td>';*/
+    print '</tr>';
+    $oldyear=$year;
 }
 
 print '</table>';
@@ -285,8 +284,9 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 // Show graphs
 print '<table class="border centpercent"><tr class="pair nohover"><td class="center">';
-if ($mesg) { print $mesg; }
-else {
+if ($mesg) {
+    print $mesg;
+} else {
     print $px1->show();
     print "<br>\n";
     /*print $px2->show();

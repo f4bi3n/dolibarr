@@ -19,7 +19,8 @@ namespace Sabre\Xml;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-trait ContextStackTrait {
+trait ContextStackTrait
+{
 
     /**
      * This is the element map. It contains a list of XML elements (in clark
@@ -93,15 +94,14 @@ trait ContextStackTrait {
      *
      * @return null
      */
-    function pushContext() {
-
+    public function pushContext()
+    {
         $this->contextStack[] = [
             $this->elementMap,
             $this->contextUri,
             $this->namespaceMap,
             $this->classMap
         ];
-
     }
 
     /**
@@ -109,15 +109,13 @@ trait ContextStackTrait {
      *
      * @return null
      */
-    function popContext() {
-
+    public function popContext()
+    {
         list(
             $this->elementMap,
             $this->contextUri,
             $this->namespaceMap,
             $this->classMap
         ) = array_pop($this->contextStack);
-
     }
-
 }

@@ -19,7 +19,8 @@ use Sabre\HTTP\ResponseInterface;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-abstract class AbstractBasic implements BackendInterface {
+abstract class AbstractBasic implements BackendInterface
+{
 
     /**
      * Authentication Realm.
@@ -56,10 +57,9 @@ abstract class AbstractBasic implements BackendInterface {
      * @param string $realm
      * @return void
      */
-    function setRealm($realm) {
-
+    public function setRealm($realm)
+    {
         $this->realm = $realm;
-
     }
 
     /**
@@ -90,8 +90,8 @@ abstract class AbstractBasic implements BackendInterface {
      * @param ResponseInterface $response
      * @return array
      */
-    function check(RequestInterface $request, ResponseInterface $response) {
-
+    public function check(RequestInterface $request, ResponseInterface $response)
+    {
         $auth = new HTTP\Auth\Basic(
             $this->realm,
             $request,
@@ -106,7 +106,6 @@ abstract class AbstractBasic implements BackendInterface {
             return [false, "Username or password was incorrect"];
         }
         return [true, $this->principalPrefix . $userpass[0]];
-
     }
 
     /**
@@ -130,15 +129,13 @@ abstract class AbstractBasic implements BackendInterface {
      * @param ResponseInterface $response
      * @return void
      */
-    function challenge(RequestInterface $request, ResponseInterface $response) {
-
+    public function challenge(RequestInterface $request, ResponseInterface $response)
+    {
         $auth = new HTTP\Auth\Basic(
             $this->realm,
             $request,
             $response
         );
         $auth->requireLogin();
-
     }
-
 }

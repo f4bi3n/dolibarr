@@ -29,29 +29,26 @@ $backtopage = GETPOST('backtopage', 'alpha');
  */
 
 if ($_POST) {
-	if (empty($ref) || empty($label)) {
-		setEventMessages($langs->trans('ErrorFieldsRequired'), null, 'errors');
-	} else {
-		$prodattr = new ProductAttribute($db);
-		$prodattr->label = $label;
-		$prodattr->ref = $ref;
+    if (empty($ref) || empty($label)) {
+        setEventMessages($langs->trans('ErrorFieldsRequired'), null, 'errors');
+    } else {
+        $prodattr = new ProductAttribute($db);
+        $prodattr->label = $label;
+        $prodattr->ref = $ref;
 
-		$resid = $prodattr->create($user);
-		if ($resid > 0) {
-			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
-			if ($backtopage)
-			{
-				header('Location: '.$backtopage);
-			}
-			else
-			{
-				header('Location: '.DOL_URL_ROOT.'/variants/card.php?id='.$resid.'&backtopage='.urlencode($backtopage));
-			}
-			exit;
-		} else {
-			setEventMessages($langs->trans('ErrorRecordAlreadyExists'), $prodattr->errors, 'errors');
-		}
-	}
+        $resid = $prodattr->create($user);
+        if ($resid > 0) {
+            setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+            if ($backtopage) {
+                header('Location: '.$backtopage);
+            } else {
+                header('Location: '.DOL_URL_ROOT.'/variants/card.php?id='.$resid.'&backtopage='.urlencode($backtopage));
+            }
+            exit;
+        } else {
+            setEventMessages($langs->trans('ErrorRecordAlreadyExists'), $prodattr->errors, 'errors');
+        }
+    }
 }
 
 $langs->load('products');

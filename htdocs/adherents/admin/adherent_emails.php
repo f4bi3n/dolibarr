@@ -36,7 +36,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin","members"));
 
-if (! $user->admin) accessforbidden();
+if (! $user->admin) {
+    accessforbidden();
+}
 
 
 $oldtypetonewone=array('texte'=>'text','chaine'=>'string');	// old type to new ones
@@ -65,65 +67,55 @@ $constantes=array(
  */
 
 //
-if ($action == 'updateall')
-{
+if ($action == 'updateall') {
     $db->begin();
     $res1=$res2=$res3=$res4=$res5=$res6=0;
     $res1=dolibarr_set_const($db, 'XXXX', GETPOST('ADHERENT_LOGIN_NOT_REQUIRED', 'alpha'), 'chaine', 0, '', $conf->entity);
-    if ($res1 < 0 || $res2 < 0 || $res3 < 0 || $res4 < 0 || $res5 < 0 || $res6 < 0)
-    {
+    if ($res1 < 0 || $res2 < 0 || $res3 < 0 || $res4 < 0 || $res5 < 0 || $res6 < 0) {
         setEventMessages('ErrorFailedToSaveDate', null, 'errors');
         $db->rollback();
-    }
-    else
-    {
+    } else {
         setEventMessages('RecordModifiedSuccessfully', null, 'mesgs');
         $db->commit();
     }
 }
 
 // Action to update or add a constant
-if ($action == 'update' || $action == 'add')
-{
-	$constlineid = GETPOST('rowid', 'int');
-	$constname=GETPOST('constname', 'alpha');
+if ($action == 'update' || $action == 'add') {
+    $constlineid = GETPOST('rowid', 'int');
+    $constname=GETPOST('constname', 'alpha');
 
-	$constvalue=(GETPOSTISSET('constvalue_'.$constname) ? GETPOST('constvalue_'.$constname, 'alpha') : GETPOST('constvalue'));
-	$consttype=(GETPOSTISSET('consttype_'.$constname) ? GETPOST('consttype_'.$constname, 'alphanohtml') : GETPOST('consttype'));
-	$constnote=(GETPOSTISSET('constnote_'.$constname) ? GETPOST('constnote_'.$constname, 'none') : GETPOST('constnote'));
+    $constvalue=(GETPOSTISSET('constvalue_'.$constname) ? GETPOST('constvalue_'.$constname, 'alpha') : GETPOST('constvalue'));
+    $consttype=(GETPOSTISSET('consttype_'.$constname) ? GETPOST('consttype_'.$constname, 'alphanohtml') : GETPOST('consttype'));
+    $constnote=(GETPOSTISSET('constnote_'.$constname) ? GETPOST('constnote_'.$constname, 'none') : GETPOST('constnote'));
 
-	$typetouse = empty($oldtypetonewone[$consttype]) ? $consttype : $oldtypetonewone[$consttype];
+    $typetouse = empty($oldtypetonewone[$consttype]) ? $consttype : $oldtypetonewone[$consttype];
 
-	$res=dolibarr_set_const($db, $constname, $constvalue, $typetouse, 0, $constnote, $conf->entity);
+    $res=dolibarr_set_const($db, $constname, $constvalue, $typetouse, 0, $constnote, $conf->entity);
 
-	if (! $res > 0) $error++;
+    if (! $res > 0) {
+        $error++;
+    }
 
-	if (! $error)
-	{
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
-		setEventMessages($langs->trans("Error"), null, 'errors');
-	}
+    if (! $error) {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    } else {
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
 }
 
 // Action to enable a submodule of the adherent module
-if ($action == 'set')
-{
+if ($action == 'set') {
     $result=dolibarr_set_const($db, GETPOST('name', 'alpha'), GETPOST('value'), '', 0, '', $conf->entity);
-    if ($result < 0)
-    {
+    if ($result < 0) {
         print $db->error();
     }
 }
 
 // Action to disable a submodule of the adherent module
-if ($action == 'unset')
-{
+if ($action == 'unset') {
     $result=dolibarr_del_const($db, GETPOST('name', 'alpha'), $conf->entity);
-    if ($result < 0)
-    {
+    if ($result < 0) {
         print $db->error();
     }
 }

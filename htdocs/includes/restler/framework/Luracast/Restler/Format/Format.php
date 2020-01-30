@@ -135,6 +135,4 @@ abstract class Format implements iFormat
     {
         return $this->getExtension();
     }
-
 }
-

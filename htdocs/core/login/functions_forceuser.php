@@ -34,16 +34,20 @@
  */
 function check_user_password_forceuser($usertotest, $passwordtotest, $entitytotest)
 {
-	// Variable dolibarr_auto_user must be defined in conf.php file
-	global $dolibarr_auto_user;
+    // Variable dolibarr_auto_user must be defined in conf.php file
+    global $dolibarr_auto_user;
 
-	dol_syslog("functions_forceuser::check_user_password_forceuser");
+    dol_syslog("functions_forceuser::check_user_password_forceuser");
 
-	$login=$dolibarr_auto_user;
-	if (empty($login)) $login='auto';
+    $login=$dolibarr_auto_user;
+    if (empty($login)) {
+        $login='auto';
+    }
 
-	if ($_SESSION["dol_loginmesg"]) $login='';
+    if ($_SESSION["dol_loginmesg"]) {
+        $login='';
+    }
 
-	dol_syslog("functions_forceuser::check_user_password_forceuser ok. forced user = ".$login);
-	return $login;
+    dol_syslog("functions_forceuser::check_user_password_forceuser ok. forced user = ".$login);
+    return $login;
 }

@@ -18,7 +18,8 @@ use Sabre\Xml\Writer;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Principal extends DAV\Xml\Property\Href {
+class Principal extends DAV\Xml\Property\Href
+{
 
     /**
      * To specify a not-logged-in user, use the UNAUTHENTICATED principal
@@ -59,8 +60,8 @@ class Principal extends DAV\Xml\Property\Href {
      * @param int $type
      * @param string|null $href
      */
-    function __construct($type, $href = null) {
-
+    public function __construct($type, $href = null)
+    {
         $this->type = $type;
         if ($type === self::HREF && is_null($href)) {
             throw new DAV\Exception('The href argument must be specified for the HREF principal type.');
@@ -69,7 +70,6 @@ class Principal extends DAV\Xml\Property\Href {
             $href = rtrim($href, '/') . '/';
             parent::__construct($href);
         }
-
     }
 
     /**
@@ -77,10 +77,9 @@ class Principal extends DAV\Xml\Property\Href {
      *
      * @return int
      */
-    function getType() {
-
+    public function getType()
+    {
         return $this->type;
-
     }
 
 
@@ -103,24 +102,23 @@ class Principal extends DAV\Xml\Property\Href {
      * @param Writer $writer
      * @return void
      */
-    function xmlSerialize(Writer $writer) {
-
+    public function xmlSerialize(Writer $writer)
+    {
         switch ($this->type) {
 
-            case self::UNAUTHENTICATED :
+            case self::UNAUTHENTICATED:
                 $writer->writeElement('{DAV:}unauthenticated');
                 break;
-            case self::AUTHENTICATED :
+            case self::AUTHENTICATED:
                 $writer->writeElement('{DAV:}authenticated');
                 break;
-            case self::HREF :
+            case self::HREF:
                 parent::xmlSerialize($writer);
                 break;
-            case self::ALL :
+            case self::ALL:
                 $writer->writeElement('{DAV:}all');
                 break;
         }
-
     }
 
     /**
@@ -137,20 +135,19 @@ class Principal extends DAV\Xml\Property\Href {
      * @param HtmlOutputHelper $html
      * @return string
      */
-    function toHtml(HtmlOutputHelper $html) {
-
+    public function toHtml(HtmlOutputHelper $html)
+    {
         switch ($this->type) {
 
-            case self::UNAUTHENTICATED :
+            case self::UNAUTHENTICATED:
                 return '<em>unauthenticated</em>';
-            case self::AUTHENTICATED :
+            case self::AUTHENTICATED:
                 return '<em>authenticated</em>';
-            case self::HREF :
+            case self::HREF:
                 return parent::toHtml($html);
-            case self::ALL :
+            case self::ALL:
                 return '<em>all</em>';
         }
-
     }
 
     /**
@@ -174,23 +171,21 @@ class Principal extends DAV\Xml\Property\Href {
      * @param Reader $reader
      * @return mixed
      */
-    static function xmlDeserialize(Reader $reader) {
-
+    public static function xmlDeserialize(Reader $reader)
+    {
         $tree = $reader->parseInnerTree()[0];
 
         switch ($tree['name']) {
-            case '{DAV:}unauthenticated' :
+            case '{DAV:}unauthenticated':
                 return new self(self::UNAUTHENTICATED);
-            case '{DAV:}authenticated' :
+            case '{DAV:}authenticated':
                 return new self(self::AUTHENTICATED);
             case '{DAV:}href':
                 return new self(self::HREF, $tree['value']);
             case '{DAV:}all':
                 return new self(self::ALL);
-            default :
+            default:
                 throw new BadRequest('Unknown or unsupported principal type: ' . $tree['name']);
         }
-
     }
-
 }

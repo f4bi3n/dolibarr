@@ -18,7 +18,8 @@ use Sabre\VObject\Property;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Binary extends Property {
+class Binary extends Property
+{
 
     /**
      * In case this is a multi-value property. This string will be used as a
@@ -37,22 +38,17 @@ class Binary extends Property {
      *
      * @return void
      */
-    function setValue($value) {
-
+    public function setValue($value)
+    {
         if (is_array($value)) {
-
             if (count($value) === 1) {
                 $this->value = $value[0];
             } else {
                 throw new \InvalidArgumentException('The argument must either be a string or an array with only one child');
             }
-
         } else {
-
             $this->value = $value;
-
         }
-
     }
 
     /**
@@ -65,10 +61,9 @@ class Binary extends Property {
      *
      * @return void
      */
-    function setRawMimeDirValue($val) {
-
+    public function setRawMimeDirValue($val)
+    {
         $this->value = base64_decode($val);
-
     }
 
     /**
@@ -76,10 +71,9 @@ class Binary extends Property {
      *
      * @return string
      */
-    function getRawMimeDirValue() {
-
+    public function getRawMimeDirValue()
+    {
         return base64_encode($this->value);
-
     }
 
     /**
@@ -90,10 +84,9 @@ class Binary extends Property {
      *
      * @return string
      */
-    function getValueType() {
-
+    public function getValueType()
+    {
         return 'BINARY';
-
     }
 
     /**
@@ -103,10 +96,9 @@ class Binary extends Property {
      *
      * @return array
      */
-    function getJsonValue() {
-
+    public function getJsonValue()
+    {
         return [base64_encode($this->getValue())];
-
     }
 
     /**
@@ -118,11 +110,9 @@ class Binary extends Property {
      *
      * @return void
      */
-    function setJsonValue(array $value) {
-
+    public function setJsonValue(array $value)
+    {
         $value = array_map('base64_decode', $value);
         parent::setJsonValue($value);
-
     }
-
 }

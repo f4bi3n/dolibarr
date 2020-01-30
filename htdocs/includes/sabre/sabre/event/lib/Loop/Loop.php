@@ -15,7 +15,8 @@ namespace Sabre\Event\Loop;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Loop {
+class Loop
+{
 
     /**
      * Executes a function after x seconds.
@@ -24,8 +25,8 @@ class Loop {
      * @param float $timeout timeout in seconds
      * @return void
      */
-    function setTimeout(callable $cb, $timeout) {
-
+    public function setTimeout(callable $cb, $timeout)
+    {
         $triggerTime = microtime(true) + ($timeout);
 
         if (!$this->timers) {
@@ -53,9 +54,7 @@ class Loop {
                 break;
             }
             $index--;
-
         }
-
     }
 
     /**
@@ -68,12 +67,12 @@ class Loop {
      * @param float $timeout
      * @return array
      */
-    function setInterval(callable $cb, $timeout) {
-
+    public function setInterval(callable $cb, $timeout)
+    {
         $keepGoing = true;
         $f = null;
 
-        $f = function() use ($cb, &$f, $timeout, &$keepGoing) {
+        $f = function () use ($cb, &$f, $timeout, &$keepGoing) {
             if ($keepGoing) {
                 $cb();
                 $this->setTimeout($f, $timeout);
@@ -88,7 +87,6 @@ class Loop {
         // Because I'm worried people will be confused by using a boolean as a
         // sort of identifier, I added an extra string.
         return ['I\'m an implementation detail', &$keepGoing];
-
     }
 
     /**
@@ -97,10 +95,9 @@ class Loop {
      * @param array $intervalId
      * @return void
      */
-    function clearInterval($intervalId) {
-
+    public function clearInterval($intervalId)
+    {
         $intervalId[1] = false;
-
     }
 
     /**
@@ -109,10 +106,9 @@ class Loop {
      * @param callable $cb
      * @return void
      */
-    function nextTick(callable $cb) {
-
+    public function nextTick(callable $cb)
+    {
         $this->nextTick[] = $cb;
-
     }
 
 
@@ -129,11 +125,10 @@ class Loop {
      * @param callable $cb
      * @return void
      */
-    function addReadStream($stream, callable $cb) {
-
+    public function addReadStream($stream, callable $cb)
+    {
         $this->readStreams[(int)$stream] = $stream;
         $this->readCallbacks[(int)$stream] = $cb;
-
     }
 
     /**
@@ -149,11 +144,10 @@ class Loop {
      * @param callable $cb
      * @return void
      */
-    function addWriteStream($stream, callable $cb) {
-
+    public function addWriteStream($stream, callable $cb)
+    {
         $this->writeStreams[(int)$stream] = $stream;
         $this->writeCallbacks[(int)$stream] = $cb;
-
     }
 
     /**
@@ -162,13 +156,12 @@ class Loop {
      * @param resource $stream
      * @return void
      */
-    function removeReadStream($stream) {
-
+    public function removeReadStream($stream)
+    {
         unset(
             $this->readStreams[(int)$stream],
             $this->readCallbacks[(int)$stream]
         );
-
     }
 
     /**
@@ -177,13 +170,12 @@ class Loop {
      * @param resource $stream
      * @return void
      */
-    function removeWriteStream($stream) {
-
+    public function removeWriteStream($stream)
+    {
         unset(
             $this->writeStreams[(int)$stream],
             $this->writeCallbacks[(int)$stream]
         );
-
     }
 
 
@@ -195,17 +187,14 @@ class Loop {
      *
      * @return void
      */
-    function run() {
-
+    public function run()
+    {
         $this->running = true;
 
         do {
-
             $hasEvents = $this->tick(true);
-
         } while ($this->running && $hasEvents);
         $this->running = false;
-
     }
 
     /**
@@ -223,8 +212,8 @@ class Loop {
      * @param bool $block
      * @return bool
      */
-    function tick($block = false) {
-
+    public function tick($block = false)
+    {
         $this->runNextTicks();
         $nextTimeout = $this->runTimers();
 
@@ -246,7 +235,6 @@ class Loop {
         $this->runStreams($streamWait);
 
         return ($this->readStreams || $this->writeStreams || $this->nextTick || $this->timers);
-
     }
 
     /**
@@ -254,10 +242,9 @@ class Loop {
      *
      * @return void
      */
-    function stop() {
-
+    public function stop()
+    {
         $this->running = false;
-
     }
 
     /**
@@ -265,15 +252,14 @@ class Loop {
      *
      * return void
      */
-    protected function runNextTicks() {
-
+    protected function runNextTicks()
+    {
         $nextTick = $this->nextTick;
         $this->nextTick = [];
 
         foreach ($nextTick as $cb) {
             $cb();
         }
-
     }
 
     /**
@@ -286,8 +272,8 @@ class Loop {
      *
      * @return float
      */
-    protected function runTimers() {
-
+    protected function runTimers()
+    {
         $now = microtime(true);
         while (($timer = array_pop($this->timers)) && $timer[0] < $now) {
             $timer[1]();
@@ -297,7 +283,6 @@ class Loop {
             $this->timers[] = $timer;
             return $timer[0] - microtime(true);
         }
-
     }
 
     /**
@@ -305,10 +290,9 @@ class Loop {
      *
      * @param float $timeout
      */
-    protected function runStreams($timeout) {
-
+    protected function runStreams($timeout)
+    {
         if ($this->readStreams || $this->writeStreams) {
-
             $read = $this->readStreams;
             $write = $this->writeStreams;
             $except = null;
@@ -324,13 +308,10 @@ class Loop {
                     $writeCb = $this->writeCallbacks[(int)$writeStream];
                     $writeCb();
                 }
-
             }
-
         } elseif ($this->running && ($this->nextTick || $this->timers)) {
             usleep($timeout !== null ? $timeout * 1000000 : 200000);
         }
-
     }
 
     /**
@@ -381,6 +362,4 @@ class Loop {
      * @var callback[]
      */
     protected $writeCallbacks = [];
-
-
 }

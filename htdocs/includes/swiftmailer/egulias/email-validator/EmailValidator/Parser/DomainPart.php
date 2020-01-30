@@ -240,7 +240,6 @@ class DomainPart extends Parser
             }
 
             $addressLiteral .= $this->lexer->token['value'];
-
         } while ($this->lexer->moveNext());
 
         $addressLiteral = str_replace('[', '', $addressLiteral);

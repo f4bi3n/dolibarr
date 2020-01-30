@@ -50,7 +50,9 @@ $planned_workload = ((GETPOST('planned_workloadhour', 'int') != '' || GETPOST('p
 // Security check
 $socid = 0;
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
-if (!$user->rights->projet->lire) accessforbidden();
+if (!$user->rights->projet->lire) {
+    accessforbidden();
+}
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('projectcard', 'globalcard'));
@@ -62,14 +64,15 @@ $object = new Project($db);
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
-if ($id > 0 || !empty($ref))
-{
-	$ret = $object->fetch($id, $ref); // If we create project, ref may be defined into POST but record does not yet exists into database
-	if ($ret > 0) {
-		$object->fetch_thirdparty();
-		if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
-		$id = $object->id;
-	}
+if ($id > 0 || !empty($ref)) {
+    $ret = $object->fetch($id, $ref); // If we create project, ref may be defined into POST but record does not yet exists into database
+    if ($ret > 0) {
+        $object->fetch_thirdparty();
+        if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) {
+            $object->fetchComments();
+        }
+        $id = $object->id;
+    }
 }
 
 // include comment actions
@@ -102,14 +105,14 @@ $morehtmlref = '<div class="refidno">';
 $morehtmlref .= $object->title;
 // Thirdparty
 if ($object->thirdparty->id > 0) {
-	$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'project');
+    $morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'project');
 }
 $morehtmlref .= '</div>';
 
 // Define a complementary filter for search of next/prev ref.
 if (!$user->rights->projet->all->lire) {
-	$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
-	$object->next_prev_filter = " rowid in (".(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
+    $objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
+    $object->next_prev_filter = " rowid in (".(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
 }
 
 dol_banner_tab($object, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -122,21 +125,27 @@ print '<table class="border centpercent">';
 
 // Visibility
 print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
-if ($object->public) print $langs->trans('SharedProject');
-else
-	print $langs->trans('PrivateProject');
+if ($object->public) {
+    print $langs->trans('SharedProject');
+} else {
+    print $langs->trans('PrivateProject');
+}
 print '</td></tr>';
 
 // Date start - end
 print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
 print dol_print_date($object->date_start, 'day');
 $end = dol_print_date($object->date_end, 'day');
-if ($end) print ' - '.$end;
+if ($end) {
+    print ' - '.$end;
+}
 print '</td></tr>';
 
 // Budget
 print '<tr><td>'.$langs->trans("Budget").'</td><td>';
-if (strcmp($object->budget_amount, '')) print price($object->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
+if (strcmp($object->budget_amount, '')) {
+    print price($object->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
+}
 print '</td></tr>';
 
 // Other attributes
@@ -159,9 +168,9 @@ print '</td></tr>';
 
 // Categories
 if ($conf->categorie->enabled) {
-	print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
-	print $form->showCategories($object->id, Categorie::TYPE_PROJECT, 1);
-	print "</td></tr>";
+    print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
+    print $form->showCategories($object->id, Categorie::TYPE_PROJECT, 1);
+    print "</td></tr>";
 }
 
 // Nb comments

@@ -17,8 +17,8 @@ use Sabre\DAVACL;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Outbox extends DAV\Collection implements IOutbox {
-
+class Outbox extends DAV\Collection implements IOutbox
+{
     use DAVACL\ACLTrait;
 
     /**
@@ -33,10 +33,9 @@ class Outbox extends DAV\Collection implements IOutbox {
      *
      * @param string $principalUri
      */
-    function __construct($principalUri) {
-
+    public function __construct($principalUri)
+    {
         $this->principalUri = $principalUri;
-
     }
 
     /**
@@ -46,10 +45,9 @@ class Outbox extends DAV\Collection implements IOutbox {
      *
      * @return string
      */
-    function getName() {
-
+    public function getName()
+    {
         return 'outbox';
-
     }
 
     /**
@@ -57,10 +55,9 @@ class Outbox extends DAV\Collection implements IOutbox {
      *
      * @return \Sabre\DAV\INode[]
      */
-    function getChildren() {
-
+    public function getChildren()
+    {
         return [];
-
     }
 
     /**
@@ -70,10 +67,9 @@ class Outbox extends DAV\Collection implements IOutbox {
      *
      * @return string|null
      */
-    function getOwner() {
-
+    public function getOwner()
+    {
         return $this->principalUri;
-
     }
 
     /**
@@ -88,8 +84,8 @@ class Outbox extends DAV\Collection implements IOutbox {
      *
      * @return array
      */
-    function getACL() {
-
+    public function getACL()
+    {
         return [
             [
                 'privilege' => '{' . CalDAV\Plugin::NS_CALDAV . '}schedule-send',
@@ -117,7 +113,5 @@ class Outbox extends DAV\Collection implements IOutbox {
                 'protected' => true,
             ],
         ];
-
     }
-
 }

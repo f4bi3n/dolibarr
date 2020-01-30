@@ -161,7 +161,7 @@ class ActionsDatapolicy
             echo $object->lastname . ';';
             echo $object->firstname . ';';
             echo $object->getCivilityLabel() . ';';
-            echo ($soc != -1 ? $object->thirdparty->name : '') . ';';
+            echo($soc != -1 ? $object->thirdparty->name : '') . ';';
             echo ';';
             echo $object->address . ';';
             echo $object->zip . ';';
@@ -185,7 +185,7 @@ class ActionsDatapolicy
             echo $object->lastname . ';';
             echo $object->firstname . ';';
             echo $object->getCivilityLabel() . ';';
-            echo ($soc != -1 ? $object->thirdparty->name : '') . ';';
+            echo($soc != -1 ? $object->thirdparty->name : '') . ';';
             echo $object->poste . ';';
             echo $object->address . ';';
             echo $object->zip . ';';
@@ -206,7 +206,7 @@ class ActionsDatapolicy
             require_once  DOL_DOCUMENT_ROOT . '/datapolicy/class/datapolicy.class.php';
             DataPolicy::sendMailDataPolicyContact($object);
         } elseif ($parameters['currentcontext'] == 'membercard' && $action == 'send_datapolicy') {
-             $object->fetch(GETPOST('id'));
+            $object->fetch(GETPOST('id'));
             require_once  DOL_DOCUMENT_ROOT . '/adherents/class/adherent.class.php';
             require_once  DOL_DOCUMENT_ROOT . '/datapolicy/class/datapolicy.class.php';
             DataPolicy::sendMailDataPolicyAdherent($object);
@@ -332,8 +332,7 @@ class ActionsDatapolicy
         global $conf, $user, $langs;
         $langs->load('datapolicy@datapolicy');
 
-        if (! empty($conf->global->DATAPOLICIES_ENABLE_EMAILS))
-        {
+        if (! empty($conf->global->DATAPOLICIES_ENABLE_EMAILS)) {
             $dialog = '<div id="dialogdatapolicy" style="display:none;" title="' . $langs->trans('DATAPOLICIES_PORTABILITE_TITLE') . '">';
             $dialog .= '<div class="confirmmessage">' . img_help('', '') . ' ' . $langs->trans('DATAPOLICIES_PORTABILITE_CONFIRMATION') . '</div>';
             $dialog .= "</div>";

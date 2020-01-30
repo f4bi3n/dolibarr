@@ -585,9 +585,11 @@ class JavascriptRenderer
         foreach ($additionalAssets as $assets) {
             $basePath = isset($assets['base_path']) ? $assets['base_path'] : null;
             $baseUrl = isset($assets['base_url']) ? $assets['base_url'] : null;
-            $root = $this->getRelativeRoot($relativeTo,
+            $root = $this->getRelativeRoot(
+                $relativeTo,
                 $this->makeUriRelativeTo($basePath, $this->basePath),
-                $this->makeUriRelativeTo($baseUrl, $this->baseUrl));
+                $this->makeUriRelativeTo($baseUrl, $this->baseUrl)
+            );
             $cssFiles = array_merge($cssFiles, $this->makeUriRelativeTo((array) $assets['css'], $root));
             $jsFiles = array_merge($jsFiles, $this->makeUriRelativeTo((array) $assets['js'], $root));
         }
@@ -865,9 +867,12 @@ class JavascriptRenderer
         }
 
         if ($this->openHandlerUrl !== null) {
-            $js .= sprintf("%s.setOpenHandler(new %s(%s));\n", $this->variableName,
+            $js .= sprintf(
+                "%s.setOpenHandler(new %s(%s));\n",
+                $this->variableName,
                 $this->openHandlerClass,
-                json_encode(array("url" => $this->openHandlerUrl)));
+                json_encode(array("url" => $this->openHandlerUrl))
+            );
         }
 
         return $js;
@@ -905,7 +910,8 @@ class JavascriptRenderer
                 if (!isset($opts['title'])) {
                     $opts['title'] = ucfirst(str_replace('_', ' ', $name));
                 }
-                $js .= sprintf("%s.addTab(\"%s\", new %s({%s%s}));\n",
+                $js .= sprintf(
+                    "%s.addTab(\"%s\", new %s({%s%s}));\n",
                     $varname,
                     $name,
                     isset($options['tab']) ? $options['tab'] : 'PhpDebugBar.DebugBar.Tab',
@@ -913,7 +919,8 @@ class JavascriptRenderer
                     isset($options['widget']) ? sprintf('%s"widget": new %s()', count($opts) ? ', ' : '', $options['widget']) : ''
                 );
             } elseif (isset($options['indicator']) || isset($options['icon'])) {
-                $js .= sprintf("%s.addIndicator(\"%s\", new %s(%s), \"%s\");\n",
+                $js .= sprintf(
+                    "%s.addIndicator(\"%s\", new %s(%s), \"%s\");\n",
                     $varname,
                     $name,
                     isset($options['indicator']) ? $options['indicator'] : 'PhpDebugBar.DebugBar.Indicator',
@@ -949,7 +956,8 @@ class JavascriptRenderer
      */
     protected function getAddDatasetCode($requestId, $data, $suffix = null)
     {
-        $js = sprintf("%s.addDataSet(%s, \"%s\"%s);\n",
+        $js = sprintf(
+            "%s.addDataSet(%s, \"%s\"%s);\n",
             $this->variableName,
             json_encode($data),
             $requestId,

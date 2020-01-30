@@ -38,18 +38,16 @@ $result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
 
 
 $result=$contact->fetch($id);
-if ($result <= 0)
-{
-	dol_print_error($contact->error);
-	exit;
+if ($result <= 0) {
+    dol_print_error($contact->error);
+    exit;
 }
 
 $physicalperson=1;
 
 $company = new Societe($db);
-if ($contact->socid)
-{
-	$result=$company->fetch($contact->socid);
+if ($contact->socid) {
+    $result=$company->fetch($contact->socid);
 }
 
 // We create VCard
@@ -73,20 +71,31 @@ $v->setNote($contact->note);
 $v->setTitle($contact->poste);
 
 // Data from linked company
-if ($company->id)
-{
-	$v->setURL($company->url, "TYPE=WORK");
-	if (! $contact->phone_pro) $v->setPhoneNumber($company->phone, "TYPE=WORK;VOICE");
-	if (! $contact->fax)       $v->setPhoneNumber($company->fax, "TYPE=WORK;FAX");
-	if (! $contact->zip)        $v->setAddress("", "", $company->address, $company->town, "", $company->zip, $company->country, "TYPE=WORK;POSTAL");
-	if ($company->email != $contact->email) $v->setEmail($company->email, 'TYPE=PREF,INTERNET');
-	// Si contact lie a un tiers non de type "particulier"
-	if ($contact->typent_code != 'TE_PRIVATE') $v->setOrg($company->name);
+if ($company->id) {
+    $v->setURL($company->url, "TYPE=WORK");
+    if (! $contact->phone_pro) {
+        $v->setPhoneNumber($company->phone, "TYPE=WORK;VOICE");
+    }
+    if (! $contact->fax) {
+        $v->setPhoneNumber($company->fax, "TYPE=WORK;FAX");
+    }
+    if (! $contact->zip) {
+        $v->setAddress("", "", $company->address, $company->town, "", $company->zip, $company->country, "TYPE=WORK;POSTAL");
+    }
+    if ($company->email != $contact->email) {
+        $v->setEmail($company->email, 'TYPE=PREF,INTERNET');
+    }
+    // Si contact lie a un tiers non de type "particulier"
+    if ($contact->typent_code != 'TE_PRIVATE') {
+        $v->setOrg($company->name);
+    }
 }
 
 // Personal informations
 $v->setPhoneNumber($contact->phone_perso, "TYPE=HOME;VOICE");
-if ($contact->birthday) $v->setBirthday($contact->birthday);
+if ($contact->birthday) {
+    $v->setBirthday($contact->birthday);
+}
 
 $db->close();
 

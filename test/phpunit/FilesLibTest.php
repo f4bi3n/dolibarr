@@ -30,11 +30,10 @@ global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/files.lib.php';
 
-if (empty($user->id))
-{
-	print "Load permissions for admin user nb 1\n";
-	$user->fetch(1);
-	$user->getrights();
+if (empty($user->id)) {
+    print "Load permissions for admin user nb 1\n";
+    $user->fetch(1);
+    $user->getrights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
@@ -48,105 +47,105 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  */
 class FilesLibTest extends PHPUnit\Framework\TestCase
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
+    protected $savconf;
+    protected $savuser;
+    protected $savlangs;
+    protected $savdb;
 
-	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @return FilesLibTest
-	 */
-	public function __construct()
-	{
-		parent::__construct();
+    /**
+     * Constructor
+     * We save global variables into local variables
+     *
+     * @return FilesLibTest
+     */
+    public function __construct()
+    {
+        parent::__construct();
 
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
+        //$this->sharedFixture
+        global $conf,$user,$langs,$db;
+        $this->savconf=$conf;
+        $this->savuser=$user;
+        $this->savlangs=$langs;
+        $this->savdb=$db;
 
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
+        print __METHOD__." db->type=".$db->type." user->id=".$user->id;
+        //print " - db ".$db->db;
+        print "\n";
+    }
 
     // Static methods
     public static function setUpBeforeClass()
     {
-    	global $conf,$user,$langs,$db;
-		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+        global $conf,$user,$langs,$db;
+        $db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
-    	print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
     // tear down after class
     public static function tearDownAfterClass()
     {
-    	global $conf,$user,$langs,$db;
-		$db->rollback();
+        global $conf,$user,$langs,$db;
+        $db->rollback();
 
-		print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
-	/**
-	 * Init phpunit tests
-	 *
-	 * @return	void
-	 */
+    /**
+     * Init phpunit tests
+     *
+     * @return	void
+     */
     protected function setUp()
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		print __METHOD__."\n";
+        print __METHOD__."\n";
     }
-	/**
-	 * End phpunit tests
-	 *
-	 * @return	void
-	 */
+    /**
+     * End phpunit tests
+     *
+     * @return	void
+     */
     protected function tearDown()
     {
-    	print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
 
-	/**
+    /**
      * testDolBasename
      *
      * @return	int
      */
     public function testDolBasename()
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
         $result=dol_basename('adir/afile');
-    	print __METHOD__." result=".$result."\n";
-		$this->assertEquals('afile', $result);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals('afile', $result);
 
-		$result=dol_basename('adir/afile/');
-    	print __METHOD__." result=".$result."\n";
-		$this->assertEquals('afile', $result);
+        $result=dol_basename('adir/afile/');
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals('afile', $result);
 
-		$result=dol_basename('adir/νεο');    // With cyrillic data. Here basename fails to return correct value
-    	print __METHOD__." result=".$result."\n";
-		$this->assertEquals('νεο', $result);
+        $result=dol_basename('adir/νεο');    // With cyrillic data. Here basename fails to return correct value
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals('νεο', $result);
 
-		$result=dol_basename('adir/νεο/');    // With cyrillic data. Here basename fails to return correct value
-    	print __METHOD__." result=".$result."\n";
-		$this->assertEquals('νεο', $result);
+        $result=dol_basename('adir/νεο/');    // With cyrillic data. Here basename fails to return correct value
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals('νεο', $result);
     }
 
 
@@ -157,18 +156,18 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
      */
     public function testDolCountNbOfLine()
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		$file=dirname(__FILE__).'/Example_import_company_1.csv';
-		$result=dol_count_nb_of_line($file);
-    	print __METHOD__." result=".$result."\n";
-		$this->assertEquals(3, $result);
+        $file=dirname(__FILE__).'/Example_import_company_1.csv';
+        $result=dol_count_nb_of_line($file);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals(3, $result);
 
-		return $result;
+        return $result;
     }
 
     /**
@@ -178,23 +177,23 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
      */
     public function testDolIsFileDir()
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		$file=dirname(__FILE__).'/Example_import_company_1.csv';
+        $file=dirname(__FILE__).'/Example_import_company_1.csv';
 
-		$result=dol_is_file($file);
-    	print __METHOD__." result=".$result."\n";
-		$this->assertTrue($result);
+        $result=dol_is_file($file);
+        print __METHOD__." result=".$result."\n";
+        $this->assertTrue($result);
 
-		$result=dol_is_dir($file);
-    	print __METHOD__." result=".$result."\n";
-		$this->assertFalse($result);
+        $result=dol_is_dir($file);
+        print __METHOD__." result=".$result."\n";
+        $this->assertFalse($result);
 
-		return $result;
+        return $result;
     }
 
     /**
@@ -211,12 +210,12 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
         $db=$this->savdb;
 
         $url='http://www.dolibarr.org';
-  		$result=dol_is_url($url);
+        $result=dol_is_url($url);
         print __METHOD__." result=".$result."\n";
         $this->assertTrue($result);
 
         $url='https://www.dolibarr.org';
-  		$result=dol_is_url($url);
+        $result=dol_is_url($url);
         print __METHOD__." result=".$result."\n";
         $this->assertTrue($result);
 
@@ -235,42 +234,42 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
      */
     public function testDolMimeType()
     {
-    	global $conf,$user,$langs,$db;
-    	$conf=$this->savconf;
-    	$user=$this->savuser;
-    	$langs=$this->savlangs;
-    	$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-    	// file.png
-    	$result=dol_mimetype('file.png', '', 0);
-    	$this->assertEquals('image/png', $result);
-    	$result=dol_mimetype('file.png', '', 1);
-    	$this->assertEquals('png', $result);
-    	$result=dol_mimetype('file.png', '', 2);
-    	$this->assertEquals('image.png', $result);
-    	$result=dol_mimetype('file.png', '', 3);
-    	$this->assertEquals('', $result);
-    	// file.odt
-    	$result=dol_mimetype('file.odt', '', 0);
-    	$this->assertEquals('application/vnd.oasis.opendocument.text', $result);
-    	$result=dol_mimetype('file.odt', '', 1);
-    	$this->assertEquals('vnd.oasis.opendocument.text', $result);
-    	$result=dol_mimetype('file.odt', '', 2);
-    	$this->assertEquals('ooffice.png', $result);
-    	$result=dol_mimetype('file.odt', '', 3);
-    	$this->assertEquals('', $result);
-    	// file.php
-    	$result=dol_mimetype('file.php', '', 0);
-    	$this->assertEquals('text/plain', $result);
-    	$result=dol_mimetype('file.php', '', 1);
-    	$this->assertEquals('plain', $result);
-    	$result=dol_mimetype('file.php', '', 2);
-    	$this->assertEquals('php.png', $result);
-    	$result=dol_mimetype('file.php', '', 3);
-    	$this->assertEquals('php', $result);
-    	// file.php.noexe
-    	$result=dol_mimetype('file.php.noexe', '', 0);
-    	$this->assertEquals('text/plain', $result);
+        // file.png
+        $result=dol_mimetype('file.png', '', 0);
+        $this->assertEquals('image/png', $result);
+        $result=dol_mimetype('file.png', '', 1);
+        $this->assertEquals('png', $result);
+        $result=dol_mimetype('file.png', '', 2);
+        $this->assertEquals('image.png', $result);
+        $result=dol_mimetype('file.png', '', 3);
+        $this->assertEquals('', $result);
+        // file.odt
+        $result=dol_mimetype('file.odt', '', 0);
+        $this->assertEquals('application/vnd.oasis.opendocument.text', $result);
+        $result=dol_mimetype('file.odt', '', 1);
+        $this->assertEquals('vnd.oasis.opendocument.text', $result);
+        $result=dol_mimetype('file.odt', '', 2);
+        $this->assertEquals('ooffice.png', $result);
+        $result=dol_mimetype('file.odt', '', 3);
+        $this->assertEquals('', $result);
+        // file.php
+        $result=dol_mimetype('file.php', '', 0);
+        $this->assertEquals('text/plain', $result);
+        $result=dol_mimetype('file.php', '', 1);
+        $this->assertEquals('plain', $result);
+        $result=dol_mimetype('file.php', '', 2);
+        $this->assertEquals('php.png', $result);
+        $result=dol_mimetype('file.php', '', 3);
+        $this->assertEquals('php', $result);
+        // file.php.noexe
+        $result=dol_mimetype('file.php.noexe', '', 0);
+        $this->assertEquals('text/plain', $result);
     }
 
 
@@ -281,34 +280,34 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
      */
     public function testDolDeleteDir()
     {
-    	global $conf,$user,$langs,$db;
-    	$conf=$this->savconf;
-    	$user=$this->savuser;
-    	$langs=$this->savlangs;
-    	$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-    	$dirout=$conf->admin->dir_temp.'/test';
-    	$dirout2=$conf->admin->dir_temp.'/test2';
+        $dirout=$conf->admin->dir_temp.'/test';
+        $dirout2=$conf->admin->dir_temp.'/test2';
 
-    	$count=0;
-    	$result=dol_delete_dir_recursive($dirout, $count);	// If it has no permission to delete, it will fails as if dir does not exists, so we can't test it
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertGreaterThanOrEqual(0, $result);
+        $count=0;
+        $result=dol_delete_dir_recursive($dirout, $count);	// If it has no permission to delete, it will fails as if dir does not exists, so we can't test it
+        print __METHOD__." result=".$result."\n";
+        $this->assertGreaterThanOrEqual(0, $result);
 
-    	$count=0;
-    	$countdeleted=0;
-    	$result=dol_delete_dir_recursive($dirout, $count, 1, 0, $countdeleted);	// If it has no permission to delete, it will fails as if dir does not exists, so we can't test it
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertGreaterThanOrEqual(0, $result);
-    	$this->assertGreaterThanOrEqual(0, $countdeleted);
+        $count=0;
+        $countdeleted=0;
+        $result=dol_delete_dir_recursive($dirout, $count, 1, 0, $countdeleted);	// If it has no permission to delete, it will fails as if dir does not exists, so we can't test it
+        print __METHOD__." result=".$result."\n";
+        $this->assertGreaterThanOrEqual(0, $result);
+        $this->assertGreaterThanOrEqual(0, $countdeleted);
 
-    	dol_mkdir($dirout2);
-    	$count=0;
-    	$countdeleted=0;
-    	$result=dol_delete_dir_recursive($dirout2, $count, 1, 0, $countdeleted);	// If it has no permission to delete, it will fails as if dir does not exists, so we can't test it
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertGreaterThanOrEqual(1, $result);
-    	$this->assertGreaterThanOrEqual(1, $countdeleted);
+        dol_mkdir($dirout2);
+        $count=0;
+        $countdeleted=0;
+        $result=dol_delete_dir_recursive($dirout2, $count, 1, 0, $countdeleted);	// If it has no permission to delete, it will fails as if dir does not exists, so we can't test it
+        print __METHOD__." result=".$result."\n";
+        $this->assertGreaterThanOrEqual(1, $result);
+        $this->assertGreaterThanOrEqual(1, $countdeleted);
     }
 
 
@@ -461,7 +460,7 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
         $savpermcreer = $user->rights->facture->creer;
 
 
-		// Check access to SPECIMEN
+        // Check access to SPECIMEN
         $user->rights->facture->lire = 0;
         $user->rights->facture->creer = 0;
         $filename='SPECIMEN.pdf';             // Filename relative to module part

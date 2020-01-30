@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/supplier_proposal.lib.php';
 if (! empty($conf->projet->enabled)) {
-	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+    require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 }
 
 // Load translation files required by the page
@@ -39,7 +39,9 @@ $id=GETPOST('id', 'int');
 $socid=GETPOST('socid', 'int');
 
 // Security check
-if (! empty($user->socid)) $socid=$user->socid;
+if (! empty($user->socid)) {
+    $socid=$user->socid;
+}
 $result = restrictedArea($user, 'supplier_proposal', $id);
 
 
@@ -72,15 +74,13 @@ $morehtmlref='<div class="refidno">';
 // Thirdparty
 $morehtmlref.=$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
 // Project
-if (! empty($conf->projet->enabled))
-{
+if (! empty($conf->projet->enabled)) {
     $langs->load("projects");
     $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
-    if ($user->rights->supplier_proposal->creer)
-    {
+    if ($user->rights->supplier_proposal->creer) {
         if ($action != 'classify') {
-        	//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
-			$morehtmlref.=' : ';
+            //$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+            $morehtmlref.=' : ';
         }
         if ($action == 'classify') {
             //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);

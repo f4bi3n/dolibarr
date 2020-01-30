@@ -33,7 +33,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/holiday.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "errors", "holiday"));
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+    accessforbidden();
+}
 
 $action = GETPOST('action', 'alpha');
 $value = GETPOST('value', 'alpha');
@@ -41,8 +43,7 @@ $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'contract';
 
-if (empty($conf->global->HOLIDAY_ADDON))
-{
+if (empty($conf->global->HOLIDAY_ADDON)) {
     $conf->global->HOLIDAY_ADDON = 'mod_holiday_madonna';
 }
 
@@ -53,126 +54,104 @@ if (empty($conf->global->HOLIDAY_ADDON))
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
-if ($action == 'updateMask')
-{
+if ($action == 'updateMask') {
     $maskconst = GETPOST('maskconstholiday', 'alpha');
     $maskvalue = GETPOST('maskholiday', 'alpha');
-    if ($maskconst) $res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
-
-    if (!$res > 0) $error++;
-
- 	if (!$error)
-    {
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    if ($maskconst) {
+        $res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
     }
-    else
-    {
+
+    if (!$res > 0) {
+        $error++;
+    }
+
+    if (!$error) {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    } else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
-}
+} elseif ($action == 'specimen') { // For contract
+    $modele = GETPOST('module', 'alpha');
 
-elseif ($action == 'specimen') // For contract
-{
-	$modele = GETPOST('module', 'alpha');
+    $holiday = new Holiday($db);
+    $holiday->initAsSpecimen();
 
-	$holiday = new Holiday($db);
-	$holiday->initAsSpecimen();
+    // Search template files
+    $file = '';
+    $classname = '';
+    $filefound = 0;
+    $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+    foreach ($dirmodels as $reldir) {
+        $file = dol_buildpath($reldir."core/modules/holiday/doc/pdf_".$modele.".modules.php", 0);
+        if (file_exists($file)) {
+            $filefound = 1;
+            $classname = "pdf_".$modele;
+            break;
+        }
+    }
 
-	// Search template files
-	$file = ''; $classname = ''; $filefound = 0;
-	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-	foreach ($dirmodels as $reldir)
-	{
-	    $file = dol_buildpath($reldir."core/modules/holiday/doc/pdf_".$modele.".modules.php", 0);
-		if (file_exists($file))
-		{
-			$filefound = 1;
-			$classname = "pdf_".$modele;
-			break;
-		}
-	}
+    if ($filefound) {
+        require_once $file;
 
-	if ($filefound)
-	{
-		require_once $file;
+        $module = new $classname($db);
 
-		$module = new $classname($db);
-
-		if ($module->write_file($holiday, $langs) > 0)
-		{
-			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=holiday&file=SPECIMEN.pdf");
-			return;
-		}
-		else
-		{
-			setEventMessages($obj->error, $obj->errors, 'errors');
-			dol_syslog($obj->error, LOG_ERR);
-		}
-	}
-	else
-	{
-		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
-		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
-	}
+        if ($module->write_file($holiday, $langs) > 0) {
+            header("Location: ".DOL_URL_ROOT."/document.php?modulepart=holiday&file=SPECIMEN.pdf");
+            return;
+        } else {
+            setEventMessages($obj->error, $obj->errors, 'errors');
+            dol_syslog($obj->error, LOG_ERR);
+        }
+    } else {
+        setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
+        dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
+    }
 }
 
 // Activate a model
-elseif ($action == 'set')
-{
-	$ret = addDocumentModel($value, $type, $label, $scandir);
-}
-
-elseif ($action == 'del')
-{
-	$ret = delDocumentModel($value, $type);
-	if ($ret > 0)
-	{
-        if ($conf->global->HOLIDAY_ADDON_PDF == "$value") dolibarr_del_const($db, 'HOLIDAY_ADDON_PDF', $conf->entity);
-	}
+elseif ($action == 'set') {
+    $ret = addDocumentModel($value, $type, $label, $scandir);
+} elseif ($action == 'del') {
+    $ret = delDocumentModel($value, $type);
+    if ($ret > 0) {
+        if ($conf->global->HOLIDAY_ADDON_PDF == "$value") {
+            dolibarr_del_const($db, 'HOLIDAY_ADDON_PDF', $conf->entity);
+        }
+    }
 }
 
 // Set default model
-elseif ($action == 'setdoc')
-{
-	if (dolibarr_set_const($db, "HOLIDAY_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity))
-	{
-		// La constante qui a ete lue en avant du nouveau set
-		// on passe donc par une variable pour avoir un affichage coherent
-		$conf->global->HOLIDAY_ADDON_PDF = $value;
-	}
-
-	// On active le modele
-	$ret = delDocumentModel($value, $type);
-	if ($ret > 0)
-	{
-		$ret = addDocumentModel($value, $type, $label, $scandir);
-	}
-}
-
-elseif ($action == 'setmod')
-{
-	// TODO Verifier si module numerotation choisi peut etre active
-	// par appel methode canBeActivated
-
-	dolibarr_set_const($db, "HOLIDAY_ADDON", $value, 'chaine', 0, '', $conf->entity);
-}
-
-elseif ($action == 'set_other')
-{
-	$freetext = GETPOST('HOLIDAY_FREE_TEXT', 'none'); // No alpha here, we want exact string
-	$res1 = dolibarr_set_const($db, "HOLIDAY_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
-
-	$draft = GETPOST('HOLIDAY_DRAFT_WATERMARK', 'alpha');
-	$res2 = dolibarr_set_const($db, "HOLIDAY_DRAFT_WATERMARK", trim($draft), 'chaine', 0, '', $conf->entity);
-
-	if (!$res1 > 0 || !$res2 > 0) $error++;
-
- 	if (!$error)
-    {
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+elseif ($action == 'setdoc') {
+    if (dolibarr_set_const($db, "HOLIDAY_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity)) {
+        // La constante qui a ete lue en avant du nouveau set
+        // on passe donc par une variable pour avoir un affichage coherent
+        $conf->global->HOLIDAY_ADDON_PDF = $value;
     }
-    else
-    {
+
+    // On active le modele
+    $ret = delDocumentModel($value, $type);
+    if ($ret > 0) {
+        $ret = addDocumentModel($value, $type, $label, $scandir);
+    }
+} elseif ($action == 'setmod') {
+    // TODO Verifier si module numerotation choisi peut etre active
+    // par appel methode canBeActivated
+
+    dolibarr_set_const($db, "HOLIDAY_ADDON", $value, 'chaine', 0, '', $conf->entity);
+} elseif ($action == 'set_other') {
+    $freetext = GETPOST('HOLIDAY_FREE_TEXT', 'none'); // No alpha here, we want exact string
+    $res1 = dolibarr_set_const($db, "HOLIDAY_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
+
+    $draft = GETPOST('HOLIDAY_DRAFT_WATERMARK', 'alpha');
+    $res2 = dolibarr_set_const($db, "HOLIDAY_DRAFT_WATERMARK", trim($draft), 'chaine', 0, '', $conf->entity);
+
+    if (!$res1 > 0 || !$res2 > 0) {
+        $error++;
+    }
+
+    if (!$error) {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    } else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
@@ -213,85 +192,86 @@ print "</tr>\n";
 
 clearstatcache();
 
-foreach ($dirmodels as $reldir)
-{
-	$dir = dol_buildpath($reldir."core/modules/holiday/");
+foreach ($dirmodels as $reldir) {
+    $dir = dol_buildpath($reldir."core/modules/holiday/");
 
-	if (is_dir($dir))
-	{
-		$handle = opendir($dir);
-		if (is_resource($handle))
-		{
-			while (($file = readdir($handle)) !== false)
-			{
-				if (substr($file, 0, 12) == 'mod_holiday_' && substr($file, dol_strlen($file) - 3, 3) == 'php')
-				{
-					$file = substr($file, 0, dol_strlen($file) - 4);
+    if (is_dir($dir)) {
+        $handle = opendir($dir);
+        if (is_resource($handle)) {
+            while (($file = readdir($handle)) !== false) {
+                if (substr($file, 0, 12) == 'mod_holiday_' && substr($file, dol_strlen($file) - 3, 3) == 'php') {
+                    $file = substr($file, 0, dol_strlen($file) - 4);
 
-					require_once $dir.$file.'.php';
+                    require_once $dir.$file.'.php';
 
-					$module = new $file($db);
+                    $module = new $file($db);
 
-					// Show modules according to features level
-					if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
-					if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+                    // Show modules according to features level
+                    if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+                        continue;
+                    }
+                    if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+                        continue;
+                    }
 
-					if ($module->isEnabled())
-					{
-						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
-						print $module->info();
-						print '</td>';
+                    if ($module->isEnabled()) {
+                        print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
+                        print $module->info();
+                        print '</td>';
 
-						// Show example of numbering model
-						print '<td class="nowrap">';
-						$tmp = $module->getExample();
-						if (preg_match('/^Error/', $tmp)) { $langs->load("errors"); print '<div class="error">'.$langs->trans($tmp).'</div>'; }
-						elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
-						else print $tmp;
-						print '</td>'."\n";
+                        // Show example of numbering model
+                        print '<td class="nowrap">';
+                        $tmp = $module->getExample();
+                        if (preg_match('/^Error/', $tmp)) {
+                            $langs->load("errors");
+                            print '<div class="error">'.$langs->trans($tmp).'</div>';
+                        } elseif ($tmp == 'NotConfigured') {
+                            print $langs->trans($tmp);
+                        } else {
+                            print $tmp;
+                        }
+                        print '</td>'."\n";
 
-						print '<td class="center">';
-						if ($conf->global->HOLIDAY_ADDON == "$file")
-						{
-							print img_picto($langs->trans("Activated"), 'switch_on');
-						}
-						else
-						{
-							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'">';
-							print img_picto($langs->trans("Disabled"), 'switch_off');
-							print '</a>';
-						}
-						print '</td>';
+                        print '<td class="center">';
+                        if ($conf->global->HOLIDAY_ADDON == "$file") {
+                            print img_picto($langs->trans("Activated"), 'switch_on');
+                        } else {
+                            print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'">';
+                            print img_picto($langs->trans("Disabled"), 'switch_off');
+                            print '</a>';
+                        }
+                        print '</td>';
 
-						$holiday = new Holiday($db);
-						$holiday->initAsSpecimen();
+                        $holiday = new Holiday($db);
+                        $holiday->initAsSpecimen();
 
-						// Info
-						$htmltooltip = '';
-						$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-						$nextval = $module->getNextValue($mysoc, $holiday);
+                        // Info
+                        $htmltooltip = '';
+                        $htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
+                        $nextval = $module->getNextValue($mysoc, $holiday);
                         if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
                             $htmltooltip .= ''.$langs->trans("NextValue").': ';
                             if ($nextval) {
-                                if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured')
+                                if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
                                     $nextval = $langs->trans($nextval);
+                                }
                                 $htmltooltip .= $nextval.'<br>';
                             } else {
                                 $htmltooltip .= $langs->trans($module->error).'<br>';
                             }
                         }
 
-						print '<td class="center">';
-						print $form->textwithpicto('', $htmltooltip, 1, 0);
-						print '</td>';
+                        print '<td class="center">';
+                        print $form->textwithpicto('', $htmltooltip, 1, 0);
+                        print '</td>';
 
-						print '</tr>';
-					}
-				}
-			}
-			closedir($handle);
-		}
-	}
+                        print '</tr>';
+                    }
+                }
+            }
+            closedir($handle);
+        }
+    }
 }
 
 print '</table>';
@@ -321,20 +301,16 @@ $sql .= " FROM ".MAIN_DB_PREFIX."document_model";
 $sql .= " WHERE type = '".$type."'";
 $sql .= " AND entity = ".$conf->entity;
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
     $i = 0;
     $num_rows = $db->num_rows($resql);
-	while ($i < $num_rows)
-	{
-		$array = $db->fetch_array($resql);
-		array_push($def, $array[0]);
-		$i++;
-	}
-}
-else
-{
-	dol_print_error($db);
+    while ($i < $num_rows) {
+        $array = $db->fetch_array($resql);
+        array_push($def, $array[0]);
+        $i++;
+    }
+} else {
+    dol_print_error($db);
 }
 
 
@@ -351,114 +327,102 @@ print "</tr>\n";
 
 clearstatcache();
 
-foreach ($dirmodels as $reldir)
-{
-    foreach (array('', '/doc') as $valdir)
-    {
-    	$realpath = $reldir."core/modules/holiday".$valdir;
-    	$dir = dol_buildpath($realpath);
+foreach ($dirmodels as $reldir) {
+    foreach (array('', '/doc') as $valdir) {
+        $realpath = $reldir."core/modules/holiday".$valdir;
+        $dir = dol_buildpath($realpath);
 
-        if (is_dir($dir))
-        {
+        if (is_dir($dir)) {
             $handle = opendir($dir);
-            if (is_resource($handle))
-            {
-                while (($file = readdir($handle)) !== false)
-                {
+            if (is_resource($handle)) {
+                while (($file = readdir($handle)) !== false) {
                     $filelist[] = $file;
                 }
                 closedir($handle);
                 arsort($filelist);
 
-                foreach ($filelist as $file)
-                {
-                    if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file))
-                    {
-                    	if (file_exists($dir.'/'.$file))
-                    	{
-                    		$name = substr($file, 4, dol_strlen($file) - 16);
-	                        $classname = substr($file, 0, dol_strlen($file) - 12);
+                foreach ($filelist as $file) {
+                    if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
+                        if (file_exists($dir.'/'.$file)) {
+                            $name = substr($file, 4, dol_strlen($file) - 16);
+                            $classname = substr($file, 0, dol_strlen($file) - 12);
 
-	                        require_once $dir.'/'.$file;
-	                        $module = new $classname($db);
+                            require_once $dir.'/'.$file;
+                            $module = new $classname($db);
 
-	                        $modulequalified = 1;
-	                        if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) $modulequalified = 0;
-	                        if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) $modulequalified = 0;
+                            $modulequalified = 1;
+                            if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+                                $modulequalified = 0;
+                            }
+                            if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+                                $modulequalified = 0;
+                            }
 
-	                        if ($modulequalified)
-	                        {
-	                            print '<tr class="oddeven"><td width="100">';
-	                            print (empty($module->name) ? $name : $module->name);
-	                            print "</td><td>\n";
-	                            if (method_exists($module, 'info')) print $module->info($langs);
-	                            else print $module->description;
-	                            print '</td>';
+                            if ($modulequalified) {
+                                print '<tr class="oddeven"><td width="100">';
+                                print(empty($module->name) ? $name : $module->name);
+                                print "</td><td>\n";
+                                if (method_exists($module, 'info')) {
+                                    print $module->info($langs);
+                                } else {
+                                    print $module->description;
+                                }
+                                print '</td>';
 
-	                            // Active
-	                            if (in_array($name, $def))
-	                            {
-	                            	print '<td class="center">'."\n";
-	                            	print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'">';
-	                            	print img_picto($langs->trans("Enabled"), 'switch_on');
-	                            	print '</a>';
-	                            	print '</td>';
-	                            }
-	                            else
-	                            {
-	                                print '<td class="center">'."\n";
-	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
-	                                print "</td>";
-	                            }
+                                // Active
+                                if (in_array($name, $def)) {
+                                    print '<td class="center">'."\n";
+                                    print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'">';
+                                    print img_picto($langs->trans("Enabled"), 'switch_on');
+                                    print '</a>';
+                                    print '</td>';
+                                } else {
+                                    print '<td class="center">'."\n";
+                                    print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+                                    print "</td>";
+                                }
 
-	                            // Default
-	                            print '<td class="center">';
-	                            if ($conf->global->HOLIDAY_ADDON_PDF == $name)
-	                            {
-	                                print img_picto($langs->trans("Default"), 'on');
-	                            }
-	                            else
-	                            {
-	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
-	                            }
-	                            print '</td>';
+                                // Default
+                                print '<td class="center">';
+                                if ($conf->global->HOLIDAY_ADDON_PDF == $name) {
+                                    print img_picto($langs->trans("Default"), 'on');
+                                } else {
+                                    print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+                                }
+                                print '</td>';
 
-	                            // Info
-		    					$htmltooltip = ''.$langs->trans("Name").': '.$module->name;
-					    		$htmltooltip .= '<br>'.$langs->trans("Type").': '.($module->type ? $module->type : $langs->trans("Unknown"));
-			                    if ($module->type == 'pdf')
-			                    {
-			                        $htmltooltip .= '<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
-			                    }
-			                    $htmltooltip .= '<br>'.$langs->trans("Path").': '.preg_replace('/^\//', '', $realpath).'/'.$file;
+                                // Info
+                                $htmltooltip = ''.$langs->trans("Name").': '.$module->name;
+                                $htmltooltip .= '<br>'.$langs->trans("Type").': '.($module->type ? $module->type : $langs->trans("Unknown"));
+                                if ($module->type == 'pdf') {
+                                    $htmltooltip .= '<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
+                                }
+                                $htmltooltip .= '<br>'.$langs->trans("Path").': '.preg_replace('/^\//', '', $realpath).'/'.$file;
 
-			                    $htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
-					    		$htmltooltip .= '<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
-					    		$htmltooltip .= '<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg, 1, 1);
-					    		$htmltooltip .= '<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg, 1, 1);
-					    		$htmltooltip .= '<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
-					    		$htmltooltip .= '<br>'.$langs->trans("WatermarkOnDraftOrders").': '.yn($module->option_draft_watermark, 1, 1);
+                                $htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
+                                $htmltooltip .= '<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
+                                $htmltooltip .= '<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg, 1, 1);
+                                $htmltooltip .= '<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg, 1, 1);
+                                $htmltooltip .= '<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
+                                $htmltooltip .= '<br>'.$langs->trans("WatermarkOnDraftOrders").': '.yn($module->option_draft_watermark, 1, 1);
 
 
-	                            print '<td class="center">';
-	                            print $form->textwithpicto('', $htmltooltip, 1, 0);
-	                            print '</td>';
+                                print '<td class="center">';
+                                print $form->textwithpicto('', $htmltooltip, 1, 0);
+                                print '</td>';
 
-	                            // Preview
-	                            print '<td class="center">';
-	                            if ($module->type == 'pdf')
-	                            {
-	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'contract').'</a>';
-	                            }
-	                            else
-	                            {
-	                                print img_object($langs->trans("PreviewNotAvailable"), 'generic');
-	                            }
-	                            print '</td>';
+                                // Preview
+                                print '<td class="center">';
+                                if ($module->type == 'pdf') {
+                                    print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'contract').'</a>';
+                                } else {
+                                    print img_object($langs->trans("PreviewNotAvailable"), 'generic');
+                                }
+                                print '</td>';
 
-	                            print "</tr>\n";
-	                        }
-                    	}
+                                print "</tr>\n";
+                            }
+                        }
                     }
                 }
             }
@@ -491,19 +455,18 @@ print "</tr>\n";
 $substitutionarray = pdf_getSubstitutionArray($langs, array('objectamount'), null, 2);
 $substitutionarray['__(AnyTranslationKey)__'] = $langs->trans("Translation");
 $htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
-foreach ($substitutionarray as $key => $val)	$htmltext .= $key.'<br>';
+foreach ($substitutionarray as $key => $val) {
+    $htmltext .= $key.'<br>';
+}
 $htmltext .= '</i>';
 
 print '<tr class="oddeven"><td colspan="2">';
 print $form->textwithpicto($langs->trans("FreeLegalTextOnHolidays"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'tooltiphelp');
 print '<br>';
 $variablename = 'HOLIDAY_FREE_TEXT';
-if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
-{
+if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
     print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
-}
-else
-{
+} else {
     include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
     $doleditor = new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
     print $doleditor->Create();

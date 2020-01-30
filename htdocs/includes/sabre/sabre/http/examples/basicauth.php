@@ -39,7 +39,6 @@ if (!$userPass = $basicAuth->getCredentials()) {
 
     // No username or password given
     $basicAuth->requireLogin();
-
 } elseif (!isset($userList[$userPass[0]]) || $userList[$userPass[0]] !== $userPass[1]) {
 
     // Username or password are incorrect
@@ -48,7 +47,6 @@ if (!$userPass = $basicAuth->getCredentials()) {
 
     // Success !
     $response->setBody('You are logged in!');
-
 }
 
 // Sending the response

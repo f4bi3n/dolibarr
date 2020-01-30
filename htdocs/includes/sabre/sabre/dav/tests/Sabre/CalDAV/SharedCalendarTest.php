@@ -5,12 +5,12 @@ namespace Sabre\CalDAV;
 use Sabre\DAV\Sharing;
 use Sabre\DAV\Xml\Element\Sharee;
 
-class SharedCalendarTest extends \PHPUnit_Framework_TestCase {
-
+class SharedCalendarTest extends \PHPUnit_Framework_TestCase
+{
     protected $backend;
 
-    function getInstance(array $props = null) {
-
+    public function getInstance(array $props = null)
+    {
         if (is_null($props)) {
             $props = [
                 'id'                                        => 1,
@@ -35,11 +35,10 @@ class SharedCalendarTest extends \PHPUnit_Framework_TestCase {
         $this->backend->updateInvites(1, [$sharee]);
 
         return new SharedCalendar($this->backend, $props);
-
     }
 
-    function testGetInvites() {
-
+    public function testGetInvites()
+    {
         $sharee = new Sharee();
         $sharee->href = 'mailto:removeme@example.org';
         $sharee->properties['{DAV:}displayname'] = 'To be removed';
@@ -50,15 +49,15 @@ class SharedCalendarTest extends \PHPUnit_Framework_TestCase {
             [$sharee],
             $this->getInstance()->getInvites()
         );
-
     }
 
-    function testGetOwner() {
+    public function testGetOwner()
+    {
         $this->assertEquals('principals/sharee', $this->getInstance()->getOwner());
     }
 
-    function testGetACL() {
-
+    public function testGetACL()
+    {
         $expected = [
             [
                 'privilege' => '{DAV:}write',
@@ -103,11 +102,10 @@ class SharedCalendarTest extends \PHPUnit_Framework_TestCase {
         ];
 
         $this->assertEquals($expected, $this->getInstance()->getACL());
-
     }
 
-    function testGetChildACL() {
-
+    public function testGetChildACL()
+    {
         $expected = [
             [
                 'privilege' => '{DAV:}write',
@@ -138,11 +136,10 @@ class SharedCalendarTest extends \PHPUnit_Framework_TestCase {
         ];
 
         $this->assertEquals($expected, $this->getInstance()->getChildACL());
-
     }
 
-    function testUpdateInvites() {
-
+    public function testUpdateInvites()
+    {
         $instance = $this->getInstance();
         $newSharees = [
             new Sharee(),
@@ -163,14 +160,12 @@ class SharedCalendarTest extends \PHPUnit_Framework_TestCase {
         ];
         $expected[0]->inviteStatus = Sharing\Plugin::INVITE_NORESPONSE;
         $this->assertEquals($expected, $instance->getInvites());
-
     }
 
-    function testPublish() {
-
+    public function testPublish()
+    {
         $instance = $this->getInstance();
         $this->assertNull($instance->setPublishStatus(true));
         $this->assertNull($instance->setPublishStatus(false));
-
     }
 }

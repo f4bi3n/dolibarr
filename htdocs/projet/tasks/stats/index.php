@@ -28,8 +28,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/taskstats.class.php';
 
 // Security check
-if (!$user->rights->projet->lire)
-	accessforbidden();
+if (!$user->rights->projet->lire) {
+    accessforbidden();
+}
 
 
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
@@ -38,10 +39,9 @@ $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 $userid = GETPOST('userid', 'int');
 $socid = GETPOST('socid', 'int');
 // Security check
-if ($user->socid > 0)
-{
-	$action = '';
-	$socid = $user->socid;
+if ($user->socid > 0) {
+    $action = '';
+    $socid = $user->socid;
 }
 $nowyear = strftime("%Y", dol_now());
 $year = GETPOST('year') > 0 ?GETPOST('year') : $nowyear;
@@ -73,9 +73,15 @@ dol_mkdir($dir);
 
 
 $stats_tasks = new TaskStats($db);
-if (!empty($userid) && $userid != -1) $stats_tasks->userid = $userid;
-if (!empty($socid) && $socid != -1) $stats_tasks->socid = $socid;
-if (!empty($year)) $stats_tasks->year = $year;
+if (!empty($userid) && $userid != -1) {
+    $stats_tasks->userid = $userid;
+}
+if (!empty($socid) && $socid != -1) {
+    $stats_tasks->socid = $socid;
+}
+if (!empty($year)) {
+    $stats_tasks->year = $year;
+}
 
 
 
@@ -89,26 +95,25 @@ $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=taskstats&amp;file=tasknbpr
 
 $px1 = new DolGraph();
 $mesg = $px1->isGraphKo();
-if (!$mesg)
-{
-	$px1->SetData($data);
-	$i = $startyear; $legend = array();
-	while ($i <= $endyear)
-	{
-		$legend[] = $i;
-		$i++;
-	}
-	$px1->SetLegend($legend);
-	$px1->SetMaxValue($px1->GetCeilMaxValue());
-	$px1->SetWidth($WIDTH);
-	$px1->SetHeight($HEIGHT);
-	$px1->SetYLabel($langs->trans("ProjectNbTask"));
-	$px1->SetShading(3);
-	$px1->SetHorizTickIncrement(1);
-	$px1->mode = 'depth';
-	$px1->SetTitle($langs->trans("ProjectNbTaskByMonth"));
+if (!$mesg) {
+    $px1->SetData($data);
+    $i = $startyear;
+    $legend = array();
+    while ($i <= $endyear) {
+        $legend[] = $i;
+        $i++;
+    }
+    $px1->SetLegend($legend);
+    $px1->SetMaxValue($px1->GetCeilMaxValue());
+    $px1->SetWidth($WIDTH);
+    $px1->SetHeight($HEIGHT);
+    $px1->SetYLabel($langs->trans("ProjectNbTask"));
+    $px1->SetShading(3);
+    $px1->SetHorizTickIncrement(1);
+    $px1->mode = 'depth';
+    $px1->SetTitle($langs->trans("ProjectNbTaskByMonth"));
 
-	$px1->draw($filenamenb, $fileurlnb);
+    $px1->draw($filenamenb, $fileurlnb);
 }
 
 
@@ -116,12 +121,16 @@ if (!$mesg)
 $stats_tasks->year = 0;
 $data_all_year = $stats_tasks->getAllByYear();
 
-if (!empty($year)) $stats_tasks->year = $year;
+if (!empty($year)) {
+    $stats_tasks->year = $year;
+}
 $arrayyears = array();
 foreach ($data_all_year as $val) {
-	$arrayyears[$val['year']] = $val['year'];
+    $arrayyears[$val['year']] = $val['year'];
 }
-if (!count($arrayyears)) $arrayyears[$nowyear] = $nowyear;
+if (!count($arrayyears)) {
+    $arrayyears[$nowyear] = $nowyear;
+}
 
 
 $h = 0;
@@ -153,8 +162,12 @@ print $form->select_dolusers($userid, 'userid', 1, array(),0,$includeuserlist);
 print '</td></tr>';*/
 // Year
 print '<tr><td>'.$langs->trans("Year").'</td><td>';
-if (!in_array($year, $arrayyears)) $arrayyears[$year] = $year;
-if (!in_array($nowyear, $arrayyears)) $arrayyears[$nowyear] = $nowyear;
+if (!in_array($year, $arrayyears)) {
+    $arrayyears[$year] = $year;
+}
+if (!in_array($nowyear, $arrayyears)) {
+    $arrayyears[$nowyear] = $nowyear;
+}
 arsort($arrayyears);
 print $form->selectarray('year', $arrayyears, $year, 0);
 print '</td></tr>';
@@ -172,24 +185,22 @@ print '<td class="right">'.$langs->trans("NbOfTasks").'</td>';
 print '</tr>';
 
 $oldyear = 0;
-foreach ($data_all_year as $val)
-{
-	$year = $val['year'];
-	while ($year && $oldyear > $year + 1)
-	{	// If we have empty year
-		$oldyear--;
+foreach ($data_all_year as $val) {
+    $year = $val['year'];
+    while ($year && $oldyear > $year + 1) {	// If we have empty year
+        $oldyear--;
 
-		print '<tr class="oddeven" height="24">';
-		print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$oldyear.'</a></td>';
-		print '<td class="right">0</td>';
-		print '</tr>';
-	}
+        print '<tr class="oddeven" height="24">';
+        print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$oldyear.'</a></td>';
+        print '<td class="right">0</td>';
+        print '</tr>';
+    }
 
-	print '<tr class="oddeven" height="24">';
-	print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$year.'</a></td>';
-	print '<td class="right">'.$val['nb'].'</td>';
-	print '</tr>';
-	$oldyear = $year;
+    print '<tr class="oddeven" height="24">';
+    print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$year.'</a></td>';
+    print '<td class="right">'.$val['nb'].'</td>';
+    print '</tr>';
+    $oldyear = $year;
 }
 
 print '</table>';
@@ -198,10 +209,11 @@ print '</div>';
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 $stringtoshow .= '<table class="border centpercent"><tr class="pair nohover"><td class="center">';
-if ($mesg) { print $mesg; }
-else {
-	$stringtoshow .= $px1->show();
-	$stringtoshow .= "<br>\n";
+if ($mesg) {
+    print $mesg;
+} else {
+    $stringtoshow .= $px1->show();
+    $stringtoshow .= "<br>\n";
 }
 $stringtoshow .= '</td></tr></table>';
 

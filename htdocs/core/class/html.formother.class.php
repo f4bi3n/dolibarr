@@ -41,9 +41,9 @@ class FormOther
     private $db;
 
     /**
-	 * @var string Error code (or message)
-	 */
-	public $error;
+     * @var string Error code (or message)
+     */
+    public $error;
 
 
     /**
@@ -73,42 +73,37 @@ class FormOther
         // phpcs:enable
         global $conf, $langs, $user;
 
-    	$sql = "SELECT rowid, label, fk_user";
+        $sql = "SELECT rowid, label, fk_user";
         $sql .= " FROM ".MAIN_DB_PREFIX."export_model";
         $sql .= " WHERE type = '".$this->db->escape($type)."'";
-		if (!empty($fk_user)) $sql .= " AND fk_user IN (0, ".$fk_user.")"; // An export model
+        if (!empty($fk_user)) {
+            $sql .= " AND fk_user IN (0, ".$fk_user.")";
+        } // An export model
         $sql .= " ORDER BY rowid";
         $result = $this->db->query($sql);
-        if ($result)
-        {
+        if ($result) {
             print '<select class="flat minwidth200" name="'.$htmlname.'" id="'.$htmlname.'">';
-            if ($useempty)
-            {
+            if ($useempty) {
                 print '<option value="-1">&nbsp;</option>';
             }
 
             $num = $this->db->num_rows($result);
             $i = 0;
-            while ($i < $num)
-            {
+            while ($i < $num) {
                 $obj = $this->db->fetch_object($result);
 
                 $label = $obj->label;
                 if ($obj->fk_user == 0) {
-                	$label .= ' <span class="opacitymedium">('.$langs->trans("Everybody").')</span>';
-                }
-                elseif (! empty($conf->global->EXPORTS_SHARE_MODELS) && empty($fk_user) && is_object($user) && $user->id != $obj->fk_user) {
-                	$tmpuser = new User($this->db);
-                	$tmpuser->fetch($obj->fk_user);
-                	$label .= ' <span class="opacitymedium">('.$tmpuser->getFullName($langs).')</span>';
+                    $label .= ' <span class="opacitymedium">('.$langs->trans("Everybody").')</span>';
+                } elseif (! empty($conf->global->EXPORTS_SHARE_MODELS) && empty($fk_user) && is_object($user) && $user->id != $obj->fk_user) {
+                    $tmpuser = new User($this->db);
+                    $tmpuser->fetch($obj->fk_user);
+                    $label .= ' <span class="opacitymedium">('.$tmpuser->getFullName($langs).')</span>';
                 }
 
-                if ($selected == $obj->rowid)
-                {
+                if ($selected == $obj->rowid) {
                     print '<option value="'.$obj->rowid.'" selected data-html="'.dol_escape_htmltag($label).'">';
-                }
-                else
-                {
+                } else {
                     print '<option value="'.$obj->rowid.'" data-html="'.dol_escape_htmltag($label).'">';
                 }
                 print $label;
@@ -117,8 +112,7 @@ class FormOther
             }
             print "</select>";
             print ajax_combobox($htmlname);
-        }
-        else {
+        } else {
             dol_print_error($this->db);
         }
     }
@@ -138,44 +132,39 @@ class FormOther
     public function select_import_model($selected = '', $htmlname = 'importmodelid', $type = '', $useempty = 0, $fk_user = null)
     {
         // phpcs:enable
-    	global $conf, $langs, $user;
+        global $conf, $langs, $user;
 
         $sql = "SELECT rowid, label, fk_user";
         $sql .= " FROM ".MAIN_DB_PREFIX."import_model";
         $sql .= " WHERE type = '".$this->db->escape($type)."'";
-        if (!empty($fk_user)) $sql .= " AND fk_user IN (0, ".$fk_user.")"; // An export model
+        if (!empty($fk_user)) {
+            $sql .= " AND fk_user IN (0, ".$fk_user.")";
+        } // An export model
         $sql .= " ORDER BY rowid";
         $result = $this->db->query($sql);
-        if ($result)
-        {
+        if ($result) {
             print '<select class="flat minwidth200" name="'.$htmlname.'" id="'.$htmlname.'">';
-            if ($useempty)
-            {
+            if ($useempty) {
                 print '<option value="-1">&nbsp;</option>';
             }
 
             $num = $this->db->num_rows($result);
             $i = 0;
-            while ($i < $num)
-            {
+            while ($i < $num) {
                 $obj = $this->db->fetch_object($result);
 
                 $label = $obj->label;
                 if ($obj->fk_user == 0) {
-                	$label .= ' <span class="opacitymedium">('.$langs->trans("Everybody").')</span>';
-                }
-                elseif (! empty($conf->global->EXPORTS_SHARE_MODELS) && empty($fk_user) && is_object($user) && $user->id != $obj->fk_user) {
-                	$tmpuser = new User($this->db);
-                	$tmpuser->fetch($obj->fk_user);
-                	$label .= ' <span class="opacitymedium">('.$tmpuser->getFullName($langs).')</span>';
+                    $label .= ' <span class="opacitymedium">('.$langs->trans("Everybody").')</span>';
+                } elseif (! empty($conf->global->EXPORTS_SHARE_MODELS) && empty($fk_user) && is_object($user) && $user->id != $obj->fk_user) {
+                    $tmpuser = new User($this->db);
+                    $tmpuser->fetch($obj->fk_user);
+                    $label .= ' <span class="opacitymedium">('.$tmpuser->getFullName($langs).')</span>';
                 }
 
-                if ($selected == $obj->rowid)
-                {
+                if ($selected == $obj->rowid) {
                     print '<option value="'.$obj->rowid.'" selected data-html="'.dol_escape_htmltag($label).'">';
-                }
-                else
-                {
+                } else {
                     print '<option value="'.$obj->rowid.'" data-html="'.dol_escape_htmltag($label).'">';
                 }
                 print $label;
@@ -184,8 +173,7 @@ class FormOther
             }
             print "</select>";
             print ajax_combobox($htmlname);
-        }
-        else {
+        } else {
             dol_print_error($this->db);
         }
     }
@@ -210,25 +198,19 @@ class FormOther
         $sql .= " WHERE e.active = 1 AND e.fk_pays = c.rowid";
         $sql .= " ORDER BY country, e.organization ASC, e.code ASC";
 
-    	dol_syslog(get_class($this).'::select_ecotaxes', LOG_DEBUG);
+        dol_syslog(get_class($this).'::select_ecotaxes', LOG_DEBUG);
         $resql = $this->db->query($sql);
-        if ($resql)
-        {
+        if ($resql) {
             print '<select class="flat" name="'.$htmlname.'">';
             $num = $this->db->num_rows($resql);
             $i = 0;
             print '<option value="-1">&nbsp;</option>'."\n";
-            if ($num)
-            {
-                while ($i < $num)
-                {
+            if ($num) {
+                while ($i < $num) {
                     $obj = $this->db->fetch_object($resql);
-                    if ($selected && $selected == $obj->rowid)
-                    {
+                    if ($selected && $selected == $obj->rowid) {
                         print '<option value="'.$obj->rowid.'" selected>';
-                    }
-                    else
-                    {
+                    } else {
                         print '<option value="'.$obj->rowid.'">';
                         //print '<option onmouseover="showtip(\''.$obj->label.'\')" onMouseout="hidetip()" value="'.$obj->rowid.'">';
                     }
@@ -240,9 +222,7 @@ class FormOther
             }
             print '</select>';
             return 0;
-        }
-        else
-        {
+        } else {
             dol_print_error($this->db);
             return 1;
         }
@@ -261,50 +241,42 @@ class FormOther
     public function select_revenue_stamp($selected = '', $htmlname = 'revenuestamp', $country_code = '')
     {
         // phpcs:enable
-    	global $langs;
+        global $langs;
 
-    	$out = '';
+        $out = '';
 
-    	$sql = "SELECT r.taux, r.revenuestamp_type";
-    	$sql .= " FROM ".MAIN_DB_PREFIX."c_revenuestamp as r,".MAIN_DB_PREFIX."c_country as c";
-    	$sql .= " WHERE r.active = 1 AND r.fk_pays = c.rowid";
-    	$sql .= " AND c.code = '".$country_code."'";
+        $sql = "SELECT r.taux, r.revenuestamp_type";
+        $sql .= " FROM ".MAIN_DB_PREFIX."c_revenuestamp as r,".MAIN_DB_PREFIX."c_country as c";
+        $sql .= " WHERE r.active = 1 AND r.fk_pays = c.rowid";
+        $sql .= " AND c.code = '".$country_code."'";
 
-    	dol_syslog(get_class($this).'::select_revenue_stamp', LOG_DEBUG);
-    	$resql = $this->db->query($sql);
-    	if ($resql)
-    	{
-    		$out .= '<select class="flat" name="'.$htmlname.'">';
-    		$num = $this->db->num_rows($resql);
-    		$i = 0;
-    		$out .= '<option value="0">&nbsp;</option>'."\n";
-    		if ($num)
-    		{
-    			while ($i < $num)
-    			{
-    				$obj = $this->db->fetch_object($resql);
-    				if (($selected && $selected == $obj->taux) || $num == 1)
-    				{
-    					$out .= '<option value="'.$obj->taux.($obj->revenuestamp_type == 'percent' ? '%' : '').'"'.($obj->revenuestamp_type == 'percent' ? ' data-type="percent"' : '').' selected>';
-    				}
-    				else
-    				{
-    					$out .= '<option value="'.$obj->taux.($obj->revenuestamp_type == 'percent' ? '%' : '').'"'.($obj->revenuestamp_type == 'percent' ? ' data-type="percent"' : '').'>';
-    					//print '<option onmouseover="showtip(\''.$obj->libelle.'\')" onMouseout="hidetip()" value="'.$obj->rowid.'">';
-    				}
-    				$out .= $obj->taux.($obj->revenuestamp_type == 'percent' ? '%' : '');
-    				$out .= '</option>';
-    				$i++;
-    			}
-    		}
-    		$out .= '</select>';
-    		return $out;
-    	}
-    	else
-    	{
-    		dol_print_error($this->db);
-    		return '';
-    	}
+        dol_syslog(get_class($this).'::select_revenue_stamp', LOG_DEBUG);
+        $resql = $this->db->query($sql);
+        if ($resql) {
+            $out .= '<select class="flat" name="'.$htmlname.'">';
+            $num = $this->db->num_rows($resql);
+            $i = 0;
+            $out .= '<option value="0">&nbsp;</option>'."\n";
+            if ($num) {
+                while ($i < $num) {
+                    $obj = $this->db->fetch_object($resql);
+                    if (($selected && $selected == $obj->taux) || $num == 1) {
+                        $out .= '<option value="'.$obj->taux.($obj->revenuestamp_type == 'percent' ? '%' : '').'"'.($obj->revenuestamp_type == 'percent' ? ' data-type="percent"' : '').' selected>';
+                    } else {
+                        $out .= '<option value="'.$obj->taux.($obj->revenuestamp_type == 'percent' ? '%' : '').'"'.($obj->revenuestamp_type == 'percent' ? ' data-type="percent"' : '').'>';
+                        //print '<option onmouseover="showtip(\''.$obj->libelle.'\')" onMouseout="hidetip()" value="'.$obj->rowid.'">';
+                    }
+                    $out .= $obj->taux.($obj->revenuestamp_type == 'percent' ? '%' : '');
+                    $out .= '</option>';
+                    $i++;
+                }
+            }
+            $out .= '</select>';
+            return $out;
+        } else {
+            dol_print_error($this->db);
+            return '';
+        }
     }
 
 
@@ -325,16 +297,14 @@ class FormOther
     {
         // phpcs:enable
         $return = '<select class="flat" name="'.$htmlname.'" '.($disabled ? 'disabled' : '').'>';
-        if ($showempty) $return .= '<option value="-1"'.(($selected == -1 || $selected == '') ? ' selected' : '').'>&nbsp;</option>';
+        if ($showempty) {
+            $return .= '<option value="-1"'.(($selected == -1 || $selected == '') ? ' selected' : '').'>&nbsp;</option>';
+        }
 
-        for ($i = $start; $i <= $end; $i += $increment)
-        {
-            if ($selected != '' && (int) $selected == $i)
-            {
+        for ($i = $start; $i <= $end; $i += $increment) {
+            if ($selected != '' && (int) $selected == $i) {
                 $return .= '<option value="'.$i.'" selected>';
-            }
-            else
-            {
+            } else {
                 $return .= '<option value="'.$i.'">';
             }
             $return .= $i.' % ';
@@ -366,8 +336,7 @@ class FormOther
         require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
         // For backward compatibility
-        if (is_numeric($type))
-        {
+        if (is_numeric($type)) {
             dol_syslog(__METHOD__.': using numeric value for parameter type is deprecated. Use string code instead.', LOG_WARNING);
         }
 
@@ -377,8 +346,7 @@ class FormOther
 
         $moreforfilter = '';
         // Enhance with select2
-        if ($conf->use_javascript_ajax)
-        {
+        if ($conf->use_javascript_ajax) {
             include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
             $comboenhancement = ajax_combobox('select_categ_'.$htmlname);
             $moreforfilter .= $comboenhancement;
@@ -386,21 +354,22 @@ class FormOther
 
         // Print a select with each of them
         $moreforfilter .= '<select class="flat minwidth100'.($morecss ? ' '.$morecss : '').'" id="select_categ_'.$htmlname.'" name="'.$htmlname.'">';
-        if ($showempty) $moreforfilter .= '<option value="0">&nbsp;</option>'; // Should use -1 to say nothing
+        if ($showempty) {
+            $moreforfilter .= '<option value="0">&nbsp;</option>';
+        } // Should use -1 to say nothing
 
-        if (is_array($tab_categs))
-        {
-            foreach ($tab_categs as $categ)
-            {
+        if (is_array($tab_categs)) {
+            foreach ($tab_categs as $categ) {
                 $moreforfilter .= '<option value="'.$categ['id'].'"';
-                if ($categ['id'] == $selected) $moreforfilter .= ' selected';
+                if ($categ['id'] == $selected) {
+                    $moreforfilter .= ' selected';
+                }
                 $moreforfilter .= '>'.dol_trunc($categ['fulllabel'], 50, 'middle').'</option>';
             }
         }
-        if ($nocateg)
-        {
-        	$langs->load("categories");
-        	$moreforfilter .= '<option value="-2"'.($selected == -2 ? ' selected' : '').'>- '.$langs->trans("NotCategorized").' -</option>';
+        if ($nocateg) {
+            $langs->load("categories");
+            $moreforfilter .= '<option value="-2"'.($selected == -2 ? ' selected' : '').'>- '.$langs->trans("NotCategorized").' -</option>';
         }
         $moreforfilter .= '</select>';
 
@@ -430,110 +399,100 @@ class FormOther
 
         $out = '';
         // Enhance with select2
-        if ($conf->use_javascript_ajax)
-        {
+        if ($conf->use_javascript_ajax) {
             include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 
             $comboenhancement = ajax_combobox($htmlname);
-            if ($comboenhancement)
-            {
-            	$out.=$comboenhancement;
+            if ($comboenhancement) {
+                $out.=$comboenhancement;
             }
         }
         // Select each sales and print them in a select input
         $out.='<select class="flat'.($morecss?' '.$morecss:'').'" id="'.$htmlname.'" name="'.$htmlname.'">';
-        if ($showempty) $out.='<option value="0">&nbsp;</option>';
+        if ($showempty) {
+            $out.='<option value="0">&nbsp;</option>';
+        }
 
         // Get list of users allowed to be viewed
         $sql_usr = "SELECT u.rowid, u.lastname, u.firstname, u.statut, u.login";
         $sql_usr.= " FROM ".MAIN_DB_PREFIX."user as u";
 
-        if (! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
-        {
-        	if (! empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
-        		$sql_usr.= " WHERE u.entity IS NOT NULL"; // Show all users
-        	} else {
-        		$sql_usr.= " WHERE EXISTS (SELECT ug.fk_user FROM ".MAIN_DB_PREFIX."usergroup_user as ug WHERE u.rowid = ug.fk_user AND ug.entity IN (".getEntity('usergroup')."))";
-        		$sql_usr.= " OR u.entity = 0"; // Show always superadmin
-        	}
-        }
-        else
-        {
-        	$sql_usr.= " WHERE u.entity IN (".getEntity('user').")";
+        if (! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+            if (! empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
+                $sql_usr.= " WHERE u.entity IS NOT NULL"; // Show all users
+            } else {
+                $sql_usr.= " WHERE EXISTS (SELECT ug.fk_user FROM ".MAIN_DB_PREFIX."usergroup_user as ug WHERE u.rowid = ug.fk_user AND ug.entity IN (".getEntity('usergroup')."))";
+                $sql_usr.= " OR u.entity = 0"; // Show always superadmin
+            }
+        } else {
+            $sql_usr.= " WHERE u.entity IN (".getEntity('user').")";
         }
 
-        if (empty($user->rights->user->user->lire)) $sql_usr.=" AND u.rowid = ".$user->id;
-        if (! empty($user->socid)) $sql_usr.=" AND u.fk_soc = ".$user->socid;
+        if (empty($user->rights->user->user->lire)) {
+            $sql_usr.=" AND u.rowid = ".$user->id;
+        }
+        if (! empty($user->socid)) {
+            $sql_usr.=" AND u.fk_soc = ".$user->socid;
+        }
         // Add existing sales representatives of thirdparty of external user
-        if (empty($user->rights->user->user->lire) && $user->socid)
-        {
+        if (empty($user->rights->user->user->lire) && $user->socid) {
             $sql_usr.=" UNION ";
             $sql_usr.= "SELECT u2.rowid, u2.lastname, u2.firstname, u2.statut, u2.login";
             $sql_usr.= " FROM ".MAIN_DB_PREFIX."user as u2, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 
-            if (! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
-            {
-            	if (! empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
-            		$sql_usr.= " WHERE u2.entity IS NOT NULL"; // Show all users
-            	} else {
-            		$sql_usr.= " WHERE EXISTS (SELECT ug2.fk_user FROM ".MAIN_DB_PREFIX."usergroup_user as ug2 WHERE u2.rowid = ug2.fk_user AND ug2.entity IN (".getEntity('usergroup')."))";
-            	}
-            }
-            else
-            {
-            	$sql_usr.= " WHERE u2.entity IN (".getEntity('user').")";
+            if (! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+                if (! empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
+                    $sql_usr.= " WHERE u2.entity IS NOT NULL"; // Show all users
+                } else {
+                    $sql_usr.= " WHERE EXISTS (SELECT ug2.fk_user FROM ".MAIN_DB_PREFIX."usergroup_user as ug2 WHERE u2.rowid = ug2.fk_user AND ug2.entity IN (".getEntity('usergroup')."))";
+                }
+            } else {
+                $sql_usr.= " WHERE u2.entity IN (".getEntity('user').")";
             }
 
             $sql_usr.= " AND u2.rowid = sc.fk_user AND sc.fk_soc=".$user->socid;
         }
-	    $sql_usr.= " ORDER BY statut DESC, lastname ASC";  // Do not use 'ORDER BY u.statut' here, not compatible with the UNION.
+        $sql_usr.= " ORDER BY statut DESC, lastname ASC";  // Do not use 'ORDER BY u.statut' here, not compatible with the UNION.
         //print $sql_usr;exit;
 
         $resql_usr = $this->db->query($sql_usr);
-        if ($resql_usr)
-        {
-            while ($obj_usr = $this->db->fetch_object($resql_usr))
-            {
+        if ($resql_usr) {
+            while ($obj_usr = $this->db->fetch_object($resql_usr)) {
                 $out.='<option value="'.$obj_usr->rowid.'"';
 
-                if ($obj_usr->rowid == $selected) $out.=' selected';
+                if ($obj_usr->rowid == $selected) {
+                    $out.=' selected';
+                }
 
                 $out.='>';
                 $out.=dolGetFirstLastname($obj_usr->firstname, $obj_usr->lastname);
                 // Complete name with more info
                 $moreinfo=0;
-                if (! empty($conf->global->MAIN_SHOW_LOGIN))
-                {
+                if (! empty($conf->global->MAIN_SHOW_LOGIN)) {
                     $out.=($moreinfo?' - ':' (').$obj_usr->login;
                     $moreinfo++;
                 }
-                if ($showstatus >= 0)
-                {
-					if ($obj_usr->statut == 1 && $showstatus == 1)
-					{
-						$out.=($moreinfo?' - ':' (').$langs->trans('Enabled');
-	                	$moreinfo++;
-					}
-					if ($obj_usr->statut == 0)
-					{
-						$out.=($moreinfo?' - ':' (').$langs->trans('Disabled');
-                		$moreinfo++;
-					}
-				}
-				$out.=($moreinfo?')':'');
+                if ($showstatus >= 0) {
+                    if ($obj_usr->statut == 1 && $showstatus == 1) {
+                        $out.=($moreinfo?' - ':' (').$langs->trans('Enabled');
+                        $moreinfo++;
+                    }
+                    if ($obj_usr->statut == 0) {
+                        $out.=($moreinfo?' - ':' (').$langs->trans('Disabled');
+                        $moreinfo++;
+                    }
+                }
+                $out.=($moreinfo?')':'');
                 $out.='</option>';
             }
             $this->db->free($resql_usr);
-        }
-        else
-        {
+        } else {
             dol_print_error($this->db);
         }
 
-        if ($norepresentative)
-        {
-        	$langs->load("companies");
-        	$out.='<option value="-2"'.($selected == -2 ? ' selected':'').'>- '.$langs->trans("NoSalesRepresentativeAffected").' -</option>';
+        if ($norepresentative) {
+            $langs->load("companies");
+            $out.='<option value="-2"'.($selected == -2 ? ' selected':'').'>- '.$langs->trans("NoSalesRepresentativeAffected").' -</option>';
         }
 
         $out.='</select>';
@@ -552,7 +511,7 @@ class FormOther
      * 	@param	int		$mode					0=Return list of tasks and their projects, 1=Return projects and tasks if exists
      *  @param  int		$useempty       		0=Allow empty values
      *  @param	int		$disablechildoftaskid	1=Disable task that are child of the provided task id
-	 *  @param	string	$filteronprojstatus		Filter on project status ('-1'=no filter, '0,1'=Draft+Validated status)
+     *  @param	string	$filteronprojstatus		Filter on project status ('-1'=no filter, '0,1'=Draft+Validated status)
      *  @param	string	$morecss				More css
      *  @return	void
      */
@@ -565,19 +524,18 @@ class FormOther
         //print $modeproject.'-'.$modetask;
         $task = new Task($this->db);
         $tasksarray = $task->getTasksArray($modetask ? $user : 0, $modeproject ? $user : 0, $projectid, 0, $mode, '', $filteronprojstatus);
-        if ($tasksarray)
-        {
-        	print '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'" id="'.$htmlname.'">';
-            if ($useempty) print '<option value="0">&nbsp;</option>';
+        if ($tasksarray) {
+            print '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'" id="'.$htmlname.'">';
+            if ($useempty) {
+                print '<option value="0">&nbsp;</option>';
+            }
             $j = 0;
             $level = 0;
             $this->_pLineSelect($j, 0, $tasksarray, $level, $selectedtask, $projectid, $disablechildoftaskid);
             print '</select>';
 
             print ajax_combobox($htmlname);
-        }
-        else
-        {
+        } else {
             print '<div class="warning">'.$langs->trans("NoProject").'</div>';
         }
     }
@@ -608,21 +566,20 @@ class FormOther
                 //var_dump($selectedproject."--".$selectedtask."--".$lines[$i]->fk_project."_".$lines[$i]->id);		// $lines[$i]->id may be empty if project has no lines
 
                 // Break on a new project
-                if ($parent == 0)	// We are on a task at first level
-                {
-                    if ($lines[$i]->fk_project != $lastprojectid)	// Break found on project
-                    {
-                        if ($i > 0) print '<option value="0" disabled>----------</option>';
+                if ($parent == 0) {	// We are on a task at first level
+                    if ($lines[$i]->fk_project != $lastprojectid) {	// Break found on project
+                        if ($i > 0) {
+                            print '<option value="0" disabled>----------</option>';
+                        }
                         print '<option value="'.$lines[$i]->fk_project.'_0"';
-                        if ($selectedproject == $lines[$i]->fk_project) print ' selected';
+                        if ($selectedproject == $lines[$i]->fk_project) {
+                            print ' selected';
+                        }
                         print '>'; // Project -> Task
                         print $langs->trans("Project").' '.$lines[$i]->projectref;
-                        if (empty($lines[$i]->public))
-                        {
+                        if (empty($lines[$i]->public)) {
                             print ' ('.$langs->trans("Visibility").': '.$langs->trans("PrivateProject").')';
-                        }
-                        else
-                        {
+                        } else {
                             print ' ('.$langs->trans("Visibility").': '.$langs->trans("SharedProject").')';
                         }
                         //print '-'.$parent.'-'.$lines[$i]->fk_project.'-'.$lastprojectid;
@@ -636,33 +593,35 @@ class FormOther
                 $newdisablechildoftaskid = $disablechildoftaskid;
 
                 // Print task
-                if (isset($lines[$i]->id))		// We use isset because $lines[$i]->id may be null if project has no task and are on root project (tasks may be caught by a left join). We enter here only if '0' or >0
-                {
-                	// Check if we must disable entry
-                	$disabled = 0;
-                	if ($disablechildoftaskid && (($lines[$i]->id == $disablechildoftaskid || $lines[$i]->fk_parent == $disablechildoftaskid)))
-                	{
-               			$disabled++;
-               			if ($lines[$i]->fk_parent == $disablechildoftaskid) $newdisablechildoftaskid = $lines[$i]->id; // If task is child of a disabled parent, we will propagate id to disable next child too
-                	}
+                if (isset($lines[$i]->id)) {		// We use isset because $lines[$i]->id may be null if project has no task and are on root project (tasks may be caught by a left join). We enter here only if '0' or >0
+                    // Check if we must disable entry
+                    $disabled = 0;
+                    if ($disablechildoftaskid && (($lines[$i]->id == $disablechildoftaskid || $lines[$i]->fk_parent == $disablechildoftaskid))) {
+                        $disabled++;
+                        if ($lines[$i]->fk_parent == $disablechildoftaskid) {
+                            $newdisablechildoftaskid = $lines[$i]->id;
+                        } // If task is child of a disabled parent, we will propagate id to disable next child too
+                    }
 
                     print '<option value="'.$lines[$i]->fk_project.'_'.$lines[$i]->id.'"';
-                    if (($lines[$i]->id == $selectedtask) || ($lines[$i]->fk_project.'_'.$lines[$i]->id == $selectedtask)) print ' selected';
-                    if ($disabled) print ' disabled';
+                    if (($lines[$i]->id == $selectedtask) || ($lines[$i]->fk_project.'_'.$lines[$i]->id == $selectedtask)) {
+                        print ' selected';
+                    }
+                    if ($disabled) {
+                        print ' disabled';
+                    }
                     print '>';
                     print $langs->trans("Project").' '.$lines[$i]->projectref;
                     print ' '.$lines[$i]->projectlabel;
-                    if (empty($lines[$i]->public))
-                    {
+                    if (empty($lines[$i]->public)) {
                         print ' ('.$langs->trans("Visibility").': '.$langs->trans("PrivateProject").')';
-                    }
-                    else
-                    {
+                    } else {
                         print ' ('.$langs->trans("Visibility").': '.$langs->trans("SharedProject").')';
                     }
-                    if ($lines[$i]->id) print ' > ';
-                    for ($k = 0; $k < $level; $k++)
-                    {
+                    if ($lines[$i]->id) {
+                        print ' > ';
+                    }
+                    for ($k = 0; $k < $level; $k++) {
                         print "&nbsp;&nbsp;&nbsp;";
                     }
                     print $lines[$i]->ref.' '.$lines[$i]->label."</option>\n";
@@ -670,7 +629,9 @@ class FormOther
                 }
 
                 $level++;
-                if ($lines[$i]->id) $this->_pLineSelect($inc, $lines[$i]->id, $lines, $level, $selectedtask, $selectedproject, $newdisablechildoftaskid);
+                if ($lines[$i]->id) {
+                    $this->_pLineSelect($inc, $lines[$i]->id, $lines, $level, $selectedtask, $selectedproject, $newdisablechildoftaskid);
+                }
                 $level--;
             }
         }
@@ -687,14 +648,19 @@ class FormOther
      */
     public static function showColor($color, $textifnotdefined = '')
     {
-    	$textcolor = 'FFF';
-    	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-    	if (colorIsLight($color)) $textcolor = '000';
+        $textcolor = 'FFF';
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+        if (colorIsLight($color)) {
+            $textcolor = '000';
+        }
 
-    	$color = colorArrayToHex(colorStringToArray($color, array()), '');
+        $color = colorArrayToHex(colorStringToArray($color, array()), '');
 
-		if ($color) print '<input type="text" class="colorthumb" disabled style="padding: 1px; margin-top: 0; margin-bottom: 0; color: #'.$textcolor.'; background-color: #'.$color.'" value="'.$color.'">';
-		else print $textifnotdefined;
+        if ($color) {
+            print '<input type="text" class="colorthumb" disabled style="padding: 1px; margin-top: 0; margin-bottom: 0; color: #'.$textcolor.'; background-color: #'.$color.'" value="'.$color.'">';
+        } else {
+            print $textifnotdefined;
+        }
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -713,7 +679,7 @@ class FormOther
     public function select_color($set_color = '', $prefix = 'f_color', $form_name = '', $showcolorbox = 1, $arrayofcolors = '')
     {
         // phpcs:enable
-    	print $this->selectColor($set_color, $prefix, $form_name, $showcolorbox, $arrayofcolors);
+        print $this->selectColor($set_color, $prefix, $form_name, $showcolorbox, $arrayofcolors);
     }
 
     /**
@@ -739,14 +705,12 @@ class FormOther
 
         $out = '';
 
-        if (!is_array($arrayofcolors) || count($arrayofcolors) < 1)
-        {
+        if (!is_array($arrayofcolors) || count($arrayofcolors) < 1) {
             $langs->load("other");
-            if (empty($conf->dol_use_jmobile))
-            {
-	            $out .= '<link rel="stylesheet" media="screen" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/css/jPicker-1.1.6.css" />';
-	            $out .= '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/jpicker-1.1.6.js"></script>';
-	            $out .= '<script type="text/javascript">
+            if (empty($conf->dol_use_jmobile)) {
+                $out .= '<link rel="stylesheet" media="screen" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/css/jPicker-1.1.6.css" />';
+                $out .= '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/jpicker-1.1.6.js"></script>';
+                $out .= '<script type="text/javascript">
 	             jQuery(document).ready(function(){
 	                $(\'#colorpicker'.$prefix.'\').jPicker( {
 	                window: {
@@ -785,14 +749,11 @@ class FormOther
 	             </script>';
             }
             $out .= '<input id="colorpicker'.$prefix.'" name="'.$prefix.'" size="6" maxlength="7" class="flat'.($morecss ? ' '.$morecss : '').'" type="text" value="'.dol_escape_htmltag($set_color).'" />';
-        }
-        else  // In most cases, this is not used. We used instead function with no specific list of colors
-        {
-            if (empty($conf->dol_use_jmobile))
-            {
-	        	$out .= '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/colorpicker/jquery.colorpicker.css" type="text/css" media="screen" />';
-	            $out .= '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/colorpicker/jquery.colorpicker.js" type="text/javascript"></script>';
-	            $out .= '<script type="text/javascript">
+        } else {  // In most cases, this is not used. We used instead function with no specific list of colors
+            if (empty($conf->dol_use_jmobile)) {
+                $out .= '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/colorpicker/jquery.colorpicker.css" type="text/css" media="screen" />';
+                $out .= '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/colorpicker/jquery.colorpicker.js" type="text/javascript"></script>';
+                $out .= '<script type="text/javascript">
 	             jQuery(document).ready(function(){
 	                 jQuery(\'#colorpicker'.$prefix.'\').colorpicker({
 	                     size: 14,
@@ -804,10 +765,11 @@ class FormOther
             }
             $out .= '<select id="colorpicker'.$prefix.'" class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$prefix.'">';
             //print '<option value="-1">&nbsp;</option>';
-            foreach ($arrayofcolors as $val)
-            {
+            foreach ($arrayofcolors as $val) {
                 $out .= '<option value="'.$val.'"';
-                if ($set_color == $val) $out .= ' selected';
+                if ($set_color == $val) {
+                    $out .= ' selected';
+                }
                 $out .= '>'.$val.'</option>';
             }
             $out .= '</select>';
@@ -835,8 +797,7 @@ class FormOther
         $file = $conf->$module->dir_temp.'/'.$name.'.png';
 
         // On cree le repertoire contenant les icones
-        if (!file_exists($conf->$module->dir_temp))
-        {
+        if (!file_exists($conf->$module->dir_temp)) {
             dol_mkdir($conf->$module->dir_temp);
         }
 
@@ -882,18 +843,13 @@ class FormOther
         );
 
         $select_week = '<select class="flat" name="'.$htmlname.'">';
-        if ($useempty)
-        {
+        if ($useempty) {
             $select_week .= '<option value="-1">&nbsp;</option>';
         }
-        foreach ($week as $key => $val)
-        {
-            if ($selected == $key)
-            {
+        foreach ($week as $key => $val) {
+            if ($selected == $key) {
                 $select_week .= '<option value="'.$key.'" selected>';
-            }
-            else
-            {
+            } else {
                 $select_week .= '<option value="'.$key.'">';
             }
             $select_week .= $val;
@@ -921,22 +877,21 @@ class FormOther
 
         require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-        if ($longlabel) $montharray = monthArray($langs, 0); // Get array
-        else $montharray = monthArray($langs, 1);
+        if ($longlabel) {
+            $montharray = monthArray($langs, 0);
+        } // Get array
+        else {
+            $montharray = monthArray($langs, 1);
+        }
 
         $select_month = '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'" id="'.$htmlname.'">';
-        if ($useempty)
-        {
+        if ($useempty) {
             $select_month .= '<option value="0">&nbsp;</option>';
         }
-        foreach ($montharray as $key => $val)
-        {
-            if ($selected == $key)
-            {
+        foreach ($montharray as $key => $val) {
+            if ($selected == $key) {
                 $select_month .= '<option value="'.$key.'" selected>';
-            }
-            else
-            {
+            } else {
                 $select_month .= '<option value="'.$key.'">';
             }
             $select_month .= $val;
@@ -988,30 +943,32 @@ class FormOther
         $currentyear = date("Y") + $offset;
         $max_year = $currentyear + $max_year;
         $min_year = $currentyear - $min_year;
-        if (empty($selected) && empty($useempty)) $selected = $currentyear;
+        if (empty($selected) && empty($useempty)) {
+            $selected = $currentyear;
+        }
 
         $out .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" id="'.$htmlname.'" name="'.$htmlname.'"'.$option.' >';
-        if ($useempty)
-        {
-        	$selected_html = '';
-            if ($selected == '') $selected_html = ' selected';
+        if ($useempty) {
+            $selected_html = '';
+            if ($selected == '') {
+                $selected_html = ' selected';
+            }
             $out .= '<option value=""'.$selected_html.'>&nbsp;</option>';
         }
-        if (!$invert)
-        {
-            for ($y = $max_year; $y >= $min_year; $y--)
-            {
+        if (!$invert) {
+            for ($y = $max_year; $y >= $min_year; $y--) {
                 $selected_html = '';
-                if ($selected > 0 && $y == $selected) $selected_html = ' selected';
+                if ($selected > 0 && $y == $selected) {
+                    $selected_html = ' selected';
+                }
                 $out .= '<option value="'.$y.'"'.$selected_html.' >'.$y.'</option>';
             }
-        }
-        else
-        {
-            for ($y = $min_year; $y <= $max_year; $y++)
-            {
+        } else {
+            for ($y = $min_year; $y <= $max_year; $y++) {
                 $selected_html = '';
-                if ($selected > 0 && $y == $selected) $selected_html = ' selected';
+                if ($selected > 0 && $y == $selected) {
+                    $selected_html = ' selected';
+                }
                 $out .= '<option value="'.$y.'"'.$selected_html.' >'.$y.'</option>';
             }
         }
@@ -1027,7 +984,7 @@ class FormOther
      *
      * 	@param	   User         $user		 Object User
      * 	@param	   String       $areacode    Code of area for pages - 0 = Home page ... See getListOfPagesForBoxes()
-	 *	@return    array                     array('selectboxlist'=>, 'boxactivated'=>, 'boxlista'=>, 'boxlistb'=>)
+     *	@return    array                     array('selectboxlist'=>, 'boxactivated'=>, 'boxlista'=>, 'boxlistb'=>)
      */
     public static function getBoxesArea($user, $areacode)
     {
@@ -1044,57 +1001,58 @@ class FormOther
         $boxactivated = InfoBox::listBoxes($db, 'activated', $areacode, (empty($user->conf->$confuserzone) ?null:$user), array(), 0); // Search boxes of common+user (or common only if user has no specific setup)
 
         $boxidactivatedforuser = array();
-        foreach ($boxactivated as $box)
-        {
-        	if (empty($user->conf->$confuserzone) || $box->fk_user == $user->id) $boxidactivatedforuser[$box->id] = $box->id; // We keep only boxes to show for user
+        foreach ($boxactivated as $box) {
+            if (empty($user->conf->$confuserzone) || $box->fk_user == $user->id) {
+                $boxidactivatedforuser[$box->id] = $box->id;
+            } // We keep only boxes to show for user
         }
 
         // Define selectboxlist
         $arrayboxtoactivatelabel = array();
-        if (!empty($user->conf->$confuserzone))
-        {
-        	$boxorder = '';
-        	$langs->load("boxes"); // Load label of boxes
-        	foreach ($boxactivated as $box)
-        	{
-        		if (!empty($boxidactivatedforuser[$box->id])) continue; // Already visible for user
-        		$label = $langs->transnoentitiesnoconv($box->boxlabel);
-        		//if (preg_match('/graph/',$box->class)) $label.=' ('.$langs->trans("Graph").')';
-        		if (preg_match('/graph/', $box->class) && $conf->browser->layout != 'phone')
-        		{
-        			$label = $label.' <span class="fa fa-bar-chart"></span>';
-        		}
-        		$arrayboxtoactivatelabel[$box->id] = $label; // We keep only boxes not shown for user, to show into combo list
-        	}
-            foreach ($boxidactivatedforuser as $boxid)
-        	{
-       			if (empty($boxorder)) $boxorder .= 'A:';
-  				$boxorder .= $boxid.',';
-        	}
+        if (!empty($user->conf->$confuserzone)) {
+            $boxorder = '';
+            $langs->load("boxes"); // Load label of boxes
+            foreach ($boxactivated as $box) {
+                if (!empty($boxidactivatedforuser[$box->id])) {
+                    continue;
+                } // Already visible for user
+                $label = $langs->transnoentitiesnoconv($box->boxlabel);
+                //if (preg_match('/graph/',$box->class)) $label.=' ('.$langs->trans("Graph").')';
+                if (preg_match('/graph/', $box->class) && $conf->browser->layout != 'phone') {
+                    $label = $label.' <span class="fa fa-bar-chart"></span>';
+                }
+                $arrayboxtoactivatelabel[$box->id] = $label; // We keep only boxes not shown for user, to show into combo list
+            }
+            foreach ($boxidactivatedforuser as $boxid) {
+                if (empty($boxorder)) {
+                    $boxorder .= 'A:';
+                }
+                $boxorder .= $boxid.',';
+            }
 
-        	//var_dump($boxidactivatedforuser);
+            //var_dump($boxidactivatedforuser);
 
-        	// Class Form must have been already loaded
-        	$selectboxlist .= '<!-- Form with select box list -->'."\n";
-			$selectboxlist .= '<form id="addbox" name="addbox" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-			$selectboxlist .= '<input type="hidden" name="addbox" value="addbox">';
-			$selectboxlist .= '<input type="hidden" name="userid" value="'.$user->id.'">';
-			$selectboxlist .= '<input type="hidden" name="areacode" value="'.$areacode.'">';
-			$selectboxlist .= '<input type="hidden" name="boxorder" value="'.$boxorder.'">';
-			$selectboxlist .= Form::selectarray('boxcombo', $arrayboxtoactivatelabel, -1, $langs->trans("ChooseBoxToAdd").'...', 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth150onsmartphone', 0, 'hidden selected', 0, 1);
-            if (empty($conf->use_javascript_ajax)) $selectboxlist .= ' <input type="submit" class="button" value="'.$langs->trans("AddBox").'">';
+            // Class Form must have been already loaded
+            $selectboxlist .= '<!-- Form with select box list -->'."\n";
+            $selectboxlist .= '<form id="addbox" name="addbox" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+            $selectboxlist .= '<input type="hidden" name="addbox" value="addbox">';
+            $selectboxlist .= '<input type="hidden" name="userid" value="'.$user->id.'">';
+            $selectboxlist .= '<input type="hidden" name="areacode" value="'.$areacode.'">';
+            $selectboxlist .= '<input type="hidden" name="boxorder" value="'.$boxorder.'">';
+            $selectboxlist .= Form::selectarray('boxcombo', $arrayboxtoactivatelabel, -1, $langs->trans("ChooseBoxToAdd").'...', 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth150onsmartphone', 0, 'hidden selected', 0, 1);
+            if (empty($conf->use_javascript_ajax)) {
+                $selectboxlist .= ' <input type="submit" class="button" value="'.$langs->trans("AddBox").'">';
+            }
             $selectboxlist .= '</form>';
-            if (!empty($conf->use_javascript_ajax))
-            {
-            	include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-            	$selectboxlist .= ajax_combobox("boxcombo");
+            if (!empty($conf->use_javascript_ajax)) {
+                include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+                $selectboxlist .= ajax_combobox("boxcombo");
             }
         }
 
         // Javascript code for dynamic actions
-        if (!empty($conf->use_javascript_ajax))
-        {
-	        $selectboxlist .= '<script type="text/javascript" language="javascript">
+        if (!empty($conf->use_javascript_ajax)) {
+            $selectboxlist .= '<script type="text/javascript" language="javascript">
 
 	        // To update list of activated boxes
 	        function updateBoxOrder(closing) {
@@ -1133,8 +1091,10 @@ class FormOther
 	        			window.location.search=\'mainmenu='.GETPOST("mainmenu", "aZ09").'&leftmenu='.GETPOST('leftmenu', "aZ09").'&action=addbox&boxid=\'+boxid;
 	                }
 	        	});';
-	        	if (!count($arrayboxtoactivatelabel)) $selectboxlist .= 'jQuery("#boxcombo").hide();';
-	        	$selectboxlist .= '
+            if (!count($arrayboxtoactivatelabel)) {
+                $selectboxlist .= 'jQuery("#boxcombo").hide();';
+            }
+            $selectboxlist .= '
 
 	        	jQuery("#boxhalfleft, #boxhalfright").sortable({
 	    	    	handle: \'.boxhandle\',
@@ -1159,32 +1119,35 @@ class FormOther
 
         	});'."\n";
 
-	        $selectboxlist .= '</script>'."\n";
+            $selectboxlist .= '</script>'."\n";
         }
 
         // Define boxlista and boxlistb
         $nbboxactivated = count($boxidactivatedforuser);
 
-        if ($nbboxactivated)
-        {
-        	// Load translation files required by the page
+        if ($nbboxactivated) {
+            // Load translation files required by the page
             $langs->loadLangs(array("boxes", "projects"));
 
-        	$emptybox = new ModeleBoxes($db);
+            $emptybox = new ModeleBoxes($db);
 
             $boxlista .= "\n<!-- Box left container -->\n";
 
             // Define $box_max_lines
             $box_max_lines = 5;
-            if (!empty($conf->global->MAIN_BOXES_MAXLINES)) $box_max_lines = $conf->global->MAIN_BOXES_MAXLINES;
+            if (!empty($conf->global->MAIN_BOXES_MAXLINES)) {
+                $box_max_lines = $conf->global->MAIN_BOXES_MAXLINES;
+            }
 
             $ii = 0;
-            foreach ($boxactivated as $key => $box)
-            {
-            	if ((!empty($user->conf->$confuserzone) && $box->fk_user == 0) || (empty($user->conf->$confuserzone) && $box->fk_user != 0)) continue;
-				if (empty($box->box_order) && $ii < ($nbboxactivated / 2)) $box->box_order = 'A'.sprintf("%02d", ($ii + 1)); // When box_order was not yet set to Axx or Bxx and is still 0
-            	if (preg_match('/^A/i', $box->box_order)) // column A
-                {
+            foreach ($boxactivated as $key => $box) {
+                if ((!empty($user->conf->$confuserzone) && $box->fk_user == 0) || (empty($user->conf->$confuserzone) && $box->fk_user != 0)) {
+                    continue;
+                }
+                if (empty($box->box_order) && $ii < ($nbboxactivated / 2)) {
+                    $box->box_order = 'A'.sprintf("%02d", ($ii + 1));
+                } // When box_order was not yet set to Axx or Bxx and is still 0
+                if (preg_match('/^A/i', $box->box_order)) { // column A
                     $ii++;
                     //print 'box_id '.$boxactivated[$ii]->box_id.' ';
                     //print 'box_order '.$boxactivated[$ii]->box_order.'<br>';
@@ -1194,24 +1157,25 @@ class FormOther
                 }
             }
 
-            if ($conf->browser->layout != 'phone')
-            {
-            	$emptybox->box_id = 'A';
-            	$emptybox->info_box_head = array();
-            	$emptybox->info_box_contents = array();
-            	$boxlista .= $emptybox->outputBox(array(), array());
+            if ($conf->browser->layout != 'phone') {
+                $emptybox->box_id = 'A';
+                $emptybox->info_box_head = array();
+                $emptybox->info_box_contents = array();
+                $boxlista .= $emptybox->outputBox(array(), array());
             }
             $boxlista .= "<!-- End box left container -->\n";
 
             $boxlistb .= "\n<!-- Box right container -->\n";
 
             $ii = 0;
-            foreach ($boxactivated as $key => $box)
-            {
-            	if ((!empty($user->conf->$confuserzone) && $box->fk_user == 0) || (empty($user->conf->$confuserzone) && $box->fk_user != 0)) continue;
-            	if (empty($box->box_order) && $ii < ($nbboxactivated / 2)) $box->box_order = 'B'.sprintf("%02d", ($ii + 1)); // When box_order was not yet set to Axx or Bxx and is still 0
-            	if (preg_match('/^B/i', $box->box_order)) // colonne B
-                {
+            foreach ($boxactivated as $key => $box) {
+                if ((!empty($user->conf->$confuserzone) && $box->fk_user == 0) || (empty($user->conf->$confuserzone) && $box->fk_user != 0)) {
+                    continue;
+                }
+                if (empty($box->box_order) && $ii < ($nbboxactivated / 2)) {
+                    $box->box_order = 'B'.sprintf("%02d", ($ii + 1));
+                } // When box_order was not yet set to Axx or Bxx and is still 0
+                if (preg_match('/^B/i', $box->box_order)) { // colonne B
                     $ii++;
                     //print 'box_id '.$boxactivated[$ii]->box_id.' ';
                     //print 'box_order '.$boxactivated[$ii]->box_order.'<br>';
@@ -1221,12 +1185,11 @@ class FormOther
                 }
             }
 
-            if ($conf->browser->layout != 'phone')
-            {
-            	$emptybox->box_id = 'B';
-            	$emptybox->info_box_head = array();
-            	$emptybox->info_box_contents = array();
-            	$boxlistb .= $emptybox->outputBox(array(), array());
+            if ($conf->browser->layout != 'phone') {
+                $emptybox->box_id = 'B';
+                $emptybox->info_box_head = array();
+                $emptybox->info_box_contents = array();
+                $boxlistb .= $emptybox->outputBox(array(), array());
             }
 
             $boxlistb .= "<!-- End box right container -->\n";
@@ -1262,27 +1225,20 @@ class FormOther
 
         dol_syslog(get_class($this)."::select_dictionary", LOG_DEBUG);
         $result = $this->db->query($sql);
-        if ($result)
-        {
+        if ($result) {
             $num = $this->db->num_rows($result);
             $i = 0;
-            if ($num)
-            {
+            if ($num) {
                 print '<select id="select'.$htmlname.'" class="flat selectdictionary" name="'.$htmlname.'"'.($moreattrib ? ' '.$moreattrib : '').'>';
-                if ($useempty == 1 || ($useempty == 2 && $num > 1))
-                {
+                if ($useempty == 1 || ($useempty == 2 && $num > 1)) {
                     print '<option value="-1">&nbsp;</option>';
                 }
 
-                while ($i < $num)
-                {
+                while ($i < $num) {
                     $obj = $this->db->fetch_object($result);
-                    if ($selected == $obj->rowid || $selected == $obj->$keyfield)
-                    {
+                    if ($selected == $obj->rowid || $selected == $obj->$keyfield) {
                         print '<option value="'.$obj->$keyfield.'" selected>';
-                    }
-                    else
-                    {
+                    } else {
                         print '<option value="'.$obj->$keyfield.'">';
                     }
                     print $obj->$labelfield;
@@ -1293,49 +1249,47 @@ class FormOther
             } else {
                 print $langs->trans("DictionaryEmpty");
             }
-        }
-        else {
+        } else {
             dol_print_error($this->db);
         }
     }
 
     /**
-	 *	Return an html string with a select combo box to choose yes or no
-	 *
-	 *	@param	string		$htmlname		Name of html select field
-	 *	@param	string		$value			Pre-selected value
-	 *	@param	int			$option			0 return automatic/manual, 1 return 1/0
-	 *	@param	bool		$disabled		true or false
-	 *  @param	int      	$useempty		1=Add empty line
-	 *	@return	string						See option
-	 */
+     *	Return an html string with a select combo box to choose yes or no
+     *
+     *	@param	string		$htmlname		Name of html select field
+     *	@param	string		$value			Pre-selected value
+     *	@param	int			$option			0 return automatic/manual, 1 return 1/0
+     *	@param	bool		$disabled		true or false
+     *  @param	int      	$useempty		1=Add empty line
+     *	@return	string						See option
+     */
     public function selectAutoManual($htmlname, $value = '', $option = 0, $disabled = false, $useempty = 0)
-	{
-		global $langs;
+    {
+        global $langs;
 
-		$automatic = "automatic"; $manual = "manual";
-		if ($option)
-		{
-			$automatic = "1";
-			$manual = "0";
-		}
+        $automatic = "automatic";
+        $manual = "manual";
+        if ($option) {
+            $automatic = "1";
+            $manual = "0";
+        }
 
-		$disabled = ($disabled ? ' disabled' : '');
+        $disabled = ($disabled ? ' disabled' : '');
 
-		$resultautomanual = '<select class="flat width100" id="'.$htmlname.'" name="'.$htmlname.'"'.$disabled.'>'."\n";
-		if ($useempty) $resultautomanual .= '<option value="-1"'.(($value < 0) ? ' selected' : '').'>&nbsp;</option>'."\n";
-		if (("$value" == 'automatic') || ($value == 1))
-		{
-			$resultautomanual .= '<option value="'.$automatic.'" selected>'.$langs->trans("Automatic").'</option>'."\n";
-			$resultautomanual .= '<option value="'.$manual.'">'.$langs->trans("Manual").'</option>'."\n";
-		}
-		else
-	    {
-	   		$selected=(($useempty && $value != '0' && $value != 'manual')?'':' selected');
-			$resultautomanual .= '<option value="'.$automatic.'">'.$langs->trans("Automatic").'</option>'."\n";
-			$resultautomanual .= '<option value="'.$manual.'"'.$selected.'>'.$langs->trans("Manual").'</option>'."\n";
-		}
-		$resultautomanual .= '</select>'."\n";
-		return $resultautomanual;
-	}
+        $resultautomanual = '<select class="flat width100" id="'.$htmlname.'" name="'.$htmlname.'"'.$disabled.'>'."\n";
+        if ($useempty) {
+            $resultautomanual .= '<option value="-1"'.(($value < 0) ? ' selected' : '').'>&nbsp;</option>'."\n";
+        }
+        if (("$value" == 'automatic') || ($value == 1)) {
+            $resultautomanual .= '<option value="'.$automatic.'" selected>'.$langs->trans("Automatic").'</option>'."\n";
+            $resultautomanual .= '<option value="'.$manual.'">'.$langs->trans("Manual").'</option>'."\n";
+        } else {
+            $selected=(($useempty && $value != '0' && $value != 'manual')?'':' selected');
+            $resultautomanual .= '<option value="'.$automatic.'">'.$langs->trans("Automatic").'</option>'."\n";
+            $resultautomanual .= '<option value="'.$manual.'"'.$selected.'>'.$langs->trans("Manual").'</option>'."\n";
+        }
+        $resultautomanual .= '</select>'."\n";
+        return $resultautomanual;
+    }
 }

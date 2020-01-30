@@ -53,8 +53,8 @@ class FileStorage implements StorageInterface
 
         //Sort the files, newest first
         usort($files, function ($a, $b) {
-                return $a['time'] < $b['time'];
-            });
+            return $a['time'] < $b['time'];
+        });
 
         //Load the metadata and filter the results.
         $results = array();

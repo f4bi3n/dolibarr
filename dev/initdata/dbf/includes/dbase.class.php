@@ -27,25 +27,29 @@ class DBase
 
     //resource dbase_open ( string $filename , int $mode )
     public static function open($filename, $mode)
-	{
-        if (!file_exists($filename))
+    {
+        if (!file_exists($filename)) {
             return false;
+        }
         $modes = array('r', 'w', 'r+');
         $mode = $modes[$mode];
         $fd = fopen($filename, $mode);
-        if (!$fd)
+        if (!$fd) {
             return false;
+        }
         return new DBase($fd);
     }
 
     //resource dbase_create ( string $filename , array $fields [, int $type = DBASE_TYPE_DBASE ] )
     public static function create($filename, $fields, $type = DBASE_TYPE_DBASE)
-	{
-        if (file_exists($filename))
+    {
+        if (file_exists($filename)) {
             return false;
+        }
         $fd = fopen($filename, 'c+');
-        if (!$fd)
+        if (!$fd) {
             return false;
+        }
         // Byte 0 (1 byte): Valid dBASE for DOS file; bits 0-2 indicate version number, bit 3
         // indicates the presence of a dBASE for DOS memo file, bits 4-6 indicate the
         // presence of a SQL table, bit 7 indicates the presence of any memo file
@@ -62,8 +66,9 @@ class DBase
         // Byte 10-11 (16-bit number): Number of bytes in record.
         // Make sure the include the byte for deleted flag
         $len = 1;
-        foreach ($fields as &$field)
+        foreach ($fields as &$field) {
             $len += self::length($field);
+        }
         self::putInt16($fd, $len);
         // Byte 12-13 (2 bytes): Reserved, 0 filled.
         self::putInt16($fd, 0);
@@ -104,7 +109,7 @@ class DBase
 
     // Create DBase instance
     private function __construct($fd)
-	{
+    {
         $this->fd = $fd;
         // Byte 4-7 (32-bit number): Number of records in the database file.  Currently 0
         fseek($this->fd, 4, SEEK_SET);
@@ -128,40 +133,42 @@ class DBase
 
     //bool dbase_close ( resource $dbase_identifier )
     public function close()
-	{
+    {
         fclose($this->fd);
     }
 
     //array dbase_get_header_info ( resource $dbase_identifier )
     public function get_header_info()
-	{
+    {
         return $this->fields;
     }
 
     //int dbase_numfields ( resource $dbase_identifier )
     public function numfields()
-	{
+    {
         return $this->fieldCount;
     }
 
     //int dbase_numrecords ( resource $dbase_identifier )
     public function numrecords()
-	{
+    {
         return $this->recordCount;
     }
 
     //bool dbase_add_record ( resource $dbase_identifier , array $record )
     public function add_record($record)
-	{
-        if (count($record) != $this->fieldCount)
+    {
+        if (count($record) != $this->fieldCount) {
             return false;
+        }
         // Seek to end of file, minus the end of file marker
         fseek($this->fd, 0, SEEK_END);
         // Put the deleted flag
         self::putChar8($this->fd, 0x20);
         // Put the record
-        if (!$this->putRecord($record))
+        if (!$this->putRecord($record)) {
             return false;
+        }
         // Update the record count
         fseek($this->fd, 4);
         self::putInt32($this->fd, ++$this->recordCount);
@@ -170,11 +177,13 @@ class DBase
 
     //bool dbase_replace_record ( resource $dbase_identifier , array $record , int $record_number )
     public function replace_record($record, $record_number)
-	{
-        if (count($record) != $this->fieldCount)
+    {
+        if (count($record) != $this->fieldCount) {
             return false;
-        if ($record_number < 1 || $record_number > $this->recordCount)
+        }
+        if ($record_number < 1 || $record_number > $this->recordCount) {
             return false;
+        }
         // Skip to the record location, plus the 1 byte for the deleted flag
         fseek($this->fd, $this->headerLength + ($this->recordLength * ($record_number - 1)) + 1);
         return $this->putRecord($record);
@@ -182,9 +191,10 @@ class DBase
 
     //bool dbase_delete_record ( resource $dbase_identifier , int $record_number )
     public function delete_record($record_number)
-	{
-        if ($record_number < 1 || $record_number > $this->recordCount)
+    {
+        if ($record_number < 1 || $record_number > $this->recordCount) {
             return false;
+        }
         fseek($this->fd, $this->headerLength + ($this->recordLength * ($record_number - 1)));
         self::putChar8($this->fd, 0x2A);
         return true;
@@ -192,9 +202,10 @@ class DBase
 
     //array dbase_get_record ( resource $dbase_identifier , int $record_number )
     public function get_record($record_number)
-	{
-        if ($record_number < 1 || $record_number > $this->recordCount)
+    {
+        if ($record_number < 1 || $record_number > $this->recordCount) {
             return false;
+        }
         fseek($this->fd, $this->headerLength + ($this->recordLength * ($record_number - 1)));
         $record = array(
             'deleted' => self::getChar8($this->fd) == 0x2A ? 1 : 0
@@ -203,12 +214,13 @@ class DBase
             $value = trim(fread($this->fd, $field['length']));
             if ($field['type'] == 'L') {
                 $value = strtolower($value);
-                if ($value == 't' || $value == 'y')
+                if ($value == 't' || $value == 'y') {
                     $value = true;
-                elseif ($value == 'f' || $value == 'n')
+                } elseif ($value == 'f' || $value == 'n') {
                     $value = false;
-                else
+                } else {
                     $value = null;
+                }
             }
             $record[$i] = $value;
         }
@@ -217,9 +229,10 @@ class DBase
 
     //array dbase_get_record_with_names ( resource $dbase_identifier , int $record_number )
     public function get_record_with_names($record_number)
-	{
-        if ($record_number < 1 || $record_number > $this->recordCount)
+    {
+        if ($record_number < 1 || $record_number > $this->recordCount) {
             return false;
+        }
         $record = $this->get_record($record_number);
         foreach ($this->fields as $i => &$field) {
             $record[$field['name']] = $record[$i];
@@ -230,7 +243,7 @@ class DBase
 
     //bool dbase_pack ( resource $dbase_identifier )
     public function pack()
-	{
+    {
         $in_offset = $out_offset = $this->headerLength;
         $new_count = 0;
         $rec_count = $this->recordCount;
@@ -258,7 +271,7 @@ class DBase
      */
 
     private static function length($field)
-	{
+    {
         switch ($field[1]) {
             case 'D': // Date: Numbers and a character to separate month, day, and year (stored internally as 8 digits in YYYYMMDD format)
                 return 8;
@@ -280,52 +293,54 @@ class DBase
      */
 
     private static function getChar8($fd)
-	{
+    {
         return ord(fread($fd, 1));
     }
 
     private static function putChar8($fd, $value)
-	{
+    {
         return fwrite($fd, chr($value));
     }
 
     private static function getInt16($fd, $n = 1)
-	{
+    {
         $data = fread($fd, 2 * $n);
         $i = unpack("S$n", $data);
-        if ($n == 1)
+        if ($n == 1) {
             return (int) $i[1];
-        else
+        } else {
             return array_merge($i);
+        }
     }
 
     private static function putInt16($fd, $value)
-	{
+    {
         return fwrite($fd, pack('S', $value));
     }
 
     private static function getInt32($fd, $n = 1)
-	{
+    {
         $data = fread($fd, 4 * $n);
         $i = unpack("L$n", $data);
-        if ($n == 1)
+        if ($n == 1) {
             return (int) $i[1];
-        else
+        } else {
             return array_merge($i);
+        }
     }
 
     private static function putInt32($fd, $value)
-	{
+    {
         return fwrite($fd, pack('L', $value));
     }
 
     private static function putString($fd, $value, $length = 254)
-	{
+    {
         $ret = fwrite($fd, pack('A' . $length, $value));
     }
 
     private function putRecord($record)
-	{
+    {
         foreach ($this->fields as $i => &$field) {
             $value = $record[$i];
             // Number types are right aligned with spaces
@@ -339,64 +354,63 @@ class DBase
 }
 
 if (!function_exists('dbase_open')) {
-
     function dbase_open($filename, $mode)
-	{
+    {
         return DBase::open($filename, $mode);
     }
 
     function dbase_create($filename, $fields, $type = DBASE_TYPE_DBASE)
-	{
+    {
         return DBase::create($filename, $fields, $type);
     }
 
     function dbase_close($dbase_identifier)
-	{
+    {
         return $dbase_identifier->close();
     }
 
     function dbase_get_header_info($dbase_identifier)
-	{
+    {
         return $dbase_identifier->get_header_info();
     }
 
     function dbase_numfields($dbase_identifier)
-	{
+    {
         $dbase_identifier->numfields();
     }
 
     function dbase_numrecords($dbase_identifier)
-	{
+    {
         return $dbase_identifier->numrecords();
     }
 
     function dbase_add_record($dbase_identifier, $record)
-	{
+    {
         return $dbase_identifier->add_record($record);
     }
 
     function dbase_delete_record($dbase_identifier, $record_number)
-	{
+    {
         return $dbase_identifier->delete_record($record_number);
     }
 
     function dbase_replace_record($dbase_identifier, $record, $record_number)
-	{
+    {
         return $dbase_identifier->replace_record($record, $record_number);
     }
 
     function dbase_get_record($dbase_identifier, $record_number)
-	{
+    {
         return $dbase_identifier->get_record($record_number);
     }
 
     function dbase_get_record_with_names($dbase_identifier, $record_number)
-	{
+    {
         return $dbase_identifier->get_record_with_names($record_number);
     }
 
     function dbase_pack($dbase_identifier)
-	{
+    {
         return $dbase_identifier->pack();
     }
 }

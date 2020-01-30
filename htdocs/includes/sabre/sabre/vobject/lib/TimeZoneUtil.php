@@ -12,16 +12,16 @@ namespace Sabre\VObject;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class TimeZoneUtil {
-
-    static $map = null;
+class TimeZoneUtil
+{
+    public static $map = null;
 
     /**
      * List of microsoft exchange timezone ids.
      *
      * Source: http://msdn.microsoft.com/en-us/library/aa563018(loband).aspx
      */
-    static $microsoftExchangeMap = [
+    public static $microsoftExchangeMap = [
         0  => 'UTC',
         31 => 'Africa/Casablanca',
 
@@ -122,7 +122,8 @@ class TimeZoneUtil {
      *
      * @return DateTimeZone
      */
-    static function getTimeZone($tzid, Component $vcalendar = null, $failIfUncertain = false) {
+    public static function getTimeZone($tzid, Component $vcalendar = null, $failIfUncertain = false)
+    {
 
         // First we will just see if the tzid is a support timezone identifier.
         //
@@ -155,7 +156,6 @@ class TimeZoneUtil {
                 }
             } catch (\Exception $e) {
             }
-
         }
 
         self::loadTzMaps();
@@ -193,12 +193,10 @@ class TimeZoneUtil {
 
             // If that didn't work, we will scan VTIMEZONE objects
             foreach ($vcalendar->select('VTIMEZONE') as $vtimezone) {
-
                 if ((string)$vtimezone->TZID === $tzid) {
 
                     // Some clients add 'X-LIC-LOCATION' with the olson name.
                     if (isset($vtimezone->{'X-LIC-LOCATION'})) {
-
                         $lic = (string)$vtimezone->{'X-LIC-LOCATION'};
 
                         // Libical generators may specify strings like
@@ -209,7 +207,6 @@ class TimeZoneUtil {
                         }
 
                         return self::getTimeZone($lic, null, $failIfUncertain);
-
                     }
                     // Microsoft may add a magic number, which we also have an
                     // answer for.
@@ -225,11 +222,8 @@ class TimeZoneUtil {
                             return new \DateTimeZone(self::$microsoftExchangeMap[$cdoId]);
                         }
                     }
-
                 }
-
             }
-
         }
 
         if ($failIfUncertain) {
@@ -238,16 +232,17 @@ class TimeZoneUtil {
 
         // If we got all the way here, we default to UTC.
         return new \DateTimeZone(date_default_timezone_get());
-
     }
 
     /**
      * This method will load in all the tz mapping information, if it's not yet
      * done.
      */
-    static function loadTzMaps() {
-
-        if (!is_null(self::$map)) return;
+    public static function loadTzMaps()
+    {
+        if (!is_null(self::$map)) {
+            return;
+        }
 
         self::$map = array_merge(
             include __DIR__ . '/timezonedata/windowszones.php',
@@ -255,7 +250,6 @@ class TimeZoneUtil {
             include __DIR__ . '/timezonedata/exchangezones.php',
             include __DIR__ . '/timezonedata/php-workaround.php'
         );
-
     }
 
     /**
@@ -269,8 +263,8 @@ class TimeZoneUtil {
      *
      * @return array
      */
-    static function getIdentifiersBC() {
+    public static function getIdentifiersBC()
+    {
         return include __DIR__ . '/timezonedata/php-bc.php';
     }
-
 }

@@ -1156,12 +1156,14 @@ class Xlsx extends BaseReader
                                             //    We should only ever have one top10 filter
                                             foreach ($filterColumn->top10 as $filterRule) {
                                                 $column->createRule()->setRule(
-                                                    (((isset($filterRule['percent'])) && ($filterRule['percent'] == 1))
+                                                    (
+                                                        ((isset($filterRule['percent'])) && ($filterRule['percent'] == 1))
                                                         ? Column\Rule::AUTOFILTER_COLUMN_RULE_TOPTEN_PERCENT
                                                         : Column\Rule::AUTOFILTER_COLUMN_RULE_TOPTEN_BY_VALUE
                                                     ),
                                                     (string) $filterRule['val'],
-                                                    (((isset($filterRule['top'])) && ($filterRule['top'] == 1))
+                                                    (
+                                                        ((isset($filterRule['top'])) && ($filterRule['top'] == 1))
                                                         ? Column\Rule::AUTOFILTER_COLUMN_RULE_TOPTEN_TOP
                                                         : Column\Rule::AUTOFILTER_COLUMN_RULE_TOPTEN_BOTTOM
                                                     )

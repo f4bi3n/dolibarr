@@ -22,13 +22,27 @@
  *       \brief      Display public form to add new ticket
  */
 
-if (!defined('NOREQUIREUSER'))  define('NOREQUIREUSER', '1');
-if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');
-if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
-if (!defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
-if (!defined('NOLOGIN'))        define("NOLOGIN", 1); // This means this output page does not require to be logged.
-if (!defined('NOCSRFCHECK'))    define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
-if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+if (!defined('NOREQUIREUSER')) {
+    define('NOREQUIREUSER', '1');
+}
+if (!defined('NOTOKENRENEWAL')) {
+    define('NOTOKENRENEWAL', '1');
+}
+if (!defined('NOREQUIREMENU')) {
+    define('NOREQUIREMENU', '1');
+}
+if (!defined('NOREQUIREHTML')) {
+    define('NOREQUIREHTML', '1');
+}
+if (!defined('NOLOGIN')) {
+    define("NOLOGIN", 1);
+} // This means this output page does not require to be logged.
+if (!defined('NOCSRFCHECK')) {
+    define("NOCSRFCHECK", 1);
+} // We accept to go on this page from external web site.
+if (!defined('NOIPCHECK')) {
+    define('NOIPCHECK', '1');
+} // Do not check IP defined into conf $dolibarr_main_restrict_ip
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
@@ -174,18 +188,16 @@ if ($action == 'create_ticket' && GETPOST('add', 'alpha')) {
             }
         }
 
-        if (!$error)
-        {
-        	$object->db->commit();
-        	$action = "infos_success";
+        if (!$error) {
+            $object->db->commit();
+            $action = "infos_success";
         } else {
-	    	$object->db->rollback();
-	    	setEventMessages($object->error, $object->errors, 'errors');
-	    	$action = 'create_ticket';
-	    }
+            $object->db->rollback();
+            setEventMessages($object->error, $object->errors, 'errors');
+            $action = 'create_ticket';
+        }
 
-	    if (!$error)
-	    {
+        if (!$error) {
             $res = $object->fetch($id);
             if ($res) {
                 // Create form object
@@ -220,8 +232,8 @@ if ($action == 'create_ticket' && GETPOST('add', 'alpha')) {
 
                 $from = $conf->global->MAIN_INFO_SOCIETE_NOM.'<'.$conf->global->TICKET_NOTIFICATION_EMAIL_FROM.'>';
                 $replyto = $from;
-				$sendtocc = '';
-				$deliveryreceipt = 0;
+                $sendtocc = '';
+                $deliveryreceipt = 0;
 
                 $message = dol_nl2br($message);
 
@@ -245,72 +257,73 @@ if ($action == 'create_ticket' && GETPOST('add', 'alpha')) {
 
                 $sendto = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
 
-                if ($sendto)
-                {
-	                $subject = '['.$conf->global->MAIN_INFO_SOCIETE_NOM.'] '.$langs->transnoentities('TicketNewEmailSubjectAdmin', $object->ref);
-	                $message_admin = $langs->transnoentities('TicketNewEmailBodyAdmin', $object->track_id)."\n\n";
-	                $message_admin .= '<ul><li>'.$langs->trans('Title').' : '.$object->subject.'</li>';
-	                $message_admin .= '<li>'.$langs->trans('Type').' : '.$object->type_label.'</li>';
-	                $message_admin .= '<li>'.$langs->trans('Category').' : '.$object->category_label.'</li>';
-	                $message_admin .= '<li>'.$langs->trans('Severity').' : '.$object->severity_label.'</li>';
-	                $message_admin .= '<li>'.$langs->trans('From').' : '.$object->origin_email.'</li>';
+                if ($sendto) {
+                    $subject = '['.$conf->global->MAIN_INFO_SOCIETE_NOM.'] '.$langs->transnoentities('TicketNewEmailSubjectAdmin', $object->ref);
+                    $message_admin = $langs->transnoentities('TicketNewEmailBodyAdmin', $object->track_id)."\n\n";
+                    $message_admin .= '<ul><li>'.$langs->trans('Title').' : '.$object->subject.'</li>';
+                    $message_admin .= '<li>'.$langs->trans('Type').' : '.$object->type_label.'</li>';
+                    $message_admin .= '<li>'.$langs->trans('Category').' : '.$object->category_label.'</li>';
+                    $message_admin .= '<li>'.$langs->trans('Severity').' : '.$object->severity_label.'</li>';
+                    $message_admin .= '<li>'.$langs->trans('From').' : '.$object->origin_email.'</li>';
 
-	                if (is_array($extrafields->attributes[$object->table_element]['label']))
-	                {
-	                	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
-	                	{
-	                		$enabled = 1;
-	                		if ($qualified && isset($extrafields->attributes[$object->table_element]['list'][$key]))
-	                		{
-	                			$enabled = dol_eval($extrafields->attributes[$object->table_element]['list'][$key], 1);
-	                		}
-	                		$perms = 1;
-	                		if ($perms && isset($extrafields->attributes[$object->table_element]['perms'][$key]))
-	                		{
-	                			$perms = dol_eval($extrafields->attributes[$object->table_element]['perms'][$key], 1);
-	                		}
+                    if (is_array($extrafields->attributes[$object->table_element]['label'])) {
+                        foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
+                            $enabled = 1;
+                            if ($qualified && isset($extrafields->attributes[$object->table_element]['list'][$key])) {
+                                $enabled = dol_eval($extrafields->attributes[$object->table_element]['list'][$key], 1);
+                            }
+                            $perms = 1;
+                            if ($perms && isset($extrafields->attributes[$object->table_element]['perms'][$key])) {
+                                $perms = dol_eval($extrafields->attributes[$object->table_element]['perms'][$key], 1);
+                            }
 
-	                		$qualified = true;
-	                		if (empty($enabled) || $enabled == 2) $qualified = false;
-	                		if (empty($perms)) $qualified = false;
-	                		if ($qualified) $message_admin .= '<li>'.$langs->trans($key).' : '.$value.'</li>';
-	                	}
-	                }
+                            $qualified = true;
+                            if (empty($enabled) || $enabled == 2) {
+                                $qualified = false;
+                            }
+                            if (empty($perms)) {
+                                $qualified = false;
+                            }
+                            if ($qualified) {
+                                $message_admin .= '<li>'.$langs->trans($key).' : '.$value.'</li>';
+                            }
+                        }
+                    }
 
-	                $message_admin .= '</ul>';
-	                $message_admin .= '<p>'.$langs->trans('Message').' : <br>'.$object->message.'</p>';
-	                $message_admin .= '<p><a href="'.dol_buildpath('/ticket/card.php', 2).'?track_id='.$object->track_id.'">'.$langs->trans('SeeThisTicketIntomanagementInterface').'</a></p>';
+                    $message_admin .= '</ul>';
+                    $message_admin .= '<p>'.$langs->trans('Message').' : <br>'.$object->message.'</p>';
+                    $message_admin .= '<p><a href="'.dol_buildpath('/ticket/card.php', 2).'?track_id='.$object->track_id.'">'.$langs->trans('SeeThisTicketIntomanagementInterface').'</a></p>';
 
-	                $from = $conf->global->MAIN_INFO_SOCIETE_NOM.'<'.$conf->global->TICKET_NOTIFICATION_EMAIL_FROM.'>';
-	                $replyto = $from;
+                    $from = $conf->global->MAIN_INFO_SOCIETE_NOM.'<'.$conf->global->TICKET_NOTIFICATION_EMAIL_FROM.'>';
+                    $replyto = $from;
 
-	                $message_admin = dol_nl2br($message_admin);
+                    $message_admin = dol_nl2br($message_admin);
 
-	                if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
-	                    $old_MAIN_MAIL_AUTOCOPY_TO = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
-	                    $conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
-	                }
-	                include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-	                $mailfile = new CMailFile($subject, $sendto, $from, $message_admin, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1);
-	                if ($mailfile->error || $mailfile->errors) {
+                    if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
+                        $old_MAIN_MAIL_AUTOCOPY_TO = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
+                        $conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
+                    }
+                    include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+                    $mailfile = new CMailFile($subject, $sendto, $from, $message_admin, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1);
+                    if ($mailfile->error || $mailfile->errors) {
                         setEventMessages($mailfile->error, $mailfile->errors, 'errors');
                     } else {
-	                    $result = $mailfile->sendfile();
-	                }
-	                if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
-	                    $conf->global->MAIN_MAIL_AUTOCOPY_TO = $old_MAIN_MAIL_AUTOCOPY_TO;
-	                }
+                        $result = $mailfile->sendfile();
+                    }
+                    if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
+                        $conf->global->MAIN_MAIL_AUTOCOPY_TO = $old_MAIN_MAIL_AUTOCOPY_TO;
+                    }
                 }
             }
 
             // Copy files into ticket directory
             $destdir = $conf->ticket->dir_output.'/'.$object->track_id;
             if (!dol_is_dir($destdir)) {
-            	dol_mkdir($destdir);
+                dol_mkdir($destdir);
             }
             foreach ($filename as $i => $val) {
-            	dol_move($filepath[$i], $destdir.'/'.$filename[$i], 0, 1);
-            	$formmail->remove_attached_files($i);
+                dol_move($filepath[$i], $destdir.'/'.$filename[$i], 0, 1);
+                $formmail->remove_attached_files($i);
             }
 
             //setEventMessages($langs->trans('YourTicketSuccessfullySaved'), null, 'mesgs');
@@ -319,7 +332,7 @@ if ($action == 'create_ticket' && GETPOST('add', 'alpha')) {
             setEventMessages($langs->trans('MesgInfosPublicTicketCreatedWithTrackId', '<strong>'.$object->track_id.'</strong>', '<strong>' . $object->ref . '</strong>'), null, 'warnings');
             setEventMessages($langs->trans('PleaseRememberThisId'), null, 'warnings');
             header("Location: index.php");
-			exit;
+            exit;
         }
     } else {
         setEventMessages($object->error, $object->errors, 'errors');
@@ -335,8 +348,7 @@ if ($action == 'create_ticket' && GETPOST('add', 'alpha')) {
 $form = new Form($db);
 $formticket = new FormTicket($db);
 
-if (!$conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)
-{
+if (!$conf->global->TICKET_ENABLE_PUBLIC_INTERFACE) {
     print '<div class="error">'.$langs->trans('TicketPublicInterfaceForbidden').'</div>';
     $db->close();
     exit();
@@ -366,15 +378,14 @@ if ($action != "infos_success") {
     print load_fiche_titre($langs->trans('NewTicket'), '', '', 0, 0, 'marginleftonly');
 
     if (empty($conf->global->TICKET_NOTIFICATION_EMAIL_FROM)) {
-    	$langs->load("errors");
-    	print '<div class="error">';
-    	print $langs->trans("ErrorFieldRequired", $langs->transnoentities("TicketEmailNotificationFrom")).'<br>';
-    	print $langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentities("Ticket"));
-    	print '<div>';
-    }
-    else {
-	    print '<div class="info marginleftonly marginrightonly">'.$langs->trans('TicketPublicInfoCreateTicket').'</div>';
-    	$formticket->showForm();
+        $langs->load("errors");
+        print '<div class="error">';
+        print $langs->trans("ErrorFieldRequired", $langs->transnoentities("TicketEmailNotificationFrom")).'<br>';
+        print $langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentities("Ticket"));
+        print '<div>';
+    } else {
+        print '<div class="info marginleftonly marginrightonly">'.$langs->trans('TicketPublicInfoCreateTicket').'</div>';
+        $formticket->showForm();
     }
 }
 

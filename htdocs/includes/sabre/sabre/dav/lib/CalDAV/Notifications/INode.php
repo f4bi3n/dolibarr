@@ -18,7 +18,8 @@ use Sabre\CalDAV\Xml\Notification\NotificationInterface;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface INode {
+interface INode
+{
 
     /**
      * This method must return an xml element, using the
@@ -26,7 +27,7 @@ interface INode {
      *
      * @return NotificationInterface
      */
-    function getNotificationType();
+    public function getNotificationType();
 
     /**
      * Returns the etag for the notification.
@@ -35,6 +36,5 @@ interface INode {
      *
      * @return string
      */
-    function getETag();
-
+    public function getETag();
 }

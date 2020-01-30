@@ -41,63 +41,63 @@ class FormOrder extends Form
      */
     public function selectSupplierOrderStatus($selected = '', $short = 0, $hmlname = 'order_status')
     {
-	    $options = array();
+        $options = array();
 
-	    // 7 is same label than 6. 8 does not exists (billed is another field)
-	    $statustohow = array(
-		    '0' => '0',
-		    '1' => '1',
-		    '2' => '2',
-		    '3' => '3',
-		    '4' => '4',
-		    '5' => '5',
-		    '6' => '6,7',
-		    '9' => '9'
-	    );
+        // 7 is same label than 6. 8 does not exists (billed is another field)
+        $statustohow = array(
+            '0' => '0',
+            '1' => '1',
+            '2' => '2',
+            '3' => '3',
+            '4' => '4',
+            '5' => '5',
+            '6' => '6,7',
+            '9' => '9'
+        );
 
-	    $tmpsupplierorder = new CommandeFournisseur($this->db);
+        $tmpsupplierorder = new CommandeFournisseur($this->db);
 
-	    foreach ($statustohow as $key => $value) {
-		    $tmpsupplierorder->statut = $key;
-		    $options[$value] = $tmpsupplierorder->getLibStatut($short);
-	    }
+        foreach ($statustohow as $key => $value) {
+            $tmpsupplierorder->statut = $key;
+            $options[$value] = $tmpsupplierorder->getLibStatut($short);
+        }
 
-	    print Form::selectarray($hmlname, $options, $selected, 1);
+        print Form::selectarray($hmlname, $options, $selected, 1);
     }
 
-	/**
-	 *	Return list of input method (mode used to receive order, like order received by email, fax, online)
-	 *  List found into table c_input_method.
-	 *
-	 *	@param	string	$selected		Id of preselected input method
-	 *  @param  string	$htmlname 		Name of HTML select list
-	 *  @param  int		$addempty		0=list with no empty value, 1=list with empty value
-	 *  @return	array					Tableau des sources de commandes
-	 */
-	public function selectInputMethod($selected = '', $htmlname = 'source_id', $addempty = 0)
-	{
-		global $langs;
+    /**
+     *	Return list of input method (mode used to receive order, like order received by email, fax, online)
+     *  List found into table c_input_method.
+     *
+     *	@param	string	$selected		Id of preselected input method
+     *  @param  string	$htmlname 		Name of HTML select list
+     *  @param  int		$addempty		0=list with no empty value, 1=list with empty value
+     *  @return	array					Tableau des sources de commandes
+     */
+    public function selectInputMethod($selected = '', $htmlname = 'source_id', $addempty = 0)
+    {
+        global $langs;
 
         $listofmethods=array();
 
-		$sql = "SELECT rowid, code, libelle as label";
-		$sql.= " FROM ".MAIN_DB_PREFIX."c_input_method";
-		$sql.= " WHERE active = 1";
+        $sql = "SELECT rowid, code, libelle as label";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_input_method";
+        $sql.= " WHERE active = 1";
 
-		dol_syslog(get_class($this)."::selectInputMethod", LOG_DEBUG);
-		$resql=$this->db->query($sql);
+        dol_syslog(get_class($this)."::selectInputMethod", LOG_DEBUG);
+        $resql=$this->db->query($sql);
 
-		if (!$resql) {
-			dol_print_error($this->db);
-			return -1;
-		}
+        if (!$resql) {
+            dol_print_error($this->db);
+            return -1;
+        }
 
-		while ($obj = $this->db->fetch_object($resql)) {
-			$listofmethods[$obj->rowid] = $langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : $obj->label;
-		}
+        while ($obj = $this->db->fetch_object($resql)) {
+            $listofmethods[$obj->rowid] = $langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : $obj->label;
+        }
 
-		print Form::selectarray($htmlname, $listofmethods, $selected, $addempty);
+        print Form::selectarray($htmlname, $listofmethods, $selected, $addempty);
 
-		return 1;
-	}
+        return 1;
+    }
 }

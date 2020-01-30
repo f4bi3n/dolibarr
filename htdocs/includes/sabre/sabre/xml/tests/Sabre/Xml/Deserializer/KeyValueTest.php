@@ -5,10 +5,10 @@ namespace Sabre\Xml\Deserializer;
 use
     Sabre\Xml\Reader;
 
-class KeyValueTest extends \PHPUnit_Framework_TestCase {
-
-    function testKeyValue() {
-
+class KeyValueTest extends \PHPUnit_Framework_TestCase
+{
+    public function testKeyValue()
+    {
         $input = <<<BLA
 <?xml version="1.0"?>
 <root xmlns="http://sabredav.org/ns">
@@ -25,7 +25,7 @@ BLA;
 
         $reader = new Reader();
         $reader->elementMap = [
-            '{http://sabredav.org/ns}struct' => function(Reader $reader) {
+            '{http://sabredav.org/ns}struct' => function (Reader $reader) {
                 return keyValue($reader, 'http://sabredav.org/ns');
             }
         ];
@@ -63,7 +63,8 @@ BLA;
     /**
      * @expectedException \Sabre\Xml\LibXMLException
      */
-    function testKeyValueLoop() {
+    public function testKeyValueLoop()
+    {
 
         /**
          * This bug is a weird one, because it triggers an infinite loop, but
@@ -91,12 +92,12 @@ BLA;
         $reader->xml($invalid_xml);
         $reader->elementMap = [
 
-            '{}Package' => function($reader) {
+            '{}Package' => function ($reader) {
                 $recipient = [];
                 // Borrowing a parser from the KeyValue class.
                 $keyValue = keyValue($reader);
 
-                if (isset($keyValue['{}WeightOz'])){
+                if (isset($keyValue['{}WeightOz'])) {
                     $recipient['referenceId'] = $keyValue['{}WeightOz'];
                 }
 
@@ -105,8 +106,5 @@ BLA;
         ];
 
         $reader->parse();
-
-
     }
-
 }

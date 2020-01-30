@@ -14,7 +14,8 @@ use Sabre\Xml\Writer;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class InviteReply implements NotificationInterface {
+class InviteReply implements NotificationInterface
+{
 
     /**
      * A unique id for the message
@@ -90,8 +91,8 @@ class InviteReply implements NotificationInterface {
      *
      * @param array $values
      */
-    function __construct(array $values) {
-
+    public function __construct(array $values)
+    {
         $required = [
             'id',
             'etag',
@@ -113,7 +114,6 @@ class InviteReply implements NotificationInterface {
             }
             $this->$key = $value;
         }
-
     }
 
     /**
@@ -135,10 +135,9 @@ class InviteReply implements NotificationInterface {
      * @param Writer $writer
      * @return void
      */
-    function xmlSerialize(Writer $writer) {
-
+    public function xmlSerialize(Writer $writer)
+    {
         $writer->writeElement('{' . CalDAV\Plugin::NS_CALENDARSERVER . '}invite-reply');
-
     }
 
     /**
@@ -148,8 +147,8 @@ class InviteReply implements NotificationInterface {
      * @param Writer $writer
      * @return void
      */
-    function xmlSerializeFull(Writer $writer) {
-
+    public function xmlSerializeFull(Writer $writer)
+    {
         $cs = '{' . CalDAV\Plugin::NS_CALENDARSERVER . '}';
 
         $this->dtStamp->setTimezone(new \DateTimezone('GMT'));
@@ -163,10 +162,10 @@ class InviteReply implements NotificationInterface {
 
         switch ($this->type) {
 
-            case DAV\Sharing\Plugin::INVITE_ACCEPTED :
+            case DAV\Sharing\Plugin::INVITE_ACCEPTED:
                 $writer->writeElement($cs . 'invite-accepted');
                 break;
-            case DAV\Sharing\Plugin::INVITE_DECLINED :
+            case DAV\Sharing\Plugin::INVITE_DECLINED:
                 $writer->writeElement($cs . 'invite-declined');
                 break;
 
@@ -180,7 +179,6 @@ class InviteReply implements NotificationInterface {
             $writer->writeElement($cs . 'summary', $this->summary);
         }
         $writer->endElement(); // invite-reply
-
     }
 
     /**
@@ -191,10 +189,9 @@ class InviteReply implements NotificationInterface {
      *
      * @return string
      */
-    function getId() {
-
+    public function getId()
+    {
         return $this->id;
-
     }
 
     /**
@@ -204,10 +201,8 @@ class InviteReply implements NotificationInterface {
      *
      * @return string
      */
-    function getETag() {
-
+    public function getETag()
+    {
         return $this->etag;
-
     }
-
 }

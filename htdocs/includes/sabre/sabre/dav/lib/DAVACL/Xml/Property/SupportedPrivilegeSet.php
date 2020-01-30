@@ -21,7 +21,8 @@ use Sabre\Xml\XmlSerializable;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class SupportedPrivilegeSet implements XmlSerializable, HtmlOutput {
+class SupportedPrivilegeSet implements XmlSerializable, HtmlOutput
+{
 
     /**
      * privileges
@@ -35,10 +36,9 @@ class SupportedPrivilegeSet implements XmlSerializable, HtmlOutput {
      *
      * @param array $privileges
      */
-    function __construct(array $privileges) {
-
+    public function __construct(array $privileges)
+    {
         $this->privileges = $privileges;
-
     }
 
     /**
@@ -46,10 +46,9 @@ class SupportedPrivilegeSet implements XmlSerializable, HtmlOutput {
      *
      * @return array
      */
-    function getValue() {
-
+    public function getValue()
+    {
         return $this->privileges;
-
     }
 
     /**
@@ -71,10 +70,9 @@ class SupportedPrivilegeSet implements XmlSerializable, HtmlOutput {
      * @param Writer $writer
      * @return void
      */
-    function xmlSerialize(Writer $writer) {
-
+    public function xmlSerialize(Writer $writer)
+    {
         $this->serializePriv($writer, '{DAV:}all', ['aggregates' => $this->privileges]);
-
     }
 
     /**
@@ -91,9 +89,9 @@ class SupportedPrivilegeSet implements XmlSerializable, HtmlOutput {
      * @param HtmlOutputHelper $html
      * @return string
      */
-    function toHtml(HtmlOutputHelper $html) {
-
-        $traverse = function($privName, $priv) use (&$traverse, $html) {
+    public function toHtml(HtmlOutputHelper $html)
+    {
+        $traverse = function ($privName, $priv) use (&$traverse, $html) {
             echo "<li>";
             echo $html->xmlName($privName);
             if (isset($priv['abstract']) && $priv['abstract']) {
@@ -118,7 +116,6 @@ class SupportedPrivilegeSet implements XmlSerializable, HtmlOutput {
         echo "</ul>\n";
 
         return ob_get_clean();
-
     }
 
 
@@ -133,8 +130,8 @@ class SupportedPrivilegeSet implements XmlSerializable, HtmlOutput {
      * @param array $privilege
      * @return void
      */
-    private function serializePriv(Writer $writer, $privName, $privilege) {
-
+    private function serializePriv(Writer $writer, $privName, $privilege)
+    {
         $writer->startElement('{DAV:}supported-privilege');
 
         $writer->startElement('{DAV:}privilege');
@@ -154,7 +151,5 @@ class SupportedPrivilegeSet implements XmlSerializable, HtmlOutput {
         }
 
         $writer->endElement(); // supported-privilege
-
     }
-
 }

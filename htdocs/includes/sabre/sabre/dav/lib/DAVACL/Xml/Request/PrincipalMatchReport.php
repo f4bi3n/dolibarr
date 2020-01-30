@@ -18,7 +18,8 @@ use Sabre\Xml\XmlDeserializable;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class PrincipalMatchReport implements XmlDeserializable {
+class PrincipalMatchReport implements XmlDeserializable
+{
 
     /**
      * Report on a list of principals that match the current principal.
@@ -73,8 +74,8 @@ class PrincipalMatchReport implements XmlDeserializable {
      * @param Reader $reader
      * @return mixed
      */
-    static function xmlDeserialize(Reader $reader) {
-
+    public static function xmlDeserialize(Reader $reader)
+    {
         $reader->pushContext();
         $reader->elementMap['{DAV:}prop'] = 'Sabre\Xml\Deserializer\enum';
 
@@ -101,7 +102,5 @@ class PrincipalMatchReport implements XmlDeserializable {
         }
 
         return $principalMatch;
-
     }
-
 }

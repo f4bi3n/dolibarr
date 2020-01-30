@@ -18,8 +18,8 @@ use Sabre\DAVACL\IACL;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Subscription extends Collection implements ISubscription, IACL {
-
+class Subscription extends Collection implements ISubscription, IACL
+{
     use ACLTrait;
 
     /**
@@ -42,8 +42,8 @@ class Subscription extends Collection implements ISubscription, IACL {
      * @param SubscriptionSupport $caldavBackend
      * @param array $subscriptionInfo
      */
-    function __construct(SubscriptionSupport $caldavBackend, array $subscriptionInfo) {
-
+    public function __construct(SubscriptionSupport $caldavBackend, array $subscriptionInfo)
+    {
         $this->caldavBackend = $caldavBackend;
         $this->subscriptionInfo = $subscriptionInfo;
 
@@ -59,7 +59,6 @@ class Subscription extends Collection implements ISubscription, IACL {
                 throw new \InvalidArgumentException('The ' . $r . ' field is required when creating a subscription node');
             }
         }
-
     }
 
     /**
@@ -69,10 +68,9 @@ class Subscription extends Collection implements ISubscription, IACL {
      *
      * @return string
      */
-    function getName() {
-
+    public function getName()
+    {
         return $this->subscriptionInfo['uri'];
-
     }
 
     /**
@@ -80,12 +78,11 @@ class Subscription extends Collection implements ISubscription, IACL {
      *
      * @return int
      */
-    function getLastModified() {
-
+    public function getLastModified()
+    {
         if (isset($this->subscriptionInfo['lastmodified'])) {
             return $this->subscriptionInfo['lastmodified'];
         }
-
     }
 
     /**
@@ -93,12 +90,11 @@ class Subscription extends Collection implements ISubscription, IACL {
      *
      * @return void
      */
-    function delete() {
-
+    public function delete()
+    {
         $this->caldavBackend->deleteSubscription(
             $this->subscriptionInfo['id']
         );
-
     }
 
     /**
@@ -106,10 +102,9 @@ class Subscription extends Collection implements ISubscription, IACL {
      *
      * @return \Sabre\DAV\INode[]
      */
-    function getChildren() {
-
+    public function getChildren()
+    {
         return [];
-
     }
 
     /**
@@ -124,13 +119,12 @@ class Subscription extends Collection implements ISubscription, IACL {
      * @param PropPatch $propPatch
      * @return void
      */
-    function propPatch(PropPatch $propPatch) {
-
+    public function propPatch(PropPatch $propPatch)
+    {
         return $this->caldavBackend->updateSubscription(
             $this->subscriptionInfo['id'],
             $propPatch
         );
-
     }
 
     /**
@@ -148,27 +142,24 @@ class Subscription extends Collection implements ISubscription, IACL {
      * @param array $properties
      * @return array
      */
-    function getProperties($properties) {
-
+    public function getProperties($properties)
+    {
         $r = [];
 
         foreach ($properties as $prop) {
-
             switch ($prop) {
-                case '{http://calendarserver.org/ns/}source' :
+                case '{http://calendarserver.org/ns/}source':
                     $r[$prop] = new Href($this->subscriptionInfo['source']);
                     break;
-                default :
+                default:
                     if (array_key_exists($prop, $this->subscriptionInfo)) {
                         $r[$prop] = $this->subscriptionInfo[$prop];
                     }
                     break;
             }
-
         }
 
         return $r;
-
     }
 
     /**
@@ -178,10 +169,9 @@ class Subscription extends Collection implements ISubscription, IACL {
      *
      * @return string|null
      */
-    function getOwner() {
-
+    public function getOwner()
+    {
         return $this->subscriptionInfo['principaluri'];
-
     }
 
     /**
@@ -196,8 +186,8 @@ class Subscription extends Collection implements ISubscription, IACL {
      *
      * @return array
      */
-    function getACL() {
-
+    public function getACL()
+    {
         return [
             [
                 'privilege' => '{DAV:}all',
@@ -215,7 +205,5 @@ class Subscription extends Collection implements ISubscription, IACL {
                 'protected' => true,
             ]
         ];
-
     }
-
 }

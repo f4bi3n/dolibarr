@@ -30,10 +30,9 @@ require_once DOL_DOCUMENT_ROOT.'/cashdesk/include/keypad.php';
 $error=GETPOST('error');
 
 // Test if already logged
-if ( $_SESSION['uid'] <= 0 )
-{
-	header('Location: index.php');
-	exit;
+if ($_SESSION['uid'] <= 0) {
+    header('Location: index.php');
+    exit;
 }
 
 // Load translation files required by the page
@@ -53,9 +52,8 @@ top_htmlhead($head, $langs->trans("CashDesk"), 0, 0, $arrayofjs, $arrayofcss);
 
 print '<body>'."\n";
 
-if (!empty($error))
-{
-	dol_htmloutput_events();
+if (!empty($error)) {
+    dol_htmloutput_events();
 }
 
 print '<div class="conteneur">'."\n";

@@ -4,7 +4,8 @@ namespace Sabre\CardDAV;
 
 require_once 'Sabre/CardDAV/AbstractPluginTest.php';
 
-class ValidateFilterTest extends AbstractPluginTest {
+class ValidateFilterTest extends AbstractPluginTest
+{
 
     /**
      * @param string $input
@@ -14,18 +15,17 @@ class ValidateFilterTest extends AbstractPluginTest {
      * @param string|null $message
      * @dataProvider data
      */
-    function testFilter($input, $filters, $test, $result, $message = null) {
-
+    public function testFilter($input, $filters, $test, $result, $message = null)
+    {
         if ($result) {
             $this->assertTrue($this->plugin->validateFilters($input, $filters, $test), $message);
         } else {
             $this->assertFalse($this->plugin->validateFilters($input, $filters, $test), $message);
         }
-
     }
 
-    function data() {
-
+    public function data()
+    {
         $body1 = <<<HELLO
 BEGIN:VCARD
 VERSION:3.0
@@ -203,7 +203,5 @@ HELLO;
             [$body1, [$filter18], 'anyof', false],
             [$body1, [$filter18], 'anyof', false],
         ];
-
     }
-
 }

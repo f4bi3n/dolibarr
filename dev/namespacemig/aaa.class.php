@@ -12,19 +12,19 @@ $globalaaa = 'globalaaa';
  */
 function faaa()
 {
-	return 'faaa';
+    return 'faaa';
 }
 
 class Aaa
 {
-	const AAA='aaa';
+    const AAA='aaa';
 
-	/**
-	 * do
-	 * @return void
-	 */
-	public function do()
-	{
-		echo 'doaaa'."\n";
-	}
+    /**
+     * do
+     * @return void
+     */
+    public function do()
+    {
+        echo 'doaaa'."\n";
+    }
 }

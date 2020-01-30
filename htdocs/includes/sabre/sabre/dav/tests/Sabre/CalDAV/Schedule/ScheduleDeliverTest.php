@@ -5,8 +5,8 @@ namespace Sabre\CalDAV\Schedule;
 use Sabre\HTTP\Request;
 use Sabre\VObject;
 
-class ScheduleDeliverTest extends \Sabre\DAVServerTest {
-
+class ScheduleDeliverTest extends \Sabre\DAVServerTest
+{
     use VObject\PHPUnitAssertions;
 
     public $setupCalDAV = true;
@@ -25,16 +25,15 @@ class ScheduleDeliverTest extends \Sabre\DAVServerTest {
         ],
     ];
 
-    function setUp() {
-
+    public function setUp()
+    {
         $this->calendarObjectUri = '/calendars/user1/cal/object.ics';
 
         parent::setUp();
-
     }
 
-    function testNewInvite() {
-
+    public function testNewInvite()
+    {
         $newObject = <<<ICS
 BEGIN:VCALENDAR
 BEGIN:VEVENT
@@ -66,11 +65,10 @@ ICS;
             $expected,
             $newObject
         );
-
     }
 
-    function testNewOnWrongCollection() {
-
+    public function testNewOnWrongCollection()
+    {
         $newObject = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -86,11 +84,9 @@ ICS;
         $this->calendarObjectUri = '/calendars/user1/object.ics';
         $this->deliver(null, $newObject);
         $this->assertItemsInInbox('user2', 0);
-
-
     }
-    function testNewInviteSchedulingDisabled() {
-
+    public function testNewInviteSchedulingDisabled()
+    {
         $newObject = <<<ICS
 BEGIN:VCALENDAR
 BEGIN:VEVENT
@@ -104,10 +100,9 @@ ICS;
 
         $this->deliver(null, $newObject, true);
         $this->assertItemsInInbox('user2', 0);
-
     }
-    function testUpdatedInvite() {
-
+    public function testUpdatedInvite()
+    {
         $newObject = <<<ICS
 BEGIN:VCALENDAR
 BEGIN:VEVENT
@@ -149,11 +144,9 @@ ICS;
             $expected,
             $newObject
         );
-
-
     }
-    function testUpdatedInviteSchedulingDisabled() {
-
+    public function testUpdatedInviteSchedulingDisabled()
+    {
         $newObject = <<<ICS
 BEGIN:VCALENDAR
 BEGIN:VEVENT
@@ -176,11 +169,10 @@ ICS;
 
         $this->deliver($oldObject, $newObject, true);
         $this->assertItemsInInbox('user2', 0);
-
     }
 
-    function testUpdatedInviteWrongPath() {
-
+    public function testUpdatedInviteWrongPath()
+    {
         $newObject = <<<ICS
 BEGIN:VCALENDAR
 BEGIN:VEVENT
@@ -204,11 +196,10 @@ ICS;
         $this->calendarObjectUri = '/calendars/user1/inbox/foo.ics';
         $this->deliver($oldObject, $newObject);
         $this->assertItemsInInbox('user2', 0);
-
     }
 
-    function testDeletedInvite() {
-
+    public function testDeletedInvite()
+    {
         $newObject = null;
 
         $oldObject = <<<ICS
@@ -224,11 +215,10 @@ ICS;
 
         $this->deliver($oldObject, $newObject);
         $this->assertItemsInInbox('user2', 1);
-
     }
 
-    function testDeletedInviteSchedulingDisabled() {
-
+    public function testDeletedInviteSchedulingDisabled()
+    {
         $newObject = null;
 
         $oldObject = <<<ICS
@@ -244,7 +234,6 @@ ICS;
 
         $this->deliver($oldObject, $newObject, true);
         $this->assertItemsInInbox('user2', 0);
-
     }
 
     /**
@@ -253,8 +242,8 @@ ICS;
      * However, we must not treat it as a cancellation, it just got moved to a
      * different calendar.
      */
-    function testUnbindIgnoredOnMove() {
-
+    public function testUnbindIgnoredOnMove()
+    {
         $newObject = null;
 
         $oldObject = <<<ICS
@@ -272,11 +261,10 @@ ICS;
         $this->server->httpRequest->setMethod('MOVE');
         $this->deliver($oldObject, $newObject);
         $this->assertItemsInInbox('user2', 0);
-
     }
 
-    function testDeletedInviteWrongUrl() {
-
+    public function testDeletedInviteWrongUrl()
+    {
         $newObject = null;
 
         $oldObject = <<<ICS
@@ -293,11 +281,10 @@ ICS;
         $this->calendarObjectUri = '/calendars/user1/inbox/foo.ics';
         $this->deliver($oldObject, $newObject);
         $this->assertItemsInInbox('user2', 0);
-
     }
 
-    function testReply() {
-
+    public function testReply()
+    {
         $oldObject = <<<ICS
 BEGIN:VCALENDAR
 BEGIN:VEVENT
@@ -349,13 +336,12 @@ ICS;
             $expected,
             $newObject
         );
-
     }
 
 
 
-    function testInviteUnknownUser() {
-
+    public function testInviteUnknownUser()
+    {
         $newObject = <<<ICS
 BEGIN:VCALENDAR
 BEGIN:VEVENT
@@ -386,11 +372,10 @@ ICS;
             $expected,
             $newObject
         );
-
     }
 
-    function testInviteNoInboxUrl() {
-
+    public function testInviteNoInboxUrl()
+    {
         $newObject = <<<ICS
 BEGIN:VCALENDAR
 BEGIN:VEVENT
@@ -402,7 +387,7 @@ END:VEVENT
 END:VCALENDAR
 ICS;
 
-        $this->server->on('propFind', function($propFind) {
+        $this->server->on('propFind', function ($propFind) {
             $propFind->set('{' . Plugin::NS_CALDAV . '}schedule-inbox-URL', null, 403);
         });
         $this->deliver(null, $newObject);
@@ -424,11 +409,10 @@ ICS;
             $expected,
             $newObject
         );
-
     }
 
-    function testInviteNoCalendarHomeSet() {
-
+    public function testInviteNoCalendarHomeSet()
+    {
         $newObject = <<<ICS
 BEGIN:VCALENDAR
 BEGIN:VEVENT
@@ -440,7 +424,7 @@ END:VEVENT
 END:VCALENDAR
 ICS;
 
-        $this->server->on('propFind', function($propFind) {
+        $this->server->on('propFind', function ($propFind) {
             $propFind->set('{' . Plugin::NS_CALDAV . '}calendar-home-set', null, 403);
         });
         $this->deliver(null, $newObject);
@@ -462,10 +446,9 @@ ICS;
             $expected,
             $newObject
         );
-
     }
-    function testInviteNoDefaultCalendar() {
-
+    public function testInviteNoDefaultCalendar()
+    {
         $newObject = <<<ICS
 BEGIN:VCALENDAR
 BEGIN:VEVENT
@@ -477,7 +460,7 @@ END:VEVENT
 END:VCALENDAR
 ICS;
 
-        $this->server->on('propFind', function($propFind) {
+        $this->server->on('propFind', function ($propFind) {
             $propFind->set('{' . Plugin::NS_CALDAV . '}schedule-default-calendar-URL', null, 403);
         });
         $this->deliver(null, $newObject);
@@ -499,10 +482,9 @@ ICS;
             $expected,
             $newObject
         );
-
     }
-    function testInviteNoScheduler() {
-
+    public function testInviteNoScheduler()
+    {
         $newObject = <<<ICS
 BEGIN:VCALENDAR
 BEGIN:VEVENT
@@ -534,10 +516,9 @@ ICS;
             $expected,
             $newObject
         );
-
     }
-    function testInviteNoACLPlugin() {
-
+    public function testInviteNoACLPlugin()
+    {
         $this->setupACL = false;
         parent::setUp();
 
@@ -571,13 +552,12 @@ ICS;
             $expected,
             $newObject
         );
-
     }
 
     protected $calendarObjectUri;
 
-    function deliver($oldObject, &$newObject, $disableScheduling = false) {
-
+    public function deliver($oldObject, &$newObject, $disableScheduling = false)
+    {
         $this->server->httpRequest->setUrl($this->calendarObjectUri);
         if ($disableScheduling) {
             $this->server->httpRequest->setHeader('Schedule-Reply', 'F');
@@ -601,7 +581,6 @@ ICS;
             if ($modified) {
                 $newObject = $stream;
             }
-
         } elseif ($oldObject && !$newObject) {
             // delete
             $this->putPath($this->calendarObjectUri, $oldObject);
@@ -627,7 +606,6 @@ ICS;
                 $newObject = $stream;
             }
         }
-
     }
 
 
@@ -641,8 +619,8 @@ ICS;
      * @param string $data
      * @return void
      */
-    function putPath($path, $data) {
-
+    public function putPath($path, $data)
+    {
         list($parent, $base) = \Sabre\HTTP\UrlUtil::splitPath($path);
         $parentNode = $this->server->tree->getNodeForPath($parent);
 
@@ -651,16 +629,13 @@ ICS;
             $childNode = $parentNode->getChild($base);
             $childNode->put($data);
         } else {*/
-            $parentNode->createFile($base, $data);
+        $parentNode->createFile($base, $data);
         //}
-
     }
 
-    function assertItemsInInbox($user, $count) {
-
+    public function assertItemsInInbox($user, $count)
+    {
         $inboxNode = $this->server->tree->getNodeForPath('calendars/' . $user . '/inbox');
         $this->assertEquals($count, count($inboxNode->getChildren()));
-
     }
-
 }

@@ -42,7 +42,6 @@ class FormMailing extends Form
      */
     public function selectDestinariesStatus($selectedid = '', $htmlname = 'dest_status', $show_empty = 0)
     {
-
         global $langs;
         $langs->load("mails");
 

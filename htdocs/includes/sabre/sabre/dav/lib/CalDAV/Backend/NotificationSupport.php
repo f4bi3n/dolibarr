@@ -22,7 +22,8 @@ use Sabre\CalDAV\Xml\Notification\NotificationInterface;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface NotificationSupport extends BackendInterface {
+interface NotificationSupport extends BackendInterface
+{
 
     /**
      * Returns a list of notifications for a given principal url.
@@ -30,7 +31,7 @@ interface NotificationSupport extends BackendInterface {
      * @param string $principalUri
      * @return NotificationInterface[]
      */
-    function getNotificationsForPrincipal($principalUri);
+    public function getNotificationsForPrincipal($principalUri);
 
     /**
      * This deletes a specific notifcation.
@@ -41,7 +42,7 @@ interface NotificationSupport extends BackendInterface {
      * @param NotificationInterface $notification
      * @return void
      */
-    function deleteNotification($principalUri, NotificationInterface $notification);
+    public function deleteNotification($principalUri, NotificationInterface $notification);
 
     /**
      * This method is called when a user replied to a request to share.
@@ -56,6 +57,5 @@ interface NotificationSupport extends BackendInterface {
      * @param string $summary A description of the reply
      * @return null|string
      */
-    function shareReply($href, $status, $calendarUri, $inReplyTo, $summary = null);
-
+    public function shareReply($href, $status, $calendarUri, $inReplyTo, $summary = null);
 }

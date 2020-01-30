@@ -232,8 +232,8 @@ class ActionsTicket
         print '</div>';
 
         if (!empty($user->rights->ticket->manage) && $action == 'edit_message_init') {
-        	// MESSAGE
-        	print '</form>';
+            // MESSAGE
+            print '</form>';
         }
     }
 
@@ -251,14 +251,15 @@ class ActionsTicket
 
         // Load logs in cache
         $ret = $this->dao->loadCacheMsgsTicket();
-        if ($ret < 0) dol_print_error($this->dao->db);
+        if ($ret < 0) {
+            dol_print_error($this->dao->db);
+        }
 
         $action = GETPOST('action', 'alpha');
 
         $this->viewTicketOriginalMessage($user, $action, $object);
 
-        if (is_array($this->dao->cache_msgs_ticket) && count($this->dao->cache_msgs_ticket) > 0)
-        {
+        if (is_array($this->dao->cache_msgs_ticket) && count($this->dao->cache_msgs_ticket) > 0) {
             print '<table class="border" style="width:100%;">';
 
             print '<tr class="liste_titre">';
@@ -393,12 +394,9 @@ class ActionsTicket
             if (!in_array($status, $exclude_status)) {
                 print '<div class="tagtd center">';
 
-                if ($status == 1)
-                {
+                if ($status == 1) {
                     $urlforbutton = $_SERVER['PHP_SELF'] . '?track_id=' . $object->track_id . '&action=mark_ticket_read';	// To set as read, we use a dedicated action
-                }
-                else
-                {
+                } else {
                     $urlforbutton = $_SERVER['PHP_SELF'] . '?track_id=' . $object->track_id . '&action=set_status&new_status=' . $status;
                 }
 

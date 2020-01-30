@@ -4,12 +4,12 @@ namespace Sabre\CalDAV;
 
 use Sabre\DAV\MkCol;
 
-class CalendarHomeSubscriptionsTest extends \PHPUnit_Framework_TestCase {
-
+class CalendarHomeSubscriptionsTest extends \PHPUnit_Framework_TestCase
+{
     protected $backend;
 
-    function getInstance() {
-
+    public function getInstance()
+    {
         $props = [
             '{DAV:}displayname'                     => 'baz',
             '{http://calendarserver.org/ns/}source' => new \Sabre\DAV\Xml\Property\Href('http://example.org/test.ics'),
@@ -21,18 +21,16 @@ class CalendarHomeSubscriptionsTest extends \PHPUnit_Framework_TestCase {
         $this->backend->createSubscription('principals/user1', 'uri', $props);
 
         return new CalendarHome($this->backend, $principal);
-
     }
 
-    function testSimple() {
-
+    public function testSimple()
+    {
         $instance = $this->getInstance();
         $this->assertEquals('user1', $instance->getName());
-
     }
 
-    function testGetChildren() {
-
+    public function testGetChildren()
+    {
         $instance = $this->getInstance();
         $children = $instance->getChildren();
         $this->assertEquals(1, count($children));
@@ -42,11 +40,10 @@ class CalendarHomeSubscriptionsTest extends \PHPUnit_Framework_TestCase {
             }
         }
         $this->fail('There were no subscription nodes in the calendar home');
-
     }
 
-    function testCreateSubscription() {
-
+    public function testCreateSubscription()
+    {
         $instance = $this->getInstance();
         $rt = ['{DAV:}collection', '{http://calendarserver.org/ns/}subscribed'];
 
@@ -58,14 +55,13 @@ class CalendarHomeSubscriptionsTest extends \PHPUnit_Framework_TestCase {
 
         $children = $instance->getChildren();
         $this->assertEquals(2, count($children));
-
     }
 
     /**
      * @expectedException \Sabre\DAV\Exception\InvalidResourceType
      */
-    function testNoSubscriptionSupport() {
-
+    public function testNoSubscriptionSupport()
+    {
         $principal = [
             'uri' => 'principals/user1'
         ];
@@ -79,7 +75,5 @@ class CalendarHomeSubscriptionsTest extends \PHPUnit_Framework_TestCase {
             '{http://calendarserver.org/ns/}source' => new \Sabre\DAV\Xml\Property\Href('http://example.org/test2.ics'),
         ];
         $uC->createExtendedCollection('sub2', new MkCol($rt, $props));
-
     }
-
 }

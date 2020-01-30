@@ -7,17 +7,16 @@ use Sabre\HTTP;
 
 require_once 'Sabre/DAV/AbstractServer.php';
 
-class PluginTest extends DAV\AbstractServer {
-
-    function setUp() {
-
+class PluginTest extends DAV\AbstractServer
+{
+    public function setUp()
+    {
         parent::setUp();
         $this->server->addPlugin(new Plugin());
-
     }
 
-    function testPassThrough() {
-
+    public function testPassThrough()
+    {
         $serverVars = [
             'REQUEST_URI'    => '/',
             'REQUEST_METHOD' => 'GET',
@@ -28,11 +27,10 @@ class PluginTest extends DAV\AbstractServer {
         $this->server->exec();
 
         $this->assertEquals(501, $this->response->status, 'We expected GET to not be implemented for Directories. Response body: ' . $this->response->body);
-
     }
 
-    function testMountResponse() {
-
+    public function testMountResponse()
+    {
         $serverVars = [
             'REQUEST_URI'    => '/?mount',
             'REQUEST_METHOD' => 'GET',
@@ -52,7 +50,5 @@ class PluginTest extends DAV\AbstractServer {
         $xml->registerXPathNamespace('dm', 'http://purl.org/NET/webdav/mount');
         $url = $xml->xpath('//dm:url');
         $this->assertEquals('http://example.org/', (string)$url[0]);
-
     }
-
 }

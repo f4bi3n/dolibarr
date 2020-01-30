@@ -2,25 +2,25 @@
 
 namespace Sabre\Uri;
 
-class ParseTest extends \PHPUnit_Framework_TestCase{
+class ParseTest extends \PHPUnit_Framework_TestCase
+{
 
     /**
      * @dataProvider parseData
      */
-    function testParse($in, $out) {
-
+    public function testParse($in, $out)
+    {
         $this->assertEquals(
             $out,
             parse($in)
         );
-
     }
 
     /**
      * @dataProvider parseData
      */
-    function testParseFallback($in, $out) {
-
+    public function testParseFallback($in, $out)
+    {
         $result = _parse_fallback($in);
         $result = $result + [
             'scheme'   => null,
@@ -36,11 +36,10 @@ class ParseTest extends \PHPUnit_Framework_TestCase{
             $out,
             $result
         );
-
     }
 
-    function parseData() {
-
+    public function parseData()
+    {
         return [
             [
                 'http://example.org/hello?foo=bar#test',
@@ -173,7 +172,5 @@ class ParseTest extends \PHPUnit_Framework_TestCase{
             ],
 
         ];
-
     }
-
 }

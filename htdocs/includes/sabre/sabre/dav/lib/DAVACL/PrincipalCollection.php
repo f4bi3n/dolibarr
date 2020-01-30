@@ -16,8 +16,8 @@ use Sabre\DAV\MkCol;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class PrincipalCollection extends AbstractPrincipalCollection implements IExtendedCollection, IACL {
-
+class PrincipalCollection extends AbstractPrincipalCollection implements IExtendedCollection, IACL
+{
     use ACLTrait;
 
     /**
@@ -30,10 +30,9 @@ class PrincipalCollection extends AbstractPrincipalCollection implements IExtend
      * @param array $principal
      * @return \Sabre\DAV\INode
      */
-    function getChildForPrincipal(array $principal) {
-
+    public function getChildForPrincipal(array $principal)
+    {
         return new Principal($this->principalBackend, $principal);
-
     }
 
     /**
@@ -60,8 +59,8 @@ class PrincipalCollection extends AbstractPrincipalCollection implements IExtend
      * @throws InvalidResourceType
      * @return void
      */
-    function createExtendedCollection($name, MkCol $mkCol) {
-
+    public function createExtendedCollection($name, MkCol $mkCol)
+    {
         if (!$mkCol->hasResourceType('{DAV:}principal')) {
             throw new InvalidResourceType('Only resources of type {DAV:}principal may be created here');
         }
@@ -70,7 +69,6 @@ class PrincipalCollection extends AbstractPrincipalCollection implements IExtend
             $this->principalPrefix . '/' . $name,
             $mkCol
         );
-
     }
 
     /**
@@ -85,7 +83,8 @@ class PrincipalCollection extends AbstractPrincipalCollection implements IExtend
      *
      * @return array
      */
-    function getACL() {
+    public function getACL()
+    {
         return [
             [
                 'principal' => '{DAV:}authenticated',
@@ -94,5 +93,4 @@ class PrincipalCollection extends AbstractPrincipalCollection implements IExtend
             ],
         ];
     }
-
 }

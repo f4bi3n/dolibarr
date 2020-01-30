@@ -638,9 +638,11 @@ class Swift_Mime_SimpleMimeEntity implements Swift_Mime_CharsetObserver, Swift_M
     protected function fixHeaders()
     {
         if (count($this->immediateChildren)) {
-            $this->setHeaderParameter('Content-Type', 'boundary',
+            $this->setHeaderParameter(
+                'Content-Type',
+                'boundary',
                 $this->getBoundary()
-                );
+            );
             $this->headers->remove('Content-Transfer-Encoding');
         } else {
             $this->setHeaderParameter('Content-Type', 'boundary', null);

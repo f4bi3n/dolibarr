@@ -155,10 +155,10 @@ class XmlFormat extends Format
                 if (is_array($value)) {
                     $useNS
                         ? $xml->startElementNs(
-                        static::$namespacedProperties[$key],
-                        $key,
-                        null
-                    )
+                            static::$namespacedProperties[$key],
+                            $key,
+                            null
+                        )
                         : $xml->startElement($key);
                     $this->write($xml, $value, $key);
                     $xml->endElement();
@@ -205,8 +205,11 @@ class XmlFormat extends Format
             }
             libxml_use_internal_errors(true);
             libxml_disable_entity_loader(true);
-            $xml = simplexml_load_string($data,
-                "SimpleXMLElement", LIBXML_NOBLANKS | LIBXML_NOCDATA | LIBXML_COMPACT);
+            $xml = simplexml_load_string(
+                $data,
+                "SimpleXMLElement",
+                LIBXML_NOBLANKS | LIBXML_NOCDATA | LIBXML_COMPACT
+            );
             if (false === $xml) {
                 $error = libxml_get_last_error();
                 throw new RestException(400, 'Malformed XML. '
@@ -235,8 +238,10 @@ class XmlFormat extends Format
 
             return $data;
         } catch (\RuntimeException $e) {
-            throw new RestException(400,
-                "Error decoding request. " . $e->getMessage());
+            throw new RestException(
+                400,
+                "Error decoding request. " . $e->getMessage()
+            );
         }
     }
 
@@ -324,10 +329,10 @@ class XmlFormat extends Format
             empty($r)
                 ? $r = static::setType($text)
                 : (
-            static::$parseTextNodeAsProperty
+                    static::$parseTextNodeAsProperty
                 ? $r[static::$textNodeName] = static::setType($text)
                 : $r[] = static::setType($text)
-            );
+                );
         }
 
         return $r;

@@ -13,7 +13,8 @@ namespace Sabre\CardDAV\Backend;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-abstract class AbstractBackend implements BackendInterface {
+abstract class AbstractBackend implements BackendInterface
+{
 
     /**
      * Returns a list of cards.
@@ -27,12 +28,10 @@ abstract class AbstractBackend implements BackendInterface {
      * @param array $uris
      * @return array
      */
-    function getMultipleCards($addressBookId, array $uris) {
-
-        return array_map(function($uri) use ($addressBookId) {
+    public function getMultipleCards($addressBookId, array $uris)
+    {
+        return array_map(function ($uri) use ($addressBookId) {
             return $this->getCard($addressBookId, $uri);
         }, $uris);
-
     }
-
 }

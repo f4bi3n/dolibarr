@@ -38,10 +38,12 @@ class PassThrough
      */
     public static function file($filename, $forceDownload = false, $expires = 0, $isPublic = true)
     {
-        if (!is_file($filename))
+        if (!is_file($filename)) {
             throw new RestException(404);
-        if (!is_readable($filename))
+        }
+        if (!is_readable($filename)) {
             throw new RestException(403);
+        }
         $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
         if (!$mime = Util::nestedValue(static::$mimeTypes, $extension)) {
             if (!function_exists('finfo_open')) {
@@ -57,8 +59,9 @@ class PassThrough
             $finfo = finfo_open(FILEINFO_MIME_TYPE);
             $mime = finfo_file($finfo, $filename);
         }
-        if (!is_array(Defaults::$headerCacheControl))
+        if (!is_array(Defaults::$headerCacheControl)) {
             Defaults::$headerCacheControl = array(Defaults::$headerCacheControl);
+        }
         $cacheControl = Defaults::$headerCacheControl[0];
         if ($expires > 0) {
             $cacheControl = $isPublic ? 'public' : 'private';
@@ -87,4 +90,4 @@ class PassThrough
         readfile($filename);
         exit;
     }
-} 
+}

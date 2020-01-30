@@ -19,7 +19,8 @@ use Sabre\Xml\XmlDeserializable;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class FreeBusyQueryReport implements XmlDeserializable {
+class FreeBusyQueryReport implements XmlDeserializable
+{
 
     /**
      * Starttime of report
@@ -56,20 +57,20 @@ class FreeBusyQueryReport implements XmlDeserializable {
      * @param Reader $reader
      * @return mixed
      */
-    static function xmlDeserialize(Reader $reader) {
-
+    public static function xmlDeserialize(Reader $reader)
+    {
         $timeRange = '{' . Plugin::NS_CALDAV . '}time-range';
 
         $start = null;
         $end = null;
 
         foreach ((array)$reader->parseInnerTree([]) as $elem) {
-
-            if ($elem['name'] !== $timeRange) continue;
+            if ($elem['name'] !== $timeRange) {
+                continue;
+            }
 
             $start = empty($elem['attributes']['start']) ?: $elem['attributes']['start'];
             $end = empty($elem['attributes']['end']) ?: $elem['attributes']['end'];
-
         }
         if (!$start && !$end) {
             throw new BadRequest('The freebusy report must have a time-range element');
@@ -85,7 +86,5 @@ class FreeBusyQueryReport implements XmlDeserializable {
         $result->end = $end;
 
         return $result;
-
     }
-
 }

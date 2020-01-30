@@ -33,27 +33,22 @@ require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 print 'DOL_MAIN_URL_ROOT='.DOL_MAIN_URL_ROOT."\n";  // constant will be used by other tests
 
 
-if ($langs->defaultlang != 'en_US')
-{
+if ($langs->defaultlang != 'en_US') {
     print "Error: Default language for company to run tests must be set to en_US or auto. Current is ".$langs->defaultlang."\n";
     exit(1);
 }
-if (empty($conf->adherent->enabled))
-{
-	print "Error: Module member must be enabled to have significant results.\n";
-	exit(1);
+if (empty($conf->adherent->enabled)) {
+    print "Error: Module member must be enabled to have significant results.\n";
+    exit(1);
 }
-if (! empty($conf->ldap->enabled))
-{
+if (! empty($conf->ldap->enabled)) {
     print "Error: LDAP module should not be enabled.\n";
     exit(1);
 }
-if (! empty($conf->google->enabled))
-{
+if (! empty($conf->google->enabled)) {
     print "Warning: Google module should not be enabled.\n";
 }
-if (empty($user->id))
-{
+if (empty($user->id)) {
     print "Load permissions for admin user nb 1\n";
     $user->fetch(1);
     $user->getrights();
@@ -74,7 +69,6 @@ class AllTests
      */
     public static function suite()
     {
-
         $suite = new PHPUnit\Framework\TestSuite('PHPUnit Framework');
 
         //require_once dirname(__FILE__).'/CoreTest.php';
@@ -220,18 +214,18 @@ class AllTests
         // Test only with php7.2 or less
         //if ((float) phpversion() < 7.3)
         //{
-        	require_once dirname(__FILE__).'/WebservicesProductsTest.php';
-	        $suite->addTestSuite('WebservicesProductsTest');
-	        require_once dirname(__FILE__).'/WebservicesInvoicesTest.php';
-	        $suite->addTestSuite('WebservicesInvoicesTest');
-	        require_once dirname(__FILE__).'/WebservicesOrdersTest.php';
-	        $suite->addTestSuite('WebservicesOrdersTest');
-	        require_once dirname(__FILE__).'/WebservicesOtherTest.php';
-	        $suite->addTestSuite('WebservicesOtherTest');
-	        require_once dirname(__FILE__).'/WebservicesThirdpartyTest.php';
-	        $suite->addTestSuite('WebservicesThirdpartyTest');
-	        require_once dirname(__FILE__).'/WebservicesUserTest.php';
-	        $suite->addTestSuite('WebservicesUserTest');
+        require_once dirname(__FILE__).'/WebservicesProductsTest.php';
+        $suite->addTestSuite('WebservicesProductsTest');
+        require_once dirname(__FILE__).'/WebservicesInvoicesTest.php';
+        $suite->addTestSuite('WebservicesInvoicesTest');
+        require_once dirname(__FILE__).'/WebservicesOrdersTest.php';
+        $suite->addTestSuite('WebservicesOrdersTest');
+        require_once dirname(__FILE__).'/WebservicesOtherTest.php';
+        $suite->addTestSuite('WebservicesOtherTest');
+        require_once dirname(__FILE__).'/WebservicesThirdpartyTest.php';
+        $suite->addTestSuite('WebservicesThirdpartyTest');
+        require_once dirname(__FILE__).'/WebservicesUserTest.php';
+        $suite->addTestSuite('WebservicesUserTest');
         //}
 
         require_once dirname(__FILE__).'/ExportTest.php';

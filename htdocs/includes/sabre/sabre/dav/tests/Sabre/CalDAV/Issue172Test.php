@@ -4,10 +4,12 @@ namespace Sabre\CalDAV;
 
 use Sabre\VObject;
 
-class Issue172Test extends \PHPUnit_Framework_TestCase {
+class Issue172Test extends \PHPUnit_Framework_TestCase
+{
 
     // DateTimeZone() native name: America/Los_Angeles (GMT-8 in January)
-    function testBuiltInTimezoneName() {
+    public function testBuiltInTimezoneName()
+    {
         $input = <<<HI
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -39,7 +41,8 @@ HI;
     }
 
     // Pacific Standard Time, translates to America/Los_Angeles (GMT-8 in January)
-    function testOutlookTimezoneName() {
+    public function testOutlookTimezoneName()
+    {
         $input = <<<HI
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -86,7 +89,8 @@ HI;
     }
 
     // X-LIC-LOCATION, translates to America/Los_Angeles (GMT-8 in January)
-    function testLibICalLocationName() {
+    public function testLibICalLocationName()
+    {
         $input = <<<HI
 BEGIN:VCALENDAR
 VERSION:2.0

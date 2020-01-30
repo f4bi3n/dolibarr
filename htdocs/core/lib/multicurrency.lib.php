@@ -53,19 +53,18 @@ function multicurrencyAdminPrepareHead()
  */
 function multicurrencyLimitPrepareHead($aCurrencies)
 {
-	global $langs;
+    global $langs;
 
-	$i=0;
-	$head = array();
+    $i=0;
+    $head = array();
 
-	foreach($aCurrencies as $currency)
-	{
-		$head[$i][0] = $_SERVER['PHP_SELF'].'?currencycode='.$currency;
-		$head[$i][1] = $langs->trans("Currency".$currency).' ('.$langs->getCurrencySymbol($currency).')';
-		$head[$i][2] = $currency;
+    foreach ($aCurrencies as $currency) {
+        $head[$i][0] = $_SERVER['PHP_SELF'].'?currencycode='.$currency;
+        $head[$i][1] = $langs->trans("Currency".$currency).' ('.$langs->getCurrencySymbol($currency).')';
+        $head[$i][2] = $currency;
 
-		$i++;
-	}
+        $i++;
+    }
 
-	return $head;
+    return $head;
 }

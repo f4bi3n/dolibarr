@@ -41,30 +41,28 @@ $action=GETPOST('action', 'alpha');
 
 // Security check
 $socid='';
-if ($user->socid) $socid=$user->socid;
+if ($user->socid) {
+    $socid=$user->socid;
+}
 $result=restrictedArea($user, $origin, $origin_id);
 
 $object = new Expedition($db);
-if ($id > 0 || ! empty($ref))
-{
+if ($id > 0 || ! empty($ref)) {
     $object->fetch($id, $ref);
     $object->fetch_thirdparty();
 
-    if (!empty($object->origin))
-    {
+    if (!empty($object->origin)) {
         $typeobject = $object->origin;
         $origin = $object->origin;
         $object->fetch_origin();
     }
 
     // Linked documents
-    if ($typeobject == 'commande' && $object->$typeobject->id && !empty($conf->commande->enabled))
-    {
+    if ($typeobject == 'commande' && $object->$typeobject->id && !empty($conf->commande->enabled)) {
         $objectsrc = new Commande($db);
         $objectsrc->fetch($object->$typeobject->id);
     }
-    if ($typeobject == 'propal' && $object->$typeobject->id && !empty($conf->propal->enabled))
-    {
+    if ($typeobject == 'propal' && $object->$typeobject->id && !empty($conf->propal->enabled)) {
         $objectsrc = new Propal($db);
         $objectsrc->fetch($object->$typeobject->id);
     }
@@ -88,21 +86,20 @@ llxHeader();
 
 $form = new Form($db);
 
-if ($id > 0 || ! empty($ref))
-{
-	$head=shipping_prepare_head($object);
-	dol_fiche_head($head, 'note', $langs->trans("Shipment"), -1, 'sending');
+if ($id > 0 || ! empty($ref)) {
+    $head=shipping_prepare_head($object);
+    dol_fiche_head($head, 'note', $langs->trans("Shipment"), -1, 'sending');
 
 
-	// Shipment card
-	$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/list.php?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">'.$langs->trans("BackToList").'</a>';
+    // Shipment card
+    $linkback = '<a href="'.DOL_URL_ROOT.'/expedition/list.php?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">'.$langs->trans("BackToList").'</a>';
 
-	$morehtmlref='<div class="refidno">';
-	// Ref customer shipment
-	$morehtmlref.=$form->editfieldkey("RefCustomer", '', $object->ref_customer, $object, $user->rights->expedition->creer, 'string', '', 0, 1);
-	$morehtmlref.=$form->editfieldval("RefCustomer", '', $object->ref_customer, $object, $user->rights->expedition->creer, 'string', '', null, null, '', 1);
-	// Thirdparty
-	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+    $morehtmlref='<div class="refidno">';
+    // Ref customer shipment
+    $morehtmlref.=$form->editfieldkey("RefCustomer", '', $object->ref_customer, $object, $user->rights->expedition->creer, 'string', '', 0, 1);
+    $morehtmlref.=$form->editfieldval("RefCustomer", '', $object->ref_customer, $object, $user->rights->expedition->creer, 'string', '', null, null, '', 1);
+    // Thirdparty
+    $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
     // Project
     if (! empty($conf->projet->enabled)) {
         $langs->load("projects");
@@ -145,10 +142,10 @@ if ($id > 0 || ! empty($ref))
 
     print '<div class="underbanner clearboth"></div>';
 
-	$cssclass = 'titlefield';
-	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
+    $cssclass = 'titlefield';
+    include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
-	dol_fiche_end();
+    dol_fiche_end();
 }
 
 // End of page

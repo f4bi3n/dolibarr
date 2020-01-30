@@ -30,7 +30,6 @@ require_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
  */
 class box_last_modified_ticket extends ModeleBoxes
 {
-
     public $boxcode = "box_last_modified_ticket";
     public $boximg = "ticket";
     public $boxlabel;
@@ -53,8 +52,8 @@ class box_last_modified_ticket extends ModeleBoxes
     public function __construct($db, $param = '')
     {
         global $langs;
-		$langs->load("boxes");
-		$this->db = $db;
+        $langs->load("boxes");
+        $this->db = $db;
 
         $this->boxlabel = $langs->transnoentitiesnoconv("BoxLastModifiedTicket");
     }
@@ -75,8 +74,8 @@ class box_last_modified_ticket extends ModeleBoxes
 
         $text = $langs->trans("BoxLastModifiedTicketDescription", $max);
         $this->info_box_head = array(
-         	'text' => $text,
-         	'limit' => dol_strlen($text)
+             'text' => $text,
+             'limit' => dol_strlen($text)
         );
 
         $this->info_box_contents[0][0] = array(

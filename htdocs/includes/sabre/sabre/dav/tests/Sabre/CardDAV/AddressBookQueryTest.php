@@ -8,10 +8,10 @@ use Sabre\HTTP;
 require_once 'Sabre/CardDAV/AbstractPluginTest.php';
 require_once 'Sabre/HTTP/ResponseMock.php';
 
-class AddressBookQueryTest extends AbstractPluginTest {
-
-    function testQuery() {
-
+class AddressBookQueryTest extends AbstractPluginTest
+{
+    public function testQuery()
+    {
         $request = new HTTP\Request(
             'REPORT',
             '/addressbooks/user1/book1',
@@ -19,7 +19,7 @@ class AddressBookQueryTest extends AbstractPluginTest {
         );
 
         $request->setBody(
-'<?xml version="1.0"?>
+            '<?xml version="1.0"?>
 <c:addressbook-query xmlns:d="DAV:" xmlns:c="urn:ietf:params:xml:ns:carddav">
     <d:prop>
       <d:getetag />
@@ -28,7 +28,7 @@ class AddressBookQueryTest extends AbstractPluginTest {
         <c:prop-filter name="uid" />
     </c:filter>
 </c:addressbook-query>'
-            );
+        );
 
         $response = new HTTP\ResponseMock();
 
@@ -56,12 +56,10 @@ class AddressBookQueryTest extends AbstractPluginTest {
                 ],
             ]
         ], $result);
-
-
     }
 
-    function testQueryDepth0() {
-
+    public function testQueryDepth0()
+    {
         $request = new HTTP\Request(
             'REPORT',
             '/addressbooks/user1/book1/card1',
@@ -69,7 +67,7 @@ class AddressBookQueryTest extends AbstractPluginTest {
         );
 
         $request->setBody(
-'<?xml version="1.0"?>
+            '<?xml version="1.0"?>
 <c:addressbook-query xmlns:d="DAV:" xmlns:c="urn:ietf:params:xml:ns:carddav">
     <d:prop>
       <d:getetag />
@@ -78,7 +76,7 @@ class AddressBookQueryTest extends AbstractPluginTest {
         <c:prop-filter name="uid" />
     </c:filter>
 </c:addressbook-query>'
-            );
+        );
 
         $response = new HTTP\ResponseMock();
 
@@ -101,12 +99,10 @@ class AddressBookQueryTest extends AbstractPluginTest {
                 ],
              ],
         ], $result);
-
-
     }
 
-    function testQueryNoMatch() {
-
+    public function testQueryNoMatch()
+    {
         $request = new HTTP\Request(
             'REPORT',
             '/addressbooks/user1/book1',
@@ -114,7 +110,7 @@ class AddressBookQueryTest extends AbstractPluginTest {
         );
 
         $request->setBody(
-'<?xml version="1.0"?>
+            '<?xml version="1.0"?>
 <c:addressbook-query xmlns:d="DAV:" xmlns:c="urn:ietf:params:xml:ns:carddav">
     <d:prop>
       <d:getetag />
@@ -123,7 +119,7 @@ class AddressBookQueryTest extends AbstractPluginTest {
         <c:prop-filter name="email" />
     </c:filter>
 </c:addressbook-query>'
-            );
+        );
 
         $response = new HTTP\ResponseMock();
 
@@ -140,11 +136,10 @@ class AddressBookQueryTest extends AbstractPluginTest {
         $result = $client->parseMultiStatus($response->body);
 
         $this->assertEquals([], $result);
-
     }
 
-    function testQueryLimit() {
-
+    public function testQueryLimit()
+    {
         $request = HTTP\Sapi::createFromServerArray([
             'REQUEST_METHOD' => 'REPORT',
             'REQUEST_URI'    => '/addressbooks/user1/book1',
@@ -152,7 +147,7 @@ class AddressBookQueryTest extends AbstractPluginTest {
         ]);
 
         $request->setBody(
-'<?xml version="1.0"?>
+            '<?xml version="1.0"?>
 <c:addressbook-query xmlns:d="DAV:" xmlns:c="urn:ietf:params:xml:ns:carddav">
     <d:prop>
       <d:getetag />
@@ -162,7 +157,7 @@ class AddressBookQueryTest extends AbstractPluginTest {
     </c:filter>
     <c:limit><c:nresults>1</c:nresults></c:limit>
 </c:addressbook-query>'
-            );
+        );
 
         $response = new HTTP\ResponseMock();
 
@@ -185,12 +180,10 @@ class AddressBookQueryTest extends AbstractPluginTest {
                 ],
              ],
         ], $result);
-
-
     }
 
-    function testJson() {
-
+    public function testJson()
+    {
         $request = new HTTP\Request(
             'REPORT',
             '/addressbooks/user1/book1/card1',
@@ -198,14 +191,14 @@ class AddressBookQueryTest extends AbstractPluginTest {
         );
 
         $request->setBody(
-'<?xml version="1.0"?>
+            '<?xml version="1.0"?>
 <c:addressbook-query xmlns:d="DAV:" xmlns:c="urn:ietf:params:xml:ns:carddav">
     <d:prop>
       <c:address-data content-type="application/vcard+json" />
       <d:getetag />
     </d:prop>
 </c:addressbook-query>'
-            );
+        );
 
         $response = new HTTP\ResponseMock();
 
@@ -231,11 +224,10 @@ class AddressBookQueryTest extends AbstractPluginTest {
                 ],
              ],
         ], $result);
-
     }
 
-    function testVCard4() {
-
+    public function testVCard4()
+    {
         $request = new HTTP\Request(
             'REPORT',
             '/addressbooks/user1/book1/card1',
@@ -243,14 +235,14 @@ class AddressBookQueryTest extends AbstractPluginTest {
         );
 
         $request->setBody(
-'<?xml version="1.0"?>
+            '<?xml version="1.0"?>
 <c:addressbook-query xmlns:d="DAV:" xmlns:c="urn:ietf:params:xml:ns:carddav">
     <d:prop>
       <c:address-data content-type="text/vcard" version="4.0" />
       <d:getetag />
     </d:prop>
 </c:addressbook-query>'
-            );
+        );
 
         $response = new HTTP\ResponseMock();
 
@@ -276,11 +268,10 @@ class AddressBookQueryTest extends AbstractPluginTest {
                 ],
              ],
         ], $result);
-
     }
 
-    function testAddressBookDepth0() {
-
+    public function testAddressBookDepth0()
+    {
         $request = new HTTP\Request(
             'REPORT',
             '/addressbooks/user1/book1',
@@ -307,8 +298,8 @@ class AddressBookQueryTest extends AbstractPluginTest {
         $this->assertEquals(415, $response->status, 'Incorrect status code. Full response body:' . $response->body);
     }
 
-    function testAddressBookProperties() {
-
+    public function testAddressBookProperties()
+    {
         $request = new HTTP\Request(
             'REPORT',
             '/addressbooks/user1/book3',
@@ -350,6 +341,5 @@ class AddressBookQueryTest extends AbstractPluginTest {
                 ],
             ],
         ], $result);
-
     }
 }

@@ -37,7 +37,7 @@ class box_commandes extends ModeleBoxes
     public $boxlabel="BoxLastCustomerOrders";
     public $depends = array("commande");
 
-	/**
+    /**
      * @var DoliDB Database handler.
      */
     public $db;
@@ -84,8 +84,7 @@ class box_commandes extends ModeleBoxes
 
         $this->info_box_head = array('text' => $langs->trans("BoxTitleLast".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE?"":"Modified")."CustomerOrders", $max));
 
-        if ($user->rights->commande->lire)
-        {
+        if ($user->rights->commande->lire) {
             $sql = "SELECT s.nom as name";
             $sql.= ", s.rowid as socid";
             $sql.= ", s.code_client";
@@ -102,14 +101,25 @@ class box_commandes extends ModeleBoxes
             $sql.= ", c.total_ttc";
             $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
             $sql.= ", ".MAIN_DB_PREFIX."commande as c";
-            if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+            if (!$user->rights->societe->client->voir && !$user->socid) {
+                $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+            }
             $sql.= " WHERE c.fk_soc = s.rowid";
             $sql.= " AND c.entity = ".$conf->entity;
-            if (! empty($conf->global->ORDER_BOX_LAST_ORDERS_VALIDATED_ONLY)) $sql.=" AND c.fk_statut = 1";
-            if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-            if ($user->socid) $sql.= " AND s.rowid = ".$user->socid;
-            if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql.= " ORDER BY c.date_commande DESC, c.ref DESC ";
-            else $sql.= " ORDER BY c.tms DESC, c.ref DESC ";
+            if (! empty($conf->global->ORDER_BOX_LAST_ORDERS_VALIDATED_ONLY)) {
+                $sql.=" AND c.fk_statut = 1";
+            }
+            if (!$user->rights->societe->client->voir && !$user->socid) {
+                $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+            }
+            if ($user->socid) {
+                $sql.= " AND s.rowid = ".$user->socid;
+            }
+            if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) {
+                $sql.= " ORDER BY c.date_commande DESC, c.ref DESC ";
+            } else {
+                $sql.= " ORDER BY c.tms DESC, c.ref DESC ";
+            }
             $sql.= $this->db->plimit($max, 0);
 
             $result = $this->db->query($sql);
@@ -152,7 +162,9 @@ class box_commandes extends ModeleBoxes
                     );
 
                     if (! empty($conf->global->ORDER_BOX_LAST_ORDERS_SHOW_VALIDATE_USER)) {
-                        if ($objp->fk_user_valid > 0) $userstatic->fetch($objp->fk_user_valid);
+                        if ($objp->fk_user_valid > 0) {
+                            $userstatic->fetch($objp->fk_user_valid);
+                        }
                         $this->info_box_contents[$line][] = array(
                             'td' => 'class="right"',
                             'text' => (($objp->fk_user_valid > 0)?$userstatic->getNomUrl(1):''),
@@ -173,7 +185,9 @@ class box_commandes extends ModeleBoxes
                     $line++;
                 }
 
-                if ($num==0) $this->info_box_contents[$line][0] = array('td' => 'class="center"','text'=>$langs->trans("NoRecordedOrders"));
+                if ($num==0) {
+                    $this->info_box_contents[$line][0] = array('td' => 'class="center"','text'=>$langs->trans("NoRecordedOrders"));
+                }
 
                 $this->db->free($result);
             } else {
@@ -191,14 +205,14 @@ class box_commandes extends ModeleBoxes
         }
     }
 
-	/**
-	 *	Method to show box
-	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
-	 *	@return	string
-	 */
+    /**
+     *	Method to show box
+     *
+     *	@param	array	$head       Array with properties of box title
+     *	@param  array	$contents   Array with properties of box lines
+     *  @param	int		$nooutput	No print, only return string
+     *	@return	string
+     */
     public function showBox($head = null, $contents = null, $nooutput = 0)
     {
         return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);

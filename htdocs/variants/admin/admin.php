@@ -23,17 +23,18 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 $langs->loadLangs(array("admin", "products"));
 
 // Security check
-if (! $user->admin || (empty($conf->product->enabled) && empty($conf->service->enabled)))
-	accessforbidden();
+if (! $user->admin || (empty($conf->product->enabled) && empty($conf->service->enabled))) {
+    accessforbidden();
+}
 
 if ($_POST) {
-	$value = GETPOST('PRODUIT_ATTRIBUTES_HIDECHILD');
+    $value = GETPOST('PRODUIT_ATTRIBUTES_HIDECHILD');
 
-	if (dolibarr_set_const($db, 'PRODUIT_ATTRIBUTES_HIDECHILD', $value, 'chaine', 0, '', $conf->entity)) {
-		setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
-	} else {
-		setEventMessages($langs->trans('CoreErrorMessage'), null, 'errors');
-	}
+    if (dolibarr_set_const($db, 'PRODUIT_ATTRIBUTES_HIDECHILD', $value, 'chaine', 0, '', $conf->entity)) {
+        setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+    } else {
+        setEventMessages($langs->trans('CoreErrorMessage'), null, 'errors');
+    }
 
     if (dolibarr_set_const($db, 'PRODUIT_ATTRIBUTES_SEPARATOR', GETPOST('PRODUIT_ATTRIBUTES_SEPARATOR'), 'chaine', 0, '', $conf->entity)) {
         setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');

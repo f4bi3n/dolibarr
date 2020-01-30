@@ -35,7 +35,8 @@ use Sabre\VObject\Recur\EventIterator;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Broker {
+class Broker
+{
 
     /**
      * This setting determines whether the rules for the SCHEDULE-AGENT
@@ -109,7 +110,8 @@ class Broker {
      *
      * @return VCalendar|null
      */
-    function processMessage(Message $itipMessage, VCalendar $existingObject = null) {
+    public function processMessage(Message $itipMessage, VCalendar $existingObject = null)
+    {
 
         // We only support events at the moment.
         if ($itipMessage->component !== 'VEVENT') {
@@ -118,23 +120,22 @@ class Broker {
 
         switch ($itipMessage->method) {
 
-            case 'REQUEST' :
+            case 'REQUEST':
                 return $this->processMessageRequest($itipMessage, $existingObject);
 
-            case 'CANCEL' :
+            case 'CANCEL':
                 return $this->processMessageCancel($itipMessage, $existingObject);
 
-            case 'REPLY' :
+            case 'REPLY':
                 return $this->processMessageReply($itipMessage, $existingObject);
 
-            default :
+            default:
                 // Unsupported iTip message
                 return;
 
         }
 
         return $existingObject;
-
     }
 
     /**
@@ -166,8 +167,8 @@ class Broker {
      *
      * @return array
      */
-    function parseEvent($calendar = null, $userHref, $oldCalendar = null) {
-
+    public function parseEvent($calendar = null, $userHref, $oldCalendar = null)
+    {
         if ($oldCalendar) {
             if (is_string($oldCalendar)) {
                 $oldCalendar = Reader::read($oldCalendar);
@@ -189,7 +190,6 @@ class Broker {
         $userHref = (array)$userHref;
 
         if (!is_null($calendar)) {
-
             if (is_string($calendar)) {
                 $calendar = Reader::read($calendar);
             }
@@ -217,7 +217,6 @@ class Broker {
                 $eventInfo['organizer'] = $oldEventInfo['organizer'];
                 $eventInfo['organizerName'] = $oldEventInfo['organizerName'];
             }
-
         } else {
             // The calendar object got deleted, we need to process this as a
             // cancellation / decline.
@@ -245,7 +244,6 @@ class Broker {
                 }
             }
             $baseCalendar = $oldCalendar;
-
         }
 
         if (in_array($eventInfo['organizer'], $userHref)) {
@@ -261,7 +259,6 @@ class Broker {
             }
         }
         return [];
-
     }
 
     /**
@@ -276,8 +273,8 @@ class Broker {
      *
      * @return VCalendar|null
      */
-    protected function processMessageRequest(Message $itipMessage, VCalendar $existingObject = null) {
-
+    protected function processMessageRequest(Message $itipMessage, VCalendar $existingObject = null)
+    {
         if (!$existingObject) {
             // This is a new invite, and we're just going to copy over
             // all the components from the invite.
@@ -297,7 +294,6 @@ class Broker {
             }
         }
         return $existingObject;
-
     }
 
     /**
@@ -312,8 +308,8 @@ class Broker {
      *
      * @return VCalendar|null
      */
-    protected function processMessageCancel(Message $itipMessage, VCalendar $existingObject = null) {
-
+    protected function processMessageCancel(Message $itipMessage, VCalendar $existingObject = null)
+    {
         if (!$existingObject) {
             // The event didn't exist in the first place, so we're just
             // ignoring this message.
@@ -324,7 +320,6 @@ class Broker {
             }
         }
         return $existingObject;
-
     }
 
     /**
@@ -338,7 +333,8 @@ class Broker {
      *
      * @return VCalendar|null
      */
-    protected function processMessageReply(Message $itipMessage, VCalendar $existingObject = null) {
+    protected function processMessageReply(Message $itipMessage, VCalendar $existingObject = null)
+    {
 
         // A reply can only be processed based on an existing object.
         // If the object is not available, the reply is ignored.
@@ -388,7 +384,9 @@ class Broker {
                     $attendee = $vevent->add('ATTENDEE', $itipMessage->sender, [
                         'PARTSTAT' => $instances[$recurId]
                     ]);
-                    if ($itipMessage->senderName) $attendee['CN'] = $itipMessage->senderName;
+                    if ($itipMessage->senderName) {
+                        $attendee['CN'] = $itipMessage->senderName;
+                    }
                 }
                 unset($instances[$recurId]);
             }
@@ -401,12 +399,10 @@ class Broker {
         // If we got replies to instances that did not exist in the
         // original list, it means that new exceptions must be created.
         foreach ($instances as $recurId => $partstat) {
-
             $recurrenceIterator = new EventIterator($existingObject, $itipMessage->uid);
             $found = false;
             $iterations = 1000;
             do {
-
                 $newObject = $recurrenceIterator->getEventObject();
                 $recurrenceIterator->next();
 
@@ -414,11 +410,12 @@ class Broker {
                     $found = true;
                 }
                 $iterations--;
-
             } while ($recurrenceIterator->valid() && !$found && $iterations);
 
             // Invalid recurrence id. Skipping this object.
-            if (!$found) continue;
+            if (!$found) {
+                continue;
+            }
 
             unset(
                 $newObject->RRULE,
@@ -445,10 +442,8 @@ class Broker {
                 }
             }
             $existingObject->add($newObject);
-
         }
         return $existingObject;
-
     }
 
     /**
@@ -465,7 +460,8 @@ class Broker {
      *
      * @return array
      */
-    protected function parseEventForOrganizer(VCalendar $calendar, array $eventInfo, array $oldEventInfo) {
+    protected function parseEventForOrganizer(VCalendar $calendar, array $eventInfo, array $oldEventInfo)
+    {
 
         // Merging attendee lists.
         $attendees = [];
@@ -537,12 +533,13 @@ class Broker {
                     $event->add(clone $calendar->VEVENT->DURATION);
                 }
                 $org = $event->add('ORGANIZER', $eventInfo['organizer']);
-                if ($eventInfo['organizerName']) $org['CN'] = $eventInfo['organizerName'];
+                if ($eventInfo['organizerName']) {
+                    $org['CN'] = $eventInfo['organizerName'];
+                }
                 $event->add('ATTENDEE', $attendee['href'], [
                     'CN' => $attendee['name'],
                 ]);
                 $message->significantChange = true;
-
             } else {
 
                 // The attendee gets the updated event body
@@ -570,7 +567,6 @@ class Broker {
                     $oldEventInfo['significantChangeHash'] !== $eventInfo['significantChangeHash'];
 
                 foreach ($attendee['newInstances'] as $instanceId => $instanceInfo) {
-
                     $currentEvent = clone $eventInfo['instances'][$instanceId];
                     if ($instanceId === 'master') {
 
@@ -610,24 +606,18 @@ class Broker {
                             if (!isset($attendee['PARTSTAT'])) {
                                 $attendee['PARTSTAT'] = 'NEEDS-ACTION';
                             }
-
                         }
-
                     }
 
                     $icalMsg->add($currentEvent);
-
                 }
-
             }
 
             $message->message = $icalMsg;
             $messages[] = $message;
-
         }
 
         return $messages;
-
     }
 
     /**
@@ -642,8 +632,8 @@ class Broker {
      *
      * @return Message[]
      */
-    protected function parseEventForAttendee(VCalendar $calendar, array $eventInfo, array $oldEventInfo, $attendee) {
-
+    protected function parseEventForAttendee(VCalendar $calendar, array $eventInfo, array $oldEventInfo, $attendee)
+    {
         if ($this->scheduleAgentServerRules && $eventInfo['organizerScheduleAgent'] === 'CLIENT') {
             return [];
         }
@@ -660,16 +650,13 @@ class Broker {
 
         $instances = [];
         foreach ($oldInstances as $instance) {
-
             $instances[$instance['id']] = [
                 'id'        => $instance['id'],
                 'oldstatus' => $instance['partstat'],
                 'newstatus' => null,
             ];
-
         }
         foreach ($eventInfo['attendees'][$attendee]['instances'] as $instance) {
-
             if (isset($instances[$instance['id']])) {
                 $instances[$instance['id']]['newstatus'] = $instance['partstat'];
             } else {
@@ -679,7 +666,6 @@ class Broker {
                     'newstatus' => $instance['partstat'],
                 ];
             }
-
         }
 
         // We need to also look for differences in EXDATE. If there are new
@@ -689,7 +675,6 @@ class Broker {
         // We only need to do that though, if the master event is not declined.
         if (isset($instances['master']) && $instances['master']['newstatus'] !== 'DECLINED') {
             foreach ($eventInfo['exdate'] as $exDate) {
-
                 if (!in_array($exDate, $oldEventInfo['exdate'])) {
                     if (isset($instances[$exDate])) {
                         $instances[$exDate]['newstatus'] = 'DECLINED';
@@ -701,19 +686,16 @@ class Broker {
                         ];
                     }
                 }
-
             }
         }
 
         // Gathering a few extra properties for each instance.
         foreach ($instances as $recurId => $instanceInfo) {
-
             if (isset($eventInfo['instances'][$recurId])) {
                 $instances[$recurId]['dtstart'] = clone $eventInfo['instances'][$recurId]->DTSTART;
             } else {
                 $instances[$recurId]['dtstart'] = $recurId;
             }
-
         }
 
         $message = new Message();
@@ -732,7 +714,6 @@ class Broker {
         $hasReply = false;
 
         foreach ($instances as $instance) {
-
             if ($instance['oldstatus'] == $instance['newstatus'] && $eventInfo['organizerForceSend'] !== 'REPLY') {
                 // Skip
                 continue;
@@ -793,7 +774,6 @@ class Broker {
                 $attendee['CN'] = $message->senderName;
             }
             $hasReply = true;
-
         }
 
         if ($hasReply) {
@@ -802,7 +782,6 @@ class Broker {
         } else {
             return [];
         }
-
     }
 
     /**
@@ -828,8 +807,8 @@ class Broker {
      *
      * @return array
      */
-    protected function parseEventInfo(VCalendar $calendar = null) {
-
+    protected function parseEventInfo(VCalendar $calendar = null)
+    {
         $uid = null;
         $organizer = null;
         $organizerName = null;
@@ -849,7 +828,6 @@ class Broker {
         $exdate = [];
 
         foreach ($calendar->VEVENT as $vevent) {
-
             if (is_null($uid)) {
                 $uid = $vevent->UID->getValue();
             } else {
@@ -903,7 +881,6 @@ class Broker {
             }
             if (isset($vevent->ATTENDEE)) {
                 foreach ($vevent->ATTENDEE as $attendee) {
-
                     if ($this->scheduleAgentServerRules &&
                         isset($attendee['SCHEDULE-AGENT']) &&
                         strtoupper($attendee['SCHEDULE-AGENT']->getValue()) === 'CLIENT'
@@ -940,10 +917,8 @@ class Broker {
                             'forceSend' => $forceSend,
                         ];
                     }
-
                 }
                 $instances[$recurId] = $vevent;
-
             }
 
             foreach ($this->significantChangeProperties as $prop) {
@@ -953,19 +928,14 @@ class Broker {
                     $significantChangeHash .= $prop . ':';
 
                     if ($prop === 'EXDATE') {
-
                         $significantChangeHash .= implode(',', $exdate) . ';';
-
                     } else {
-
                         foreach ($propertyValues as $val) {
                             $significantChangeHash .= $val->getValue() . ';';
                         }
-
                     }
                 }
             }
-
         }
         $significantChangeHash = md5($significantChangeHash);
 
@@ -983,7 +953,5 @@ class Broker {
             'significantChangeHash',
             'status'
         );
-
     }
-
 }

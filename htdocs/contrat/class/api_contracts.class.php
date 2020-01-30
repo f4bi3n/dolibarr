@@ -33,7 +33,7 @@ class Contracts extends DolibarrApi
     /**
      * @var array   $FIELDS     Mandatory fields, checked when create and update object
      */
-    static $FIELDS = array(
+    public static $FIELDS = array(
         'socid',
         'date_contrat',
         'commercial_signature_id',
@@ -67,16 +67,16 @@ class Contracts extends DolibarrApi
      */
     public function get($id)
     {
-        if(! DolibarrApiAccess::$user->rights->contrat->lire) {
+        if (! DolibarrApiAccess::$user->rights->contrat->lire) {
             throw new RestException(401);
         }
 
         $result = $this->contract->fetch($id);
-        if( ! $result ) {
+        if (! $result) {
             throw new RestException(404, 'Contract not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('contrat', $this->contract->id)) {
+        if (! DolibarrApi::_checkAccessToResource('contrat', $this->contract->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
@@ -112,28 +112,37 @@ class Contracts extends DolibarrApi
 
         // If the internal user must only see his customers, force searching by him
         $search_sale = 0;
-        if (! DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) $search_sale = DolibarrApiAccess::$user->id;
+        if (! DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) {
+            $search_sale = DolibarrApiAccess::$user->id;
+        }
 
         $sql = "SELECT t.rowid";
-        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
+        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
+            $sql .= ", sc.fk_soc, sc.fk_user";
+        } // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
         $sql.= " FROM ".MAIN_DB_PREFIX."contrat as t";
 
-        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
+        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
+            $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        } // We need this table joined to the select in order to filter by sale
 
         $sql.= ' WHERE t.entity IN ('.getEntity('contrat').')';
-        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql.= " AND t.fk_soc = sc.fk_soc";
-        if ($socids) $sql.= " AND t.fk_soc IN (".$socids.")";
-        if ($search_sale > 0) $sql.= " AND t.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
+        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
+            $sql.= " AND t.fk_soc = sc.fk_soc";
+        }
+        if ($socids) {
+            $sql.= " AND t.fk_soc IN (".$socids.")";
+        }
+        if ($search_sale > 0) {
+            $sql.= " AND t.rowid = sc.fk_soc";
+        }		// Join for the needed table to filter by sale
         // Insert sale filter
-        if ($search_sale > 0)
-        {
+        if ($search_sale > 0) {
             $sql .= " AND sc.fk_user = ".$search_sale;
         }
         // Add sql filters
-        if ($sqlfilters)
-        {
-            if (! DolibarrApi::_checkFilters($sqlfilters))
-            {
+        if ($sqlfilters) {
+            if (! DolibarrApi::_checkFilters($sqlfilters)) {
                 throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
             }
             $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
@@ -141,9 +150,8 @@ class Contracts extends DolibarrApi
         }
 
         $sql.= $db->order($sortfield, $sortorder);
-        if ($limit)	{
-            if ($page < 0)
-            {
+        if ($limit) {
+            if ($page < 0) {
                 $page = 0;
             }
             $offset = $limit * $page;
@@ -154,25 +162,22 @@ class Contracts extends DolibarrApi
         dol_syslog("API Rest request");
         $result = $db->query($sql);
 
-        if ($result)
-        {
+        if ($result) {
             $num = $db->num_rows($result);
             $min = min($num, ($limit <= 0 ? $num : $limit));
             $i=0;
-            while ($i < $min)
-            {
+            while ($i < $min) {
                 $obj = $db->fetch_object($result);
                 $contrat_static = new Contrat($db);
-                if($contrat_static->fetch($obj->rowid)) {
+                if ($contrat_static->fetch($obj->rowid)) {
                     $obj_ret[] = $this->_cleanObjectDatas($contrat_static);
                 }
                 $i++;
             }
-        }
-        else {
+        } else {
             throw new RestException(503, 'Error when retrieve contrat list : '.$db->lasterror());
         }
-        if( ! count($obj_ret)) {
+        if (! count($obj_ret)) {
             throw new RestException(404, 'No contract found');
         }
         return $obj_ret;
@@ -186,13 +191,13 @@ class Contracts extends DolibarrApi
      */
     public function post($request_data = null)
     {
-        if(! DolibarrApiAccess::$user->rights->contrat->creer) {
+        if (! DolibarrApiAccess::$user->rights->contrat->creer) {
             throw new RestException(401, "Insufficient rights");
         }
         // Check mandatory fields
         $result = $this->_validate($request_data);
 
-        foreach($request_data as $field => $value) {
+        foreach ($request_data as $field => $value) {
             $this->contract->$field = $value;
         }
         /*if (isset($request_data["lines"])) {
@@ -225,11 +230,11 @@ class Contracts extends DolibarrApi
         }
 
         $result = $this->contract->fetch($id);
-        if( ! $result ) {
+        if (! $result) {
             throw new RestException(404, 'Contract not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('contrat', $this->contract->id)) {
+        if (! DolibarrApi::_checkAccessToResource('contrat', $this->contract->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
         $this->contract->getLinesArray();
@@ -252,16 +257,16 @@ class Contracts extends DolibarrApi
      */
     public function postLine($id, $request_data = null)
     {
-        if(! DolibarrApiAccess::$user->rights->contrat->creer) {
+        if (! DolibarrApiAccess::$user->rights->contrat->creer) {
             throw new RestException(401);
         }
 
         $result = $this->contract->fetch($id);
-        if( ! $result ) {
+        if (! $result) {
             throw new RestException(404, 'Contract not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('contrat', $this->contract->id)) {
+        if (! DolibarrApi::_checkAccessToResource('contrat', $this->contract->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
         $request_data = (object) $request_data;
@@ -305,16 +310,16 @@ class Contracts extends DolibarrApi
      */
     public function putLine($id, $lineid, $request_data = null)
     {
-        if(! DolibarrApiAccess::$user->rights->contrat->creer) {
+        if (! DolibarrApiAccess::$user->rights->contrat->creer) {
             throw new RestException(401);
         }
 
         $result = $this->contract->fetch($id);
-        if( ! $result ) {
+        if (! $result) {
             throw new RestException(404, 'Contrat not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('contrat', $this->contract->id)) {
+        if (! DolibarrApi::_checkAccessToResource('contrat', $this->contract->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
@@ -365,7 +370,7 @@ class Contracts extends DolibarrApi
      */
     public function activateLine($id, $lineid, $datestart, $dateend = null, $comment = null)
     {
-        if(! DolibarrApiAccess::$user->rights->contrat->creer) {
+        if (! DolibarrApiAccess::$user->rights->contrat->creer) {
             throw new RestException(401);
         }
 
@@ -374,7 +379,7 @@ class Contracts extends DolibarrApi
             throw new RestException(404, 'Contrat not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('contrat', $this->contract->id)) {
+        if (! DolibarrApi::_checkAccessToResource('contrat', $this->contract->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
@@ -412,7 +417,7 @@ class Contracts extends DolibarrApi
             throw new RestException(404, 'Contrat not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('contrat', $this->contract->id)) {
+        if (! DolibarrApi::_checkAccessToResource('contrat', $this->contract->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
@@ -462,10 +467,8 @@ class Contracts extends DolibarrApi
         $updateRes = $this->contract->deleteline($lineid, DolibarrApiAccess::$user);
         if ($updateRes > 0) {
             return $this->get($id);
-        }
-        else
-        {
-              throw new RestException(405, $this->contract->error);
+        } else {
+            throw new RestException(405, $this->contract->error);
         }
     }
 
@@ -491,17 +494,16 @@ class Contracts extends DolibarrApi
         if (! DolibarrApi::_checkAccessToResource('contrat', $this->contract->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
-        foreach($request_data as $field => $value) {
-            if ($field == 'id') continue;
+        foreach ($request_data as $field => $value) {
+            if ($field == 'id') {
+                continue;
+            }
             $this->contract->$field = $value;
         }
 
-        if ($this->contract->update(DolibarrApiAccess::$user) > 0)
-        {
+        if ($this->contract->update(DolibarrApiAccess::$user) > 0) {
             return $this->get($id);
-        }
-        else
-        {
+        } else {
             throw new RestException(500, $this->contract->error);
         }
     }
@@ -671,8 +673,9 @@ class Contracts extends DolibarrApi
     {
         $contrat = array();
         foreach (Contracts::$FIELDS as $field) {
-            if (!isset($data[$field]))
+            if (!isset($data[$field])) {
                 throw new RestException(400, "$field field missing");
+            }
             $contrat[$field] = $data[$field];
         }
         return $contrat;

@@ -7,10 +7,10 @@ use Sabre\DAV\Browser\HtmlOutputHelper;
 use Sabre\HTTP;
 use Sabre\Xml\Reader;
 
-class CurrentUserPrivilegeSetTest extends \PHPUnit_Framework_TestCase {
-
-    function testSerialize() {
-
+class CurrentUserPrivilegeSetTest extends \PHPUnit_Framework_TestCase
+{
+    public function testSerialize()
+    {
         $privileges = [
             '{DAV:}read',
             '{DAV:}write',
@@ -31,11 +31,10 @@ XML;
 
 
         $this->assertXmlStringEqualsXmlString($expected, $xml);
-
     }
 
-    function testUnserialize() {
-
+    public function testUnserialize()
+    {
         $source = '<?xml version="1.0"?>
 <d:root xmlns:d="DAV:">
     <d:privilege>
@@ -52,21 +51,19 @@ XML;
         $this->assertTrue($result->has('{DAV:}read'));
         $this->assertTrue($result->has('{DAV:}write-properties'));
         $this->assertFalse($result->has('{DAV:}bind'));
-
     }
 
-    function parse($xml) {
-
+    public function parse($xml)
+    {
         $reader = new Reader();
         $reader->elementMap['{DAV:}root'] = 'Sabre\\DAVACL\\Xml\\Property\\CurrentUserPrivilegeSet';
         $reader->xml($xml);
         $result = $reader->parse();
         return $result['value'];
-
     }
 
-    function testToHtml() {
-
+    public function testToHtml()
+    {
         $privileges = ['{DAV:}read', '{DAV:}write'];
 
         $prop = new CurrentUserPrivilegeSet($privileges);
@@ -80,7 +77,5 @@ XML;
             '<span title="{DAV:}write">d:write</span>';
 
         $this->assertEquals($expected, $prop->toHtml($html));
-
     }
-
 }

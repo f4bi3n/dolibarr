@@ -21,7 +21,8 @@ use Sabre\Xml\XmlDeserializable;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class InviteReply implements XmlDeserializable {
+class InviteReply implements XmlDeserializable
+{
 
     /**
      * The sharee calendar user address.
@@ -69,14 +70,13 @@ class InviteReply implements XmlDeserializable {
      * @param string $summary
      * @param int $status
      */
-    function __construct($href, $calendarUri, $inReplyTo, $summary, $status) {
-
+    public function __construct($href, $calendarUri, $inReplyTo, $summary, $status)
+    {
         $this->href = $href;
         $this->calendarUri = $calendarUri;
         $this->inReplyTo = $inReplyTo;
         $this->summary = $summary;
         $this->status = $status;
-
     }
 
     /**
@@ -100,8 +100,8 @@ class InviteReply implements XmlDeserializable {
      * @param Reader $reader
      * @return mixed
      */
-    static function xmlDeserialize(Reader $reader) {
-
+    public static function xmlDeserialize(Reader $reader)
+    {
         $elems = KeyValue::xmlDeserialize($reader);
 
         $href = null;
@@ -111,40 +111,36 @@ class InviteReply implements XmlDeserializable {
         $status = null;
 
         foreach ($elems as $name => $value) {
-
             switch ($name) {
 
-                case '{' . Plugin::NS_CALENDARSERVER . '}hosturl' :
+                case '{' . Plugin::NS_CALENDARSERVER . '}hosturl':
                     foreach ($value as $bla) {
                         if ($bla['name'] === '{DAV:}href') {
                             $calendarUri = $bla['value'];
                         }
                     }
                     break;
-                case '{' . Plugin::NS_CALENDARSERVER . '}invite-accepted' :
+                case '{' . Plugin::NS_CALENDARSERVER . '}invite-accepted':
                     $status = DAV\Sharing\Plugin::INVITE_ACCEPTED;
                     break;
-                case '{' . Plugin::NS_CALENDARSERVER . '}invite-declined' :
+                case '{' . Plugin::NS_CALENDARSERVER . '}invite-declined':
                     $status = DAV\Sharing\Plugin::INVITE_DECLINED;
                     break;
-                case '{' . Plugin::NS_CALENDARSERVER . '}in-reply-to' :
+                case '{' . Plugin::NS_CALENDARSERVER . '}in-reply-to':
                     $inReplyTo = $value;
                     break;
-                case '{' . Plugin::NS_CALENDARSERVER . '}summary' :
+                case '{' . Plugin::NS_CALENDARSERVER . '}summary':
                     $summary = $value;
                     break;
-                case '{DAV:}href' :
+                case '{DAV:}href':
                     $href = $value;
                     break;
             }
-
         }
         if (is_null($calendarUri)) {
             throw new BadRequest('The {http://calendarserver.org/ns/}hosturl/{DAV:}href element must exist');
         }
 
         return new self($href, $calendarUri, $inReplyTo, $summary, $status);
-
     }
-
 }

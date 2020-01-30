@@ -25,6 +25,4 @@ interface iFilter
      * @return boolean true when api access is allowed false otherwise
      */
     public function __isAllowed();
-
 }
-

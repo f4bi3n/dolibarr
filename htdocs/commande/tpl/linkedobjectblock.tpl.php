@@ -19,8 +19,8 @@
 
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
-	print "Error, template page can't be called as URL";
-	exit;
+    print "Error, template page can't be called as URL";
+    exit;
 }
 
 print "<!-- BEGIN PHP TEMPLATE -->\n";
@@ -38,12 +38,13 @@ $linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date', 'desc', 0, 0, 1)
 
 $total = 0;
 $ilink = 0;
-foreach ($linkedObjectBlock as $key => $objectlink)
-{
+foreach ($linkedObjectBlock as $key => $objectlink) {
     $ilink++;
 
     $trclass = 'oddeven';
-    if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass .= ' liste_sub_total';
+    if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) {
+        $trclass .= ' liste_sub_total';
+    }
     echo '<tr class="'.$trclass.'" >';
     echo '<td class="linkedcol-element" >'.$langs->trans("CustomerOrder");
     if (!empty($showImportButton) && $conf->global->MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES) {

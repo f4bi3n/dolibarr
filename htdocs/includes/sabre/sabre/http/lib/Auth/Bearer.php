@@ -15,7 +15,8 @@ namespace Sabre\HTTP\Auth;
  * @author François Kooman (fkooman@tuxed.net)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Bearer extends AbstractAuth {
+class Bearer extends AbstractAuth
+{
 
     /**
      * This method returns a string with an access token.
@@ -24,8 +25,8 @@ class Bearer extends AbstractAuth {
      *
      * @return null|string
      */
-    function getToken() {
-
+    public function getToken()
+    {
         $auth = $this->request->getHeader('Authorization');
 
         if (!$auth) {
@@ -37,7 +38,6 @@ class Bearer extends AbstractAuth {
         }
 
         return substr($auth, 7);
-
     }
 
     /**
@@ -46,11 +46,9 @@ class Bearer extends AbstractAuth {
      *
      * @return void
      */
-    function requireLogin() {
-
+    public function requireLogin()
+    {
         $this->response->addHeader('WWW-Authenticate', 'Bearer realm="' . $this->realm . '"');
         $this->response->setStatus(401);
-
     }
-
 }

@@ -14,7 +14,8 @@ use Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface IPrincipalCollection extends DAV\ICollection {
+interface IPrincipalCollection extends DAV\ICollection
+{
 
     /**
      * This method is used to search for principals matching a set of
@@ -39,7 +40,7 @@ interface IPrincipalCollection extends DAV\ICollection {
      * @param string $test
      * @return array
      */
-    function searchPrincipals(array $searchProperties, $test = 'allof');
+    public function searchPrincipals(array $searchProperties, $test = 'allof');
 
     /**
      * Finds a principal by its URI.
@@ -57,6 +58,5 @@ interface IPrincipalCollection extends DAV\ICollection {
      * @param string $uri
      * @return string
      */
-    function findByUri($uri);
-
+    public function findByUri($uri);
 }

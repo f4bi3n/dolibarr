@@ -8,13 +8,13 @@ use Sabre\HTTP;
 
 require_once 'Sabre/HTTP/ResponseMock.php';
 
-class ValidateVCardTest extends \PHPUnit_Framework_TestCase {
-
+class ValidateVCardTest extends \PHPUnit_Framework_TestCase
+{
     protected $server;
     protected $cardBackend;
 
-    function setUp() {
-
+    public function setUp()
+    {
         $addressbooks = [
             [
                 'id'           => 'addressbook1',
@@ -39,16 +39,14 @@ class ValidateVCardTest extends \PHPUnit_Framework_TestCase {
 
         $response = new HTTP\ResponseMock();
         $this->server->httpResponse = $response;
-
     }
 
-    function request(HTTP\Request $request, $expectedStatus = null) {
-
+    public function request(HTTP\Request $request, $expectedStatus = null)
+    {
         $this->server->httpRequest = $request;
         $this->server->exec();
 
         if ($expectedStatus) {
-
             $realStatus = $this->server->httpResponse->getStatus();
 
             $msg = '';
@@ -63,11 +61,10 @@ class ValidateVCardTest extends \PHPUnit_Framework_TestCase {
         }
 
         return $this->server->httpResponse;
-
     }
 
-    function testCreateFile() {
-
+    public function testCreateFile()
+    {
         $request = HTTP\Sapi::createFromServerArray([
             'REQUEST_METHOD' => 'PUT',
             'REQUEST_URI'    => '/addressbooks/admin/addressbook1/blabla.vcf',
@@ -76,11 +73,10 @@ class ValidateVCardTest extends \PHPUnit_Framework_TestCase {
         $response = $this->request($request);
 
         $this->assertEquals(415, $response->status);
-
     }
 
-    function testCreateFileValid() {
-
+    public function testCreateFileValid()
+    {
         $request = new HTTP\Request(
             'PUT',
             '/addressbooks/admin/addressbook1/blabla.vcf'
@@ -117,7 +113,6 @@ VCF;
         ];
 
         $this->assertEquals($expected, $this->cardBackend->getCard('addressbook1', 'blabla.vcf'));
-
     }
 
     /**
@@ -126,8 +121,8 @@ VCF;
      *
      * @depends testCreateFileValid
      */
-    function testCreateVCardAutoFix() {
-
+    public function testCreateVCardAutoFix()
+    {
         $request = new HTTP\Request(
             'PUT',
             '/addressbooks/admin/addressbook1/blabla.vcf'
@@ -175,7 +170,6 @@ VCF;
         ];
 
         $this->assertEquals($expected, $this->cardBackend->getCard('addressbook1', 'blabla.vcf'));
-
     }
 
     /**
@@ -187,8 +181,8 @@ VCF;
      *
      * @depends testCreateFileValid
      */
-    function testCreateVCardStrictFail() {
-
+    public function testCreateVCardStrictFail()
+    {
         $request = new HTTP\Request(
             'PUT',
             '/addressbooks/admin/addressbook1/blabla.vcf',
@@ -209,11 +203,10 @@ VCF;
 
         $request->setBody($vcard);
         $this->request($request, 415);
-
     }
 
-    function testCreateFileNoUID() {
-
+    public function testCreateFileNoUID()
+    {
         $request = new HTTP\Request(
             'PUT',
             '/addressbooks/admin/addressbook1/blabla.vcf'
@@ -236,8 +229,8 @@ VCF;
         );
     }
 
-    function testCreateFileJson() {
-
+    public function testCreateFileJson()
+    {
         $request = new HTTP\Request(
             'PUT',
             '/addressbooks/admin/addressbook1/blabla.vcf'
@@ -250,11 +243,10 @@ VCF;
 
         $foo = $this->cardBackend->getCard('addressbook1', 'blabla.vcf');
         $this->assertEquals("BEGIN:VCARD\r\nVERSION:4.0\r\nUID:foo\r\nFN:FirstName LastName\r\nEND:VCARD\r\n", $foo['carddata']);
-
     }
 
-    function testCreateFileVCalendar() {
-
+    public function testCreateFileVCalendar()
+    {
         $request = HTTP\Sapi::createFromServerArray([
             'REQUEST_METHOD' => 'PUT',
             'REQUEST_URI'    => '/addressbooks/admin/addressbook1/blabla.vcf',
@@ -264,11 +256,10 @@ VCF;
         $response = $this->request($request);
 
         $this->assertEquals(415, $response->status, 'Incorrect status returned! Full response body: ' . $response->body);
-
     }
 
-    function testUpdateFile() {
-
+    public function testUpdateFile()
+    {
         $this->cardBackend->createCard('addressbook1', 'blabla.vcf', 'foo');
         $request = new HTTP\Request(
             'PUT',
@@ -276,11 +267,10 @@ VCF;
         );
 
         $response = $this->request($request, 415);
-
     }
 
-    function testUpdateFileParsableBody() {
-
+    public function testUpdateFileParsableBody()
+    {
         $this->cardBackend->createCard('addressbook1', 'blabla.vcf', 'foo');
         $request = new HTTP\Request(
             'PUT',
@@ -300,6 +290,5 @@ VCF;
         ];
 
         $this->assertEquals($expected, $this->cardBackend->getCard('addressbook1', 'blabla.vcf'));
-
     }
 }

@@ -33,31 +33,31 @@
  */
 function prelevement_prepare_head(BonPrelevement $object)
 {
-	global $langs, $conf, $user;
-	$langs->load("withdrawals");
+    global $langs, $conf, $user;
+    $langs->load("withdrawals");
 
-	$h = 0;
-	$head = array();
+    $h = 0;
+    $head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/card.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Card");
-	$head[$h][2] = 'prelevement';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/card.php?id='.$object->id;
+    $head[$h][1] = $langs->trans("Card");
+    $head[$h][2] = 'prelevement';
+    $h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/factures.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Bills");
-	$head[$h][2] = 'invoices';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/factures.php?id='.$object->id;
+    $head[$h][1] = $langs->trans("Bills");
+    $head[$h][2] = 'invoices';
+    $h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche-rejet.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Rejects");
-	$head[$h][2] = 'rejects';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche-rejet.php?id='.$object->id;
+    $head[$h][1] = $langs->trans("Rejects");
+    $head[$h][2] = 'rejects';
+    $h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche-stat.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Statistics");
-	$head[$h][2] = 'statistics';
-	$h++;
+    $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche-stat.php?id='.$object->id;
+    $head[$h][1] = $langs->trans("Statistics");
+    $head[$h][2] = 'statistics';
+    $h++;
 
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
@@ -77,9 +77,15 @@ function prelevement_prepare_head(BonPrelevement $object)
  */
 function prelevement_check_config()
 {
-	global $conf;
-	if(empty($conf->global->PRELEVEMENT_ID_BANKACCOUNT)) return -1;
-	if(empty($conf->global->PRELEVEMENT_ICS)) return -1;
-    if(empty($conf->global->PRELEVEMENT_USER)) return -1;
-	return 0;
+    global $conf;
+    if (empty($conf->global->PRELEVEMENT_ID_BANKACCOUNT)) {
+        return -1;
+    }
+    if (empty($conf->global->PRELEVEMENT_ICS)) {
+        return -1;
+    }
+    if (empty($conf->global->PRELEVEMENT_USER)) {
+        return -1;
+    }
+    return 0;
 }

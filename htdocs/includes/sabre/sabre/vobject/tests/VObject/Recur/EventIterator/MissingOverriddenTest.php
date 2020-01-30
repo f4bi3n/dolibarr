@@ -5,12 +5,12 @@ namespace Sabre\VObject\Recur\EventIterator;
 use DateTime;
 use Sabre\VObject\Reader;
 
-class MissingOverriddenTest extends \PHPUnit_Framework_TestCase {
-
+class MissingOverriddenTest extends \PHPUnit_Framework_TestCase
+{
     use \Sabre\VObject\PHPUnitAssertions;
 
-    function testExpand() {
-
+    public function testExpand()
+    {
         $input = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -56,7 +56,5 @@ END:VEVENT
 END:VCALENDAR
 ICS;
         $this->assertVObjectEqualsVObject($output, $vcal);
-    
     }
-
 }

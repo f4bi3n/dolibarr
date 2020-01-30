@@ -184,7 +184,8 @@ class Swift_CharacterStream_ArrayCharacterStream implements Swift_CharacterStrea
     {
         if (!isset($this->charReader)) {
             $this->charReader = $this->charReaderFactory->getReaderFor(
-                $this->charset);
+                $this->charset
+            );
         }
 
         $startLength = $this->charReader->getInitialByteSize();
@@ -219,7 +220,9 @@ class Swift_CharacterStream_ArrayCharacterStream implements Swift_CharacterStrea
                     $bytes[] = $buffer[$buf_pos++];
                 }
                 $need = $this->charReader->validateByteSequence(
-                    $bytes, $size);
+                    $bytes,
+                    $size
+                );
                 if ($need > 0) {
                     if ($buf_len - $buf_pos < $need) {
                         $new = $this->reloadBuffer($fp, $need);

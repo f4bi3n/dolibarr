@@ -19,8 +19,8 @@ use Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Collection extends DAV\Collection {
-
+class Collection extends DAV\Collection
+{
     protected $name;
     protected $children;
     protected $parent;
@@ -33,8 +33,8 @@ class Collection extends DAV\Collection {
      * @param Collection $parent
      * @return void
      */
-    function __construct($name, array $children = [], Collection $parent = null) {
-
+    public function __construct($name, array $children = [], Collection $parent = null)
+    {
         $this->name = $name;
         foreach ($children as $key => $value) {
             if (is_string($value)) {
@@ -48,7 +48,6 @@ class Collection extends DAV\Collection {
             }
         }
         $this->parent = $parent;
-
     }
 
     /**
@@ -58,10 +57,9 @@ class Collection extends DAV\Collection {
      *
      * @return string
      */
-    function getName() {
-
+    public function getName()
+    {
         return $this->name;
-
     }
 
     /**
@@ -88,14 +86,13 @@ class Collection extends DAV\Collection {
      * @param resource|string $data Initial payload
      * @return null|string
      */
-    function createFile($name, $data = null) {
-
+    public function createFile($name, $data = null)
+    {
         if (is_resource($data)) {
             $data = stream_get_contents($data);
         }
         $this->children[] = new File($name, $data, $this);
         return '"' . md5($data) . '"';
-
     }
 
     /**
@@ -104,10 +101,9 @@ class Collection extends DAV\Collection {
      * @param string $name
      * @return void
      */
-    function createDirectory($name) {
-
+    public function createDirectory($name)
+    {
         $this->children[] = new self($name);
-
     }
 
     /**
@@ -115,10 +111,9 @@ class Collection extends DAV\Collection {
      *
      * @return \Sabre\DAV\INode[]
      */
-    function getChildren() {
-
+    public function getChildren()
+    {
         return $this->children;
-
     }
 
     /**
@@ -126,10 +121,9 @@ class Collection extends DAV\Collection {
      *
      * @param \Sabre\DAV\INode $node
      */
-    function addNode(\Sabre\DAV\INode $node) {
-
+    public function addNode(\Sabre\DAV\INode $node)
+    {
         $this->children[] = $node;
-
     }
 
     /**
@@ -138,17 +132,14 @@ class Collection extends DAV\Collection {
      * @param string $name
      * @return void
      */
-    function deleteChild($name) {
-
+    public function deleteChild($name)
+    {
         foreach ($this->children as $key => $value) {
-
             if ($value->getName() == $name) {
                 unset($this->children[$key]);
                 return;
             }
-
         }
-
     }
 
     /**
@@ -156,13 +147,11 @@ class Collection extends DAV\Collection {
      *
      * @return void
      */
-    function delete() {
-
+    public function delete()
+    {
         foreach ($this->getChildren() as $child) {
             $this->deleteChild($child->getName());
         }
         $this->parent->deleteChild($this->getName());
-
     }
-
 }

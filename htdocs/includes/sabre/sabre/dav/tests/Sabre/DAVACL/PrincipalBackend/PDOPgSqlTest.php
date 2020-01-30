@@ -2,8 +2,7 @@
 
 namespace Sabre\DAVACL\PrincipalBackend;
 
-class PDOPgSqlTest extends AbstractPDOTest {
-
+class PDOPgSqlTest extends AbstractPDOTest
+{
     public $driver = 'pgsql';
-
 }

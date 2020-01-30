@@ -5,10 +5,10 @@ namespace Sabre\DAV\Xml\Property;
 use Sabre\DAV\Locks\LockInfo;
 use Sabre\DAV\Xml\XmlTest;
 
-class LockDiscoveryTest extends XmlTest {
-
-    function testSerialize() {
-
+class LockDiscoveryTest extends XmlTest
+{
+    public function testSerialize()
+    {
         $lock = new LockInfo();
         $lock->owner = 'hello';
         $lock->token = 'blabla';
@@ -23,7 +23,7 @@ class LockDiscoveryTest extends XmlTest {
         $xml = $this->write(['{DAV:}root' => $prop]);
 
         $this->assertXmlStringEqualsXmlString(
-'<?xml version="1.0"?>
+            '<?xml version="1.0"?>
 <d:root xmlns:d="DAV:">
   <d:activelock>
   <d:lockscope><d:exclusive /></d:lockscope>
@@ -41,12 +41,13 @@ class LockDiscoveryTest extends XmlTest {
   
 </d:activelock>
 </d:root>
-', $xml);
-
+',
+            $xml
+        );
     }
     
-    function testSerializeShared() {
-
+    public function testSerializeShared()
+    {
         $lock = new LockInfo();
         $lock->owner = 'hello';
         $lock->token = 'blabla';
@@ -61,7 +62,7 @@ class LockDiscoveryTest extends XmlTest {
         $xml = $this->write(['{DAV:}root' => $prop]);
 
         $this->assertXmlStringEqualsXmlString(
-'<?xml version="1.0"?>
+            '<?xml version="1.0"?>
 <d:root xmlns:d="DAV:">
   <d:activelock>
   <d:lockscope><d:shared /></d:lockscope>
@@ -79,8 +80,8 @@ class LockDiscoveryTest extends XmlTest {
   
 </d:activelock>
 </d:root>
-', $xml);
-
+',
+            $xml
+        );
     }
-
 }

@@ -1,5 +1,6 @@
 <?php
 namespace Luracast\Restler;
+
 /**
  * Information gathered about the api user is kept here using static methods
  * and properties for other classes to make use of them.
@@ -30,8 +31,11 @@ class User implements iIdentifyUser
 
     public static function getUniqueIdentifier($includePlatform = false)
     {
-        if (!static::$initialized) static::init();
-        return static::$id ? : base64_encode('ip:' . ($includePlatform
+        if (!static::$initialized) {
+            static::init();
+        }
+        return static::$id ? : base64_encode('ip:' . (
+            $includePlatform
             ? static::$ip . '-' . static::$platform
             : static::$ip
         ));

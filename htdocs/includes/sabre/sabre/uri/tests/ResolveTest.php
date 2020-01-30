@@ -2,22 +2,22 @@
 
 namespace Sabre\Uri;
 
-class ResolveTest extends \PHPUnit_Framework_TestCase{
+class ResolveTest extends \PHPUnit_Framework_TestCase
+{
 
     /**
      * @dataProvider resolveData
      */
-    function testResolve($base, $update, $expected) {
-
+    public function testResolve($base, $update, $expected)
+    {
         $this->assertEquals(
             $expected,
             resolve($base, $update)
         );
-
     }
 
-    function resolveData() {
-
+    public function resolveData()
+    {
         return [
             [
                 'http://example.org/foo/baz',
@@ -77,7 +77,5 @@ class ResolveTest extends \PHPUnit_Framework_TestCase{
             ],
 
         ];
-
     }
-
 }

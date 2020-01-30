@@ -21,7 +21,8 @@ use Sabre\Xml\XmlDeserializable;
  * @author Evert Pot (http://www.rooftopsolutions.nl/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class AddressData implements XmlDeserializable {
+class AddressData implements XmlDeserializable
+{
 
     /**
      * The deserialize method is called during xml parsing.
@@ -44,20 +45,18 @@ class AddressData implements XmlDeserializable {
      * @param Reader $reader
      * @return mixed
      */
-    static function xmlDeserialize(Reader $reader) {
-
+    public static function xmlDeserialize(Reader $reader)
+    {
         $result = [
             'contentType' => $reader->getAttribute('content-type') ?: 'text/vcard',
             'version'     => $reader->getAttribute('version') ?: '3.0',
         ];
 
         $elems = (array)$reader->parseInnerTree();
-        $result['addressDataProperties'] = array_map(function($element) {
+        $result['addressDataProperties'] = array_map(function ($element) {
             return $element['attributes']['name'];
         }, $elems);
 
         return $result;
-
     }
-
 }

@@ -6,10 +6,10 @@ use Sabre\DAV\Sharing\Plugin;
 use Sabre\DAV\Xml\Element\Sharee;
 use Sabre\DAV\Xml\XmlTest;
 
-class InviteTest extends XmlTest {
-
-    function testSerialize() {
-
+class InviteTest extends XmlTest
+{
+    public function testSerialize()
+    {
         $sharees = [
             new Sharee(),
             new Sharee(),
@@ -70,7 +70,5 @@ class InviteTest extends XmlTest {
 XML;
 
         $this->assertXmlStringEqualsXmlString($expected, $xml);
-
     }
-
 }

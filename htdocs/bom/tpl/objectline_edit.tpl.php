@@ -32,16 +32,17 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($object) || !is_object($object))
-{
-	print "Error, template page can't be called as URL";
-	exit;
+if (empty($object) || !is_object($object)) {
+    print "Error, template page can't be called as URL";
+    exit;
 }
 
 
 global $forceall;
 
-if (empty($forceall)) $forceall = 0;
+if (empty($forceall)) {
+    $forceall = 0;
+}
 
 
 // Define colspan for the button 'Add'
@@ -56,8 +57,8 @@ $coldisplay=0;
 print '<tr class="oddeven tredited">';
 // Adds a line numbering column
 if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
-	print '<td class="linecolnum center">'.($i+1).'</td>';
-	$coldisplay++;
+    print '<td class="linecolnum center">'.($i+1).'</td>';
+    $coldisplay++;
 }
 
 $coldisplay++;
@@ -67,21 +68,20 @@ $coldisplay++;
 
 	<input type="hidden" name="lineid" value="<?php echo $line->id; ?>">
 	<input type="hidden" id="product_type" name="type" value="<?php echo $line->product_type; ?>">
-	<input type="hidden" id="product_id" name="productid" value="<?php echo (!empty($line->fk_product) ? $line->fk_product : 0); ?>" />
+	<input type="hidden" id="product_id" name="productid" value="<?php echo(!empty($line->fk_product) ? $line->fk_product : 0); ?>" />
 	<input type="hidden" id="special_code" name="special_code" value="<?php echo $line->special_code; ?>">
 	<input type="hidden" id="fk_parent_line" name="fk_parent_line" value="<?php echo $line->fk_parent_line; ?>">
 
 <?php
 // Predefined product/service
 if ($line->fk_product > 0) {
-	$tmpproduct = new Product($object->db);
-	$tmpproduct->fetch($line->fk_product);
-	print $tmpproduct->getNomUrl(1);
+    $tmpproduct = new Product($object->db);
+    $tmpproduct->fetch($line->fk_product);
+    print $tmpproduct->getNomUrl(1);
 }
 
-if (is_object($hookmanager))
-{
-	$fk_parent_line = (GETPOST('fk_parent_line') ? GETPOST('fk_parent_line') : $line->fk_parent_line);
+if (is_object($hookmanager)) {
+    $fk_parent_line = (GETPOST('fk_parent_line') ? GETPOST('fk_parent_line') : $line->fk_parent_line);
     $parameters=array('line'=>$line,'fk_parent_line'=>$fk_parent_line,'var'=>$var,'dateSelector'=>$dateSelector,'seller'=>$seller,'buyer'=>$buyer);
     $reshook=$hookmanager->executeHooks('formEditProductOptions', $parameters, $this, $action);
 }
@@ -92,7 +92,7 @@ print '</td>';
 {
     $coldisplay++;
 ?>
-	<td class="right"><input id="fourn_ref" name="fourn_ref" class="flat minwidth75" value="<?php echo ($line->ref_supplier ? $line->ref_supplier : $line->ref_fourn); ?>"></td>
+    <td class="right"><input id="fourn_ref" name="fourn_ref" class="flat minwidth75" value="<?php echo ($line->ref_supplier ? $line->ref_supplier : $line->ref_fourn); ?>"></td>
 <?php
 */
 
@@ -100,20 +100,19 @@ $coldisplay++;
 
 print '<td class="nobottom linecolqty right">';
 if (($line->info_bits & 2) != 2) {
-	// I comment this because it shows info even when not required
-	// for example always visible on invoice but must be visible only if stock module on and stock decrease option is on invoice validation and status is not validated
-	// must also not be output for most entities (proposal, intervention, ...)
-	//if($line->qty > $line->stock) print img_picto($langs->trans("StockTooLow"),"warning", 'style="vertical-align: bottom;"')." ";
-	print '<input size="3" type="text" class="flat right" name="qty" id="qty" value="' . $line->qty . '">';
+    // I comment this because it shows info even when not required
+    // for example always visible on invoice but must be visible only if stock module on and stock decrease option is on invoice validation and status is not validated
+    // must also not be output for most entities (proposal, intervention, ...)
+    //if($line->qty > $line->stock) print img_picto($langs->trans("StockTooLow"),"warning", 'style="vertical-align: bottom;"')." ";
+    print '<input size="3" type="text" class="flat right" name="qty" id="qty" value="' . $line->qty . '">';
 }
 print '</td>';
 
-if ($conf->global->PRODUCT_USE_UNITS)
-{
+if ($conf->global->PRODUCT_USE_UNITS) {
     $coldisplay++;
-	print '<td class="nobottom linecoluseunit left">';
-	print $form->selectUnits($line->fk_unit, "units");
-	print '</td>';
+    print '<td class="nobottom linecoluseunit left">';
+    print $form->selectUnits($line->fk_unit, "units");
+    print '</td>';
 }
 
 $coldisplay++;
@@ -138,7 +137,7 @@ print '</td>';
 print '</tr>';
 
 if (is_object($objectline)) {
-	print $objectline->showOptionals($extrafields, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD) ? 0 : 1);
+    print $objectline->showOptionals($extrafields, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD) ? 0 : 1);
 }
 
 print "<!-- END PHP TEMPLATE objectline_edit.tpl.php -->\n";

@@ -49,8 +49,8 @@ $error = 0;
  */
 
 if (!$product->isProduct()) {
-	header('Location: '.dol_buildpath('/product/card.php?id='.$product->id, 2));
-	exit();
+    header('Location: '.dol_buildpath('/product/card.php?id='.$product->id, 2));
+    exit();
 }
 
 /**
@@ -66,72 +66,70 @@ $combinations = GETPOST('combinations', 'array');
 $price_var_percent = (bool) GETPOST('price_var_percent');
 $donotremove = true;
 
-if ($_POST)
-{
-	$donotremove = (bool) GETPOST('donotremove');
+if ($_POST) {
+    $donotremove = (bool) GETPOST('donotremove');
 
-	//We must check if all those given combinations actually exist
-	$sanitized_values = array();
+    //We must check if all those given combinations actually exist
+    $sanitized_values = array();
 
-	foreach ($combinations as $attr => $val) {
-		if ($prodattr->fetch($attr) > 0) {
-			foreach ($val as $valueid => $content) {
-				if ($prodattrval->fetch($valueid) > 0) {
-					$sanitized_values[$attr][$valueid] = $content;
-				}
-			}
-		}
-	}
+    foreach ($combinations as $attr => $val) {
+        if ($prodattr->fetch($attr) > 0) {
+            foreach ($val as $valueid => $content) {
+                if ($prodattrval->fetch($valueid) > 0) {
+                    $sanitized_values[$attr][$valueid] = $content;
+                }
+            }
+        }
+    }
 
-	if ($sanitized_values) {
-		require DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+    if ($sanitized_values) {
+        require DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-		$adapted_values = array();
+        $adapted_values = array();
 
-		//Adapt the array to the cartesian function
-		foreach ($sanitized_values as $attr => $val) {
-			$adapted_values[$attr] = array_keys($val);
-		}
+        //Adapt the array to the cartesian function
+        foreach ($sanitized_values as $attr => $val) {
+            $adapted_values[$attr] = array_keys($val);
+        }
 
-		$db->begin();
+        $db->begin();
 
-		$combination = new ProductCombination($db);
+        $combination = new ProductCombination($db);
 
-		$delete_prev_comb_res = 1;
+        $delete_prev_comb_res = 1;
 
-		if (!$donotremove) {
-			$delete_prev_comb_res = $combination->deleteByFkProductParent($user, $id);
-		}
+        if (!$donotremove) {
+            $delete_prev_comb_res = $combination->deleteByFkProductParent($user, $id);
+        }
 
-		//Current combinations will be deleted
-		if ($delete_prev_comb_res > 0) {
-			$res = 1;
+        //Current combinations will be deleted
+        if ($delete_prev_comb_res > 0) {
+            $res = 1;
 
-			$cartesianarray = cartesianArray($adapted_values);
-			foreach ($cartesianarray as $currcomb)
-			{
-				$res = $combination->createProductCombination($user, $product, $currcomb, $sanitized_values, $price_var_percent);
-				if ($res < 0) {
-				    $error++;
-				    setEventMessages($combination->error, $combination->errors, 'errors');
-				    break;
-				}
-			}
+            $cartesianarray = cartesianArray($adapted_values);
+            foreach ($cartesianarray as $currcomb) {
+                $res = $combination->createProductCombination($user, $product, $currcomb, $sanitized_values, $price_var_percent);
+                if ($res < 0) {
+                    $error++;
+                    setEventMessages($combination->error, $combination->errors, 'errors');
+                    break;
+                }
+            }
 
-			if ($res > 0) {
-				$db->commit();
-				setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
-				header('Location: '.dol_buildpath('/variants/combinations.php?id='.$id, 2));
-				exit;
-			}
-		} else {
-			setEventMessages($langs->trans('ErrorDeletingGeneratedProducts'), null, 'errors');
-		}
+            if ($res > 0) {
+                $db->commit();
+                setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+                header('Location: '.dol_buildpath('/variants/combinations.php?id='.$id, 2));
+                exit;
+            }
+        } else {
+            setEventMessages($langs->trans('ErrorDeletingGeneratedProducts'), null, 'errors');
+        }
 
-		$db->rollback();
-	} else {
-		setEventMessages($langs->trans('ErrorFieldsRequired'), null, 'errors');
-	}
+        $db->rollback();
+    } else {
+        setEventMessages($langs->trans('ErrorFieldsRequired'), null, 'errors');
+    }
 }
 
 
@@ -141,40 +139,40 @@ if ($_POST)
  */
 
 if (! empty($id) || ! empty($ref)) {
-	$object = new Product($db);
-	$result = $object->fetch($id, $ref);
+    $object = new Product($db);
+    $result = $object->fetch($id, $ref);
 
-	llxHeader("", "", $langs->trans("CardProduct".$object->type));
+    llxHeader("", "", $langs->trans("CardProduct".$object->type));
 
-	if ($result > 0)
-	{
-		$showbarcode=empty($conf->barcode->enabled)?0:1;
-		if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) $showbarcode=0;
+    if ($result > 0) {
+        $showbarcode=empty($conf->barcode->enabled)?0:1;
+        if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) {
+            $showbarcode=0;
+        }
 
-		$head=product_prepare_head($object);
-		$titre=$langs->trans("CardProduct".$object->type);
-		$picto=($object->type== Product::TYPE_SERVICE?'service':'product');
-		dol_fiche_head($head, 'combinations', $titre, 0, $picto);
+        $head=product_prepare_head($object);
+        $titre=$langs->trans("CardProduct".$object->type);
+        $picto=($object->type== Product::TYPE_SERVICE?'service':'product');
+        dol_fiche_head($head, 'combinations', $titre, 0, $picto);
 
-		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
-		$object->next_prev_filter=" fk_product_type = ".$object->type;
+        $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
+        $object->next_prev_filter=" fk_product_type = ".$object->type;
 
-		dol_banner_tab($object, 'ref', $linkback, ($user->socid?0:1), 'ref', '', '', '', 0, '', '', 1);
+        dol_banner_tab($object, 'ref', $linkback, ($user->socid?0:1), 'ref', '', '', '', 0, '', '', 1);
 
-		dol_fiche_end();
-	}
+        dol_fiche_end();
+    }
 
-	print load_fiche_titre($langs->trans('ProductCombinationGenerator'));
+    print load_fiche_titre($langs->trans('ProductCombinationGenerator'));
 
-	$dictionary_attr = array();
+    $dictionary_attr = array();
 
-	foreach ($prodattr->fetchAll() as $attr) {
-		$dictionary_attr[$attr->id] = $attr;
-		foreach ($prodattrval->fetchAllByProductAttribute($attr->id) as $attrval) {
-			$dictionary_attr[$attr->id]->values[$attrval->id] = $attrval;
-		}
-	}
-	?>
+    foreach ($prodattr->fetchAll() as $attr) {
+        $dictionary_attr[$attr->id] = $attr;
+        foreach ($prodattrval->fetchAllByProductAttribute($attr->id) as $attrval) {
+            $dictionary_attr[$attr->id]->values[$attrval->id] = $attrval;
+        }
+    } ?>
 
 	<script>
 
@@ -358,10 +356,9 @@ if (! empty($id) || ! empty($ref)) {
 				<optgroup label="<?php echo $attr->label ?>">
 					<?php foreach ($attr->values as $attrval): ?>
 						<option value="<?php echo $attr->id.':'.$attrval->id ?>"<?php
-						if (isset($combinations[$attr->id][$attrval->id])) {
-							echo ' selected';
-						}
-						?>><?php echo dol_htmlentities($attrval->value) ?></option>
+                        if (isset($combinations[$attr->id][$attrval->id])) {
+                            echo ' selected';
+                        } ?>><?php echo dol_htmlentities($attrval->value) ?></option>
 					<?php endforeach ?>
 				</optgroup>
 				<?php endforeach ?>

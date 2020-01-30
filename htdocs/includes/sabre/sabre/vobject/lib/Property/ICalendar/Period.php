@@ -17,7 +17,8 @@ use Sabre\Xml;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Period extends Property {
+class Period extends Property
+{
 
     /**
      * In case this is a multi-value property. This string will be used as a
@@ -37,10 +38,9 @@ class Period extends Property {
      *
      * @return void
      */
-    function setRawMimeDirValue($val) {
-
+    public function setRawMimeDirValue($val)
+    {
         $this->setValue(explode($this->delimiter, $val));
-
     }
 
     /**
@@ -48,10 +48,9 @@ class Period extends Property {
      *
      * @return string
      */
-    function getRawMimeDirValue() {
-
+    public function getRawMimeDirValue()
+    {
         return implode($this->delimiter, $this->getParts());
-
     }
 
     /**
@@ -62,10 +61,9 @@ class Period extends Property {
      *
      * @return string
      */
-    function getValueType() {
-
+    public function getValueType()
+    {
         return 'PERIOD';
-
     }
 
     /**
@@ -77,18 +75,15 @@ class Period extends Property {
      *
      * @return void
      */
-    function setJsonValue(array $value) {
-
+    public function setJsonValue(array $value)
+    {
         $value = array_map(
-            function($item) {
-
+            function ($item) {
                 return strtr(implode('/', $item), [':' => '', '-' => '']);
-
             },
             $value
         );
         parent::setJsonValue($value);
-
     }
 
     /**
@@ -98,11 +93,10 @@ class Period extends Property {
      *
      * @return array
      */
-    function getJsonValue() {
-
+    public function getJsonValue()
+    {
         $return = [];
         foreach ($this->getParts() as $item) {
-
             list($start, $end) = explode('/', $item, 2);
 
             $start = DateTimeParser::parseDateTime($start);
@@ -120,11 +114,9 @@ class Period extends Property {
                     $end->format('Y-m-d\\TH:i:s'),
                 ];
             }
-
         }
 
         return $return;
-
     }
 
     /**
@@ -135,21 +127,18 @@ class Period extends Property {
      *
      * @return void
      */
-    protected function xmlSerializeValue(Xml\Writer $writer) {
-
+    protected function xmlSerializeValue(Xml\Writer $writer)
+    {
         $writer->startElement(strtolower($this->getValueType()));
         $value = $this->getJsonValue();
         $writer->writeElement('start', $value[0][0]);
 
         if ($value[0][1][0] === 'P') {
             $writer->writeElement('duration', $value[0][1]);
-        }
-        else {
+        } else {
             $writer->writeElement('end', $value[0][1]);
         }
 
         $writer->endElement();
-
     }
-
 }

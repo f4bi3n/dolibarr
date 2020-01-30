@@ -8,12 +8,12 @@ use Sabre\HTTP;
 require_once 'Sabre/DAVACL/MockACLNode.php';
 require_once 'Sabre/HTTP/ResponseMock.php';
 
-class PluginAdminTest extends \PHPUnit_Framework_TestCase {
-
+class PluginAdminTest extends \PHPUnit_Framework_TestCase
+{
     public $server;
 
-    function setUp() {
-
+    public function setUp()
+    {
         $principalBackend = new PrincipalBackend\Mock();
 
         $tree = [
@@ -27,8 +27,8 @@ class PluginAdminTest extends \PHPUnit_Framework_TestCase {
         $this->server->addPlugin($plugin);
     }
 
-    function testNoAdminAccess() {
-
+    public function testNoAdminAccess()
+    {
         $plugin = new Plugin();
         $this->server->addPlugin($plugin);
 
@@ -46,14 +46,13 @@ class PluginAdminTest extends \PHPUnit_Framework_TestCase {
         $this->server->exec();
 
         $this->assertEquals(403, $response->status);
-
     }
 
     /**
      * @depends testNoAdminAccess
      */
-    function testAdminAccess() {
-
+    public function testAdminAccess()
+    {
         $plugin = new Plugin();
         $plugin->adminPrincipals = [
             'principals/admin',
@@ -74,6 +73,5 @@ class PluginAdminTest extends \PHPUnit_Framework_TestCase {
         $this->server->exec();
 
         $this->assertEquals(200, $response->status);
-
     }
 }

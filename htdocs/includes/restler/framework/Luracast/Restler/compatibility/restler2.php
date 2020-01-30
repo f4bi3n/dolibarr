@@ -9,8 +9,8 @@ use Luracast\Restler\CommentParser;
 //changes in auto loading
 $classMap = array();
 //find lowercase php files representing a class/interface
-foreach (explode(PATH_SEPARATOR, get_include_path()) as $path)
-    foreach (new DirectoryIterator($path) as $fileInfo)
+foreach (explode(PATH_SEPARATOR, get_include_path()) as $path) {
+    foreach (new DirectoryIterator($path) as $fileInfo) {
         if ($fileInfo->isFile()
             && 'php' === $fileInfo->getExtension()
             && ctype_lower($fileInfo->getBasename('.php'))
@@ -20,8 +20,11 @@ foreach (explode(PATH_SEPARATOR, get_include_path()) as $path)
                 file_get_contents($fileInfo->getPathname()),
                 $matches
             )
-        )
+        ) {
             $classMap[$matches[2]] = $fileInfo->getPathname();
+        }
+    }
+}
 
 AutoLoader::seen($classMap);
 

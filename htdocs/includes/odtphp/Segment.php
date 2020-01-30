@@ -21,9 +21,9 @@ class Segment implements IteratorAggregate, Countable
     protected $name;
     protected $children = array();
     protected $vars = array();
-	protected $images = array();
-	protected $odf;
-	protected $file;
+    protected $images = array();
+    protected $odf;
+    protected $file;
 
     /**
      * Constructor
@@ -36,7 +36,7 @@ class Segment implements IteratorAggregate, Countable
     {
         $this->name = (string) $name;
         $this->xml = (string) $xml;
-		$this->odf = $odf;
+        $this->odf = $odf;
         $zipHandler = $this->odf->getConfig('ZIP_PROXY');
         $this->file = new $zipHandler($this->odf->getConfig('PATH_TO_TMP'));
         $this->_analyseChildren($this->xml);
@@ -88,10 +88,15 @@ class Segment implements IteratorAggregate, Countable
     {
         // To provide debug information on line number processed
         global $count;
-        if (empty($count)) $count=1;
-        else $count++;
+        if (empty($count)) {
+            $count=1;
+        } else {
+            $count++;
+        }
 
-        if (empty($this->savxml)) $this->savxml = $this->xml;       // Sav content of line at first line merged, so we will reuse original for next steps
+        if (empty($this->savxml)) {
+            $this->savxml = $this->xml;
+        }       // Sav content of line at first line merged, so we will reuse original for next steps
         $this->xml = $this->savxml;
         $tmpvars = $this->vars;                                     // Store into $tmpvars so we won't modify this->vars when completing data with empty values
 
@@ -99,21 +104,17 @@ class Segment implements IteratorAggregate, Countable
         $reg='@\[!--\sIF\s([{}a-zA-Z0-9\.\,_]+)\s--\]@smU';
         preg_match_all($reg, $this->xml, $matches, PREG_SET_ORDER);
         //var_dump($tmpvars);exit;
-        foreach($matches as $match)   // For each match, if there is no entry into this->vars, we add it
-        {
-            if (! empty($match[1]) && ! isset($tmpvars[$match[1]]))
-            {
+        foreach ($matches as $match) {   // For each match, if there is no entry into this->vars, we add it
+            if (! empty($match[1]) && ! isset($tmpvars[$match[1]])) {
                 $tmpvars[$match[1]] = '';     // Not defined, so we set it to '', we just need entry into this->vars for next loop
             }
         }
 
         // Conditionals substitution
         // Note: must be done before static substitution, else the variable will be replaced by its value and the conditional won't work anymore
-        foreach($tmpvars as $key => $value)
-        {
+        foreach ($tmpvars as $key => $value) {
             // If value is true (not 0 nor false nor null nor empty string)
-            if ($value)
-            {
+            if ($value) {
                 // Remove the IF tag
                 $this->xml = str_replace('[!-- IF '.$key.' --]', '', $this->xml);
                 // Remove everything between the ELSE tag (if it exists) and the ENDIF tag
@@ -121,13 +122,14 @@ class Segment implements IteratorAggregate, Countable
                 $this->xml = preg_replace($reg, '', $this->xml);
             }
             // Else the value is false, then two cases: no ELSE and we're done, or there is at least one place where there is an ELSE clause, then we replace it
-            else
-            {
+            else {
                 // Find all conditional blocks for this variable: from IF to ELSE and to ENDIF
                 $reg = '@\[!--\sIF\s' . $key . '\s--\](.*)(\[!--\sELSE\s' . $key . '\s--\](.*))?\[!--\sENDIF\s' . $key . '\s--\]@smU'; // U modifier = all quantifiers are non-greedy
                 preg_match_all($reg, $this->xml, $matches, PREG_SET_ORDER);
-                foreach($matches as $match) { // For each match, if there is an ELSE clause, we replace the whole block by the value in the ELSE clause
-                    if (!empty($match[3])) $this->xml = str_replace($match[0], $match[3], $this->xml);
+                foreach ($matches as $match) { // For each match, if there is an ELSE clause, we replace the whole block by the value in the ELSE clause
+                    if (!empty($match[3])) {
+                        $this->xml = str_replace($match[0], $match[3], $this->xml);
+                    }
                 }
                 // Cleanup the other conditional blocks (all the others where there were no ELSE clause, we can just remove them altogether)
                 $this->xml = preg_replace($reg, '', $this->xml);
@@ -143,37 +145,37 @@ class Segment implements IteratorAggregate, Countable
         }
         $reg = "/\[!--\sBEGIN\s$this->name\s--\](.*)\[!--\sEND\s$this->name\s--\]/sm";
         $this->xmlParsed = preg_replace($reg, '$1', $this->xmlParsed);
-		// Miguel Erill 09704/2017 - Add macro replacement to invoice lines
+        // Miguel Erill 09704/2017 - Add macro replacement to invoice lines
         $this->xmlParsed = $this->macroReplace($this->xmlParsed);
         $this->file->open($this->odf->getTmpfile());
         foreach ($this->images as $imageKey => $imageValue) {
-			if ($this->file->getFromName('Pictures/' . $imageValue) === false) {
-				// Add the image inside the ODT document
-				$this->file->addFile($imageKey, 'Pictures/' . $imageValue);
-				// Add the image to the Manifest (which maintains a list of images, necessary to avoid "Corrupt ODT file. Repair?" when opening the file with LibreOffice)
-				$this->odf->addImageToManifest($imageValue);
-			}
+            if ($this->file->getFromName('Pictures/' . $imageValue) === false) {
+                // Add the image inside the ODT document
+                $this->file->addFile($imageKey, 'Pictures/' . $imageValue);
+                // Add the image to the Manifest (which maintains a list of images, necessary to avoid "Corrupt ODT file. Repair?" when opening the file with LibreOffice)
+                $this->odf->addImageToManifest($imageValue);
+            }
         }
         $this->file->close();
 
         return $this->xmlParsed;
     }
 
-   /**
-    * Function to replace macros for invoice short and long month, invoice year
-    *
-    * Substitution occur when the invoice is generated, not considering the invoice date
-    * so do not (re)generate in a diferent date than the one that the invoice belongs to
-    * Perhaps it would be better to use the invoice issued date but I still do not know
-    * how to get it here
-    *
-    * Miguel Erill 09/04/2017
-    *
-    * @param	string	$value	String to convert
-    */
+    /**
+     * Function to replace macros for invoice short and long month, invoice year
+     *
+     * Substitution occur when the invoice is generated, not considering the invoice date
+     * so do not (re)generate in a diferent date than the one that the invoice belongs to
+     * Perhaps it would be better to use the invoice issued date but I still do not know
+     * how to get it here
+     *
+     * Miguel Erill 09/04/2017
+     *
+     * @param	string	$value	String to convert
+     */
     public function macroReplace($text)
     {
-    	include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
         global $langs;
 
         $hoy = dol_getdate(dol_now('tzuser'));
@@ -191,7 +193,7 @@ class Segment implements IteratorAggregate, Countable
 
         $text=preg_replace($patterns, $values, $text);
 
-	return $text;
+        return $text;
     }
 
     /**
@@ -231,12 +233,12 @@ class Segment implements IteratorAggregate, Countable
             //throw new SegmentException("var $key not found in {$this->getName()}");
         }
 
-		$value=$this->odf->htmlToUTFAndPreOdf($value);
+        $value=$this->odf->htmlToUTFAndPreOdf($value);
 
-		$value = $encode ? htmlspecialchars($value) : $value;
-		$value = ($charset == 'ISO-8859') ? utf8_encode($value) : $value;
+        $value = $encode ? htmlspecialchars($value) : $value;
+        $value = ($charset == 'ISO-8859') ? utf8_encode($value) : $value;
 
-		$value=$this->odf->preOdfToOdf($value);
+        $value=$this->odf->preOdfToOdf($value);
 
         $this->vars[$this->odf->getConfig('DELIMITER_LEFT') . $key . $this->odf->getConfig('DELIMITER_RIGHT')] = $value;
         return $this;
@@ -258,7 +260,7 @@ class Segment implements IteratorAggregate, Countable
             throw new OdfException("Invalid image");
         }
         // Set the width and height of the page
-        list ($width, $height) = $size;
+        list($width, $height) = $size;
         $width *= Odf::PIXEL_TO_CM;
         $height *= Odf::PIXEL_TO_CM;
         // Fix local-aware issues (eg: 12,10 -> 12.10)
@@ -312,4 +314,3 @@ IMG;
         return $this->xmlParsed;
     }
 }
-

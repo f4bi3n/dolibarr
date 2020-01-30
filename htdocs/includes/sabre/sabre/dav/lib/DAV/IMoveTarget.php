@@ -17,7 +17,8 @@ namespace Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface IMoveTarget extends ICollection {
+interface IMoveTarget extends ICollection
+{
 
     /**
      * Moves a node into this collection.
@@ -39,6 +40,5 @@ interface IMoveTarget extends ICollection {
      * @param INode $sourceNode Source node itself
      * @return bool
      */
-    function moveInto($targetName, $sourcePath, INode $sourceNode);
-
+    public function moveInto($targetName, $sourcePath, INode $sourceNode);
 }

@@ -29,11 +29,10 @@ global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/compta/prelevement/class/bonprelevement.class.php';
 
-if (empty($user->id))
-{
-	print "Load permissions for admin user nb 1\n";
-	$user->fetch(1);
-	$user->getrights();
+if (empty($user->id)) {
+    print "Load permissions for admin user nb 1\n";
+    $user->fetch(1);
+    $user->getrights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
@@ -49,32 +48,32 @@ $langs->load("main");
  */
 class BonPrelevementTest extends PHPUnit\Framework\TestCase
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
+    protected $savconf;
+    protected $savuser;
+    protected $savlangs;
+    protected $savdb;
 
-	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @return BankAccountTest
-	 */
-	public function __construct()
-	{
-		parent::__construct();
+    /**
+     * Constructor
+     * We save global variables into local variables
+     *
+     * @return BankAccountTest
+     */
+    public function __construct()
+    {
+        parent::__construct();
 
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
+        //$this->sharedFixture
+        global $conf,$user,$langs,$db;
+        $this->savconf=$conf;
+        $this->savuser=$user;
+        $this->savlangs=$langs;
+        $this->savdb=$db;
 
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
+        print __METHOD__." db->type=".$db->type." user->id=".$user->id;
+        //print " - db ".$db->db;
+        print "\n";
+    }
 
     /**
      * setUpBeforeClass
@@ -83,10 +82,10 @@ class BonPrelevementTest extends PHPUnit\Framework\TestCase
      */
     public static function setUpBeforeClass()
     {
-    	global $conf,$user,$langs,$db;
-		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+        global $conf,$user,$langs,$db;
+        $db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
-    	print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
     /**
@@ -96,35 +95,35 @@ class BonPrelevementTest extends PHPUnit\Framework\TestCase
      */
     public static function tearDownAfterClass()
     {
-    	global $conf,$user,$langs,$db;
-		$db->rollback();
+        global $conf,$user,$langs,$db;
+        $db->rollback();
 
-		print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
-	/**
-	 * Init phpunit tests
-	 *
-	 * @return	void
-	 */
+    /**
+     * Init phpunit tests
+     *
+     * @return	void
+     */
     protected function setUp()
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		print __METHOD__."\n";
+        print __METHOD__."\n";
     }
-	/**
-	 * End phpunit tests
-	 *
-	 * @return	void
-	 */
+    /**
+     * End phpunit tests
+     *
+     * @return	void
+     */
     protected function tearDown()
     {
-    	print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
     /**
@@ -134,34 +133,34 @@ class BonPrelevementTest extends PHPUnit\Framework\TestCase
      */
     public function testBonPrelevementCreate()
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		// TODO
-		// Create invoice
-
-
-		// Create payment with mode withdraw
+        // TODO
+        // Create invoice
 
 
-		// Ask withdraw request
+        // Create payment with mode withdraw
 
 
-		// Create withdraw record and generate SEPA file
-		$localobject=new BonPrelevement($this->savdb);
-    	//$localobject->date_solde=dol_now();
-    	$result=$localobject->Create(0, 0, 'simu');
-
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals($result, 0);
-
-    	// Test SEPA file
+        // Ask withdraw request
 
 
-    	return $result;
+        // Create withdraw record and generate SEPA file
+        $localobject=new BonPrelevement($this->savdb);
+        //$localobject->date_solde=dol_now();
+        $result=$localobject->Create(0, 0, 'simu');
+
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals($result, 0);
+
+        // Test SEPA file
+
+
+        return $result;
     }
 
     /**
@@ -175,19 +174,19 @@ class BonPrelevementTest extends PHPUnit\Framework\TestCase
      */
     /*    public function testBonPrelevementDelete($id)
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		$localobject=new BonPrelevement($this->savdb);
-    	$result=$localobject->fetch($id);
-		$result=$localobject->delete($id);
+        $localobject=new BonPrelevement($this->savdb);
+        $result=$localobject->fetch($id);
+        $result=$localobject->delete($id);
 
-		print __METHOD__." id=".$id." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
-    	return $result;
+        print __METHOD__." id=".$id." result=".$result."\n";
+        $this->assertLessThan($result, 0);
+        return $result;
     }
     */
 }

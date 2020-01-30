@@ -11,7 +11,8 @@ namespace Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-abstract class ServerPlugin {
+abstract class ServerPlugin
+{
 
     /**
      * This initializes the plugin.
@@ -24,7 +25,7 @@ abstract class ServerPlugin {
      * @param Server $server
      * @return void
      */
-    abstract function initialize(Server $server);
+    abstract public function initialize(Server $server);
 
     /**
      * This method should return a list of server-features.
@@ -34,10 +35,9 @@ abstract class ServerPlugin {
      *
      * @return array
      */
-    function getFeatures() {
-
+    public function getFeatures()
+    {
         return [];
-
     }
 
     /**
@@ -50,10 +50,9 @@ abstract class ServerPlugin {
      * @param string $path
      * @return array
      */
-    function getHTTPMethods($path) {
-
+    public function getHTTPMethods($path)
+    {
         return [];
-
     }
 
     /**
@@ -64,10 +63,9 @@ abstract class ServerPlugin {
      *
      * @return string
      */
-    function getPluginName() {
-
+    public function getPluginName()
+    {
         return get_class($this);
-
     }
 
     /**
@@ -80,10 +78,9 @@ abstract class ServerPlugin {
      * @param string $uri
      * @return array
      */
-    function getSupportedReportSet($uri) {
-
+    public function getSupportedReportSet($uri)
+    {
         return [];
-
     }
 
     /**
@@ -97,14 +94,12 @@ abstract class ServerPlugin {
      *
      * @return array
      */
-    function getPluginInfo() {
-
+    public function getPluginInfo()
+    {
         return [
             'name'        => $this->getPluginName(),
             'description' => null,
             'link'        => null,
         ];
-
     }
-
 }

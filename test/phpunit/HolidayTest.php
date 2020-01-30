@@ -30,8 +30,7 @@ require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/holiday/class/holiday.class.php';
 $langs->load("dict");
 
-if (empty($user->id))
-{
+if (empty($user->id)) {
     print "Load permissions for admin user nb 1\n";
     $user->fetch(1);
     $user->getrights();
@@ -359,10 +358,10 @@ class HolidayTest extends PHPUnit\Framework\TestCase
      */
     public function testUpdateBalance()
     {
-    	$localobjecta=new Holiday($this->savdb);
+        $localobjecta=new Holiday($this->savdb);
 
-    	$localobjecta->updateConfCP('lastUpdate', '20100101120000');
+        $localobjecta->updateConfCP('lastUpdate', '20100101120000');
 
-    	$localobjecta->updateBalance();
+        $localobjecta->updateBalance();
     }
 }

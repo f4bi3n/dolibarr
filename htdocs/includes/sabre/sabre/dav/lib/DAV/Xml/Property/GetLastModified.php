@@ -19,7 +19,8 @@ use Sabre\Xml\Writer;
  * @author Evert Pot (http://www.rooftopsolutions.nl/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class GetLastModified implements Element {
+class GetLastModified implements Element
+{
 
     /**
      * time
@@ -33,8 +34,8 @@ class GetLastModified implements Element {
      *
      * @param int|DateTime $time
      */
-    function __construct($time) {
-
+    public function __construct($time)
+    {
         if ($time instanceof DateTime) {
             $this->time = clone $time;
         } else {
@@ -43,7 +44,6 @@ class GetLastModified implements Element {
 
         // Setting timezone to UTC
         $this->time->setTimezone(new DateTimeZone('UTC'));
-
     }
 
     /**
@@ -51,10 +51,9 @@ class GetLastModified implements Element {
      *
      * @return DateTime
      */
-    function getTime() {
-
+    public function getTime()
+    {
         return $this->time;
-
     }
 
     /**
@@ -72,12 +71,11 @@ class GetLastModified implements Element {
      * @param Writer $writer
      * @return void
      */
-    function xmlSerialize(Writer $writer) {
-
+    public function xmlSerialize(Writer $writer)
+    {
         $writer->write(
             HTTP\Util::toHTTPDate($this->time)
         );
-
     }
 
     /**
@@ -101,10 +99,9 @@ class GetLastModified implements Element {
      * @param Reader $reader
      * @return mixed
      */
-    static function xmlDeserialize(Reader $reader) {
-
+    public static function xmlDeserialize(Reader $reader)
+    {
         return
             new self(new DateTime($reader->parseInnerTree()));
-
     }
 }

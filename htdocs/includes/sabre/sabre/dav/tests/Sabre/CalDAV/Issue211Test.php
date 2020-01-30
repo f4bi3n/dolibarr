@@ -11,8 +11,8 @@ use Sabre\HTTP;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Issue211Test extends \Sabre\DAVServerTest {
-
+class Issue211Test extends \Sabre\DAVServerTest
+{
     protected $setupCalDAV = true;
 
     protected $caldavCalendars = [
@@ -53,8 +53,8 @@ END:VCALENDAR
         ],
     ];
 
-    function testIssue211() {
-
+    public function testIssue211()
+    {
         $request = HTTP\Sapi::createFromServerArray([
             'REQUEST_METHOD'    => 'REPORT',
             'HTTP_CONTENT_TYPE' => 'application/xml',
@@ -84,6 +84,5 @@ END:VCALENDAR
         // if this assert is reached, the endless loop is gone
         // There should be no matching events
         $this->assertFalse(strpos('BEGIN:VEVENT', $response->body));
-
     }
 }

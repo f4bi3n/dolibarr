@@ -104,27 +104,23 @@ class printing_printipp extends PrintingDriver
         $ipp->setPort($this->port);
         $ipp->setJobName($file, true);
         $ipp->setUserName($this->userid);
-        if (!empty($this->user)) $ipp->setAuthentication($this->user, $this->password);
+        if (!empty($this->user)) {
+            $ipp->setAuthentication($this->user, $this->password);
+        }
 
         // select printer uri for module order, propal,...
         $sql = "SELECT rowid,printer_id,copy FROM ".MAIN_DB_PREFIX."printing WHERE module = '".$module."' AND driver = 'printipp' AND userid = ".$user->id;
         $result = $this->db->query($sql);
         if ($result) {
             $obj = $this->db->fetch_object($result);
-            if ($obj)
-            {
-            	dol_syslog("Found a default printer for user ".$user->id." = ".$obj->printer_id);
+            if ($obj) {
+                dol_syslog("Found a default printer for user ".$user->id." = ".$obj->printer_id);
                 $ipp->setPrinterURI($obj->printer_id);
-            }
-            else
-            {
-                if (!empty($conf->global->PRINTIPP_URI_DEFAULT))
-                {
+            } else {
+                if (!empty($conf->global->PRINTIPP_URI_DEFAULT)) {
                     dol_syslog("Will use default printer conf->global->PRINTIPP_URI_DEFAULT = ".$conf->global->PRINTIPP_URI_DEFAULT);
                     $ipp->setPrinterURI($conf->global->PRINTIPP_URI_DEFAULT);
-                }
-                else
-                {
+                } else {
                     $this->errors[] = 'NoDefaultPrinterDefined';
                     $error++;
                     return $error;
@@ -137,7 +133,9 @@ class printing_printipp extends PrintingDriver
         // Set number of copy
         $ipp->setCopies($obj->copy);
         $fileprint = $conf->{$module}->dir_output;
-        if ($subdir != '') $fileprint .= '/'.$subdir;
+        if ($subdir != '') {
+            $fileprint .= '/'.$subdir;
+        }
         $fileprint .= '/'.$file;
         $ipp->setData($fileprint);
         try {
@@ -146,7 +144,9 @@ class printing_printipp extends PrintingDriver
             $this->errors[] = $e->getMessage();
             $error++;
         }
-        if ($error == 0) $this->errors[] = 'PRINTIPP: Job added';
+        if ($error == 0) {
+            $this->errors[] = 'PRINTIPP: Job added';
+        }
 
         return $error;
     }

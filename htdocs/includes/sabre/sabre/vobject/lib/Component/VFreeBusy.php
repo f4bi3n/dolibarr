@@ -15,7 +15,8 @@ use Sabre\VObject;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class VFreeBusy extends VObject\Component {
+class VFreeBusy extends VObject\Component
+{
 
     /**
      * Checks based on the contained FREEBUSY information, if a timeslot is
@@ -26,8 +27,8 @@ class VFreeBusy extends VObject\Component {
      *
      * @return bool
      */
-    function isFree(DateTimeInterface $start, DatetimeInterface $end) {
-
+    public function isFree(DateTimeInterface $start, DatetimeInterface $end)
+    {
         foreach ($this->select('FREEBUSY') as $freebusy) {
 
             // We are only interested in FBTYPE=BUSY (the default),
@@ -55,13 +56,10 @@ class VFreeBusy extends VObject\Component {
                 if ($start < $busyEnd && $end > $busyStart) {
                     return false;
                 }
-
             }
-
         }
 
         return true;
-
     }
 
     /**
@@ -79,8 +77,8 @@ class VFreeBusy extends VObject\Component {
      *
      * @var array
      */
-    function getValidationRules() {
-
+    public function getValidationRules()
+    {
         return [
             'UID'     => 1,
             'DTSTAMP' => 1,
@@ -96,7 +94,5 @@ class VFreeBusy extends VObject\Component {
             'FREEBUSY'       => '*',
             'REQUEST-STATUS' => '*',
         ];
-
     }
-
 }

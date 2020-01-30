@@ -16,7 +16,8 @@ use Sabre\VObject\Recur\NoInstancesException;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class VEvent extends VObject\Component {
+class VEvent extends VObject\Component
+{
 
     /**
      * Returns true or false depending on if the event falls in the specified
@@ -30,20 +31,16 @@ class VEvent extends VObject\Component {
      *
      * @return bool
      */
-    function isInTimeRange(DateTimeInterface $start, DateTimeInterface $end) {
-
+    public function isInTimeRange(DateTimeInterface $start, DateTimeInterface $end)
+    {
         if ($this->RRULE) {
-
             try {
-
                 $it = new EventIterator($this, null, $start->getTimezone());
-
             } catch (NoInstancesException $e) {
 
                 // If we've catched this exception, there are no instances
                 // for the event that fall into the specified time-range.
                 return false;
-
             }
 
             $it->fastForward($start);
@@ -55,7 +52,6 @@ class VEvent extends VObject\Component {
             // If the starttime of the recurrence did not exceed the
             // end of the time range as well, we have a match.
             return ($it->getDTStart() < $end && $it->getDTEnd() > $start);
-
         }
 
         $effectiveStart = $this->DTSTART->getDateTime($start->getTimezone());
@@ -68,7 +64,6 @@ class VEvent extends VObject\Component {
             // See:
             // http://tools.ietf.org/html/rfc5545#page-54
             $effectiveEnd = $this->DTEND->getDateTime($end->getTimezone());
-
         } elseif (isset($this->DURATION)) {
             $effectiveEnd = $effectiveStart->add(VObject\DateTimeParser::parseDuration($this->DURATION));
         } elseif (!$this->DTSTART->hasTime()) {
@@ -79,7 +74,6 @@ class VEvent extends VObject\Component {
         return (
             ($start < $effectiveEnd) && ($end > $effectiveStart)
         );
-
     }
 
     /**
@@ -87,13 +81,12 @@ class VEvent extends VObject\Component {
      *
      * @return array
      */
-    protected function getDefaults() {
-
+    protected function getDefaults()
+    {
         return [
             'UID'     => 'sabre-vobject-' . VObject\UUIDUtil::getUUID(),
             'DTSTAMP' => date('Ymd\\THis\\Z'),
         ];
-
     }
 
     /**
@@ -111,8 +104,8 @@ class VEvent extends VObject\Component {
      *
      * @var array
      */
-    function getValidationRules() {
-
+    public function getValidationRules()
+    {
         $hasMethod = isset($this->parent->METHOD);
         return [
             'UID'           => 1,
@@ -147,7 +140,5 @@ class VEvent extends VObject\Component {
             'RESOURCES'      => '*',
             'RDATE'          => '*',
         ];
-
     }
-
 }

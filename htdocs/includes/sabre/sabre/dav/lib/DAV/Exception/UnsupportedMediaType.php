@@ -14,17 +14,16 @@ use Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class UnsupportedMediaType extends DAV\Exception {
+class UnsupportedMediaType extends DAV\Exception
+{
 
     /**
      * returns the http statuscode for this exception
      *
      * @return int
      */
-    function getHTTPCode() {
-
+    public function getHTTPCode()
+    {
         return 415;
-
     }
-
 }

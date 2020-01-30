@@ -33,13 +33,12 @@ $request = new Request('GET', 'http://localhost/');
 $client = new Client();
 
 for ($i = 0; $i < 1000; $i++) {
-
     echo "$i sending\n";
     $client->sendAsync(
         $request,
 
         // This is the 'success' callback
-        function($response) use ($i) {
+        function ($response) use ($i) {
             echo "$i -> " . $response->getStatus() . "\n";
         },
 
@@ -47,8 +46,7 @@ for ($i = 0; $i < 1000; $i++) {
         // problems (such as not being able to connect to a host, dns errors,
         // etc.) and also cases where a response was returned, but it had a
         // status code of 400 or higher.
-        function($error) use ($i) {
-
+        function ($error) use ($i) {
             if ($error['status'] === Client::STATUS_CURLERROR) {
                 // Curl errors
                 echo "$i -> curl error: " . $error['curl_errmsg'] . "\n";

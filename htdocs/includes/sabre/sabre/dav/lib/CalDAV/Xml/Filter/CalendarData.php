@@ -25,7 +25,8 @@ use Sabre\Xml\XmlDeserializable;
  * @author Evert Pot (http://www.rooftopsolutions.nl/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class CalendarData implements XmlDeserializable {
+class CalendarData implements XmlDeserializable
+{
 
     /**
      * The deserialize method is called during xml parsing.
@@ -48,8 +49,8 @@ class CalendarData implements XmlDeserializable {
      * @param Reader $reader
      * @return mixed
      */
-    static function xmlDeserialize(Reader $reader) {
-
+    public static function xmlDeserialize(Reader $reader)
+    {
         $result = [
             'contentType' => $reader->getAttribute('content-type') ?: 'text/calendar',
             'version'     => $reader->getAttribute('version') ?: '2.0',
@@ -57,9 +58,8 @@ class CalendarData implements XmlDeserializable {
 
         $elems = (array)$reader->parseInnerTree();
         foreach ($elems as $elem) {
-
             switch ($elem['name']) {
-                case '{' . Plugin::NS_CALDAV . '}expand' :
+                case '{' . Plugin::NS_CALDAV . '}expand':
 
                     $result['expand'] = [
                         'start' => isset($elem['attributes']['start']) ? DateTimeParser::parseDateTime($elem['attributes']['start']) : null,
@@ -74,11 +74,8 @@ class CalendarData implements XmlDeserializable {
                     }
                     break;
             }
-
         }
 
         return $result;
-
     }
-
 }

@@ -15,7 +15,8 @@ namespace Sabre\CalDAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface ICalendarObjectContainer extends \Sabre\DAV\ICollection {
+interface ICalendarObjectContainer extends \Sabre\DAV\ICollection
+{
 
     /**
      * Performs a calendar-query on the contents of this calendar.
@@ -34,6 +35,5 @@ interface ICalendarObjectContainer extends \Sabre\DAV\ICollection {
      * @param array $filters
      * @return array
      */
-    function calendarQuery(array $filters);
-
+    public function calendarQuery(array $filters);
 }

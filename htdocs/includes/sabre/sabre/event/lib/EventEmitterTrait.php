@@ -15,7 +15,8 @@ namespace Sabre\Event;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-trait EventEmitterTrait {
+trait EventEmitterTrait
+{
 
     /**
      * The list of listeners
@@ -32,8 +33,8 @@ trait EventEmitterTrait {
      * @param int $priority
      * @return void
      */
-    function on($eventName, callable $callBack, $priority = 100) {
-
+    public function on($eventName, callable $callBack, $priority = 100)
+    {
         if (!isset($this->listeners[$eventName])) {
             $this->listeners[$eventName] = [
                 true,  // If there's only one item, it's sorted
@@ -45,7 +46,6 @@ trait EventEmitterTrait {
             $this->listeners[$eventName][1][] = $priority;
             $this->listeners[$eventName][2][] = $callBack;
         }
-
     }
 
     /**
@@ -56,18 +56,15 @@ trait EventEmitterTrait {
      * @param int $priority
      * @return void
      */
-    function once($eventName, callable $callBack, $priority = 100) {
-
+    public function once($eventName, callable $callBack, $priority = 100)
+    {
         $wrapper = null;
-        $wrapper = function() use ($eventName, $callBack, &$wrapper) {
-
+        $wrapper = function () use ($eventName, $callBack, &$wrapper) {
             $this->removeListener($eventName, $wrapper);
             return call_user_func_array($callBack, func_get_args());
-
         };
 
         $this->on($eventName, $wrapper, $priority);
-
     }
 
     /**
@@ -96,25 +93,20 @@ trait EventEmitterTrait {
      * @param callback $continueCallBack
      * @return bool
      */
-    function emit($eventName, array $arguments = [], callable $continueCallBack = null) {
-
+    public function emit($eventName, array $arguments = [], callable $continueCallBack = null)
+    {
         if (is_null($continueCallBack)) {
-
             foreach ($this->listeners($eventName) as $listener) {
-
                 $result = call_user_func_array($listener, $arguments);
                 if ($result === false) {
                     return false;
                 }
             }
-
         } else {
-
             $listeners = $this->listeners($eventName);
             $counter = count($listeners);
 
             foreach ($listeners as $listener) {
-
                 $counter--;
                 $result = call_user_func_array($listener, $arguments);
                 if ($result === false) {
@@ -122,15 +114,14 @@ trait EventEmitterTrait {
                 }
 
                 if ($counter > 0) {
-                    if (!$continueCallBack()) break;
+                    if (!$continueCallBack()) {
+                        break;
+                    }
                 }
-
             }
-
         }
 
         return true;
-
     }
 
     /**
@@ -142,8 +133,8 @@ trait EventEmitterTrait {
      * @param string $eventName
      * @return callable[]
      */
-    function listeners($eventName) {
-
+    public function listeners($eventName)
+    {
         if (!isset($this->listeners[$eventName])) {
             return [];
         }
@@ -159,7 +150,6 @@ trait EventEmitterTrait {
         }
 
         return $this->listeners[$eventName][2];
-
     }
 
     /**
@@ -172,8 +162,8 @@ trait EventEmitterTrait {
      * @param callable $listener
      * @return bool
      */
-    function removeListener($eventName, callable $listener) {
-
+    public function removeListener($eventName, callable $listener)
+    {
         if (!isset($this->listeners[$eventName])) {
             return false;
         }
@@ -185,7 +175,6 @@ trait EventEmitterTrait {
             }
         }
         return false;
-
     }
 
     /**
@@ -198,14 +187,12 @@ trait EventEmitterTrait {
      * @param string $eventName
      * @return void
      */
-    function removeAllListeners($eventName = null) {
-
+    public function removeAllListeners($eventName = null)
+    {
         if (!is_null($eventName)) {
             unset($this->listeners[$eventName]);
         } else {
             $this->listeners = [];
         }
-
     }
-
 }

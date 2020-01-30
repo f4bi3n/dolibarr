@@ -5,7 +5,9 @@ use Sabre\VObject;
 
 if ($argc < 2) {
     $cmd = $argv[0];
-    fwrite(STDERR, <<<HI
+    fwrite(
+        STDERR,
+        <<<HI
 Fruux test data generator
 
 This script generates a lot of test data. This is used for profiling and stuff.
@@ -23,7 +25,9 @@ HI
 
 $events = 100;
 
-if (isset($argv[1])) $events = (int)$argv[1];
+if (isset($argv[1])) {
+    $events = (int)$argv[1];
+}
 
 include __DIR__ . '/../vendor/autoload.php';
 
@@ -36,7 +40,6 @@ $calendar = new VObject\Component\VCalendar();
 $ii = 0;
 
 while ($ii < $events) {
-
     $ii++;
 
     $event = $calendar->add('VEVENT');
@@ -48,7 +51,7 @@ while ($ii < $events) {
 
     switch ($doctorRandom) {
         // All-day event
-        case 1 :
+        case 1:
             $event->DTEND = 'bla';
             $dtStart = clone $currentDate;
             $dtEnd = clone $currentDate;
@@ -57,10 +60,10 @@ while ($ii < $events) {
             $event->DTSTART['VALUE'] = 'DATE';
             $event->DTEND->setDateTime($dtEnd);
             break;
-        case 2 :
+        case 2:
             $event->RRULE = 'FREQ=DAILY;COUNT=' . mt_rand(1, 10);
-            // No break intentional
-        default :
+            // no break intentional
+        default:
             $dtStart = clone $currentDate;
             $dtStart->setTime(mt_rand(1, 23), mt_rand(0, 59), mt_rand(0, 59));
             $event->DTSTART->setDateTime($dtStart);
@@ -70,7 +73,6 @@ while ($ii < $events) {
     }
     
     $currentDate->modify('+ ' . mt_rand(0, 3) . ' days');
-
 }
 fwrite(STDERR, "Validating\n");
 

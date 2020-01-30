@@ -18,7 +18,8 @@ use Sabre\Xml\XmlDeserializable;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class PrincipalPropertySearchReport implements XmlDeserializable {
+class PrincipalPropertySearchReport implements XmlDeserializable
+{
 
     /**
      * The requested properties.
@@ -74,8 +75,8 @@ class PrincipalPropertySearchReport implements XmlDeserializable {
      * @param Reader $reader
      * @return mixed
      */
-    static function xmlDeserialize(Reader $reader) {
-
+    public static function xmlDeserialize(Reader $reader)
+    {
         $self = new self();
 
         $foundSearchProp = false;
@@ -90,13 +91,12 @@ class PrincipalPropertySearchReport implements XmlDeserializable {
         ];
         
         foreach ($reader->parseInnerTree($elemMap) as $elem) {
-
             switch ($elem['name']) {
 
-                case '{DAV:}prop' :
+                case '{DAV:}prop':
                     $self->properties = array_keys($elem['value']);
                     break;
-                case '{DAV:}property-search' :
+                case '{DAV:}property-search':
                     $foundSearchProp = true;
                     // This property has two sub-elements:
                     //   {DAV:}prop - The property to be searched on. This may
@@ -109,19 +109,16 @@ class PrincipalPropertySearchReport implements XmlDeserializable {
                         $self->searchProperties[$propName] = $elem['value']['{DAV:}match'];
                     }
                     break;
-                case '{DAV:}apply-to-principal-collection-set' :
+                case '{DAV:}apply-to-principal-collection-set':
                     $self->applyToPrincipalCollectionSet = true;
                     break;
 
             }
-
         }
         if (!$foundSearchProp) {
             throw new BadRequest('The {DAV:}principal-property-search report must contain at least 1 {DAV:}property-search element');
         }
 
         return $self;
-
     }
-
 }

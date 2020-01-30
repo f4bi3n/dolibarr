@@ -24,13 +24,27 @@
  * 				JQuery (providing object $) and JQuery-UI (providing $datepicker) libraries must be loaded before this file.
  */
 
-if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC', '1');
-if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK', 1);
-if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
-if (! defined('NOLOGIN'))         define('NOLOGIN', 1);
-if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU', 1);
-if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML', 1);
-if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX', '1');
+if (! defined('NOREQUIRESOC')) {
+    define('NOREQUIRESOC', '1');
+}
+if (! defined('NOCSRFCHECK')) {
+    define('NOCSRFCHECK', 1);
+}
+if (! defined('NOTOKENRENEWAL')) {
+    define('NOTOKENRENEWAL', 1);
+}
+if (! defined('NOLOGIN')) {
+    define('NOLOGIN', 1);
+}
+if (! defined('NOREQUIREMENU')) {
+    define('NOREQUIREMENU', 1);
+}
+if (! defined('NOREQUIREHTML')) {
+    define('NOREQUIREHTML', 1);
+}
+if (! defined('NOREQUIREAJAX')) {
+    define('NOREQUIREAJAX', '1');
+}
 
 session_cache_limiter('public');
 
@@ -39,8 +53,11 @@ require_once '../../main.inc.php';
 // Define javascript type
 top_httphead('text/javascript; charset=UTF-8');
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-if (empty($dolibarr_nocache)) header('Cache-Control: max-age=10800, public, must-revalidate');
-else header('Cache-Control: no-cache');
+if (empty($dolibarr_nocache)) {
+    header('Cache-Control: max-age=10800, public, must-revalidate');
+} else {
+    header('Cache-Control: no-cache');
+}
 
 
 
@@ -139,8 +156,8 @@ jQuery(function($){
 		dayNamesMin: tradDaysMin,
 		weekHeader: '<?php echo $langs->trans("Week"); ?>',
 		dateFormat: '<?php echo $langs->trans("FormatDateShortJQuery"); ?>',	/* Note dd/mm/yy means year on 4 digit in jquery format */
-		firstDay: <?php echo (isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:'1'); ?>,
-		isRTL: <?php echo ($langs->trans("DIRECTION")=='rtl'?'true':'false'); ?>,
+		firstDay: <?php echo(isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:'1'); ?>,
+		isRTL: <?php echo($langs->trans("DIRECTION")=='rtl'?'true':'false'); ?>,
 		showMonthAfterYear: false,  	/* TODO add specific to country	*/
  		yearSuffix: ''			/* TODO add specific to country */
 	};
@@ -1039,17 +1056,19 @@ function price2numjs(amount) {
 	if (amount == '') return '';
 
 	<?php
-	$dec = ',';
-	$thousand = ' ';
-	if ($langs->transnoentitiesnoconv("SeparatorDecimal") != "SeparatorDecimal") {
-		$dec = $langs->transnoentitiesnoconv("SeparatorDecimal");
-	}
-	if ($langs->transnoentitiesnoconv("SeparatorThousand") != "SeparatorThousand") {
-		$thousand = $langs->transnoentitiesnoconv("SeparatorThousand");
-	}
-	if ($thousand == 'Space') $thousand=' ';
-	print "var dec='" . dol_escape_js($dec) . "'; var thousand='" . dol_escape_js($thousand) . "';\n";    // Set var in javascript
-	?>
+    $dec = ',';
+    $thousand = ' ';
+    if ($langs->transnoentitiesnoconv("SeparatorDecimal") != "SeparatorDecimal") {
+        $dec = $langs->transnoentitiesnoconv("SeparatorDecimal");
+    }
+    if ($langs->transnoentitiesnoconv("SeparatorThousand") != "SeparatorThousand") {
+        $thousand = $langs->transnoentitiesnoconv("SeparatorThousand");
+    }
+    if ($thousand == 'Space') {
+        $thousand=' ';
+    }
+    print "var dec='" . dol_escape_js($dec) . "'; var thousand='" . dol_escape_js($thousand) . "';\n";    // Set var in javascript
+    ?>
 
 	var main_max_dec_shown = <?php echo (int) str_replace('.', '', $conf->global->MAIN_MAX_DECIMALS_SHOWN); ?>;
 	var main_rounding_unit = <?php echo (int) $conf->global->MAIN_MAX_DECIMALS_UNIT; ?>;
@@ -1081,7 +1100,7 @@ function price2numjs(amount) {
 
 <?php
 if (empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) && ! defined('DISABLE_JQUERY_JNOTIFY')) {
-    ?>
+        ?>
 // Defined properties for JNotify
 $(document).ready(function() {
 	if (typeof $.jnotify == 'function')
@@ -1104,6 +1123,7 @@ $(document).ready(function() {
 		});
 	}
 });
-<?php } ?>
+<?php
+    } ?>
 
 // End of lib_head.js.php

@@ -25,7 +25,8 @@ use Sabre\Xml\Writer;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Acl implements Element, HtmlOutput {
+class Acl implements Element, HtmlOutput
+{
 
     /**
      * List of privileges
@@ -59,11 +60,10 @@ class Acl implements Element, HtmlOutput {
      * @param array $privileges
      * @param bool $prefixBaseUrl
      */
-    function __construct(array $privileges, $prefixBaseUrl = true) {
-
+    public function __construct(array $privileges, $prefixBaseUrl = true)
+    {
         $this->privileges = $privileges;
         $this->prefixBaseUrl = $prefixBaseUrl;
-
     }
 
     /**
@@ -71,10 +71,9 @@ class Acl implements Element, HtmlOutput {
      *
      * @return array
      */
-    function getPrivileges() {
-
+    public function getPrivileges()
+    {
         return $this->privileges;
-
     }
 
     /**
@@ -96,14 +95,11 @@ class Acl implements Element, HtmlOutput {
      * @param Writer $writer
      * @return void
      */
-    function xmlSerialize(Writer $writer) {
-
+    public function xmlSerialize(Writer $writer)
+    {
         foreach ($this->privileges as $ace) {
-
             $this->serializeAce($writer, $ace);
-
         }
-
     }
 
     /**
@@ -120,13 +116,12 @@ class Acl implements Element, HtmlOutput {
      * @param HtmlOutputHelper $html
      * @return string
      */
-    function toHtml(HtmlOutputHelper $html) {
-
+    public function toHtml(HtmlOutputHelper $html)
+    {
         ob_start();
         echo "<table>";
         echo "<tr><th>Principal</th><th>Privilege</th><th></th></tr>";
         foreach ($this->privileges as $privilege) {
-
             echo '<tr>';
             // if it starts with a {, it's a special principal
             if ($privilege['principal'][0] === '{') {
@@ -136,14 +131,14 @@ class Acl implements Element, HtmlOutput {
             }
             echo '<td>', $html->xmlName($privilege['privilege']), '</td>';
             echo '<td>';
-            if (!empty($privilege['protected'])) echo '(protected)';
+            if (!empty($privilege['protected'])) {
+                echo '(protected)';
+            }
             echo '</td>';
             echo '</tr>';
-
         }
         echo "</table>";
         return ob_get_clean();
-
     }
 
     /**
@@ -167,8 +162,8 @@ class Acl implements Element, HtmlOutput {
      * @param Reader $reader
      * @return mixed
      */
-    static function xmlDeserialize(Reader $reader) {
-
+    public static function xmlDeserialize(Reader $reader)
+    {
         $elementMap = [
             '{DAV:}ace'       => 'Sabre\Xml\Element\KeyValue',
             '{DAV:}privilege' => 'Sabre\Xml\Element\Elements',
@@ -178,7 +173,6 @@ class Acl implements Element, HtmlOutput {
         $privileges = [];
 
         foreach ((array)$reader->parseInnerTree($elementMap) as $element) {
-
             if ($element['name'] !== '{DAV:}ace') {
                 continue;
             }
@@ -190,16 +184,16 @@ class Acl implements Element, HtmlOutput {
             $principal = $ace['{DAV:}principal'];
 
             switch ($principal->getType()) {
-                case Principal::HREF :
+                case Principal::HREF:
                     $principal = $principal->getHref();
                     break;
-                case Principal::AUTHENTICATED :
+                case Principal::AUTHENTICATED:
                     $principal = '{DAV:}authenticated';
                     break;
-                case Principal::UNAUTHENTICATED :
+                case Principal::UNAUTHENTICATED:
                     $principal = '{DAV:}unauthenticated';
                     break;
-                case Principal::ALL :
+                case Principal::ALL:
                     $principal = '{DAV:}all';
                     break;
 
@@ -222,13 +216,10 @@ class Acl implements Element, HtmlOutput {
                         'privilege' => $priv,
                     ];
                 }
-
             }
-
         }
 
         return new self($privileges);
-
     }
 
     /**
@@ -238,18 +229,18 @@ class Acl implements Element, HtmlOutput {
      * @param array $ace
      * @return void
      */
-    private function serializeAce(Writer $writer, array $ace) {
-
+    private function serializeAce(Writer $writer, array $ace)
+    {
         $writer->startElement('{DAV:}ace');
 
         switch ($ace['principal']) {
-            case '{DAV:}authenticated' :
+            case '{DAV:}authenticated':
                 $principal = new Principal(Principal::AUTHENTICATED);
                 break;
-            case '{DAV:}unauthenticated' :
+            case '{DAV:}unauthenticated':
                 $principal = new Principal(Principal::UNAUTHENTICATED);
                 break;
-            case '{DAV:}all' :
+            case '{DAV:}all':
                 $principal = new Principal(Principal::ALL);
                 break;
             default:
@@ -271,7 +262,5 @@ class Acl implements Element, HtmlOutput {
         }
 
         $writer->endElement(); // ace
-
     }
-
 }

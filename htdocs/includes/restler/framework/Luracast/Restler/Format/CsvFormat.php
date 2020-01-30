@@ -1,7 +1,6 @@
 <?php
 namespace Luracast\Restler\Format;
 
-
 use Luracast\Restler\Data\Obj;
 use Luracast\Restler\RestException;
 
@@ -19,7 +18,6 @@ use Luracast\Restler\RestException;
  */
 class CsvFormat extends Format implements iDecodeStream
 {
-
     const MIME = 'text/csv';
     const EXTENSION = 'csv';
     public static $delimiter = ',';
@@ -106,8 +104,9 @@ class CsvFormat extends Format implements iDecodeStream
 
         static::$haveHeaders ? $keys = $row : $decoded[] = $row;
 
-        while (($row = static::getRow(array_shift($lines), $keys)) !== FALSE)
+        while (($row = static::getRow(array_shift($lines), $keys)) !== false) {
             $decoded [] = $row;
+        }
 
         $char = Obj::$separatorChar;
         Obj::$separatorChar = false;
@@ -130,11 +129,13 @@ class CsvFormat extends Format implements iDecodeStream
 
         $row = array();
         foreach ($line as $key => $value) {
-            if (is_numeric($value))
+            if (is_numeric($value)) {
                 $value = floatval($value);
+            }
             if ($keys) {
-                if (isset($keys [$key]))
+                if (isset($keys [$key])) {
                     $row [$keys [$key]] = $value;
+                }
             } else {
                 $row [$key] = $value;
             }
@@ -169,8 +170,9 @@ class CsvFormat extends Format implements iDecodeStream
 
         static::$haveHeaders ? $keys = $row : $decoded[] = $row;
 
-        while (($row = static::getRow(stream_get_line($stream, 0, PHP_EOL), $keys)) !== FALSE)
+        while (($row = static::getRow(stream_get_line($stream, 0, PHP_EOL), $keys)) !== false) {
             $decoded [] = $row;
+        }
 
         $char = Obj::$separatorChar;
         Obj::$separatorChar = false;

@@ -73,27 +73,31 @@ $sql.= " GROUP BY t.rowid, t.libelle, t.subscription, d.statut";
 
 dol_syslog("index.php::select nb of members per type", LOG_DEBUG);
 $result = $db->query($sql);
-if ($result)
-{
-	$num = $db->num_rows($result);
-	$i = 0;
-	while ($i < $num)
-	{
-		$objp = $db->fetch_object($result);
+if ($result) {
+    $num = $db->num_rows($result);
+    $i = 0;
+    while ($i < $num) {
+        $objp = $db->fetch_object($result);
 
-		$adhtype=new AdherentType($db);
-		$adhtype->id=$objp->rowid;
-		$adhtype->subscription=$objp->subscription;
-		$adhtype->label=$objp->label;
-		$AdherentType[$objp->rowid]=$adhtype;
+        $adhtype=new AdherentType($db);
+        $adhtype->id=$objp->rowid;
+        $adhtype->subscription=$objp->subscription;
+        $adhtype->label=$objp->label;
+        $AdherentType[$objp->rowid]=$adhtype;
 
-		if ($objp->statut == -1) { $MemberToValidate[$objp->rowid]=$objp->somme; }
-		if ($objp->statut == 1)  { $MembersValidated[$objp->rowid]=$objp->somme; }
-		if ($objp->statut == 0)  { $MembersResiliated[$objp->rowid]=$objp->somme; }
+        if ($objp->statut == -1) {
+            $MemberToValidate[$objp->rowid]=$objp->somme;
+        }
+        if ($objp->statut == 1) {
+            $MembersValidated[$objp->rowid]=$objp->somme;
+        }
+        if ($objp->statut == 0) {
+            $MembersResiliated[$objp->rowid]=$objp->somme;
+        }
 
-		$i++;
-	}
-	$db->free($result);
+        $i++;
+    }
+    $db->free($result);
 }
 
 $now=dol_now();
@@ -110,51 +114,49 @@ $sql.= " GROUP BY d.fk_adherent_type";
 
 dol_syslog("index.php::select nb of uptodate members by type", LOG_DEBUG);
 $result = $db->query($sql);
-if ($result)
-{
-	$num = $db->num_rows($result);
-	$i = 0;
-	while ($i < $num)
-	{
-		$objp = $db->fetch_object($result);
-		$MemberUpToDate[$objp->fk_adherent_type] = $objp->somme;
-		$i++;
-	}
-	$db->free();
+if ($result) {
+    $num = $db->num_rows($result);
+    $i = 0;
+    while ($i < $num) {
+        $objp = $db->fetch_object($result);
+        $MemberUpToDate[$objp->fk_adherent_type] = $objp->somme;
+        $i++;
+    }
+    $db->free();
 }
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
-{
+if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This is useless due to the global search combo
     // Search contact/address
-    if (!empty($conf->adherent->enabled) && $user->rights->adherent->lire)
-    {
-    	$listofsearchfields['search_member'] = array('text'=>'Member');
+    if (!empty($conf->adherent->enabled) && $user->rights->adherent->lire) {
+        $listofsearchfields['search_member'] = array('text'=>'Member');
     }
 
-    if (count($listofsearchfields))
-    {
-    	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
-    	print '<input type="hidden" name="token" value="'.newToken().'">';
+    if (count($listofsearchfields)) {
+        print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
+        print '<input type="hidden" name="token" value="'.newToken().'">';
         print '<div class="div-table-responsive-no-min">';
-    	print '<table class="noborder nohover centpercent">';
-    	$i = 0;
-    	foreach ($listofsearchfields as $key => $value)
-    	{
-    		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-    		print '<tr class="oddeven">';
-    		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label>:</td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
-    		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
-    		print '</tr>';
-    		$i++;
-    	}
-    	print '</table>';
+        print '<table class="noborder nohover centpercent">';
+        $i = 0;
+        foreach ($listofsearchfields as $key => $value) {
+            if ($i == 0) {
+                print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+            }
+            print '<tr class="oddeven">';
+            print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label>:</td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
+            if ($i == 0) {
+                print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
+            }
+            print '</tr>';
+            $i++;
+        }
+        print '</table>';
         print '</div>';
-    	print '</form>';
-    	print '<br>';
+        print '</form>';
+        print '<br>';
     }
 }
 
@@ -163,10 +165,9 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useles
  * Statistics
  */
 
-if ($conf->use_javascript_ajax)
-{
-	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder nohover centpercent">';
+if ($conf->use_javascript_ajax) {
+    print '<div class="div-table-responsive-no-min">';
+    print '<table class="noborder nohover centpercent">';
     print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
     print '<tr><td class="center" colspan="2">';
 
@@ -178,8 +179,7 @@ if ($conf->use_javascript_ajax)
     $dataval = array();
     $datalabels = array();
     $i = 0;
-    foreach ($AdherentType as $key => $adhtype)
-    {
+    foreach ($AdherentType as $key => $adhtype) {
         $datalabels[] = array($i, $adhtype->getNomUrl(0, dol_size(16)));
         $dataval['draft'][] = array($i, isset($MemberToValidate[$key]) ? $MemberToValidate[$key] : 0);
         $dataval['notuptodate'][] = array($i, isset($MembersValidated[$key]) ? $MembersValidated[$key] - (isset($MemberUpToDate[$key]) ? $MemberUpToDate[$key] : 0) : 0);
@@ -231,12 +231,10 @@ $sql.= " AND d.rowid = c.fk_adherent";
 
 
 $result = $db->query($sql);
-if ($result)
-{
+if ($result) {
     $num = $db->num_rows($result);
     $i = 0;
-    while ($i < $num)
-    {
+    while ($i < $num) {
         $objp = $db->fetch_object($result);
         $year = dol_print_date($db->jdate($objp->dateh), "%Y");
         $Total[$year] = (isset($Total[$year]) ? $Total[$year] : 0) + $objp->subscription;
@@ -258,19 +256,17 @@ print "</tr>\n";
 
 krsort($Total);
 $i = 0;
-foreach ($Total as $key=>$value)
-{
-	if ($i >= 8)
-	{
-		print '<tr class="oddeven">';
-		print "<td>...</td>";
-		print "<td class=\"right\"></td>";
-		print "<td class=\"right\"></td>";
-		print "<td class=\"right\"></td>";
-		print "</tr>\n";
-		break;
-	}
-	print '<tr class="oddeven">';
+foreach ($Total as $key=>$value) {
+    if ($i >= 8) {
+        print '<tr class="oddeven">';
+        print "<td>...</td>";
+        print "<td class=\"right\"></td>";
+        print "<td class=\"right\"></td>";
+        print "<td class=\"right\"></td>";
+        print "</tr>\n";
+        break;
+    }
+    print '<tr class="oddeven">';
     print "<td><a href=\"./subscription/list.php?date_select=$key\">$key</a></td>";
     print "<td class=\"right\">".$Number[$key]."</td>";
     print "<td class=\"right\">".price($value)."</td>";
@@ -307,51 +303,43 @@ $sql .= $db->order("a.tms", "DESC");
 $sql .= $db->plimit($max, 0);
 
 $resql = $db->query($sql);
-if ($resql)
-{
-	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre">';
-	print '<th colspan="4">'.$langs->trans("LastMembersModified", $max).'</th></tr>';
+if ($resql) {
+    print '<div class="div-table-responsive-no-min">';
+    print '<table class="noborder centpercent">';
+    print '<tr class="liste_titre">';
+    print '<th colspan="4">'.$langs->trans("LastMembersModified", $max).'</th></tr>';
 
-	$num = $db->num_rows($resql);
-	if ($num)
-	{
-		$i = 0;
-		while ($i < $num)
-		{
-			$obj = $db->fetch_object($resql);
-			print '<tr class="oddeven">';
-			$staticmember->id=$obj->rowid;
-			$staticmember->lastname=$obj->lastname;
-			$staticmember->firstname=$obj->firstname;
-			if (! empty($obj->fk_soc))
-			{
-				$staticmember->fk_soc = $obj->fk_soc;
-				$staticmember->fetch_thirdparty();
-				$staticmember->name=$staticmember->thirdparty->name;
-			}
-			else
-			{
-				$staticmember->name=$obj->company;
-			}
-			$staticmember->ref=$staticmember->getFullName($langs);
-			$statictype->id=$obj->typeid;
-			$statictype->label=$obj->label;
-			print '<td>'.$staticmember->getNomUrl(1, 32).'</td>';
-			print '<td>'.$statictype->getNomUrl(1, 32).'</td>';
-			print '<td>'.dol_print_date($db->jdate($obj->datem), 'dayhour').'</td>';
-			print '<td class="right">'.$staticmember->LibStatut($obj->statut, ($obj->subscription=='yes'?1:0), $db->jdate($obj->date_end_subscription), 3).'</td>';
-			print '</tr>';
-			$i++;
-		}
-	}
-	print "</table></div>";
-	print "<br>";
-}
-else
-{
-	dol_print_error($db);
+    $num = $db->num_rows($resql);
+    if ($num) {
+        $i = 0;
+        while ($i < $num) {
+            $obj = $db->fetch_object($resql);
+            print '<tr class="oddeven">';
+            $staticmember->id=$obj->rowid;
+            $staticmember->lastname=$obj->lastname;
+            $staticmember->firstname=$obj->firstname;
+            if (! empty($obj->fk_soc)) {
+                $staticmember->fk_soc = $obj->fk_soc;
+                $staticmember->fetch_thirdparty();
+                $staticmember->name=$staticmember->thirdparty->name;
+            } else {
+                $staticmember->name=$obj->company;
+            }
+            $staticmember->ref=$staticmember->getFullName($langs);
+            $statictype->id=$obj->typeid;
+            $statictype->label=$obj->label;
+            print '<td>'.$staticmember->getNomUrl(1, 32).'</td>';
+            print '<td>'.$statictype->getNomUrl(1, 32).'</td>';
+            print '<td>'.dol_print_date($db->jdate($obj->datem), 'dayhour').'</td>';
+            print '<td class="right">'.$staticmember->LibStatut($obj->statut, ($obj->subscription=='yes'?1:0), $db->jdate($obj->date_end_subscription), 3).'</td>';
+            print '</tr>';
+            $i++;
+        }
+    }
+    print "</table></div>";
+    print "<br>";
+} else {
+    dol_print_error($db);
 }
 
 
@@ -370,50 +358,45 @@ $sql .= $db->order("c.tms", "DESC");
 $sql .= $db->plimit($max, 0);
 
 $resql = $db->query($sql);
-if ($resql)
-{
-	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre">';
-	print '<th colspan="5">'.$langs->trans("LastSubscriptionsModified", $max).'</th></tr>';
+if ($resql) {
+    print '<div class="div-table-responsive-no-min">';
+    print '<table class="noborder centpercent">';
+    print '<tr class="liste_titre">';
+    print '<th colspan="5">'.$langs->trans("LastSubscriptionsModified", $max).'</th></tr>';
 
-	$num = $db->num_rows($resql);
-	if ($num)
-	{
-		$i = 0;
-		while ($i < $num)
-		{
-			$obj = $db->fetch_object($resql);
-			print '<tr class="oddeven">';
-			$subscriptionstatic->id = $obj->cid;
-			$subscriptionstatic->ref = $obj->cid;
-			$staticmember->id = $obj->rowid;
-			$staticmember->lastname = $obj->lastname;
-			$staticmember->firstname = $obj->firstname;
-			if (!empty($obj->fk_soc)) {
-				$staticmember->fk_soc = $obj->fk_soc;
-				$staticmember->fetch_thirdparty();
-				$staticmember->name = $staticmember->thirdparty->name;
-			} else {
-				$staticmember->name = $obj->company;
-			}
-			$staticmember->ref = $staticmember->getFullName($langs);
-			print '<td>'.$subscriptionstatic->getNomUrl(1).'</td>';
-			print '<td>'.$staticmember->getNomUrl(1, 32, 'subscription').'</td>';
-			print '<td>'.get_date_range($db->jdate($obj->date_start), $db->jdate($obj->date_end)).'</td>';
-			print '<td class="right">'.price($obj->subscription).'</td>';
-			//print '<td class="right">'.$staticmember->LibStatut($obj->statut,($obj->subscription=='yes'?1:0),$db->jdate($obj->date_end_subscription),5).'</td>';
-			print '<td class="right">'.dol_print_date($db->jdate($obj->datem ? $obj->datem : $obj->datec), 'dayhour').'</td>';
-			print '</tr>';
-			$i++;
-		}
-	}
-	print "</table></div>";
-	print "<br>";
-}
-else
-{
-	dol_print_error($db);
+    $num = $db->num_rows($resql);
+    if ($num) {
+        $i = 0;
+        while ($i < $num) {
+            $obj = $db->fetch_object($resql);
+            print '<tr class="oddeven">';
+            $subscriptionstatic->id = $obj->cid;
+            $subscriptionstatic->ref = $obj->cid;
+            $staticmember->id = $obj->rowid;
+            $staticmember->lastname = $obj->lastname;
+            $staticmember->firstname = $obj->firstname;
+            if (!empty($obj->fk_soc)) {
+                $staticmember->fk_soc = $obj->fk_soc;
+                $staticmember->fetch_thirdparty();
+                $staticmember->name = $staticmember->thirdparty->name;
+            } else {
+                $staticmember->name = $obj->company;
+            }
+            $staticmember->ref = $staticmember->getFullName($langs);
+            print '<td>'.$subscriptionstatic->getNomUrl(1).'</td>';
+            print '<td>'.$staticmember->getNomUrl(1, 32, 'subscription').'</td>';
+            print '<td>'.get_date_range($db->jdate($obj->date_start), $db->jdate($obj->date_end)).'</td>';
+            print '<td class="right">'.price($obj->subscription).'</td>';
+            //print '<td class="right">'.$staticmember->LibStatut($obj->statut,($obj->subscription=='yes'?1:0),$db->jdate($obj->date_end_subscription),5).'</td>';
+            print '<td class="right">'.dol_print_date($db->jdate($obj->datem ? $obj->datem : $obj->datec), 'dayhour').'</td>';
+            print '</tr>';
+            $i++;
+        }
+    }
+    print "</table></div>";
+    print "<br>";
+} else {
+    dol_print_error($db);
 }
 
 
@@ -428,15 +411,14 @@ print '<th class=right>'.$langs->trans("MenuMembersUpToDate").'</th>';
 print '<th class=right>'.$langs->trans("MembersStatusResiliated").'</th>';
 print "</tr>\n";
 
-foreach ($AdherentType as $key => $adhtype)
-{
-	print '<tr class="oddeven">';
-	print '<td>'.$adhtype->getNomUrl(1, dol_size(32)).'</td>';
-	print '<td class="right">'.(isset($MemberToValidate[$key]) && $MemberToValidate[$key] > 0 ? $MemberToValidate[$key] : '').' '.$staticmember->LibStatut(-1, $adhtype->subscription, 0, 3).'</td>';
-	print '<td class="right">'.(isset($MembersValidated[$key]) && ($MembersValidated[$key] - (isset($MemberUpToDate[$key]) ? $MemberUpToDate[$key] : 0) > 0) ? $MembersValidated[$key] - (isset($MemberUpToDate[$key]) ? $MemberUpToDate[$key] : 0) : '').' '.$staticmember->LibStatut(1, $adhtype->subscription, 0, 3).'</td>';
-	print '<td class="right">'.(isset($MemberUpToDate[$key]) && $MemberUpToDate[$key] > 0 ? $MemberUpToDate[$key] : '').' '.$staticmember->LibStatut(1, $adhtype->subscription, $now, 3).'</td>';
-	print '<td class="right">'.(isset($MembersResiliated[$key]) && $MembersResiliated[$key] > 0 ? $MembersResiliated[$key] : '').' '.$staticmember->LibStatut(0, $adhtype->subscription, 0, 3).'</td>';
-	print "</tr>\n";
+foreach ($AdherentType as $key => $adhtype) {
+    print '<tr class="oddeven">';
+    print '<td>'.$adhtype->getNomUrl(1, dol_size(32)).'</td>';
+    print '<td class="right">'.(isset($MemberToValidate[$key]) && $MemberToValidate[$key] > 0 ? $MemberToValidate[$key] : '').' '.$staticmember->LibStatut(-1, $adhtype->subscription, 0, 3).'</td>';
+    print '<td class="right">'.(isset($MembersValidated[$key]) && ($MembersValidated[$key] - (isset($MemberUpToDate[$key]) ? $MemberUpToDate[$key] : 0) > 0) ? $MembersValidated[$key] - (isset($MemberUpToDate[$key]) ? $MemberUpToDate[$key] : 0) : '').' '.$staticmember->LibStatut(1, $adhtype->subscription, 0, 3).'</td>';
+    print '<td class="right">'.(isset($MemberUpToDate[$key]) && $MemberUpToDate[$key] > 0 ? $MemberUpToDate[$key] : '').' '.$staticmember->LibStatut(1, $adhtype->subscription, $now, 3).'</td>';
+    print '<td class="right">'.(isset($MembersResiliated[$key]) && $MembersResiliated[$key] > 0 ? $MembersResiliated[$key] : '').' '.$staticmember->LibStatut(0, $adhtype->subscription, 0, 3).'</td>';
+    print "</tr>\n";
 }
 print '<tr class="liste_total">';
 print '<td class="liste_total">'.$langs->trans("Total").'</td>';

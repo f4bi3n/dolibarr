@@ -64,54 +64,61 @@ class box_propales extends ModeleBoxes
     }
 
     /**
-	 *  Load data into info_box_contents array to show array later.
-	 *
-	 *  @param	int		$max        Maximum number of records to load
+     *  Load data into info_box_contents array to show array later.
+     *
+     *  @param	int		$max        Maximum number of records to load
      *  @return	void
      */
     public function loadBox($max = 5)
     {
-    	global $user, $langs, $conf;
+        global $user, $langs, $conf;
 
-    	$this->max=$max;
+        $this->max=$max;
 
-    	include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+        include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
         include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-    	$propalstatic=new Propal($this->db);
+        $propalstatic=new Propal($this->db);
         $societestatic = new Societe($this->db);
 
         $this->info_box_head = array('text' => $langs->trans("BoxTitleLast".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE?"":"Modified")."Propals", $max));
 
-    	if ($user->rights->propale->lire)
-    	{
-    		$sql = "SELECT s.nom as name, s.rowid as socid, s.code_client, s.logo, s.email,";
-    		$sql.= " p.rowid, p.ref, p.fk_statut, p.datep as dp, p.datec, p.fin_validite, p.date_cloture, p.total_ht, p.tva as total_tva, p.total as total_ttc, p.tms";
-    		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-    		$sql.= ", ".MAIN_DB_PREFIX."propal as p";
-    		if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-    		$sql.= " WHERE p.fk_soc = s.rowid";
-    		$sql.= " AND p.entity = ".$conf->entity;
-    		if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-    		if($user->socid) $sql.= " AND s.rowid = ".$user->socid;
-            if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql.= " ORDER BY p.datep DESC, p.ref DESC ";
-            else $sql.= " ORDER BY p.tms DESC, p.ref DESC ";
-    		$sql.= $this->db->plimit($max, 0);
+        if ($user->rights->propale->lire) {
+            $sql = "SELECT s.nom as name, s.rowid as socid, s.code_client, s.logo, s.email,";
+            $sql.= " p.rowid, p.ref, p.fk_statut, p.datep as dp, p.datec, p.fin_validite, p.date_cloture, p.total_ht, p.tva as total_tva, p.total as total_ttc, p.tms";
+            $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+            $sql.= ", ".MAIN_DB_PREFIX."propal as p";
+            if (!$user->rights->societe->client->voir && !$user->socid) {
+                $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+            }
+            $sql.= " WHERE p.fk_soc = s.rowid";
+            $sql.= " AND p.entity = ".$conf->entity;
+            if (!$user->rights->societe->client->voir && !$user->socid) {
+                $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+            }
+            if ($user->socid) {
+                $sql.= " AND s.rowid = ".$user->socid;
+            }
+            if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) {
+                $sql.= " ORDER BY p.datep DESC, p.ref DESC ";
+            } else {
+                $sql.= " ORDER BY p.tms DESC, p.ref DESC ";
+            }
+            $sql.= $this->db->plimit($max, 0);
 
-    		$result = $this->db->query($sql);
-    		if ($result)
-    		{
-    			$num = $this->db->num_rows($result);
-    			$now=dol_now();
+            $result = $this->db->query($sql);
+            if ($result) {
+                $num = $this->db->num_rows($result);
+                $now=dol_now();
 
-    			$line = 0;
+                $line = 0;
 
                 while ($line < $num) {
-    				$objp = $this->db->fetch_object($result);
-    				$date=$this->db->jdate($objp->dp);
-    				$datec=$this->db->jdate($objp->datec);
-    				$datem=$this->db->jdate($objp->tms);
-    				$dateterm=$this->db->jdate($objp->fin_validite);
-    				$dateclose=$this->db->jdate($objp->date_cloture);
+                    $objp = $this->db->fetch_object($result);
+                    $date=$this->db->jdate($objp->dp);
+                    $datec=$this->db->jdate($objp->datec);
+                    $datem=$this->db->jdate($objp->tms);
+                    $dateterm=$this->db->jdate($objp->fin_validite);
+                    $dateclose=$this->db->jdate($objp->date_cloture);
                     $propalstatic->id = $objp->rowid;
                     $propalstatic->ref = $objp->ref;
                     $propalstatic->total_ht = $objp->total_ht;
@@ -123,10 +130,10 @@ class box_propales extends ModeleBoxes
                     $societestatic->logo = $objp->logo;
                     $societestatic->email = $objp->email;
 
-    				$late = '';
-    				if ($objp->fk_statut == 1 && $dateterm < ($now - $conf->propal->cloture->warning_delay)) {
-    					$late = img_warning($langs->trans("Late"));
-    				}
+                    $late = '';
+                    if ($objp->fk_statut == 1 && $dateterm < ($now - $conf->propal->cloture->warning_delay)) {
+                        $late = img_warning($langs->trans("Late"));
+                    }
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'class="nowraponall"',
@@ -159,11 +166,12 @@ class box_propales extends ModeleBoxes
                     $line++;
                 }
 
-                if ($num==0)
+                if ($num==0) {
                     $this->info_box_contents[$line][0] = array(
                         'td' => 'class="center"',
                         'text'=>$langs->trans("NoRecordedProposals"),
                     );
+                }
 
                 $this->db->free($result);
             } else {
@@ -181,14 +189,14 @@ class box_propales extends ModeleBoxes
         }
     }
 
-	/**
-	 *  Method to show box
-	 *
-	 *	@param  array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
-	 *	@return	string
-	 */
+    /**
+     *  Method to show box
+     *
+     *	@param  array	$head       Array with properties of box title
+     *	@param  array	$contents   Array with properties of box lines
+     *  @param	int		$nooutput	No print, only return string
+     *	@return	string
+     */
     public function showBox($head = null, $contents = null, $nooutput = 0)
     {
         return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);

@@ -12,12 +12,12 @@ use Sabre\HTTP;
  *
  * See: http://sabre.io/dav/http-patch/
  */
-class SpecificationTest extends \PHPUnit_Framework_TestCase {
-
+class SpecificationTest extends \PHPUnit_Framework_TestCase
+{
     protected $server;
 
-    function setUp() {
-
+    public function setUp()
+    {
         $tree = [
             new File(SABRE_TEMPDIR . '/foobar.txt')
         ];
@@ -28,13 +28,11 @@ class SpecificationTest extends \PHPUnit_Framework_TestCase {
         $tree[0]->put('1234567890');
 
         $this->server = $server;
-
     }
 
-    function tearDown() {
-
+    public function tearDown()
+    {
         \Sabre\TestUtil::clearTempDir();
-
     }
 
     /**
@@ -45,8 +43,8 @@ class SpecificationTest extends \PHPUnit_Framework_TestCase {
      *
      * @dataProvider data
      */
-    function testUpdateRange($headerValue, $httpStatus, $endResult, $contentLength = 4) {
-
+    public function testUpdateRange($headerValue, $httpStatus, $endResult, $contentLength = 4)
+    {
         $headers = [
             'Content-Type'   => 'application/x-sabredav-partialupdate',
             'X-Update-Range' => $headerValue,
@@ -68,11 +66,10 @@ class SpecificationTest extends \PHPUnit_Framework_TestCase {
         if (!is_null($endResult)) {
             $this->assertEquals($endResult, file_get_contents(SABRE_TEMPDIR . '/foobar.txt'));
         }
-
     }
 
-    function data() {
-
+    public function data()
+    {
         return [
             // Problems
             ['foo',       400, null],
@@ -88,7 +85,5 @@ class SpecificationTest extends \PHPUnit_Framework_TestCase {
             ['append',    204, '1234567890----'],
 
         ];
-
     }
-
 }

@@ -31,16 +31,14 @@ require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/price.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/compta/facture/class/facture.class.php';
 
-if (empty($user->id))
-{
+if (empty($user->id)) {
     print "Load permissions for admin user nb 1\n";
     $user->fetch(1);
     $user->getrights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
-if (! empty($conf->global->MAIN_ROUNDING_RULE_TOT))
-{
+if (! empty($conf->global->MAIN_ROUNDING_RULE_TOT)) {
     print "Parameter MAIN_ROUNDING_RULE_TOT must be set to 0 or not set.\n";
     exit(1);
 }

@@ -18,7 +18,8 @@ use Sabre\Xml\XmlDeserializable;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Lock implements XmlDeserializable {
+class Lock implements XmlDeserializable
+{
 
     /**
      * Owner of the lock
@@ -56,8 +57,8 @@ class Lock implements XmlDeserializable {
      * @param Reader $reader
      * @return mixed
      */
-    static function xmlDeserialize(Reader $reader) {
-
+    public static function xmlDeserialize(Reader $reader)
+    {
         $reader->pushContext();
         $reader->elementMap['{DAV:}owner'] = 'Sabre\\Xml\\Element\\XmlFragment';
 
@@ -71,11 +72,11 @@ class Lock implements XmlDeserializable {
 
         if (isset($values['{DAV:}lockscope'])) {
             foreach ($values['{DAV:}lockscope'] as $elem) {
-                if ($elem['name'] === '{DAV:}exclusive') $new->scope = LockInfo::EXCLUSIVE;
+                if ($elem['name'] === '{DAV:}exclusive') {
+                    $new->scope = LockInfo::EXCLUSIVE;
+                }
             }
         }
         return $new;
-
     }
-
 }

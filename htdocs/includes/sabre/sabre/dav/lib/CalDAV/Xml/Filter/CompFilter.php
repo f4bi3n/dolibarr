@@ -22,7 +22,8 @@ use Sabre\Xml\XmlDeserializable;
  * @author Evert Pot (http://www.rooftopsolutions.nl/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class CompFilter implements XmlDeserializable {
+class CompFilter implements XmlDeserializable
+{
 
     /**
      * The deserialize method is called during xml parsing.
@@ -45,8 +46,8 @@ class CompFilter implements XmlDeserializable {
      * @param Reader $reader
      * @return mixed
      */
-    static function xmlDeserialize(Reader $reader) {
-
+    public static function xmlDeserialize(Reader $reader)
+    {
         $result = [
             'name'           => null,
             'is-not-defined' => false,
@@ -60,20 +61,20 @@ class CompFilter implements XmlDeserializable {
 
         $elems = $reader->parseInnerTree();
 
-        if (is_array($elems)) foreach ($elems as $elem) {
+        if (is_array($elems)) {
+            foreach ($elems as $elem) {
+                switch ($elem['name']) {
 
-            switch ($elem['name']) {
-
-                case '{' . Plugin::NS_CALDAV . '}comp-filter' :
+                case '{' . Plugin::NS_CALDAV . '}comp-filter':
                     $result['comp-filters'][] = $elem['value'];
                     break;
-                case '{' . Plugin::NS_CALDAV . '}prop-filter' :
+                case '{' . Plugin::NS_CALDAV . '}prop-filter':
                     $result['prop-filters'][] = $elem['value'];
                     break;
-                case '{' . Plugin::NS_CALDAV . '}is-not-defined' :
+                case '{' . Plugin::NS_CALDAV . '}is-not-defined':
                     $result['is-not-defined'] = true;
                     break;
-                case '{' . Plugin::NS_CALDAV . '}time-range' :
+                case '{' . Plugin::NS_CALDAV . '}time-range':
                     if ($result['name'] === 'VCALENDAR') {
                         throw new BadRequest('You cannot add time-range filters on the VCALENDAR component');
                     }
@@ -87,11 +88,9 @@ class CompFilter implements XmlDeserializable {
                     break;
 
             }
-
+            }
         }
 
         return $result;
-
     }
-
 }

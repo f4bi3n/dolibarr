@@ -16,10 +16,9 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
-{
-	print "Error, template page can't be called as URL";
-	exit;
+if (empty($conf) || ! is_object($conf)) {
+    print "Error, template page can't be called as URL";
+    exit;
 }
 
 
@@ -32,8 +31,12 @@ $head = societe_prepare_head($object);
 
 dol_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company');
 
-if ($this->control->tpl['error']) echo $this->control->tpl['error'];
-if ($this->control->tpl['action_delete']) echo $this->control->tpl['action_delete']; ?>
+if ($this->control->tpl['error']) {
+    echo $this->control->tpl['error'];
+}
+if ($this->control->tpl['action_delete']) {
+    echo $this->control->tpl['action_delete'];
+} ?>
 
 <table class="border allwidth">
 
@@ -119,7 +122,9 @@ if ($this->control->tpl['action_delete']) echo $this->control->tpl['action_delet
 	<td colspan="3"><?php echo $this->control->tpl['tva_assuj']; ?></td>
 </tr>
 
-<?php if(!empty($this->control->tpl['localtax'])) echo $this->control->tpl['localtax']; ?>
+<?php if (!empty($this->control->tpl['localtax'])) {
+    echo $this->control->tpl['localtax'];
+} ?>
 
 <tr>
 	<td><?php echo $langs->trans("Type"); ?></td>
@@ -188,7 +193,7 @@ if ($this->control->tpl['action_delete']) echo $this->control->tpl['action_delet
 <?php if ($user->rights->societe->supprimer) { ?>
 	<?php if ($conf->use_javascript_ajax) { ?>
 		<span id="action-delete" class="butActionDelete"><?php echo $langs->trans('Delete'); ?></span>
-	<?php }	else { ?>
+	<?php } else { ?>
 		<a class="butActionDelete" href="<?php echo $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id'].'&amp;action=delete&amp;canvas='.$canvas; ?>"><?php echo $langs->trans('Delete'); ?></a>
 	<?php } ?>
 <?php } ?>

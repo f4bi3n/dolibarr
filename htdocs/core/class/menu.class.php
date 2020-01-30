@@ -35,7 +35,7 @@ class Menu
      */
     public function __construct()
     {
-          $this->liste = array();
+        $this->liste = array();
     }
 
     /**
@@ -105,7 +105,7 @@ class Menu
     public function remove_last()
     {
         // phpcs:enable
-    	if (count($this->liste) > 1) {
+        if (count($this->liste) > 1) {
             array_pop($this->liste);
         }
     }
@@ -118,9 +118,10 @@ class Menu
     public function getNbOfVisibleMenuEntries()
     {
         $nb=0;
-        foreach($this->liste as $val)
-        {
-            if (! empty($val['enabled'])) $nb++;
+        foreach ($this->liste as $val) {
+            if (! empty($val['enabled'])) {
+                $nb++;
+            }
         }
         return $nb;
     }

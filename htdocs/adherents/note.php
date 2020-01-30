@@ -39,8 +39,7 @@ $result=restrictedArea($user, 'adherent', $id);
 
 $object = new Adherent($db);
 $result=$object->fetch($id);
-if ($result > 0)
-{
+if ($result > 0) {
     $adht = new AdherentType($db);
     $result=$adht->fetch($object->typeid);
 }
@@ -64,27 +63,25 @@ llxHeader("", $title, $helpurl);
 
 $form = new Form($db);
 
-if ($id)
-{
-	$head = member_prepare_head($object);
+if ($id) {
+    $head = member_prepare_head($object);
 
-	dol_fiche_head($head, 'note', $langs->trans("Member"), -1, 'user');
+    dol_fiche_head($head, 'note', $langs->trans("Member"), -1, 'user');
 
-	print "<form method=\"post\" action=\"".$_SERVER['PHP_SELF']."\">";
-	print '<input type="hidden" name="token" value="'.newToken().'">';
+    print "<form method=\"post\" action=\"".$_SERVER['PHP_SELF']."\">";
+    print '<input type="hidden" name="token" value="'.newToken().'">';
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+    $linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	dol_banner_tab($object, 'rowid', $linkback);
+    dol_banner_tab($object, 'rowid', $linkback);
 
     print '<div class="fichecenter">';
 
     print '<div class="underbanner clearboth"></div>';
-	print '<table class="border centpercent tableforfield">';
+    print '<table class="border centpercent tableforfield">';
 
     // Login
-    if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
-    {
+    if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
         print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
     }
 

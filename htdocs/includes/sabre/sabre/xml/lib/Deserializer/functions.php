@@ -58,7 +58,8 @@ use Sabre\Xml\Reader;
  * @param string $namespace
  * @return array
  */
-function keyValue(Reader $reader, $namespace = null) {
+function keyValue(Reader $reader, $namespace = null)
+{
 
     // If there's no children, we don't do anything.
     if ($reader->isEmptyElement) {
@@ -70,7 +71,6 @@ function keyValue(Reader $reader, $namespace = null) {
 
     $reader->read();
     do {
-
         if ($reader->nodeType === Reader::ELEMENT) {
             if ($namespace !== null && $reader->namespaceURI === $namespace) {
                 $values[$reader->localName] = $reader->parseCurrentElement()['value'];
@@ -86,7 +86,6 @@ function keyValue(Reader $reader, $namespace = null) {
     $reader->read();
 
     return $values;
-
 }
 
 /**
@@ -137,7 +136,8 @@ function keyValue(Reader $reader, $namespace = null) {
  * @param string $namespace
  * @return string[]
  */
-function enum(Reader $reader, $namespace = null) {
+function enum(Reader $reader, $namespace = null)
+{
 
     // If there's no children, we don't do anything.
     if ($reader->isEmptyElement) {
@@ -149,7 +149,6 @@ function enum(Reader $reader, $namespace = null) {
 
     $values = [];
     do {
-
         if ($reader->nodeType !== Reader::ELEMENT) {
             continue;
         }
@@ -158,12 +157,10 @@ function enum(Reader $reader, $namespace = null) {
         } else {
             $values[] = $reader->getClark();
         }
-
     } while ($reader->depth >= $currentDepth && $reader->next());
 
     $reader->next();
     return $values;
-
 }
 
 /**
@@ -178,8 +175,8 @@ function enum(Reader $reader, $namespace = null) {
  * @param string $namespace
  * @return object
  */
-function valueObject(Reader $reader, $className, $namespace) {
-
+function valueObject(Reader $reader, $className, $namespace)
+{
     $valueObject = new $className();
     if ($reader->isEmptyElement) {
         $reader->next();
@@ -190,9 +187,7 @@ function valueObject(Reader $reader, $className, $namespace) {
 
     $reader->read();
     do {
-
         if ($reader->nodeType === Reader::ELEMENT && $reader->namespaceURI == $namespace) {
-
             if (property_exists($valueObject, $reader->localName)) {
                 if (is_array($defaultProperties[$reader->localName])) {
                     $valueObject->{$reader->localName}[] = $reader->parseCurrentElement()['value'];
@@ -210,7 +205,6 @@ function valueObject(Reader $reader, $className, $namespace) {
 
     $reader->read();
     return $valueObject;
-
 }
 
 /**
@@ -238,21 +232,18 @@ function valueObject(Reader $reader, $className, $namespace) {
  * @param string $childElementName Element name in clark-notation
  * @return array
  */
-function repeatingElements(Reader $reader, $childElementName) {
-
+function repeatingElements(Reader $reader, $childElementName)
+{
     if ($childElementName[0] !== '{') {
         $childElementName = '{}' . $childElementName;
     }
     $result = [];
 
     foreach ($reader->parseGetElements() as $element) {
-
         if ($element['name'] === $childElementName) {
             $result[] = $element['value'];
         }
-
     }
 
     return $result;
-
 }

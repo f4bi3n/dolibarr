@@ -13,7 +13,8 @@ namespace Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface IQuota extends ICollection {
+interface IQuota extends ICollection
+{
 
     /**
      * Returns the quota information
@@ -21,6 +22,5 @@ interface IQuota extends ICollection {
      * This method MUST return an array with 2 values, the first being the total used space,
      * the second the available space (in bytes)
      */
-    function getQuotaInfo();
-
+    public function getQuotaInfo();
 }

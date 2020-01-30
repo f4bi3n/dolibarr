@@ -182,9 +182,9 @@ class modAdherent extends DolibarrModules
         // Boxes
         //-------
         $this->boxes = array(
-			0=>array('file'=>'box_members.php','enabledbydefaulton'=>'Home'),
-			2=>array('file'=>'box_birthdays_members.php','enabledbydefaulton'=>'Home')
-		);
+            0=>array('file'=>'box_members.php','enabledbydefaulton'=>'Home'),
+            2=>array('file'=>'box_birthdays_members.php','enabledbydefaulton'=>'Home')
+        );
 
         // Permissions
         //------------
@@ -284,7 +284,7 @@ class modAdherent extends DolibarrModules
             'a.zip'=>"Text",'a.town'=>"Text",'d.nom'=>"Text",'co.code'=>'Text','co.label'=>"Text",'a.phone'=>"Text",'a.phone_perso'=>"Text",'a.phone_mobile'=>"Text",
             'a.email'=>"Text",'a.birth'=>"Date",'a.statut'=>"Status",'a.note_public'=>"Text",'a.note_private'=>"Text",'a.datec'=>'Date','a.datevalid'=>'Date',
             'a.tms'=>'Date','a.datefin'=>'Date','ta.rowid'=>'List:adherent_type:libelle::member_type','ta.libelle'=>'Text',
-			'c.rowid'=>'Numeric','c.dateadh'=>'Date','c.datef'=>'Date','c.subscription'=>'Numeric'
+            'c.rowid'=>'Numeric','c.dateadh'=>'Date','c.datef'=>'Date','c.subscription'=>'Numeric'
         );
         $this->export_entities_array[$r]=array(
             'a.rowid'=>'member','a.civility'=>"member",'a.lastname'=>"member",'a.firstname'=>"member",'a.login'=>"member",'a.gender'=>'member','a.morphy'=>'member',
@@ -292,10 +292,12 @@ class modAdherent extends DolibarrModules
             'a.phone'=>"member",'a.phone_perso'=>"member",'a.phone_mobile'=>"member",'a.email'=>"member",'a.birth'=>"member",'a.statut'=>"member",
             'a.photo'=>"member",'a.note_public'=>"member",'a.note_private'=>"member",'a.datec'=>'member','a.datevalid'=>'member','a.tms'=>'member',
             'a.datefin'=>'member','ta.rowid'=>'member_type','ta.libelle'=>'member_type',
-			'c.rowid'=>'subscription','c.dateadh'=>'subscription','c.datef'=>'subscription','c.subscription'=>'subscription'
+            'c.rowid'=>'subscription','c.dateadh'=>'subscription','c.datef'=>'subscription','c.subscription'=>'subscription'
         );
         // Add extra fields
-        $keyforselect='adherent'; $keyforelement='member'; $keyforaliasextra='extra';
+        $keyforselect='adherent';
+        $keyforelement='member';
+        $keyforaliasextra='extra';
         include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
         // End add axtra fields
         $this->export_sql_start[$r]='SELECT DISTINCT ';
@@ -331,10 +333,8 @@ class modAdherent extends DolibarrModules
         // Add extra fields
         $sql="SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'adherent' AND entity IN (0,".$conf->entity.")";
         $resql=$this->db->query($sql);
-        if ($resql)    // This can fail when class is used on old database (during migration for example)
-        {
-            while ($obj=$this->db->fetch_object($resql))
-            {
+        if ($resql) {    // This can fail when class is used on old database (during migration for example)
+            while ($obj=$this->db->fetch_object($resql)) {
                 $fieldname='extra.'.$obj->name;
                 $fieldlabel=ucfirst($obj->label);
                 $this->import_fields_array[$r][$fieldname]=$fieldlabel.($obj->fieldrequired?'*':'');

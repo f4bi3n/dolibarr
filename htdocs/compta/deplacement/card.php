@@ -29,8 +29,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/trip.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-if (!empty($conf->projet->enabled))
-{
+if (!empty($conf->projet->enabled)) {
     require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
@@ -40,7 +39,9 @@ $langs->load("trips");
 
 // Security check
 $id = GETPOST('id', 'int');
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+    $socid = $user->socid;
+}
 $result = restrictedArea($user, 'deplacement', $id, '');
 
 $action = GETPOST('action', 'alpha');
@@ -60,60 +61,38 @@ $permissionnote = $user->rights->deplacement->creer; // Used by the include of a
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not includ_once
 
-if ($action == 'validate' && $user->rights->deplacement->creer)
-{
+if ($action == 'validate' && $user->rights->deplacement->creer) {
     $object->fetch($id);
-    if ($object->statut == Deplacement::STATUS_DRAFT)
-    {
+    if ($object->statut == Deplacement::STATUS_DRAFT) {
         $result = $object->setStatut(1);
-        if ($result > 0)
-        {
+        if ($result > 0) {
             header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
             exit;
-        }
-        else
-        {
-	        setEventMessages($object->error, $object->errors, 'errors');
+        } else {
+            setEventMessages($object->error, $object->errors, 'errors');
         }
     }
-}
-
-elseif ($action == 'classifyrefunded' && $user->rights->deplacement->creer)
-{
+} elseif ($action == 'classifyrefunded' && $user->rights->deplacement->creer) {
     $object->fetch($id);
-    if ($object->statut == Deplacement::STATUS_VALIDATED)
-    {
+    if ($object->statut == Deplacement::STATUS_VALIDATED) {
         $result = $object->setStatut(Deplacement::STATUS_REFUNDED);
-        if ($result > 0)
-        {
+        if ($result > 0) {
             header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
             exit;
-        }
-        else
-        {
-	        setEventMessages($object->error, $object->errors, 'errors');
+        } else {
+            setEventMessages($object->error, $object->errors, 'errors');
         }
     }
-}
-
-elseif ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->deplacement->supprimer)
-{
+} elseif ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->deplacement->supprimer) {
     $result = $object->delete($id);
-    if ($result >= 0)
-    {
+    if ($result >= 0) {
         header("Location: index.php");
         exit;
+    } else {
+        setEventMessages($object->error, $object->errors, 'errors');
     }
-    else
-    {
-	    setEventMessages($object->error, $object->errors, 'errors');
-    }
-}
-
-elseif ($action == 'add' && $user->rights->deplacement->creer)
-{
-    if (!GETPOST('cancel', 'alpha'))
-    {
+} elseif ($action == 'add' && $user->rights->deplacement->creer) {
+    if (!GETPOST('cancel', 'alpha')) {
         $error = 0;
 
         $object->date = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
@@ -125,54 +104,41 @@ elseif ($action == 'add' && $user->rights->deplacement->creer)
         $object->note_public	= GETPOST('note_public', 'alpha');
         $object->statut = Deplacement::STATUS_DRAFT;
 
-        if (!$object->date)
-        {
-	        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
+        if (!$object->date) {
+            setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
             $error++;
         }
-        if ($object->type == '-1')
-        {
-	        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
+        if ($object->type == '-1') {
+            setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
             $error++;
         }
-        if (!($object->fk_user > 0))
-        {
-	        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Person")), null, 'errors');
+        if (!($object->fk_user > 0)) {
+            setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Person")), null, 'errors');
             $error++;
         }
 
-        if (!$error)
-        {
+        if (!$error) {
             $id = $object->create($user);
 
-            if ($id > 0)
-            {
+            if ($id > 0) {
                 header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
                 exit;
-            }
-            else
-            {
-	            setEventMessages($object->error, $object->errors, 'errors');
+            } else {
+                setEventMessages($object->error, $object->errors, 'errors');
                 $action = 'create';
             }
-        }
-        else
-        {
+        } else {
             $action = 'create';
         }
-    }
-    else
-    {
+    } else {
         header("Location: index.php");
         exit;
     }
 }
 
 // Update record
-elseif ($action == 'update' && $user->rights->deplacement->creer)
-{
-    if (!GETPOST('cancel', 'alpha'))
-    {
+elseif ($action == 'update' && $user->rights->deplacement->creer) {
+    if (!GETPOST('cancel', 'alpha')) {
         $result = $object->fetch($id);
 
         $object->date			= dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
@@ -185,44 +151,41 @@ elseif ($action == 'update' && $user->rights->deplacement->creer)
 
         $result = $object->update($user);
 
-        if ($result > 0)
-        {
+        if ($result > 0) {
             header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
             exit;
+        } else {
+            setEventMessages($object->error, $object->errors, 'errors');
         }
-        else
-        {
-	        setEventMessages($object->error, $object->errors, 'errors');
-        }
-    }
-    else
-    {
+    } else {
         header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
         exit;
     }
 }
 
 // Set into a project
-elseif ($action == 'classin' && $user->rights->deplacement->creer)
-{
+elseif ($action == 'classin' && $user->rights->deplacement->creer) {
     $object->fetch($id);
     $result = $object->setProject(GETPOST('projectid', 'int'));
-    if ($result < 0) dol_print_error($db, $object->error);
+    if ($result < 0) {
+        dol_print_error($db, $object->error);
+    }
 }
 
 // Set fields
-elseif ($action == 'setdated' && $user->rights->deplacement->creer)
-{
+elseif ($action == 'setdated' && $user->rights->deplacement->creer) {
     $dated = dol_mktime(GETPOST('datedhour', 'int'), GETPOST('datedmin', 'int'), GETPOST('datedsec', 'int'), GETPOST('datedmonth', 'int'), GETPOST('datedday', 'int'), GETPOST('datedyear', 'int'));
     $object->fetch($id);
     $result = $object->setValueFrom('dated', $dated, '', '', 'date', '', $user, 'DEPLACEMENT_MODIFY');
-    if ($result < 0) dol_print_error($db, $object->error);
-}
-elseif ($action == 'setkm' && $user->rights->deplacement->creer)
-{
+    if ($result < 0) {
+        dol_print_error($db, $object->error);
+    }
+} elseif ($action == 'setkm' && $user->rights->deplacement->creer) {
     $object->fetch($id);
     $result = $object->setValueFrom('km', GETPOST('km', 'int'), '', null, 'text', '', $user, 'DEPLACEMENT_MODIFY');
-    if ($result < 0) dol_print_error($db, $object->error);
+    if ($result < 0) {
+        dol_print_error($db, $object->error);
+    }
 }
 
 
@@ -237,8 +200,7 @@ $form = new Form($db);
 /*
  * Action create
 */
-if ($action == 'create')
-{
+if ($action == 'create') {
     //WYSIWYG Editor
     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
@@ -287,8 +249,7 @@ if ($action == 'create')
     print '</td></tr>';
 
     // Private note
-    if (empty($user->socid))
-    {
+    if (empty($user->socid)) {
         print '<tr>';
         print '<td class="tdtop">'.$langs->trans('NotePrivate').'</td>';
         print '<td>';
@@ -307,30 +268,25 @@ if ($action == 'create')
     print '</table>';
 
     print '<br><div class="center">';
-	print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+    print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
+    print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
     print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</div>';
+    print '</div>';
 
     print '</form>';
-}
-elseif ($id)
-{
+} elseif ($id) {
     $result = $object->fetch($id);
-    if ($result > 0)
-    {
+    if ($result > 0) {
         $head = trip_prepare_head($object);
 
         dol_fiche_head($head, 'card', $langs->trans("TripCard"), 0, 'trip');
 
-        if ($action == 'edit' && $user->rights->deplacement->creer)
-        {
+        if ($action == 'edit' && $user->rights->deplacement->creer) {
             //WYSIWYG Editor
             require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
             $soc = new Societe($db);
-            if ($object->socid)
-            {
+            if ($object->socid) {
                 $soc->fetch($object->socid);
             }
 
@@ -385,8 +341,7 @@ elseif ($id)
             print "</td></tr>";
 
             // Private note
-            if (empty($user->socid))
-            {
+            if (empty($user->socid)) {
                 print '<tr><td class="tdtop">'.$langs->trans("NotePrivate").'</td>';
                 print '<td>';
 
@@ -404,27 +359,26 @@ elseif ($id)
             print '</table>';
 
             print '<br><div class="center">';
-			print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
-			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+            print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+            print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
             print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
             print '</div>';
 
             print '</form>';
 
             print '</div>';
-        }
-        else
-        {
+        } else {
             /*
              * Confirm delete trip
              */
-            if ($action == 'delete')
-            {
+            if ($action == 'delete') {
                 print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id, $langs->trans("DeleteTrip"), $langs->trans("ConfirmDeleteTrip"), "confirm_delete");
             }
 
             $soc = new Societe($db);
-            if ($object->socid) $soc->fetch($object->socid);
+            if ($object->socid) {
+                $soc->fetch($object->socid);
+            }
 
             print '<table class="border centpercent">';
 
@@ -435,9 +389,9 @@ elseif ($id)
             print $form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'ref', '');
             print '</td></tr>';
 
-	        $form->load_cache_types_fees();
+            $form->load_cache_types_fees();
 
-	        // Type
+            // Type
             print '<tr><td>';
             print $form->editfieldkey("Type", 'type', $langs->trans($object->type), $object, $conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer, 'select:types_fees');
             print '</td><td>';
@@ -468,12 +422,13 @@ elseif ($id)
             // Where
             print '<tr><td>'.$langs->trans("CompanyVisited").'</td>';
             print '<td>';
-            if ($soc->id) print $soc->getNomUrl(1);
+            if ($soc->id) {
+                print $soc->getNomUrl(1);
+            }
             print '</td></tr>';
 
             // Project
-            if (!empty($conf->projet->enabled))
-            {
+            if (!empty($conf->projet->enabled)) {
                 $langs->load('projects');
                 print '<tr>';
                 print '<td>';
@@ -481,20 +436,16 @@ elseif ($id)
                 print '<table class="nobordernopadding" width="100%"><tr><td>';
                 print $langs->trans('Project');
                 print '</td>';
-                if ($action != 'classify' && $user->rights->deplacement->creer)
-                {
+                if ($action != 'classify' && $user->rights->deplacement->creer) {
                     print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classify&amp;id='.$object->id.'">';
                     print img_edit($langs->trans('SetProject'), 1);
                     print '</a></td>';
                 }
                 print '</tr></table>';
                 print '</td><td colspan="3">';
-                if ($action == 'classify')
-                {
+                if ($action == 'classify') {
                     $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1);
-                }
-                else
-                {
+                } else {
                     $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0);
                 }
                 print '</td>';
@@ -504,9 +455,9 @@ elseif ($id)
             // Statut
             print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
 
-        	// Other attributes
-        	$parameters = array('socid'=>$object->id);
-        	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
+            // Other attributes
+            $parameters = array('socid'=>$object->id);
+            include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
             print "</table><br>";
 
@@ -523,56 +474,39 @@ elseif ($id)
 
             print '<div class="tabsAction">';
 
-            if ($object->statut < Deplacement::STATUS_REFUNDED) 	// if not refunded
-            {
-	            if ($user->rights->deplacement->creer)
-	            {
-	                print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$id.'">'.$langs->trans('Modify').'</a>';
-	            }
-	            else
-	            {
-	                print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('Modify').'</a>';
-	            }
+            if ($object->statut < Deplacement::STATUS_REFUNDED) { 	// if not refunded
+                if ($user->rights->deplacement->creer) {
+                    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$id.'">'.$langs->trans('Modify').'</a>';
+                } else {
+                    print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('Modify').'</a>';
+                }
             }
 
-            if ($object->statut == Deplacement::STATUS_DRAFT) 	// if draft
-            {
-                if ($user->rights->deplacement->creer)
-                {
+            if ($object->statut == Deplacement::STATUS_DRAFT) { 	// if draft
+                if ($user->rights->deplacement->creer) {
                     print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=validate&id='.$id.'">'.$langs->trans('Validate').'</a>';
-                }
-                else
-                {
+                } else {
                     print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('Validate').'</a>';
                 }
             }
 
-            if ($object->statut == Deplacement::STATUS_VALIDATED) 	// if validated
-            {
-                if ($user->rights->deplacement->creer)
-                {
+            if ($object->statut == Deplacement::STATUS_VALIDATED) { 	// if validated
+                if ($user->rights->deplacement->creer) {
                     print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=classifyrefunded&id='.$id.'">'.$langs->trans('ClassifyRefunded').'</a>';
-                }
-                else
-                {
+                } else {
                     print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('ClassifyRefunded').'</a>';
                 }
             }
 
-            if ($user->rights->deplacement->supprimer)
-            {
+            if ($user->rights->deplacement->supprimer) {
                 print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$id.'">'.$langs->trans('Delete').'</a>';
-            }
-            else
-            {
+            } else {
                 print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('Delete').'</a>';
             }
 
             print '</div>';
         }
-    }
-    else
-    {
+    } else {
         dol_print_error($db);
     }
 }

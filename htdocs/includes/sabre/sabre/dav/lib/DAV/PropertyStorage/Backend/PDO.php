@@ -18,7 +18,8 @@ use Sabre\DAV\Xml\Property\Complex;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class PDO implements BackendInterface {
+class PDO implements BackendInterface
+{
 
     /**
      * Value is stored as string.
@@ -54,10 +55,9 @@ class PDO implements BackendInterface {
      *
      * @param \PDO $pdo
      */
-    function __construct(\PDO $pdo) {
-
+    public function __construct(\PDO $pdo)
+    {
         $this->pdo = $pdo;
-
     }
 
     /**
@@ -77,8 +77,8 @@ class PDO implements BackendInterface {
      * @param PropFind $propFind
      * @return void
      */
-    function propFind($path, PropFind $propFind) {
-
+    public function propFind($path, PropFind $propFind)
+    {
         if (!$propFind->isAllProps() && count($propFind->get404Properties()) === 0) {
             return;
         }
@@ -92,19 +92,18 @@ class PDO implements BackendInterface {
                 $row['value'] = stream_get_contents($row['value']);
             }
             switch ($row['valuetype']) {
-                case null :
-                case self::VT_STRING :
+                case null:
+                case self::VT_STRING:
                     $propFind->set($row['name'], $row['value']);
                     break;
-                case self::VT_XML :
+                case self::VT_XML:
                     $propFind->set($row['name'], new Complex($row['value']));
                     break;
-                case self::VT_OBJECT :
+                case self::VT_OBJECT:
                     $propFind->set($row['name'], unserialize($row['value']));
                     break;
             }
         }
-
     }
 
     /**
@@ -120,34 +119,27 @@ class PDO implements BackendInterface {
      * @param PropPatch $propPatch
      * @return void
      */
-    function propPatch($path, PropPatch $propPatch) {
-
-        $propPatch->handleRemaining(function($properties) use ($path) {
-
-
+    public function propPatch($path, PropPatch $propPatch)
+    {
+        $propPatch->handleRemaining(function ($properties) use ($path) {
             if ($this->pdo->getAttribute(\PDO::ATTR_DRIVER_NAME) === 'pgsql') {
-
                 $updateSql = <<<SQL
 INSERT INTO {$this->tableName} (path, name, valuetype, value)
 VALUES (:path, :name, :valuetype, :value)
 ON CONFLICT (path, name)
 DO UPDATE SET valuetype = :valuetype, value = :value
 SQL;
-
-
             } else {
                 $updateSql = <<<SQL
 REPLACE INTO {$this->tableName} (path, name, valuetype, value)
 VALUES (:path, :name, :valuetype, :value)
 SQL;
-
             }
 
             $updateStmt = $this->pdo->prepare($updateSql);
             $deleteStmt = $this->pdo->prepare("DELETE FROM " . $this->tableName . " WHERE path = ? AND name = ?");
 
             foreach ($properties as $name => $value) {
-
                 if (!is_null($value)) {
                     if (is_scalar($value)) {
                         $valueType = self::VT_STRING;
@@ -165,17 +157,13 @@ SQL;
                     $updateStmt->bindParam('value', $value, \PDO::PARAM_LOB);
 
                     $updateStmt->execute();
-
                 } else {
                     $deleteStmt->execute([$path, $name]);
                 }
-
             }
 
             return true;
-
         });
-
     }
 
     /**
@@ -189,8 +177,8 @@ SQL;
      * @param string $path
      * @return void
      */
-    function delete($path) {
-
+    public function delete($path)
+    {
         $stmt = $this->pdo->prepare("DELETE FROM " . $this->tableName . "  WHERE path = ? OR path LIKE ? ESCAPE '='");
         $childPath = strtr(
             $path,
@@ -202,7 +190,6 @@ SQL;
         ) . '/%';
 
         $stmt->execute([$path, $childPath]);
-
     }
 
     /**
@@ -216,7 +203,8 @@ SQL;
      * @param string $destination
      * @return void
      */
-    function move($source, $destination) {
+    public function move($source, $destination)
+    {
 
         // I don't know a way to write this all in a single sql query that's
         // also compatible across db engines, so we're letting PHP do all the
@@ -230,7 +218,9 @@ SQL;
 
             // Sanity check. SQL may select too many records, such as records
             // with different cases.
-            if ($row['path'] !== $source && strpos($row['path'], $source . '/') !== 0) continue;
+            if ($row['path'] !== $source && strpos($row['path'], $source . '/') !== 0) {
+                continue;
+            }
 
             $trailingPart = substr($row['path'], strlen($source) + 1);
             $newPath = $destination;
@@ -238,9 +228,6 @@ SQL;
                 $newPath .= '/' . $trailingPart;
             }
             $update->execute([$newPath, $row['id']]);
-
         }
-
     }
-
 }

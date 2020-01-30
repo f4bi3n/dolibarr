@@ -5,10 +5,10 @@ namespace Sabre\Xml\Element;
 use Sabre\Xml\Reader;
 use Sabre\Xml\Writer;
 
-class ElementsTest extends \PHPUnit_Framework_TestCase {
-
-    function testDeserialize() {
-
+class ElementsTest extends \PHPUnit_Framework_TestCase
+{
+    public function testDeserialize()
+    {
         $input = <<<BLA
 <?xml version="1.0"?>
 <root xmlns="http://sabredav.org/ns">
@@ -81,11 +81,10 @@ BLA;
             ],
             'attributes' => [],
         ], $output);
-
     }
 
-    function testSerialize() {
-
+    public function testSerialize()
+    {
         $value = [
             '{http://sabredav.org/ns}elem1',
             '{http://sabredav.org/ns}elem2',
@@ -122,8 +121,5 @@ BLA;
 XML;
 
         $this->assertEquals($expected, $output);
-
-
     }
-
 }

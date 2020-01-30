@@ -21,7 +21,8 @@ use Sabre\Xml\XmlDeserializable;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class PropFilter implements XmlDeserializable {
+class PropFilter implements XmlDeserializable
+{
 
     /**
      * The deserialize method is called during xml parsing.
@@ -44,8 +45,8 @@ class PropFilter implements XmlDeserializable {
      * @param Reader $reader
      * @return mixed
      */
-    static function xmlDeserialize(Reader $reader) {
-
+    public static function xmlDeserialize(Reader $reader)
+    {
         $result = [
             'name'           => null,
             'test'           => 'anyof',
@@ -63,17 +64,17 @@ class PropFilter implements XmlDeserializable {
 
         $elems = $reader->parseInnerTree();
 
-        if (is_array($elems)) foreach ($elems as $elem) {
+        if (is_array($elems)) {
+            foreach ($elems as $elem) {
+                switch ($elem['name']) {
 
-            switch ($elem['name']) {
-
-                case '{' . Plugin::NS_CARDDAV . '}param-filter' :
+                case '{' . Plugin::NS_CARDDAV . '}param-filter':
                     $result['param-filters'][] = $elem['value'];
                     break;
-                case '{' . Plugin::NS_CARDDAV . '}is-not-defined' :
+                case '{' . Plugin::NS_CARDDAV . '}is-not-defined':
                     $result['is-not-defined'] = true;
                     break;
-                case '{' . Plugin::NS_CARDDAV . '}text-match' :
+                case '{' . Plugin::NS_CARDDAV . '}text-match':
                     $matchType = isset($elem['attributes']['match-type']) ? $elem['attributes']['match-type'] : 'contains';
 
                     if (!in_array($matchType, ['contains', 'equals', 'starts-with', 'ends-with'])) {
@@ -88,11 +89,9 @@ class PropFilter implements XmlDeserializable {
                     break;
 
             }
-
+            }
         }
 
         return $result;
-
     }
-
 }

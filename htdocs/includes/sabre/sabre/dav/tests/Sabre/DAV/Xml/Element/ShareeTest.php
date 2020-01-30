@@ -5,19 +5,19 @@ namespace Sabre\DAV\Xml\Element;
 use Sabre\DAV\Sharing\Plugin;
 use Sabre\DAV\Xml\XmlTest;
 
-class ShareeTest extends XmlTest {
+class ShareeTest extends XmlTest
+{
 
     /**
      * @expectedException \InvalidArgumentException
      */
-    function testShareeUnknownPropertyInConstructor() {
-
+    public function testShareeUnknownPropertyInConstructor()
+    {
         new Sharee(['foo' => 'bar']);
-
     }
 
-    function testDeserialize() {
-
+    public function testDeserialize()
+    {
         $xml = <<<XML
 <?xml version="1.0" encoding="utf-8" ?>
 <D:sharee xmlns:D="DAV:">
@@ -46,14 +46,13 @@ XML;
             $expected,
             $result['value']
         );
-
     }
 
     /**
      * @expectedException \Sabre\DAV\Exception\BadRequest
      */
-    function testDeserializeNoHref() {
-
+    public function testDeserializeNoHref()
+    {
         $xml = <<<XML
 <?xml version="1.0" encoding="utf-8" ?>
 <D:sharee xmlns:D="DAV:">
@@ -70,15 +69,14 @@ XML;
         $this->parse($xml, [
             '{DAV:}sharee' => 'Sabre\\DAV\\Xml\\Element\\Sharee'
         ]);
-
     }
 
 
     /**
      * @expectedException \Sabre\DAV\Exception\BadRequest
      */
-    function testDeserializeNoShareeAccess() {
-
+    public function testDeserializeNoShareeAccess()
+    {
         $xml = <<<XML
 <?xml version="1.0" encoding="utf-8" ?>
 <D:sharee xmlns:D="DAV:">
@@ -93,6 +91,5 @@ XML;
         $this->parse($xml, [
             '{DAV:}sharee' => 'Sabre\\DAV\\Xml\\Element\\Sharee'
         ]);
-
     }
 }

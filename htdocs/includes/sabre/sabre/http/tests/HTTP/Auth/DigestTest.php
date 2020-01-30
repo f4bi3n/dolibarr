@@ -5,7 +5,8 @@ namespace Sabre\HTTP\Auth;
 use Sabre\HTTP\Request;
 use Sabre\HTTP\Response;
 
-class DigestTest extends \PHPUnit_Framework_TestCase {
+class DigestTest extends \PHPUnit_Framework_TestCase
+{
 
     /**
      * @var Sabre\HTTP\Response
@@ -26,17 +27,15 @@ class DigestTest extends \PHPUnit_Framework_TestCase {
 
     const REALM = 'SabreDAV unittest';
 
-    function setUp() {
-
+    public function setUp()
+    {
         $this->response = new Response();
         $this->request = new Request();
         $this->auth = new Digest(self::REALM, $this->request, $this->response);
-
-
     }
 
-    function testDigest() {
-
+    public function testDigest()
+    {
         list($nonce, $opaque) = $this->getServerTokens();
 
         $username = 'admin';
@@ -62,11 +61,10 @@ class DigestTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(self::REALM, $this->auth->getRealm());
         $this->assertTrue($this->auth->validateA1(md5($username . ':' . self::REALM . ':' . $password)), 'Authentication is deemed invalid through validateA1');
         $this->assertTrue($this->auth->validatePassword($password), 'Authentication is deemed invalid through validatePassword');
-
     }
 
-    function testInvalidDigest() {
-
+    public function testInvalidDigest()
+    {
         list($nonce, $opaque) = $this->getServerTokens();
 
         $username = 'admin';
@@ -89,22 +87,20 @@ class DigestTest extends \PHPUnit_Framework_TestCase {
         $this->auth->init();
 
         $this->assertFalse($this->auth->validateA1(md5($username . ':' . self::REALM . ':' . ($password . 'randomness'))), 'Authentication is deemed invalid through validateA1');
-
     }
 
-    function testInvalidDigest2() {
-
+    public function testInvalidDigest2()
+    {
         $this->request->setMethod('GET');
         $this->request->setHeader('Authorization', 'basic blablabla');
 
         $this->auth->init();
         $this->assertFalse($this->auth->validateA1(md5('user:realm:password')));
-
     }
 
 
-    function testDigestAuthInt() {
-
+    public function testDigestAuthInt()
+    {
         $this->auth->setQOP(Digest::QOP_AUTHINT);
         list($nonce, $opaque) = $this->getServerTokens(Digest::QOP_AUTHINT);
 
@@ -129,11 +125,10 @@ class DigestTest extends \PHPUnit_Framework_TestCase {
         $this->auth->init();
 
         $this->assertTrue($this->auth->validateA1(md5($username . ':' . self::REALM . ':' . $password)), 'Authentication is deemed invalid through validateA1');
-
     }
 
-    function testDigestAuthBoth() {
-
+    public function testDigestAuthBoth()
+    {
         $this->auth->setQOP(Digest::QOP_AUTHINT | Digest::QOP_AUTH);
         list($nonce, $opaque) = $this->getServerTokens(Digest::QOP_AUTHINT | Digest::QOP_AUTH);
 
@@ -158,22 +153,24 @@ class DigestTest extends \PHPUnit_Framework_TestCase {
         $this->auth->init();
 
         $this->assertTrue($this->auth->validateA1(md5($username . ':' . self::REALM . ':' . $password)), 'Authentication is deemed invalid through validateA1');
-
     }
 
 
-    private function getServerTokens($qop = Digest::QOP_AUTH) {
-
+    private function getServerTokens($qop = Digest::QOP_AUTH)
+    {
         $this->auth->requireLogin();
 
         switch ($qop) {
-            case Digest::QOP_AUTH    : $qopstr = 'auth'; break;
-            case Digest::QOP_AUTHINT : $qopstr = 'auth-int'; break;
-            default                  : $qopstr = 'auth,auth-int'; break;
+            case Digest::QOP_AUTH: $qopstr = 'auth'; break;
+            case Digest::QOP_AUTHINT: $qopstr = 'auth-int'; break;
+            default: $qopstr = 'auth,auth-int'; break;
         }
 
-        $test = preg_match('/Digest realm="' . self::REALM . '",qop="' . $qopstr . '",nonce="([0-9a-f]*)",opaque="([0-9a-f]*)"/',
-            $this->response->getHeader('WWW-Authenticate'), $matches);
+        $test = preg_match(
+            '/Digest realm="' . self::REALM . '",qop="' . $qopstr . '",nonce="([0-9a-f]*)",opaque="([0-9a-f]*)"/',
+            $this->response->getHeader('WWW-Authenticate'),
+            $matches
+        );
 
         $this->assertTrue($test == true, 'The WWW-Authenticate response didn\'t match our pattern. We received: ' . $this->response->getHeader('WWW-Authenticate'));
 
@@ -185,7 +182,5 @@ class DigestTest extends \PHPUnit_Framework_TestCase {
         $this->auth->setQOP($qop);
 
         return [$nonce,$opaque];
-
     }
-
 }

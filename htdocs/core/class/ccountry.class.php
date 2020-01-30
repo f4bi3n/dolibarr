@@ -32,42 +32,42 @@
  */
 class Ccountry // extends CommonObject
 {
-	/**
+    /**
      * @var DoliDB Database handler.
      */
     public $db;
 
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	/**
-	 * @var string[] Error codes (or messages)
-	 */
-	public $errors = array();
-
-	public $element = 'ccountry'; //!< Id that identify managed objects
-	public $table_element = 'c_country'; //!< Name of table without prefix where object is stored
+    /**
+     * @var string Error code (or message)
+     */
+    public $error = '';
 
     /**
-	 * @var int ID
-	 */
-	public $id;
+     * @var string[] Error codes (or messages)
+     */
+    public $errors = array();
 
-	public $code;
-	public $code_iso;
+    public $element = 'ccountry'; //!< Id that identify managed objects
+    public $table_element = 'c_country'; //!< Name of table without prefix where object is stored
 
-	/**
+    /**
+     * @var int ID
+     */
+    public $id;
+
+    public $code;
+    public $code_iso;
+
+    /**
      * @var string Countries label
      */
     public $label;
 
-	public $active;
+    public $active;
 
-	public $fields = array(
-		'label' => array('type'=>'varchar(250)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>15, 'notnull'=>-1, 'showoncombobox'=>'1')
-	);
+    public $fields = array(
+        'label' => array('type'=>'varchar(250)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>15, 'notnull'=>-1, 'showoncombobox'=>'1')
+    );
 
 
     /**
@@ -90,73 +90,78 @@ class Ccountry // extends CommonObject
      */
     public function create($user, $notrigger = 0)
     {
-    	global $conf, $langs;
-		$error = 0;
+        global $conf, $langs;
+        $error = 0;
 
-		// Clean parameters
-		if (isset($this->code)) $this->code = trim($this->code);
-		if (isset($this->code_iso)) $this->code_iso = trim($this->code_iso);
-		if (isset($this->label)) $this->label = trim($this->label);
-		if (isset($this->active)) $this->active = trim($this->active);
+        // Clean parameters
+        if (isset($this->code)) {
+            $this->code = trim($this->code);
+        }
+        if (isset($this->code_iso)) {
+            $this->code_iso = trim($this->code_iso);
+        }
+        if (isset($this->label)) {
+            $this->label = trim($this->label);
+        }
+        if (isset($this->active)) {
+            $this->active = trim($this->active);
+        }
 
-		// Check parameters
-		// Put here code to add control on parameters values
+        // Check parameters
+        // Put here code to add control on parameters values
 
         // Insert request
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."c_country(";
-		$sql .= "rowid,";
-		$sql .= "code,";
-		$sql .= "code_iso,";
-		$sql .= "label,";
-		$sql .= "active";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."c_country(";
+        $sql .= "rowid,";
+        $sql .= "code,";
+        $sql .= "code_iso,";
+        $sql .= "label,";
+        $sql .= "active";
         $sql .= ") VALUES (";
-		$sql .= " ".(!isset($this->rowid) ? 'NULL' : "'".$this->db->escape($this->rowid)."'").",";
-		$sql .= " ".(!isset($this->code) ? 'NULL' : "'".$this->db->escape($this->code)."'").",";
-		$sql .= " ".(!isset($this->code_iso) ? 'NULL' : "'".$this->db->escape($this->code_iso)."'").",";
-		$sql .= " ".(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'").",";
-		$sql .= " ".(!isset($this->active) ? 'NULL' : "'".$this->db->escape($this->active)."'")."";
-		$sql .= ")";
+        $sql .= " ".(!isset($this->rowid) ? 'NULL' : "'".$this->db->escape($this->rowid)."'").",";
+        $sql .= " ".(!isset($this->code) ? 'NULL' : "'".$this->db->escape($this->code)."'").",";
+        $sql .= " ".(!isset($this->code_iso) ? 'NULL' : "'".$this->db->escape($this->code_iso)."'").",";
+        $sql .= " ".(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'").",";
+        $sql .= " ".(!isset($this->active) ? 'NULL' : "'".$this->db->escape($this->active)."'")."";
+        $sql .= ")";
 
-		$this->db->begin();
+        $this->db->begin();
 
-	   	dol_syslog(get_class($this)."::create", LOG_DEBUG);
+        dol_syslog(get_class($this)."::create", LOG_DEBUG);
         $resql = $this->db->query($sql);
-    	if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+        if (!$resql) {
+            $error++;
+            $this->errors[] = "Error ".$this->db->lasterror();
+        }
 
-		if (!$error)
-        {
+        if (!$error) {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."c_country");
 
-			if (!$notrigger)
-			{
-	            // Uncomment this and change MYOBJECT to your own tag if you
-	            // want this action call a trigger.
+            if (!$notrigger) {
+                // Uncomment this and change MYOBJECT to your own tag if you
+                // want this action call a trigger.
 
-	            //// Call triggers
-	            //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-	            //$interface=new Interfaces($this->db);
-	            //$result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
-	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-	            //// End call triggers
-			}
+                //// Call triggers
+                //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+                //$interface=new Interfaces($this->db);
+                //$result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
+                //if ($result < 0) { $error++; $this->errors=$interface->errors; }
+                //// End call triggers
+            }
         }
 
         // Commit or rollback
-        if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
-	            dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
-	            $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
-			}
-			$this->db->rollback();
-			return -1 * $error;
-		}
-		else
-		{
-			$this->db->commit();
+        if ($error) {
+            foreach ($this->errors as $errmsg) {
+                dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
+                $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+            }
+            $this->db->rollback();
+            return -1 * $error;
+        } else {
+            $this->db->commit();
             return $this->id;
-		}
+        }
     }
 
 
@@ -170,42 +175,41 @@ class Ccountry // extends CommonObject
      */
     public function fetch($id, $code = '', $code_iso = '')
     {
-    	global $langs;
+        global $langs;
         $sql = "SELECT";
-  		$sql.= " t.rowid,";
-  		$sql.= " t.code,";
-  		$sql.= " t.code_iso,";
-  		$sql.= " t.label,";
-  		$sql.= " t.active";
+        $sql.= " t.rowid,";
+        $sql.= " t.code,";
+        $sql.= " t.code_iso,";
+        $sql.= " t.label,";
+        $sql.= " t.active";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_country as t";
-        if ($id) $sql.= " WHERE t.rowid = ".$id;
-        elseif ($code) $sql.= " WHERE t.code = '".$this->db->escape($code)."'";
-        elseif ($code_iso) $sql.= " WHERE t.code_iso = '".$this->db->escape($code_iso)."'";
+        if ($id) {
+            $sql.= " WHERE t.rowid = ".$id;
+        } elseif ($code) {
+            $sql.= " WHERE t.code = '".$this->db->escape($code)."'";
+        } elseif ($code_iso) {
+            $sql.= " WHERE t.code_iso = '".$this->db->escape($code_iso)."'";
+        }
 
-    	dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+        dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            if ($this->db->num_rows($resql))
-            {
+        if ($resql) {
+            if ($this->db->num_rows($resql)) {
                 $obj = $this->db->fetch_object($resql);
 
                 $this->id    = $obj->rowid;
-				$this->code = $obj->code;
-				$this->code_iso = $obj->code_iso;
-				$this->label = $obj->label;
-				$this->active = $obj->active;
+                $this->code = $obj->code;
+                $this->code_iso = $obj->code_iso;
+                $this->label = $obj->label;
+                $this->active = $obj->active;
 
                 $this->db->free($resql);
                 return 1;
-            }
-            else {
+            } else {
                 return 0;
             }
-        }
-        else
-        {
-      	    $this->error = "Error ".$this->db->lasterror();
+        } else {
+            $this->error = "Error ".$this->db->lasterror();
             return -1;
         }
     }
@@ -220,122 +224,124 @@ class Ccountry // extends CommonObject
      */
     public function update($user = null, $notrigger = 0)
     {
-    	global $conf, $langs;
-		$error = 0;
+        global $conf, $langs;
+        $error = 0;
 
-		// Clean parameters
-		if (isset($this->code)) $this->code = trim($this->code);
-		if (isset($this->code_iso)) $this->code_iso = trim($this->code_iso);
-		if (isset($this->label)) $this->label = trim($this->label);
-		if (isset($this->active)) $this->active = trim($this->active);
+        // Clean parameters
+        if (isset($this->code)) {
+            $this->code = trim($this->code);
+        }
+        if (isset($this->code_iso)) {
+            $this->code_iso = trim($this->code_iso);
+        }
+        if (isset($this->label)) {
+            $this->label = trim($this->label);
+        }
+        if (isset($this->active)) {
+            $this->active = trim($this->active);
+        }
 
 
-		// Check parameters
-		// Put here code to add control on parameters values
+        // Check parameters
+        // Put here code to add control on parameters values
 
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX."c_country SET";
-		$sql .= " code=".(isset($this->code) ? "'".$this->db->escape($this->code)."'" : "null").",";
-		$sql .= " code_iso=".(isset($this->code_iso) ? "'".$this->db->escape($this->code_iso)."'" : "null").",";
-		$sql .= " label=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
-		$sql .= " active=".(isset($this->active) ? $this->active : "null")."";
+        $sql .= " code=".(isset($this->code) ? "'".$this->db->escape($this->code)."'" : "null").",";
+        $sql .= " code_iso=".(isset($this->code_iso) ? "'".$this->db->escape($this->code_iso)."'" : "null").",";
+        $sql .= " label=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
+        $sql .= " active=".(isset($this->active) ? $this->active : "null")."";
         $sql .= " WHERE rowid=".$this->id;
 
-		$this->db->begin();
+        $this->db->begin();
 
-		dol_syslog(get_class($this)."::update", LOG_DEBUG);
+        dol_syslog(get_class($this)."::update", LOG_DEBUG);
         $resql = $this->db->query($sql);
-    	if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+        if (!$resql) {
+            $error++;
+            $this->errors[] = "Error ".$this->db->lasterror();
+        }
 
-		if (!$error)
-		{
-			if (!$notrigger)
-			{
-	            // Uncomment this and change MYOBJECT to your own tag if you
-	            // want this action call a trigger.
+        if (!$error) {
+            if (!$notrigger) {
+                // Uncomment this and change MYOBJECT to your own tag if you
+                // want this action call a trigger.
 
-	            //// Call triggers
-	            //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-	            //$interface=new Interfaces($this->db);
-	            //$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
-	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-	            //// End call triggers
-	    	}
-		}
+                //// Call triggers
+                //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+                //$interface=new Interfaces($this->db);
+                //$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
+                //if ($result < 0) { $error++; $this->errors=$interface->errors; }
+                //// End call triggers
+            }
+        }
 
         // Commit or rollback
-		if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
-	            dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
-	            $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
-			}
-			$this->db->rollback();
-			return -1 * $error;
-		}
-		else
-		{
-			$this->db->commit();
-			return 1;
-		}
+        if ($error) {
+            foreach ($this->errors as $errmsg) {
+                dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+                $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+            }
+            $this->db->rollback();
+            return -1 * $error;
+        } else {
+            $this->db->commit();
+            return 1;
+        }
     }
 
 
- 	/**
- 	 *  Delete object in database
-	 *
+    /**
+     *  Delete object in database
+     *
      *	@param  User	$user        User that delete
      *  @param	int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return	int					 <0 if KO, >0 if OK
-	 */
-	public function delete($user, $notrigger = 0)
-	{
-		global $conf, $langs;
-		$error = 0;
+     *  @return	int					 <0 if KO, >0 if OK
+     */
+    public function delete($user, $notrigger = 0)
+    {
+        global $conf, $langs;
+        $error = 0;
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."c_country";
-		$sql .= " WHERE rowid=".$this->id;
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."c_country";
+        $sql .= " WHERE rowid=".$this->id;
 
-		$this->db->begin();
+        $this->db->begin();
 
-		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-    	if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+        dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+        $resql = $this->db->query($sql);
+        if (!$resql) {
+            $error++;
+            $this->errors[] = "Error ".$this->db->lasterror();
+        }
 
-		if (!$error)
-		{
-			if (!$notrigger)
-			{
-				// Uncomment this and change MYOBJECT to your own tag if you
-		        // want this action call a trigger.
+        if (!$error) {
+            if (!$notrigger) {
+                // Uncomment this and change MYOBJECT to your own tag if you
+                // want this action call a trigger.
 
-		        //// Call triggers
-		        //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-		        //$interface=new Interfaces($this->db);
-		        //$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
-		        //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-		        //// End call triggers
-			}
-		}
+                //// Call triggers
+                //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+                //$interface=new Interfaces($this->db);
+                //$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
+                //if ($result < 0) { $error++; $this->errors=$interface->errors; }
+                //// End call triggers
+            }
+        }
 
         // Commit or rollback
-		if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
-	            dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
-	            $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
-			}
-			$this->db->rollback();
-			return -1 * $error;
-		}
-		else
-		{
-			$this->db->commit();
-			return 1;
-		}
-	}
+        if ($error) {
+            foreach ($this->errors as $errmsg) {
+                dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
+                $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+            }
+            $this->db->rollback();
+            return -1 * $error;
+        } else {
+            $this->db->commit();
+            return 1;
+        }
+    }
 
     /**
      *  Return a link to the object card (with optionaly the picto)
@@ -349,7 +355,7 @@ class Ccountry // extends CommonObject
      */
     public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
     {
-    	global $langs;
+        global $langs;
         return $langs->trans($this->label);
     }
 }

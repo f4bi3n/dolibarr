@@ -8,6 +8,6 @@ namespace Sabre\CalDAV\Schedule;
  * @license http://sabre.io/license/ Modified BSD License
  * @copyright Copyright (C) fruux GmbH (https://fruux.com/)
  */
-interface ISchedulingObject extends \Sabre\CalDAV\ICalendarObject {
-
+interface ISchedulingObject extends \Sabre\CalDAV\ICalendarObject
+{
 }

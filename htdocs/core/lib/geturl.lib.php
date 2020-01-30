@@ -41,7 +41,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
     $PROXY_USER=empty($conf->global->MAIN_PROXY_USER)?0:$conf->global->MAIN_PROXY_USER;
     $PROXY_PASS=empty($conf->global->MAIN_PROXY_PASS)?0:$conf->global->MAIN_PROXY_PASS;
 
-	dol_syslog("getURLContent postorget=".$postorget." URL=".$url." param=".$param);
+    dol_syslog("getURLContent postorget=".$postorget." URL=".$url." param=".$param);
 
     //setting the curl parameters.
     $ch = curl_init();
@@ -52,17 +52,21 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
      exit;*/
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_VERBOSE, 1);
-	curl_setopt($ch, CURLOPT_USERAGENT, 'Dolibarr geturl function');
+    curl_setopt($ch, CURLOPT_USERAGENT, 'Dolibarr geturl function');
 
-	@curl_setopt($ch, CURLOPT_FOLLOWLOCATION, ($followlocation?true:false));   // We use @ here because this may return warning if safe mode is on or open_basedir is on
+    @curl_setopt($ch, CURLOPT_FOLLOWLOCATION, ($followlocation?true:false));   // We use @ here because this may return warning if safe mode is on or open_basedir is on
 
-	if (count($addheaders)) curl_setopt($ch, CURLOPT_HTTPHEADER, $addheaders);
-	curl_setopt($ch, CURLINFO_HEADER_OUT, true);	// To be able to retrieve request header and log it
+    if (count($addheaders)) {
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $addheaders);
+    }
+    curl_setopt($ch, CURLINFO_HEADER_OUT, true);	// To be able to retrieve request header and log it
 
-	// By default use tls decied by PHP.
-	// You can force, if supported a version like TLSv1 or TLSv1.2
-	if (! empty($conf->global->MAIN_CURL_SSLVERSION)) curl_setopt($ch, CURLOPT_SSLVERSION, $conf->global->MAIN_CURL_SSLVERSION);
-	//curl_setopt($ch, CURLOPT_SSLVERSION, 6); for tls 1.2
+    // By default use tls decied by PHP.
+    // You can force, if supported a version like TLSv1 or TLSv1.2
+    if (! empty($conf->global->MAIN_CURL_SSLVERSION)) {
+        curl_setopt($ch, CURLOPT_SSLVERSION, $conf->global->MAIN_CURL_SSLVERSION);
+    }
+    //curl_setopt($ch, CURLOPT_SSLVERSION, 6); for tls 1.2
 
     //turning off the server and peer verification(TrustManager Concept).
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -73,54 +77,42 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
     //curl_setopt($ch, CURLOPT_SAFE_UPLOAD, true);	// PHP 5.5
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);		// We want response
-    if ($postorget == 'POST')
-    {
-    	curl_setopt($ch, CURLOPT_POST, 1);	// POST
-    	curl_setopt($ch, CURLOPT_POSTFIELDS, $param);	// Setting param x=a&y=z as POST fields
-    }
-    elseif ($postorget == 'POSTALREADYFORMATED')
-    {
+    if ($postorget == 'POST') {
+        curl_setopt($ch, CURLOPT_POST, 1);	// POST
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $param);	// Setting param x=a&y=z as POST fields
+    } elseif ($postorget == 'POSTALREADYFORMATED') {
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST'); // HTTP request is 'POST' but param string is taken as it is
         curl_setopt($ch, CURLOPT_POSTFIELDS, $param);	// param = content of post, like a xml string
-    }
-    elseif ($postorget == 'PUT')
-    {
+    } elseif ($postorget == 'PUT') {
         $array_param=null;
-    	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT'); // HTTP request is 'PUT'
-    	if (! is_array($param)) parse_str($param, $array_param);
-    	else
-    	{
-    	    dol_syslog("parameter param must be a string", LOG_WARNING);
-    	    $array_param=$param;
-    	}
-    	curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($array_param));	// Setting param x=a&y=z as PUT fields
-    }
-    elseif ($postorget == 'PUTALREADYFORMATED')
-    {
-    	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT'); // HTTP request is 'PUT'
-    	curl_setopt($ch, CURLOPT_POSTFIELDS, $param);	// param = content of post, like a xml string
-    }
-    elseif ($postorget == 'HEAD')
-    {
-    	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'HEAD'); // HTTP request is 'HEAD'
-    	curl_setopt($ch, CURLOPT_NOBODY, true);
-    }
-    elseif ($postorget == 'DELETE')
-    {
-    	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');	// POST
-    }
-    else
-    {
-    	curl_setopt($ch, CURLOPT_POST, 0);			// GET
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT'); // HTTP request is 'PUT'
+        if (! is_array($param)) {
+            parse_str($param, $array_param);
+        } else {
+            dol_syslog("parameter param must be a string", LOG_WARNING);
+            $array_param=$param;
+        }
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($array_param));	// Setting param x=a&y=z as PUT fields
+    } elseif ($postorget == 'PUTALREADYFORMATED') {
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT'); // HTTP request is 'PUT'
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $param);	// param = content of post, like a xml string
+    } elseif ($postorget == 'HEAD') {
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'HEAD'); // HTTP request is 'HEAD'
+        curl_setopt($ch, CURLOPT_NOBODY, true);
+    } elseif ($postorget == 'DELETE') {
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');	// POST
+    } else {
+        curl_setopt($ch, CURLOPT_POST, 0);			// GET
     }
 
     //if USE_PROXY constant set at begin of this method.
-    if ($USE_PROXY)
-    {
+    if ($USE_PROXY) {
         dol_syslog("getURLContent set proxy to ".$PROXY_HOST. ":" . $PROXY_PORT." - ".$PROXY_USER. ":" . $PROXY_PASS);
         //curl_setopt ($ch, CURLOPT_PROXYTYPE, CURLPROXY_HTTP); // Curl 7.10
         curl_setopt($ch, CURLOPT_PROXY, $PROXY_HOST. ":" . $PROXY_PORT);
-        if ($PROXY_USER) curl_setopt($ch, CURLOPT_PROXYUSERPWD, $PROXY_USER. ":" . $PROXY_PASS);
+        if ($PROXY_USER) {
+            curl_setopt($ch, CURLOPT_PROXYUSERPWD, $PROXY_USER. ":" . $PROXY_PASS);
+        }
     }
 
     //getting response from server
@@ -133,33 +125,30 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
     dol_syslog("getURLContent response size=".strlen($response));	// This may contains binary data, so we dont output it
 
     $rep=array();
-    if (curl_errno($ch))
-    {
+    if (curl_errno($ch)) {
         // Ad keys to $rep
         $rep['content']=$response;
 
         // moving to display page to display curl errors
-		$rep['curl_error_no']=curl_errno($ch);
+        $rep['curl_error_no']=curl_errno($ch);
         $rep['curl_error_msg']=curl_error($ch);
 
-		dol_syslog("getURLContent response array is ".join(',', $rep));
-    }
-    else
-    {
-    	$info = curl_getinfo($ch);
+        dol_syslog("getURLContent response array is ".join(',', $rep));
+    } else {
+        $info = curl_getinfo($ch);
 
-    	// Ad keys to $rep
-    	$rep = $info;
-    	//$rep['header_size']=$info['header_size'];
-    	//$rep['http_code']=$info['http_code'];
-    	dol_syslog("getURLContent http_code=".$rep['http_code']);
+        // Ad keys to $rep
+        $rep = $info;
+        //$rep['header_size']=$info['header_size'];
+        //$rep['http_code']=$info['http_code'];
+        dol_syslog("getURLContent http_code=".$rep['http_code']);
 
         // Add more keys to $rep
         $rep['content']=$response;
-    	$rep['curl_error_no']='';
-    	$rep['curl_error_msg']='';
+        $rep['curl_error_no']='';
+        $rep['curl_error_msg']='';
 
-    	//closing the curl
+        //closing the curl
         curl_close($ch);
     }
 
@@ -177,22 +166,18 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
  */
 function getDomainFromURL($url, $mode = 0)
 {
-	$tmpdomain = preg_replace('/^https?:\/\//i', '', $url);				// Remove http(s)://
-	$tmpdomain = preg_replace('/\/.*$/i', '', $tmpdomain);				// Remove part after domain
-	if ($mode == 2)
-	{
-		$tmpdomain = preg_replace('/^.*\.([^\.]+)\.([^\.]+)\.([^\.]+)$/', '\1.\2.\3', $tmpdomain);	// Remove part 'www.' before 'abc.mydomain.com'
-	}
-	else
-	{
-		$tmpdomain = preg_replace('/^.*\.([^\.]+)\.([^\.]+)$/', '\1.\2', $tmpdomain);				// Remove part 'www.abc.' before 'mydomain.com'
-	}
-	if (empty($mode))
-	{
-		$tmpdomain = preg_replace('/\.[^\.]+$/', '', $tmpdomain);			// Remove first level domain (.com, .net, ...)
-	}
+    $tmpdomain = preg_replace('/^https?:\/\//i', '', $url);				// Remove http(s)://
+    $tmpdomain = preg_replace('/\/.*$/i', '', $tmpdomain);				// Remove part after domain
+    if ($mode == 2) {
+        $tmpdomain = preg_replace('/^.*\.([^\.]+)\.([^\.]+)\.([^\.]+)$/', '\1.\2.\3', $tmpdomain);	// Remove part 'www.' before 'abc.mydomain.com'
+    } else {
+        $tmpdomain = preg_replace('/^.*\.([^\.]+)\.([^\.]+)$/', '\1.\2', $tmpdomain);				// Remove part 'www.abc.' before 'mydomain.com'
+    }
+    if (empty($mode)) {
+        $tmpdomain = preg_replace('/\.[^\.]+$/', '', $tmpdomain);			// Remove first level domain (.com, .net, ...)
+    }
 
-	return $tmpdomain;
+    return $tmpdomain;
 }
 
 /**
@@ -205,14 +190,16 @@ function getDomainFromURL($url, $mode = 0)
  */
 function getRootURLFromURL($url)
 {
-	$prefix='';
-	$tmpurl = $url;
-	$reg = null;
-	if (preg_match('/^(https?:\/\/)/i', $tmpurl, $reg)) $prefix = $reg[1];
-	$tmpurl = preg_replace('/^https?:\/\//i', '', $tmpurl);				// Remove http(s)://
-	$tmpurl = preg_replace('/\/.*$/i', '', $tmpurl);					// Remove part after domain
+    $prefix='';
+    $tmpurl = $url;
+    $reg = null;
+    if (preg_match('/^(https?:\/\/)/i', $tmpurl, $reg)) {
+        $prefix = $reg[1];
+    }
+    $tmpurl = preg_replace('/^https?:\/\//i', '', $tmpurl);				// Remove http(s)://
+    $tmpurl = preg_replace('/\/.*$/i', '', $tmpurl);					// Remove part after domain
 
-	return $prefix.$tmpurl;
+    return $prefix.$tmpurl;
 }
 
 /**
@@ -223,6 +210,6 @@ function getRootURLFromURL($url)
  */
 function removeHtmlComment($content)
 {
-	$content = preg_replace('/<!--[^\-]+-->/', '', $content);
-	return $content;
+    $content = preg_replace('/<!--[^\-]+-->/', '', $content);
+    return $content;
 }

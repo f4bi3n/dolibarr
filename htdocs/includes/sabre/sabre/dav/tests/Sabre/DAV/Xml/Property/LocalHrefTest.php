@@ -6,17 +6,16 @@ use Sabre\DAV;
 use Sabre\DAV\Browser\HtmlOutputHelper;
 use Sabre\DAV\Xml\XmlTest;
 
-class LocalHrefTest extends XmlTest {
-
-    function testConstruct() {
-
+class LocalHrefTest extends XmlTest
+{
+    public function testConstruct()
+    {
         $href = new LocalHref('path');
         $this->assertEquals('path', $href->getHref());
-
     }
 
-    function testSerialize() {
-
+    public function testSerialize()
+    {
         $href = new LocalHref('path');
         $this->assertEquals('path', $href->getHref());
 
@@ -25,13 +24,14 @@ class LocalHrefTest extends XmlTest {
         $xml = $this->write(['{DAV:}anything' => $href]);
 
         $this->assertXmlStringEqualsXmlString(
-'<?xml version="1.0"?>
+            '<?xml version="1.0"?>
 <d:anything xmlns:d="DAV:"><d:href>/bla/path</d:href></d:anything>
-', $xml);
-
+',
+            $xml
+        );
     }
-    function testSerializeSpace() {
-
+    public function testSerializeSpace()
+    {
         $href = new LocalHref('path alsopath');
         $this->assertEquals('path%20alsopath', $href->getHref());
 
@@ -40,13 +40,14 @@ class LocalHrefTest extends XmlTest {
         $xml = $this->write(['{DAV:}anything' => $href]);
 
         $this->assertXmlStringEqualsXmlString(
-'<?xml version="1.0"?>
+            '<?xml version="1.0"?>
 <d:anything xmlns:d="DAV:"><d:href>/bla/path%20alsopath</d:href></d:anything>
-', $xml);
-
+',
+            $xml
+        );
     }
-    function testToHtml() {
-
+    public function testToHtml()
+    {
         $href = new LocalHref([
             '/foo/bar',
             'foo/bar',
@@ -63,7 +64,5 @@ class LocalHrefTest extends XmlTest {
             '<a href="/base/foo/bar">/base/foo/bar</a><br />' .
             '<a href="http://example.org/bar">http://example.org/bar</a>';
         $this->assertEquals($expected, $href->toHtml($html));
-
     }
-
 }

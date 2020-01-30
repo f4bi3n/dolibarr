@@ -6,10 +6,10 @@ use Sabre\HTTP;
 
 require_once 'Sabre/HTTP/ResponseMock.php';
 
-class AbstractBearerTest extends \PHPUnit_Framework_TestCase {
-
-    function testCheckNoHeaders() {
-
+class AbstractBearerTest extends \PHPUnit_Framework_TestCase
+{
+    public function testCheckNoHeaders()
+    {
         $request = new HTTP\Request();
         $response = new HTTP\Response();
 
@@ -18,11 +18,10 @@ class AbstractBearerTest extends \PHPUnit_Framework_TestCase {
         $this->assertFalse(
             $backend->check($request, $response)[0]
         );
-
     }
 
-    function testCheckInvalidToken() {
-
+    public function testCheckInvalidToken()
+    {
         $request = HTTP\Sapi::createFromServerArray([
             'HTTP_AUTHORIZATION' => 'Bearer foo',
         ]);
@@ -33,11 +32,10 @@ class AbstractBearerTest extends \PHPUnit_Framework_TestCase {
         $this->assertFalse(
             $backend->check($request, $response)[0]
         );
-
     }
 
-    function testCheckSuccess() {
-
+    public function testCheckSuccess()
+    {
         $request = HTTP\Sapi::createFromServerArray([
             'HTTP_AUTHORIZATION' => 'Bearer valid',
         ]);
@@ -48,11 +46,10 @@ class AbstractBearerTest extends \PHPUnit_Framework_TestCase {
             [true, 'principals/username'],
             $backend->check($request, $response)
         );
-
     }
 
-    function testRequireAuth() {
-
+    public function testRequireAuth()
+    {
         $request = new HTTP\Request();
         $response = new HTTP\Response();
 
@@ -64,13 +61,12 @@ class AbstractBearerTest extends \PHPUnit_Framework_TestCase {
             'Bearer realm="writing unittests on a saturday night"',
             $response->getHeader('WWW-Authenticate')
         );
-
     }
-
 }
 
 
-class AbstractBearerMock extends AbstractBearer {
+class AbstractBearerMock extends AbstractBearer
+{
 
     /**
      * Validates a bearer token
@@ -81,10 +77,8 @@ class AbstractBearerMock extends AbstractBearer {
      * @param string $bearerToken
      * @return bool
      */
-    function validateBearerToken($bearerToken) {
-
+    public function validateBearerToken($bearerToken)
+    {
         return 'valid' === $bearerToken ? 'principals/username' : false;
-
     }
-
 }

@@ -23,7 +23,8 @@ use Sabre\Xml\Writer;
  * @author Evert Pot (http://www.rooftopsolutions.nl/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Href implements Element, HtmlOutput {
+class Href implements Element, HtmlOutput
+{
 
     /**
      * List of uris
@@ -42,13 +43,12 @@ class Href implements Element, HtmlOutput {
      *
      * @param string|string[] $hrefs
      */
-    function __construct($hrefs) {
-
+    public function __construct($hrefs)
+    {
         if (is_string($hrefs)) {
             $hrefs = [$hrefs];
         }
         $this->hrefs = $hrefs;
-
     }
 
     /**
@@ -56,10 +56,9 @@ class Href implements Element, HtmlOutput {
      *
      * @return string
      */
-    function getHref() {
-
+    public function getHref()
+    {
         return $this->hrefs[0];
-
     }
 
     /**
@@ -67,10 +66,9 @@ class Href implements Element, HtmlOutput {
      *
      * @return array
      */
-    function getHrefs() {
-
+    public function getHrefs()
+    {
         return $this->hrefs;
-
     }
 
     /**
@@ -92,13 +90,12 @@ class Href implements Element, HtmlOutput {
      * @param Writer $writer
      * @return void
      */
-    function xmlSerialize(Writer $writer) {
-
+    public function xmlSerialize(Writer $writer)
+    {
         foreach ($this->getHrefs() as $href) {
             $href = Uri\resolve($writer->contextUri, $href);
             $writer->writeElement('{DAV:}href', $href);
         }
-
     }
 
     /**
@@ -115,14 +112,13 @@ class Href implements Element, HtmlOutput {
      * @param HtmlOutputHelper $html
      * @return string
      */
-    function toHtml(HtmlOutputHelper $html) {
-
+    public function toHtml(HtmlOutputHelper $html)
+    {
         $links = [];
         foreach ($this->getHrefs() as $href) {
             $links[] = $html->link($href);
         }
         return implode('<br />', $links);
-
     }
 
     /**
@@ -146,20 +142,18 @@ class Href implements Element, HtmlOutput {
      * @param Reader $reader
      * @return mixed
      */
-    static function xmlDeserialize(Reader $reader) {
-
+    public static function xmlDeserialize(Reader $reader)
+    {
         $hrefs = [];
         foreach ((array)$reader->parseInnerTree() as $elem) {
-            if ($elem['name'] !== '{DAV:}href')
+            if ($elem['name'] !== '{DAV:}href') {
                 continue;
+            }
 
             $hrefs[] = $elem['value'];
-
         }
         if ($hrefs) {
             return new self($hrefs, false);
         }
-
     }
-
 }

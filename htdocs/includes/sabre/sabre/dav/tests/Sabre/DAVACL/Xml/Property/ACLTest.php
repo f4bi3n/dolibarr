@@ -6,17 +6,16 @@ use Sabre\DAV;
 use Sabre\DAV\Browser\HtmlOutputHelper;
 use Sabre\HTTP;
 
-class ACLTest extends \PHPUnit_Framework_TestCase {
-
-    function testConstruct() {
-
+class ACLTest extends \PHPUnit_Framework_TestCase
+{
+    public function testConstruct()
+    {
         $acl = new Acl([]);
         $this->assertInstanceOf('Sabre\DAVACL\Xml\Property\ACL', $acl);
-
     }
 
-    function testSerializeEmpty() {
-
+    public function testSerializeEmpty()
+    {
         $acl = new Acl([]);
         $xml = (new DAV\Server())->xml->write('{DAV:}root', $acl);
 
@@ -24,11 +23,10 @@ class ACLTest extends \PHPUnit_Framework_TestCase {
 <d:root xmlns:d="DAV:" xmlns:s="http://sabredav.org/ns" />';
 
         $this->assertXmlStringEqualsXmlString($expected, $xml);
-
     }
 
-    function testSerialize() {
-
+    public function testSerialize()
+    {
         $privileges = [
             [
                 'principal' => 'principals/evert',
@@ -70,11 +68,10 @@ class ACLTest extends \PHPUnit_Framework_TestCase {
 </d:root>
 ';
         $this->assertXmlStringEqualsXmlString($expected, $xml);
-
     }
 
-    function testSerializeSpecialPrincipals() {
-
+    public function testSerializeSpecialPrincipals()
+    {
         $privileges = [
             [
                 'principal' => '{DAV:}authenticated',
@@ -129,11 +126,10 @@ class ACLTest extends \PHPUnit_Framework_TestCase {
 </d:root>
 ';
         $this->assertXmlStringEqualsXmlString($expected, $xml);
-
     }
 
-    function testUnserialize() {
-
+    public function testUnserialize()
+    {
         $source = '<?xml version="1.0"?>
 <d:root xmlns:d="DAV:">
   <d:ace>
@@ -183,15 +179,13 @@ class ACLTest extends \PHPUnit_Framework_TestCase {
         ];
 
         $this->assertEquals($expected, $result->getPrivileges());
-
-
     }
 
     /**
      * @expectedException Sabre\DAV\Exception\BadRequest
      */
-    function testUnserializeNoPrincipal() {
-
+    public function testUnserializeNoPrincipal()
+    {
         $source = '<?xml version="1.0"?>
 <d:root xmlns:d="DAV:">
   <d:ace>
@@ -210,11 +204,10 @@ class ACLTest extends \PHPUnit_Framework_TestCase {
         $reader->xml($source);
 
         $result = $reader->parse();
-
     }
 
-    function testUnserializeOtherPrincipal() {
-
+    public function testUnserializeOtherPrincipal()
+    {
         $source = '<?xml version="1.0"?>
 <d:root xmlns:d="DAV:">
   <d:ace>
@@ -273,14 +266,13 @@ class ACLTest extends \PHPUnit_Framework_TestCase {
         ];
 
         $this->assertEquals($expected, $result->getPrivileges());
-
     }
 
     /**
      * @expectedException Sabre\DAV\Exception\NotImplemented
      */
-    function testUnserializeDeny() {
-
+    public function testUnserializeDeny()
+    {
         $source = '<?xml version="1.0"?>
 <d:root xmlns:d="DAV:">
   <d:ignore-me />
@@ -300,11 +292,10 @@ class ACLTest extends \PHPUnit_Framework_TestCase {
         $reader->xml($source);
 
         $result = $reader->parse();
-
     }
 
-    function testToHtml() {
-
+    public function testToHtml()
+    {
         $privileges = [
             [
                 'principal' => 'principals/evert',
@@ -336,7 +327,5 @@ class ACLTest extends \PHPUnit_Framework_TestCase {
             '</table>';
 
         $this->assertEquals($expected, $acl->toHtml($html));
-
     }
-
 }

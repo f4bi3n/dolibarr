@@ -64,7 +64,6 @@ class Netatmo extends AbstractService
     public function getAuthorizationEndpoint()
     {
         return new Uri($this->baseApiUri.'oauth2/authorize');
-
     }
 
     /**

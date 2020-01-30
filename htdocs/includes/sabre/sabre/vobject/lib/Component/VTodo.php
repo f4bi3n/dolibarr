@@ -14,7 +14,8 @@ use Sabre\VObject;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class VTodo extends VObject\Component {
+class VTodo extends VObject\Component
+{
 
     /**
      * Returns true or false depending on if the event falls in the specified
@@ -28,8 +29,8 @@ class VTodo extends VObject\Component {
      *
      * @return bool
      */
-    function isInTimeRange(DateTimeInterface $start, DateTimeInterface $end) {
-
+    public function isInTimeRange(DateTimeInterface $start, DateTimeInterface $end)
+    {
         $dtstart = isset($this->DTSTART) ? $this->DTSTART->getDateTime() : null;
         $duration = isset($this->DURATION) ? VObject\DateTimeParser::parseDuration($this->DURATION) : null;
         $due = isset($this->DUE) ? $this->DUE->getDateTime() : null;
@@ -63,7 +64,6 @@ class VTodo extends VObject\Component {
             return ($end > $created);
         }
         return true;
-
     }
 
     /**
@@ -81,8 +81,8 @@ class VTodo extends VObject\Component {
      *
      * @var array
      */
-    function getValidationRules() {
-
+    public function getValidationRules()
+    {
         return [
             'UID'     => 1,
             'DTSTAMP' => 1,
@@ -119,7 +119,6 @@ class VTodo extends VObject\Component {
             'RESOURCES'      => '*',
             'RDATE'          => '*',
         ];
-
     }
 
     /**
@@ -144,36 +143,29 @@ class VTodo extends VObject\Component {
      *
      * @return array
      */
-    function validate($options = 0) {
-
+    public function validate($options = 0)
+    {
         $result = parent::validate($options);
         if (isset($this->DUE) && isset($this->DTSTART)) {
-
             $due = $this->DUE;
             $dtStart = $this->DTSTART;
 
             if ($due->getValueType() !== $dtStart->getValueType()) {
-
                 $result[] = [
                     'level'   => 3,
                     'message' => 'The value type (DATE or DATE-TIME) must be identical for DUE and DTSTART',
                     'node'    => $due,
                 ];
-
             } elseif ($due->getDateTime() < $dtStart->getDateTime()) {
-
                 $result[] = [
                     'level'   => 3,
                     'message' => 'DUE must occur after DTSTART',
                     'node'    => $due,
                 ];
-
             }
-
         }
 
         return $result;
-
     }
 
     /**
@@ -181,13 +173,11 @@ class VTodo extends VObject\Component {
      *
      * @return array
      */
-    protected function getDefaults() {
-
+    protected function getDefaults()
+    {
         return [
             'UID'     => 'sabre-vobject-' . VObject\UUIDUtil::getUUID(),
             'DTSTAMP' => date('Ymd\\THis\\Z'),
         ];
-
     }
-
 }

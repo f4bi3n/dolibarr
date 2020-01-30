@@ -19,7 +19,8 @@ use Sabre\Xml\XmlDeserializable;
  * @author Evert Pot (http://www.rooftopsolutions.nl/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class CalendarMultiGetReport implements XmlDeserializable {
+class CalendarMultiGetReport implements XmlDeserializable
+{
 
     /**
      * An array with requested properties.
@@ -82,8 +83,8 @@ class CalendarMultiGetReport implements XmlDeserializable {
      * @param Reader $reader
      * @return mixed
      */
-    static function xmlDeserialize(Reader $reader) {
-
+    public static function xmlDeserialize(Reader $reader)
+    {
         $elems = $reader->parseInnerTree([
             '{urn:ietf:params:xml:ns:caldav}calendar-data' => 'Sabre\\CalDAV\\Xml\\Filter\\CalendarData',
             '{DAV:}prop'                                   => 'Sabre\\Xml\\Element\\KeyValue',
@@ -95,21 +96,19 @@ class CalendarMultiGetReport implements XmlDeserializable {
         ];
 
         foreach ($elems as $elem) {
-
             switch ($elem['name']) {
 
-                case '{DAV:}prop' :
+                case '{DAV:}prop':
                     $newProps['properties'] = array_keys($elem['value']);
                     if (isset($elem['value']['{' . Plugin::NS_CALDAV . '}calendar-data'])) {
                         $newProps += $elem['value']['{' . Plugin::NS_CALDAV . '}calendar-data'];
                     }
                     break;
-                case '{DAV:}href' :
+                case '{DAV:}href':
                     $newProps['hrefs'][] = Uri\resolve($reader->contextUri, $elem['value']);
                     break;
 
             }
-
         }
 
         $obj = new self();
@@ -118,7 +117,5 @@ class CalendarMultiGetReport implements XmlDeserializable {
         }
 
         return $obj;
-
     }
-
 }

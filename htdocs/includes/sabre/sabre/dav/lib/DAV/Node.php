@@ -11,7 +11,8 @@ namespace Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-abstract class Node implements INode {
+abstract class Node implements INode
+{
 
     /**
      * Returns the last modification time as a unix timestamp.
@@ -20,10 +21,9 @@ abstract class Node implements INode {
      *
      * @return int
      */
-    function getLastModified() {
-
+    public function getLastModified()
+    {
         return null;
-
     }
 
     /**
@@ -32,10 +32,9 @@ abstract class Node implements INode {
      * @throws Exception\Forbidden
      * @return void
      */
-    function delete() {
-
+    public function delete()
+    {
         throw new Exception\Forbidden('Permission denied to delete node');
-
     }
 
     /**
@@ -45,10 +44,8 @@ abstract class Node implements INode {
      * @throws Exception\Forbidden
      * @return void
      */
-    function setName($name) {
-
+    public function setName($name)
+    {
         throw new Exception\Forbidden('Permission denied to rename file');
-
     }
-
 }

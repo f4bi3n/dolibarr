@@ -2,10 +2,10 @@
 
 namespace Sabre\VObject;
 
-class FreeBusyDataTest extends \PHPUnit_Framework_TestCase {
-
-    function testGetData() {
-
+class FreeBusyDataTest extends \PHPUnit_Framework_TestCase
+{
+    public function testGetData()
+    {
         $fb = new FreeBusyData(100, 200);
 
         $this->assertEquals(
@@ -18,14 +18,13 @@ class FreeBusyDataTest extends \PHPUnit_Framework_TestCase {
             ],
             $fb->getData()
         );
-
     }
 
     /**
      * @depends testGetData
      */
-    function testAddBeginning() {
-
+    public function testAddBeginning()
+    {
         $fb = new FreeBusyData(100, 200);
 
         // Overwriting the first half
@@ -66,14 +65,13 @@ class FreeBusyDataTest extends \PHPUnit_Framework_TestCase {
             ],
             $fb->getData()
         );
-
     }
 
     /**
      * @depends testAddBeginning
      */
-    function testAddEnd() {
-
+    public function testAddEnd()
+    {
         $fb = new FreeBusyData(100, 200);
 
         // Overwriting the first half
@@ -95,15 +93,13 @@ class FreeBusyDataTest extends \PHPUnit_Framework_TestCase {
             ],
             $fb->getData()
         );
-
-
     }
 
     /**
      * @depends testAddEnd
      */
-    function testAddMiddle() {
-
+    public function testAddMiddle()
+    {
         $fb = new FreeBusyData(100, 200);
 
         // Overwriting the first half
@@ -130,14 +126,13 @@ class FreeBusyDataTest extends \PHPUnit_Framework_TestCase {
             ],
             $fb->getData()
         );
-
     }
 
     /**
      * @depends testAddMiddle
      */
-    function testAddMultiple() {
-
+    public function testAddMultiple()
+    {
         $fb = new FreeBusyData(100, 200);
 
         $fb->add(110, 120, 'BUSY');
@@ -173,14 +168,13 @@ class FreeBusyDataTest extends \PHPUnit_Framework_TestCase {
             ],
             $fb->getData()
         );
-
     }
 
     /**
      * @depends testAddMultiple
      */
-    function testAddMultipleOverlap() {
-
+    public function testAddMultipleOverlap()
+    {
         $fb = new FreeBusyData(100, 200);
 
         $fb->add(110, 120, 'BUSY');
@@ -254,8 +248,8 @@ class FreeBusyDataTest extends \PHPUnit_Framework_TestCase {
     /**
      * @depends testAddMultipleOverlap
      */
-    function testAddMultipleOverlapAndMerge() {
-
+    public function testAddMultipleOverlapAndMerge()
+    {
         $fb = new FreeBusyData(100, 200);
 
         $fb->add(110, 120, 'BUSY');

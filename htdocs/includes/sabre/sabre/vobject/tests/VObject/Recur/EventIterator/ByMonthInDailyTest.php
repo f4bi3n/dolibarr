@@ -5,13 +5,14 @@ namespace Sabre\VObject\Recur;
 use DateTime;
 use Sabre\VObject\Reader;
 
-class ByMonthInDailyTest extends \PHPUnit_Framework_TestCase {
+class ByMonthInDailyTest extends \PHPUnit_Framework_TestCase
+{
 
     /**
      * This tests the expansion of dates with DAILY frequency in RRULE with BYMONTH restrictions
      */
-    function testExpand() {
-
+    public function testExpand()
+    {
         $ics = <<<ICS
 BEGIN:VCALENDAR
 VERSION:2.0
@@ -54,5 +55,4 @@ ICS;
 
         $this->assertEquals($expectedDates, $dates, 'Recursed dates are restricted by month');
     }
-
 }
